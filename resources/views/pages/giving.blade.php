@@ -18,7 +18,7 @@
                 </div>
                 <div class="flex items-baseline justify-between border-b border-line pb-3">
                     <dt class="text-[12px] uppercase tracking-[0.16em] text-navy-400">Account Name</dt>
-                    <dd class="font-kr text-[15px] font-bold">{{ SiteSetting::get('giving_account_name') }}</dd>
+                    <dd class="text-[15px] font-bold">{{ SiteSetting::get('giving_account_name') }}</dd>
                 </div>
                 <div class="flex items-baseline justify-between border-b border-line pb-3">
                     <dt class="text-[12px] uppercase tracking-[0.16em] text-navy-400">BSB</dt>
