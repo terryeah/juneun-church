@@ -12,7 +12,7 @@
     <img
         src="{{ $sermon->thumbnailUrl() }}"
         alt="{{ $sermon->title }}"
-        class="photo-treatment absolute inset-0 h-full w-full"
+        class="absolute inset-0 h-full w-full object-cover"
         loading="lazy"
     >
     <span class="absolute inset-0 flex items-center justify-center">
