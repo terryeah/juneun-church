@@ -5,7 +5,7 @@
     <section class="container-site pb-12 lg:pb-16">
         <div class="border-t-2 border-navy">
             @forelse ($announcements as $announcement)
-                <a href="{{ route('news.show', $announcement) }}" class="group block border-b border-line py-5">
+                <a href="{{ route('news.show', $announcement) }}" class="group block py-5">
                     <p class="text-[11px] text-navy-400">
                         {{ $announcement->published_at?->translatedFormat('Y년 n월 j일') }}
                         @if ($announcement->is_pinned)
