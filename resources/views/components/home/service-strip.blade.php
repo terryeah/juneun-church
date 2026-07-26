@@ -24,7 +24,7 @@
 @endphp
 
 {{-- Three equal service-time columns separated by 1px divider cells. --}}
-<div class="border-y border-line py-[26px]">
+<div class="border-y border-line py-6 lg:py-[26px]">
     <div class="grid gap-6 lg:grid-cols-[1fr_1px_1fr_1px_1fr] lg:gap-[30px]">
         @foreach ($services as $service)
             @if (! $loop->first)

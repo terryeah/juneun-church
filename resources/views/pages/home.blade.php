@@ -1,7 +1,7 @@
 <x-layout.app description="브리즈번 주는교회 - 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라가는 젊은 한인교회입니다.">
 
     {{-- Hero --}}
-    <section class="container-site py-10 lg:py-14">
+    <section class="container-site py-8 md:py-10 lg:py-14">
         <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-11">
             <div class="lg:flex-[1.05]">
                 <x-ui.kicker>Brisbane Ju-neun Church · Since 2024</x-ui.kicker>
@@ -26,7 +26,7 @@
     </section>
 
     {{-- Value rows: the three 주는교회 identities --}}
-    <section class="container-site py-10 lg:py-14">
+    <section class="container-site py-8 md:py-10 lg:py-14">
         @php
             $identities = [
                 [
@@ -67,7 +67,7 @@
     </section>
 
     {{-- News + latest sermon band --}}
-    <section class="container-site py-10 lg:py-14">
+    <section class="container-site py-8 md:py-10 lg:py-14">
         <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-11">
             <div>
                 <x-ui.kicker>교회 소식 · News</x-ui.kicker>
@@ -108,7 +108,7 @@
     </section>
 
     {{-- Meal sharing (반찬나눔) --}}
-    <section class="container-site py-10 lg:py-14">
+    <section class="container-site py-8 md:py-10 lg:py-14">
         <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
             <div class="flex items-center">
                 <x-ui.photo-placeholder label="Meal Sharing · 반찬나눔" class="aspect-video w-full" />
@@ -135,7 +135,7 @@
     </section>
 
     {{-- Poster band introducing the sliding gallery preview --}}
-    <section class="bg-navy py-[76px]">
+    <section class="bg-navy py-12 md:py-16 lg:py-[76px]">
         <div class="container-site">
             <p class="text-kicker font-extrabold uppercase tracking-[0.16em] text-cream/55">Moments · 주는교회의 순간들</p>
             <p class="mt-5 font-kr text-display-lg text-cream">함께 예배하고, 함께 나누는<br>교회의 일상입니다.</p>
@@ -148,7 +148,7 @@
             <div class="overflow-hidden" data-photo-slider>
                 <div class="flex gap-[2px] transition-transform duration-700 ease-in-out" data-slider-track>
                     @foreach ($recentPhotos as $photo)
-                        <a href="{{ route('gallery.show', $photo->album) }}" class="block w-full shrink-0 overflow-hidden rounded-[10px] md:w-[calc((100%-4px)/3)]">
+                        <a href="{{ route('gallery.show', $photo->album) }}" class="block w-[calc((100%-2px)/2)] shrink-0 overflow-hidden rounded-[10px] md:w-[calc((100%-4px)/3)] lg:w-[calc((100%-8px)/5)]">
                             <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
                         </a>
                     @endforeach
