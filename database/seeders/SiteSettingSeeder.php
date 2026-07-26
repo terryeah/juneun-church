@@ -40,7 +40,7 @@ class SiteSettingSeeder extends Seeder
             ['key' => 'kids_service_venue', 'value' => '본관', 'group' => 'service_times'],
 
             ['key' => 'instagram_url', 'value' => 'https://www.instagram.com/juneun.church_brisbane/', 'group' => 'social'],
-            ['key' => 'youtube_url', 'value' => 'https://www.youtube.com/channel/UCqne5yzA5A5ml-a9RuIkZXA', 'group' => 'social'],
+            ['key' => 'youtube_url', 'value' => 'https://www.youtube.com/@juneun_church', 'group' => 'social'],
 
             ['key' => 'giving_bank', 'value' => 'Westpac', 'group' => 'giving'],
             ['key' => 'giving_account_name', 'value' => 'Brisbane Juneun Church', 'group' => 'giving'],
