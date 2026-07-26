@@ -16,10 +16,10 @@
     <meta property="og:site_name" content="{{ config('app.name') }}">
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
-<body class="min-h-screen bg-cream font-sans text-navy antialiased">
+<body class="flex min-h-screen flex-col bg-cream font-sans text-navy antialiased">
     <x-layout.header />
 
-    <main>
+    <main class="flex-1">
         {{ $slot }}
     </main>
 
