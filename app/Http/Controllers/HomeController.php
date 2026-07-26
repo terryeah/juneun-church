@@ -41,11 +41,12 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
-        /** Three recent photos for the full-bleed gallery preview band */
+        /** Recent photos for the sliding gallery preview band */
         $recentPhotos = Photo::query()
             ->whereHas('album', fn ($query) => $query->where('is_published', true))
+            ->orderBy('sort_order')
             ->latest()
-            ->limit(3)
+            ->limit(9)
             ->get();
 
         return view('pages.home', compact('announcements', 'latestSermon', 'upcomingEvents', 'recentPhotos'));

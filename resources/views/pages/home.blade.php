@@ -134,27 +134,33 @@
         </div>
     </section>
 
-    {{-- Poster band: the one saturated field on the page --}}
+    {{-- Poster band introducing the sliding gallery preview --}}
     <section class="bg-navy py-[76px]">
         <div class="container-site">
-            <p class="text-kicker font-extrabold uppercase tracking-[0.16em] text-cream/55">Visit Us · Sunday 11:30 AM</p>
-            <p class="mt-5 font-kr text-display-lg text-cream">누구나 환영합니다.<br>이번 주일, 함께 예배해요.</p>
+            <p class="text-kicker font-extrabold uppercase tracking-[0.16em] text-cream/55">Moments · 주는교회의 순간들</p>
+            <p class="mt-5 font-kr text-display-lg text-cream">함께 예배하고, 함께 나누는<br>교회의 일상입니다.</p>
         </div>
     </section>
 
-    {{-- Photo band: 3-up gallery preview --}}
+    {{-- Sliding gallery preview band --}}
     <section class="bg-navy pb-[2px]">
-        <div class="grid grid-cols-1 gap-[2px] md:grid-cols-3">
-            @forelse ($recentPhotos as $photo)
-                <a href="{{ route('gallery.show', $photo->album) }}" class="block aspect-square overflow-hidden rounded-[10px]">
-                    <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="photo-treatment h-full w-full" loading="lazy">
-                </a>
-            @empty
+        @if ($recentPhotos->isNotEmpty())
+            <div class="overflow-hidden" data-photo-slider>
+                <div class="flex gap-[2px] transition-transform duration-700 ease-in-out" data-slider-track>
+                    @foreach ($recentPhotos as $photo)
+                        <a href="{{ route('gallery.show', $photo->album) }}" class="block w-full shrink-0 overflow-hidden rounded-[10px] md:w-[calc((100%-4px)/3)]">
+                            <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <div class="grid grid-cols-1 gap-[2px] md:grid-cols-3">
                 @foreach (['Fellowship', 'Worship', 'Next-Gen'] as $label)
                     <x-ui.photo-placeholder :label="$label" class="aspect-square rounded-[10px] bg-navy-700/60 text-cream/40" />
                 @endforeach
-            @endforelse
-        </div>
+            </div>
+        @endif
     </section>
 
 </x-layout.app>

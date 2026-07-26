@@ -2,6 +2,7 @@ import { MobileNav } from './components/MobileNav';
 import { YouTubeLazy } from './components/YouTubeLazy';
 import { Lightbox } from './components/Lightbox';
 import { InfiniteScroll } from './components/InfiniteScroll';
+import { PhotoSlider } from './components/PhotoSlider';
 
 /**
  * Main entry point.
@@ -28,5 +29,10 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const scrollContainer = document.querySelector<HTMLElement>('[data-infinite-scroll]');
     if (scrollContainer) {
         new InfiniteScroll(scrollContainer);
+    }
+
+    const slider = document.querySelector<HTMLElement>('[data-photo-slider]');
+    if (slider) {
+        new PhotoSlider(slider);
     }
 });
