@@ -4,10 +4,6 @@
         주는교회의 모든 예배는 누구에게나 열려 있습니다. 이번 주, 함께 예배해요.
     </x-ui.page-header>
 
-    <section class="container-site">
-        <x-home.service-strip />
-    </section>
-
     @if ($featured)
         <section class="container-site py-10 lg:py-14">
             <div class="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
