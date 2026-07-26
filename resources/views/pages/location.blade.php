@@ -24,13 +24,13 @@
     </section>
 
     <section class="container-site py-10 lg:py-14">
-        <div class="grid gap-10 lg:grid-cols-2 lg:gap-11">
+        <div class="grid gap-10 md:grid-cols-2 md:gap-8 lg:gap-11">
             @foreach ($locations as $location)
-                <div>
+                <div class="flex flex-col">
                     <x-ui.kicker>{{ $location['label'] }}</x-ui.kicker>
                     <h2 class="mt-2 font-kr text-display-sm font-medium">{{ $location['address'] }}</h2>
-                    <p class="mt-1 text-[12px] text-navy-400">{{ $location['note'] }}</p>
-                    <div class="mt-4 overflow-hidden rounded-media border border-line">
+                    <p class="mb-4 mt-1 text-[12px] text-navy-400">{{ $location['note'] }}</p>
+                    <div class="mt-auto overflow-hidden rounded-media border border-line">
                         <iframe
                             src="https://www.google.com/maps?q={{ urlencode($location['address']) }}&output=embed"
                             class="h-[320px] w-full border-0"
