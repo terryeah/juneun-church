@@ -1,0 +1,127 @@
+@import 'tailwindcss';
+
+@import '@fontsource/archivo/400.css';
+@import '@fontsource/archivo/500.css';
+@import '@fontsource/archivo/600.css';
+@import '@fontsource/archivo/700.css';
+@import '@fontsource/archivo/800.css';
+@import '@fontsource/archivo/900.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+
+/**
+ * Gmarket Sans is self-hosted from public/fonts per the design handoff.
+ */
+@font-face {
+    font-family: 'GmarketSans';
+    src: url('/fonts/GmarketSansLight.woff') format('woff');
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'GmarketSans';
+    src: url('/fonts/GmarketSansMedium.woff') format('woff');
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'GmarketSans';
+    src: url('/fonts/GmarketSansBold.woff') format('woff');
+    font-weight: 700;
+    font-display: swap;
+}
+
+/**
+ * Design tokens from the Ju-neun Church design handoff.
+ */
+@theme {
+    --font-sans: 'Archivo', system-ui, sans-serif;
+    --font-kr: 'GmarketSans', 'Gothic A1', 'Archivo', system-ui, sans-serif;
+
+    --color-navy: #16223c;
+    --color-navy-900: #0d1730;
+    --color-navy-700: #233559;
+    --color-navy-400: #7688aa;
+    --color-cream: #f4f1ea;
+    --color-paper: #ffffff;
+    --color-accent: #004aad;
+    --color-accent-700: #00337a;
+    --color-accent-100: #dce7f7;
+    --color-on-accent: #ffffff;
+    --color-line: rgba(22, 34, 60, 0.16);
+
+    --text-kicker: 0.6875rem;
+    --text-kicker--line-height: 1;
+    --text-kicker--letter-spacing: 0.16em;
+    --text-display-lg: clamp(2.1rem, 5.6vw, 3rem);
+    --text-display-lg--line-height: 1;
+    --text-display-lg--letter-spacing: -0.01em;
+    --text-display-md: clamp(1.6rem, 4.2vw, 2.25rem);
+    --text-display-md--line-height: 1.11;
+    --text-display-sm: 1.25rem;
+    --text-display-sm--line-height: 1.2;
+
+    --radius-nav: 8px;
+    --radius-btn: 10px;
+    --radius-media: 12px;
+    --radius-play: 14px;
+    --radius-frame: 18px;
+
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+}
+
+/**
+ * Base layer: page ground, Korean text handling and focus rings.
+ */
+@layer base {
+    body {
+        background-color: var(--color-cream);
+        color: var(--color-navy);
+        font-family: var(--font-sans);
+    }
+
+    :lang(ko),
+    .font-kr {
+        word-break: keep-all;
+        text-wrap: pretty;
+    }
+
+    a,
+    button,
+    summary {
+        transition:
+            background-color 150ms ease,
+            color 150ms ease,
+            border-color 150ms ease;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
+    }
+}
+
+@utility photo-treatment {
+    filter: grayscale(1) contrast(1.08);
+    object-fit: cover;
+}
+
+@utility container-site {
+    margin-inline: auto;
+    max-width: 80rem;
+    padding-inline: 22px;
+
+    @variant md {
+        padding-inline: 34px;
+    }
+
+    @variant lg {
+        padding-inline: 46px;
+    }
+}

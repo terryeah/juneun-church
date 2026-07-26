@@ -1,0 +1,8 @@
+@props([
+    'label' => 'Photo',
+])
+
+{{-- Drop-zone style placeholder used until real photography is supplied. --}}
+<div {{ $attributes->merge(['class' => 'flex items-center justify-center rounded-media bg-navy/8 text-navy-400']) }}>
+    <span class="text-kicker font-extrabold uppercase tracking-[0.16em]">{{ $label }}</span>
+</div>

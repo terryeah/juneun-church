@@ -1,0 +1,32 @@
+import { MobileNav } from './components/MobileNav';
+import { YouTubeLazy } from './components/YouTubeLazy';
+import { Lightbox } from './components/Lightbox';
+import { InfiniteScroll } from './components/InfiniteScroll';
+
+/**
+ * Main entry point.
+ *
+ * Every component is a progressive enhancement: the site remains fully
+ * usable without JavaScript, so each component binds only when its root
+ * element exists on the current page.
+ */
+document.addEventListener('DOMContentLoaded', (): void => {
+    const navToggle = document.querySelector<HTMLButtonElement>('[data-mobile-nav-toggle]');
+    if (navToggle) {
+        new MobileNav(navToggle);
+    }
+
+    document
+        .querySelectorAll<HTMLElement>('[data-youtube-lazy]')
+        .forEach((element) => new YouTubeLazy(element));
+
+    const gallery = document.querySelector<HTMLElement>('[data-lightbox-gallery]');
+    if (gallery) {
+        new Lightbox(gallery);
+    }
+
+    const scrollContainer = document.querySelector<HTMLElement>('[data-infinite-scroll]');
+    if (scrollContainer) {
+        new InfiniteScroll(scrollContainer);
+    }
+});

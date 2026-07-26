@@ -1,0 +1,53 @@
+@php
+    use App\Models\SiteSetting;
+
+    $navItems = [
+        ['label' => '예배 안내', 'href' => route('worship'), 'active' => request()->routeIs('worship')],
+        ['label' => '교회 소식', 'href' => route('news.index'), 'active' => request()->routeIs('news.*')],
+        ['label' => '주보', 'href' => route('bulletins'), 'active' => request()->routeIs('bulletins')],
+        ['label' => '갤러리', 'href' => route('gallery.index'), 'active' => request()->routeIs('gallery.*')],
+        ['label' => '온라인헌금', 'href' => route('giving'), 'active' => request()->routeIs('giving')],
+        ['label' => '오시는 길', 'href' => route('location'), 'active' => request()->routeIs('location')],
+    ];
+@endphp
+
+<header class="border-b-2 border-navy bg-paper">
+    <div class="container-site flex items-center justify-between py-4">
+        <a href="{{ route('home') }}" class="flex items-center gap-3 text-navy">
+            <span class="h-[34px]"><x-ui.logo /></span>
+            <span>
+                <span class="block font-kr text-[18px] font-medium leading-tight">{{ SiteSetting::get('church_name', '브리즈번 주는교회') }}</span>
+                <span class="block text-[10px] font-medium tracking-[0.04em] text-navy-400">{{ SiteSetting::get('denomination', '대한예수교 장로회') }}</span>
+            </span>
+        </a>
+
+        <nav class="hidden items-center gap-1 lg:flex" aria-label="주 메뉴">
+            @foreach ($navItems as $item)
+                <x-layout.nav-link :href="$item['href']" :active="$item['active']">{{ $item['label'] }}</x-layout.nav-link>
+            @endforeach
+        </nav>
+
+        <button
+            type="button"
+            class="rounded-nav p-2 text-navy hover:bg-accent-100 lg:hidden"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            aria-label="메뉴 열기"
+            data-mobile-nav-toggle
+        >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/>
+            </svg>
+        </button>
+    </div>
+
+    <nav id="mobile-menu" class="hidden fixed inset-0 top-[74px] z-40 bg-paper lg:hidden" aria-label="모바일 메뉴" data-mobile-nav-menu>
+        <div class="container-site divide-y divide-line py-4">
+            @foreach ($navItems as $item)
+                <div><x-layout.nav-link :href="$item['href']" :active="$item['active']" :mobile="true">{{ $item['label'] }}</x-layout.nav-link></div>
+            @endforeach
+            <div><x-layout.nav-link :href="route('events')" :active="request()->routeIs('events')" :mobile="true">교회 행사</x-layout.nav-link></div>
+            <div><x-layout.nav-link :href="route('people')" :active="request()->routeIs('people')" :mobile="true">섬기는 사람들</x-layout.nav-link></div>
+        </div>
+    </nav>
+</header>
