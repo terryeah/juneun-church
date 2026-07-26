@@ -26,8 +26,8 @@
                     </a>
                     <a href="{{ SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="text-navy hover:text-accent" aria-label="YouTube">
                         <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
-                            <rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/>
-                            <path d="M10.5 9.5v5l4.5-2.5z" fill="currentColor" stroke="none"/>
+                            <rect x="2" y="4.5" width="20" height="15" rx="4"/>
+                            <path d="M10 9.3v5.4l5-2.7z" fill="currentColor" stroke="none"/>
                         </svg>
                     </a>
                 </div>
