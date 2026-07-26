@@ -3,7 +3,7 @@
     <x-ui.page-header kicker="News · 교회 소식" title="교회 소식" />
 
     <section class="container-site pb-12 lg:pb-16">
-        <div class="border-t-2 border-navy">
+        <div class="border-t-2 border-navy pt-3 lg:pt-5">
             @forelse ($announcements as $announcement)
                 <a href="{{ route('news.show', $announcement) }}" class="group block py-5">
                     <p class="text-[11px] text-navy-400">
