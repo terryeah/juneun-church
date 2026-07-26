@@ -93,7 +93,7 @@
                 <div>
                     <div class="flex items-baseline justify-between">
                         <x-ui.kicker>최근 예배 · Latest Sermon</x-ui.kicker>
-                        <a href="{{ $latestSermon->youtubeUrl() }}" class="text-[12px] font-bold text-accent hover:text-accent-700" rel="noopener">YouTube →</a>
+                        <a href="{{ $latestSermon->youtubeUrl() }}" target="_blank" rel="noopener" class="text-[12px] font-bold leading-none text-accent hover:text-accent-700">YouTube →</a>
                     </div>
                     <div class="mt-4">
                         <x-ui.sermon-video :sermon="$latestSermon" />

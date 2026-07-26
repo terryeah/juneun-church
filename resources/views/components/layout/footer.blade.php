@@ -17,14 +17,14 @@
                     받은 은혜를 흘려보내는 교회 — 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라갑니다.
                 </p>
                 <div class="mt-5 flex gap-3">
-                    <a href="{{ SiteSetting::get('instagram_url', '#') }}" class="text-navy hover:text-accent" aria-label="Instagram">
+                    <a href="{{ SiteSetting::get('instagram_url', '#') }}" target="_blank" rel="noopener" class="text-navy hover:text-accent" aria-label="Instagram">
                         <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
                             <rect x="3" y="3" width="18" height="18" rx="5"/>
                             <circle cx="12" cy="12" r="4"/>
                             <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none"/>
                         </svg>
                     </a>
-                    <a href="{{ SiteSetting::get('youtube_url', '#') }}" class="text-navy hover:text-accent" aria-label="YouTube">
+                    <a href="{{ SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="text-navy hover:text-accent" aria-label="YouTube">
                         <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
                             <rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/>
                             <path d="M10.5 9.5v5l4.5-2.5z" fill="currentColor" stroke="none"/>
