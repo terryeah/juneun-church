@@ -57,7 +57,7 @@
                         {{ $identity['korean'] }}<span class="text-accent">({{ $identity['english'] }})</span>교회
                     </h2>
                     <div>
-                        <p class="font-kr text-[15px] leading-relaxed">{{ $identity['verse'] }}</p>
+                        <p class="-mt-[3px] font-kr text-[15px] leading-relaxed">{{ $identity['verse'] }}</p>
                         <p class="mt-2 text-[11px] font-bold tracking-[0.08em] text-accent">{{ $identity['reference'] }}</p>
                         <p class="mt-3 font-kr text-[13.5px] leading-relaxed text-navy-700">{{ $identity['description'] }}</p>
                     </div>
