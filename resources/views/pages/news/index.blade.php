@@ -14,7 +14,7 @@
                     </p>
                     <h2 class="mt-1 font-kr text-display-sm font-medium group-hover:text-accent">{{ $announcement->title }}</h2>
                     <p class="mt-2 line-clamp-2 max-w-2xl font-kr text-[13.5px] leading-relaxed text-navy-700">
-                        {{ str($announcement->content)->stripTags()->limit(140) }}
+                        {{ $announcement->excerpt() }}
                     </p>
                 </a>
             @empty

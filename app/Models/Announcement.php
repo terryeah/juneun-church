@@ -79,6 +79,22 @@ class Announcement extends Model
     }
 
     /**
+     * Plain-text excerpt of the content for list pages.
+     *
+     * Block-level closing tags and line breaks become spaces before tags
+     * are stripped, so separate paragraphs never run into each other.
+     */
+    public function excerpt(int $limit = 140): string
+    {
+        return Str::of($this->content)
+            ->replaceMatches('/<(br|\/p|\/h[1-6]|\/li|\/div)[^>]*>/i', ' ')
+            ->stripTags()
+            ->squish()
+            ->limit($limit)
+            ->value();
+    }
+
+    /**
      * Use the slug for route model binding on the public site.
      */
     public function getRouteKeyName(): string
