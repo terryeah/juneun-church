@@ -42,20 +42,6 @@
                 </div>
             @endforeach
         </div>
-
-        @if (SiteSetting::get('contact_email') || SiteSetting::get('contact_phone'))
-            <div class="mt-10 border-t border-line pt-6">
-                <x-ui.kicker>Contact</x-ui.kicker>
-                <p class="mt-2 text-[14px] text-navy-700">
-                    @if (SiteSetting::get('contact_email'))
-                        <a href="mailto:{{ SiteSetting::get('contact_email') }}" class="hover:text-accent">{{ SiteSetting::get('contact_email') }}</a>
-                    @endif
-                    @if (SiteSetting::get('contact_phone'))
-                        · {{ SiteSetting::get('contact_phone') }}
-                    @endif
-                </p>
-            </div>
-        @endif
     </section>
 
 </x-layout.app>
