@@ -20,7 +20,7 @@ class SiteSettingSeeder extends Seeder
     {
         $settings = [
             ['key' => 'church_name', 'value' => '브리즈번 주는교회', 'group' => 'contact'],
-            ['key' => 'church_name_en', 'value' => 'Brisbane Ju-neun Church', 'group' => 'contact'],
+            ['key' => 'church_name_en', 'value' => 'Brisbane Juneun Church', 'group' => 'contact'],
             ['key' => 'denomination', 'value' => '대한예수교 장로회', 'group' => 'contact'],
             ['key' => 'address_main_label', 'value' => '본관', 'group' => 'contact'],
             ['key' => 'address_main', 'value' => '71 Newnham Rd, Mt Gravatt East QLD 4122', 'group' => 'contact'],
