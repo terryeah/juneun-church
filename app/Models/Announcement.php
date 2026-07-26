@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
+
+/**
+ * A church announcement (교회 소식).
+ *
+ * Announcements are authored in the admin panel with the Filament rich
+ * editor, may be pinned above the chronological list, and can expire
+ * automatically via the optional expires_at timestamp.
+ */
+#[Fillable([
+    'title',
+    'slug',
+    'content',
+    'featured_image',
+    'is_published',
+    'is_pinned',
+    'published_at',
+    'expires_at',
+    'created_by',
+])]
+class Announcement extends Model
+{
+    use HasFactory;
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_published' => 'boolean',
+            'is_pinned' => 'boolean',
+            'published_at' => 'datetime',
+            'expires_at' => 'datetime',
+        ];
+    }
+
+    /**
+     * Generate a slug from the title when none has been supplied.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (Announcement $announcement) {
+            if (blank($announcement->slug)) {
+                $announcement->slug = Str::slug($announcement->title).'-'.Str::lower(Str::random(6));
+            }
+        });
+    }
+
+    /**
+     * The user who created the announcement.
+     */
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Scope to announcements visible on the public site.
+     *
+     * @param  Builder<Announcement>  $query
+     */
+    public function scopePublished(Builder $query): void
+    {
+        $query->where('is_published', true)
+            ->where(fn (Builder $q) => $q->whereNull('published_at')->orWhere('published_at', '<=', now()))
+            ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
+    }
+
+    /**
+     * Use the slug for route model binding on the public site.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+}
