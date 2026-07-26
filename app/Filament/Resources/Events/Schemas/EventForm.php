@@ -31,12 +31,18 @@ class EventForm
                     ->maxLength(255),
                 DatePicker::make('event_date')
                     ->label('행사일')
+                    ->native(false)
+                    ->displayFormat('Y-m-d')
                     ->required(),
                 TimePicker::make('event_time')
                     ->label('시작 시간')
-                    ->seconds(false),
+                    ->native(false)
+                    ->displayFormat('h:i:s A')
+                    ->seconds(true),
                 DatePicker::make('end_date')
                     ->label('종료일')
+                    ->native(false)
+                    ->displayFormat('Y-m-d')
                     ->helperText('하루 행사는 비워두세요.'),
                 Toggle::make('is_published')
                     ->label('게시')

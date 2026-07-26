@@ -22,7 +22,7 @@ class SermonsTable
                 TextColumn::make('preacher')
                     ->searchable(),
                 TextColumn::make('sermon_date')
-                    ->date()
+                    ->date('Y-m-d')
                     ->sortable(),
                 TextColumn::make('serviceType.name')
                     ->searchable(),
@@ -34,11 +34,11 @@ class SermonsTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

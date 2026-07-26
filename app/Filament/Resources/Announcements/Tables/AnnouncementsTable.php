@@ -26,20 +26,20 @@ class AnnouncementsTable
                 IconColumn::make('is_pinned')
                     ->boolean(),
                 TextColumn::make('published_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable(),
                 TextColumn::make('expires_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable(),
                 TextColumn::make('created_by')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

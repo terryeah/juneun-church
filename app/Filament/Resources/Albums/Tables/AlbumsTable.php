@@ -20,7 +20,7 @@ class AlbumsTable
                 TextColumn::make('slug')
                     ->searchable(),
                 TextColumn::make('event_date')
-                    ->date()
+                    ->date('Y-m-d')
                     ->sortable(),
                 TextColumn::make('cover_photo_path')
                     ->searchable(),
@@ -30,11 +30,11 @@ class AlbumsTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

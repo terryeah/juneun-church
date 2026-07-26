@@ -34,11 +34,11 @@ class StaffMembersTable
                 IconColumn::make('is_published')
                     ->boolean(),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

@@ -19,17 +19,17 @@ class BulletinsTable
                 TextColumn::make('file_path')
                     ->searchable(),
                 TextColumn::make('published_at')
-                    ->date()
+                    ->date('Y-m-d')
                     ->sortable(),
                 TextColumn::make('created_by')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

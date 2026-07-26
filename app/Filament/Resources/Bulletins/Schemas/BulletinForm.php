@@ -25,6 +25,8 @@ class BulletinForm
                     ->maxLength(255),
                 DatePicker::make('published_at')
                     ->label('발행일')
+                    ->native(false)
+                    ->displayFormat('Y-m-d')
                     ->required()
                     ->default(now()),
                 FileUpload::make('file_path')

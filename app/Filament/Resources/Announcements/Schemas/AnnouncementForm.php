@@ -44,9 +44,15 @@ class AnnouncementForm
                     ->label('상단 고정'),
                 DateTimePicker::make('published_at')
                     ->label('게시 일시')
+                    ->native(false)
+                    ->displayFormat('Y-m-d, h:i:s A')
+                    ->seconds(true)
                     ->default(now()),
                 DateTimePicker::make('expires_at')
                     ->label('게시 종료 일시')
+                    ->native(false)
+                    ->displayFormat('Y-m-d, h:i:s A')
+                    ->seconds(true)
                     ->helperText('비워두면 계속 게시됩니다.'),
                 TextInput::make('slug')
                     ->label('슬러그')

@@ -18,13 +18,13 @@ class EventsTable
                 TextColumn::make('title')
                     ->searchable(),
                 TextColumn::make('event_date')
-                    ->date()
+                    ->date('Y-m-d')
                     ->sortable(),
                 TextColumn::make('event_time')
-                    ->time()
+                    ->time('h:i:s A')
                     ->sortable(),
                 TextColumn::make('end_date')
-                    ->date()
+                    ->date('Y-m-d')
                     ->sortable(),
                 TextColumn::make('location')
                     ->searchable(),
@@ -34,11 +34,11 @@ class EventsTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

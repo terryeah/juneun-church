@@ -40,6 +40,8 @@ class SermonForm
                     ->maxLength(255),
                 DatePicker::make('sermon_date')
                     ->label('예배 날짜')
+                    ->native(false)
+                    ->displayFormat('Y-m-d')
                     ->required(),
                 TextInput::make('scripture_reference')
                     ->label('본문 말씀')

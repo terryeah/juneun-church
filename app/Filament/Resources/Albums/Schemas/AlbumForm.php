@@ -27,6 +27,8 @@ class AlbumForm
                     ->maxLength(255),
                 DatePicker::make('event_date')
                     ->label('행사 날짜')
+                    ->native(false)
+                    ->displayFormat('Y-m-d')
                     ->required(),
                 Textarea::make('description')
                     ->label('설명')
