@@ -7,6 +7,7 @@ use App\Filament\Resources\Photos\Pages\EditPhoto;
 use App\Filament\Resources\Photos\Pages\ListPhotos;
 use App\Filament\Resources\Photos\Schemas\PhotoForm;
 use App\Filament\Resources\Photos\Tables\PhotosTable;
+use App\Filament\Clusters\Media\MediaCluster;
 use App\Models\Photo;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use Filament\Tables\Table;
 class PhotoResource extends Resource
 {
     protected static ?string $model = Photo::class;
+
+    protected static ?string $cluster = MediaCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 

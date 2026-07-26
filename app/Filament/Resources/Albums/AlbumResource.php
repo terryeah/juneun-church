@@ -7,6 +7,7 @@ use App\Filament\Resources\Albums\Pages\EditAlbum;
 use App\Filament\Resources\Albums\Pages\ListAlbums;
 use App\Filament\Resources\Albums\Schemas\AlbumForm;
 use App\Filament\Resources\Albums\Tables\AlbumsTable;
+use App\Filament\Clusters\Media\MediaCluster;
 use App\Models\Album;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use Filament\Tables\Table;
 class AlbumResource extends Resource
 {
     protected static ?string $model = Album::class;
+
+    protected static ?string $cluster = MediaCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
