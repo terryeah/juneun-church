@@ -1,7 +1,7 @@
 <x-layout.app :title="$album->title">
 
     <x-ui.page-header kicker="Gallery · 갤러리" :title="$album->title">
-        {{ $album->event_date->translatedFormat('Y년 n월 j일') }}@if ($album->description) — {{ $album->description }}@endif
+        {{ $album->event_date->translatedFormat('Y년 n월 j일') }}@if ($album->description) - {{ $album->description }}@endif
     </x-ui.page-header>
 
     <section class="container-site pb-12 lg:pb-16">
@@ -12,7 +12,7 @@
                         <img
                             src="{{ $photo->thumbnailUrl() }}"
                             alt="{{ $photo->caption ?? $album->title }}"
-                            class="photo-treatment aspect-square w-full transition-transform duration-150 hover:scale-[1.02]"
+                            class="aspect-square w-full object-cover transition-transform duration-150 hover:scale-[1.02]"
                             loading="lazy"
                         >
                     </a>

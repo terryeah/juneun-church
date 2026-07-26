@@ -7,7 +7,7 @@
             @forelse ($albums as $album)
                 <a href="{{ route('gallery.show', $album) }}" class="group block">
                     @if ($album->coverUrl())
-                        <img src="{{ $album->coverUrl() }}" alt="{{ $album->title }}" class="photo-treatment aspect-[4/3] w-full rounded-media" loading="lazy">
+                        <img src="{{ $album->coverUrl() }}" alt="{{ $album->title }}" class="aspect-[4/3] w-full object-cover rounded-media" loading="lazy">
                     @else
                         <x-ui.photo-placeholder :label="$album->title" class="aspect-[4/3] w-full" />
                     @endif

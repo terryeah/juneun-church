@@ -9,7 +9,7 @@
             <img
                 src="{{ Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($announcement->featured_image) }}"
                 alt="{{ $announcement->title }}"
-                class="photo-treatment mt-8 w-full max-w-3xl rounded-media"
+                class="mt-8 w-full max-w-3xl object-cover rounded-media"
             >
         @endif
 

@@ -10,7 +10,7 @@
                     @foreach ($position->staffMembers as $member)
                         <div class="flex items-start gap-4">
                             @if ($member->photoUrl())
-                                <img src="{{ $member->photoUrl() }}" alt="{{ $member->name }}" class="photo-treatment h-20 w-20 shrink-0 rounded-media">
+                                <img src="{{ $member->photoUrl() }}" alt="{{ $member->name }}" class="h-20 w-20 object-cover shrink-0 rounded-media">
                             @else
                                 <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-media bg-navy/8 text-navy-400">
                                     <span class="h-8"><x-ui.logo /></span>

@@ -107,11 +107,6 @@
     }
 }
 
-@utility photo-treatment {
-    filter: grayscale(1) contrast(1.08);
-    object-fit: cover;
-}
-
 @utility container-site {
     margin-inline: auto;
     max-width: 80rem;
