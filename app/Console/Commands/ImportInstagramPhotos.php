@@ -12,13 +12,15 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * Imports the church's recent public Instagram photos into the gallery.
+ * Imports the church's recent public Instagram photo posts as albums.
  *
- * Instagram's anonymous web profile endpoint exposes only the twelve most
- * recent posts; video posts and reels are skipped. Photos are stored on
- * the media disk inside an "Instagram" album and already-imported posts
- * are recognised by shortcode, so the command can run repeatedly (for
- * example from the scheduler) without creating duplicates.
+ * Every photo post becomes its own album named from the post caption,
+ * with carousel posts contributing all of their images, so the gallery
+ * reflects church events rather than a single Instagram dump. Video
+ * posts and reels are skipped. Instagram's anonymous endpoint exposes
+ * only the twelve most recent posts; albums are keyed by post shortcode
+ * so repeated runs never duplicate, and titles or visibility curated in
+ * the admin panel afterwards are preserved.
  */
 class ImportInstagramPhotos extends Command
 {
@@ -34,7 +36,7 @@ class ImportInstagramPhotos extends Command
      *
      * @var string
      */
-    protected $description = "Import the church's recent public Instagram photos into the gallery";
+    protected $description = "Import the church's recent public Instagram photo posts as gallery albums";
 
     /**
      * Execute the console command.
@@ -69,61 +71,80 @@ class ImportInstagramPhotos extends Command
             return self::SUCCESS;
         }
 
-        $album = Album::query()->firstOrCreate(
-            ['slug' => 'instagram'],
-            [
-                'title' => 'Instagram',
-                'description' => '교회 인스타그램(@'.$handle.')의 최근 사진입니다.',
-                'event_date' => today(),
-                'is_published' => true,
-            ],
-        );
-
         $imported = 0;
 
         foreach ($posts as $node) {
-            $filename = $node['shortcode'].'.jpg';
+            $slug = 'ig-'.Str::lower($node['shortcode']);
 
-            if ($album->photos()->where('filename', $filename)->exists()) {
+            if (Album::query()->where('slug', $slug)->exists()) {
                 continue;
             }
 
-            $image = Http::withHeaders(['User-Agent' => 'Mozilla/5.0'])->get($node['display_url']);
+            $takenAt = isset($node['taken_at_timestamp'])
+                ? Carbon::createFromTimestamp($node['taken_at_timestamp'])
+                : today();
 
-            if (! $image->successful()) {
-                $this->warn("Skipped {$node['shortcode']}: image download failed.");
-
-                continue;
-            }
-
-            $path = 'gallery/instagram/'.$filename;
-            Storage::disk(config('filesystems.media'))->put($path, $image->body());
-
-            Photo::query()->create([
-                'album_id' => $album->id,
-                'filename' => $filename,
-                'original_filename' => $filename,
-                'path' => $path,
-                'width' => $node['dimensions']['width'] ?? null,
-                'height' => $node['dimensions']['height'] ?? null,
-                'file_size' => strlen($image->body()),
-                'caption' => $this->captionFor($node),
-                'sort_order' => $this->sortOrderFor($node),
+            $album = Album::query()->create([
+                'title' => $this->titleFor($node),
+                'slug' => $slug,
+                'description' => $this->captionFor($node),
+                'event_date' => $takenAt,
+                'is_published' => true,
             ]);
 
+            foreach ($this->imageUrls($node) as $index => $url) {
+                $image = Http::withHeaders(['User-Agent' => 'Mozilla/5.0'])->get($url);
+
+                if (! $image->successful()) {
+                    $this->warn("Skipped an image of {$node['shortcode']}: download failed.");
+
+                    continue;
+                }
+
+                $filename = $node['shortcode'].'-'.($index + 1).'.jpg';
+                $path = 'gallery/instagram/'.$filename;
+                Storage::disk(config('filesystems.media'))->put($path, $image->body());
+
+                Photo::query()->create([
+                    'album_id' => $album->id,
+                    'filename' => $filename,
+                    'original_filename' => $filename,
+                    'path' => $path,
+                    'file_size' => strlen($image->body()),
+                    'sort_order' => ($index + 1) * 10,
+                ]);
+            }
+
+            if ($album->photos()->count() === 0) {
+                $album->delete();
+
+                continue;
+            }
+
+            $album->update(['cover_photo_path' => $album->photos()->first()?->path]);
             $imported++;
         }
 
-        $latest = $posts->max('taken_at_timestamp');
-
-        $album->update([
-            'event_date' => $latest ? Carbon::createFromTimestamp($latest) : $album->event_date,
-            'cover_photo_path' => $album->photos()->first()?->path,
-        ]);
-
-        $this->info("Imported {$imported} new photo(s) into the Instagram album.");
+        $this->info("Imported {$imported} new album(s) from Instagram.");
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Every image URL of a post: the main image plus carousel children.
+     *
+     * @return array<int, string>
+     */
+    private function imageUrls(array $node): array
+    {
+        $children = collect($node['edge_sidecar_to_children']['edges'] ?? [])
+            ->pluck('node')
+            ->reject(fn (array $child) => $child['is_video'] ?? false)
+            ->pluck('display_url');
+
+        return $children->isNotEmpty()
+            ? $children->values()->all()
+            : [$node['display_url']];
     }
 
     /**
@@ -137,18 +158,21 @@ class ImportInstagramPhotos extends Command
     }
 
     /**
-     * Sort key that places newer posts first in the unsigned column.
-     *
-     * The photo relation orders ascending, so the post timestamp is
-     * subtracted from a fixed future instant (2100-01-01 UTC).
+     * Album title: the first meaningful caption line without hashtags.
      */
-    private function sortOrderFor(array $node): int
+    private function titleFor(array $node): string
     {
-        return max(0, 4102444800 - ($node['taken_at_timestamp'] ?? 0));
+        $caption = $this->captionFor($node);
+
+        if (blank($caption)) {
+            return 'Instagram '.$node['shortcode'];
+        }
+
+        return Str::of($caption)->limit(40)->value();
     }
 
     /**
-     * First line of the post caption, without hashtags, capped for storage.
+     * Post caption without hashtags, squashed to a single line.
      */
     private function captionFor(array $node): ?string
     {
