@@ -81,7 +81,7 @@
  */
 @layer base {
     body {
-        background-color: var(--color-cream);
+        background-color: var(--color-paper);
         color: var(--color-navy);
         font-family: var(--font-sans);
     }
