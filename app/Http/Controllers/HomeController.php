@@ -46,7 +46,7 @@ class HomeController extends Controller
             ->whereHas('album', fn ($query) => $query->where('is_published', true))
             ->orderBy('sort_order')
             ->latest()
-            ->limit(9)
+            ->limit(12)
             ->get();
 
         return view('pages.home', compact('announcements', 'latestSermon', 'upcomingEvents', 'recentPhotos'));
