@@ -62,7 +62,7 @@
             </div>
         </div>
 
-        <div class="mt-10 flex flex-col gap-2 border-t border-line pt-5 text-[11px] text-navy-400 md:flex-row md:items-center md:justify-between">
+        <div class="mt-10 flex flex-col gap-2 pt-5 text-[11px] text-navy-400 md:flex-row md:items-center md:justify-between">
             <p>© 2024–{{ now()->year }} {{ SiteSetting::get('church_name_en', 'Brisbane Ju-neun Church') }}</p>
             <p class="font-kr">{{ SiteSetting::get('denomination', '대한예수교장로회') }}</p>
         </div>

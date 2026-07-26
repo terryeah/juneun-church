@@ -67,13 +67,13 @@
     </section>
 
     {{-- News + latest sermon band --}}
-    <section class="container-site border-t border-line py-10 lg:py-14">
+    <section class="container-site py-10 lg:py-14">
         <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-11">
             <div>
                 <x-ui.kicker>교회 소식 · News</x-ui.kicker>
                 <div class="mt-4">
                     @forelse ($announcements as $announcement)
-                        <a href="{{ route('news.show', $announcement) }}" class="group block border-t border-line py-4">
+                        <a href="{{ route('news.show', $announcement) }}" class="group block border-t border-line py-4 first:border-t-0">
                             <p class="text-[11px] text-navy-400">
                                 {{ $announcement->published_at?->translatedFormat('Y년 n월 j일') }}
                                 @if ($announcement->is_pinned)
@@ -83,7 +83,7 @@
                             <h3 class="mt-1 font-kr text-[15px] font-medium group-hover:text-accent">{{ $announcement->title }}</h3>
                         </a>
                     @empty
-                        <p class="border-t border-line py-4 text-[13px] text-navy-400">등록된 소식이 없습니다.</p>
+                        <p class="py-4 text-[13px] text-navy-400">등록된 소식이 없습니다.</p>
                     @endforelse
                 </div>
                 <a href="{{ route('news.index') }}" class="mt-2 inline-block text-[13px] font-bold text-accent hover:text-accent-700">소식 전체 보기 →</a>
@@ -108,7 +108,7 @@
     </section>
 
     {{-- Meal sharing (반찬나눔) --}}
-    <section class="container-site border-t border-line py-10 lg:py-14">
+    <section class="container-site py-10 lg:py-14">
         <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
             <div class="flex items-center">
                 <x-ui.photo-placeholder label="Meal Sharing · 반찬나눔" class="aspect-video w-full" />

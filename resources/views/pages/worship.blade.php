@@ -30,7 +30,7 @@
         </section>
     @endif
 
-    <section class="container-site border-t border-line py-10 lg:py-14">
+    <section class="container-site py-10 lg:py-14">
         <x-ui.kicker>지난 예배 · Archive</x-ui.kicker>
         <div class="mt-6 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             @forelse ($sermons as $sermon)
