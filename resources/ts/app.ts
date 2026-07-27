@@ -3,6 +3,7 @@ import { YouTubeLazy } from './components/YouTubeLazy';
 import { Lightbox } from './components/Lightbox';
 import { InfiniteScroll } from './components/InfiniteScroll';
 import { PhotoSlider } from './components/PhotoSlider';
+import { Animations } from './components/Animations';
 
 /**
  * Main entry point.
@@ -35,4 +36,6 @@ document.addEventListener('DOMContentLoaded', (): void => {
     if (slider) {
         new PhotoSlider(slider);
     }
+
+    new Animations();
 });

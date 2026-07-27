@@ -4,12 +4,12 @@
     <section class="container-site py-8 md:py-10 lg:py-14">
         <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-11">
             <div class="lg:flex-[1.05]">
-                <x-ui.kicker>Brisbane Ju-neun Church · Since 2024</x-ui.kicker>
-                <h1 class="mt-4 font-kr text-display-lg">받은 은혜를<br>흘려보내는 교회</h1>
-                <p class="mt-5 max-w-[400px] text-[16px] leading-relaxed text-navy-700">
+                <x-ui.kicker data-hero-item>Brisbane Juneun Church · Since 2024</x-ui.kicker>
+                <h1 class="mt-4 font-kr text-display-lg" data-hero-item>받은 은혜를<br>흘려보내는 교회</h1>
+                <p class="mt-5 max-w-[400px] text-[16px] leading-relaxed text-navy-700" data-hero-item>
                     A young Korean church in Brisbane - worshipping together, giving generously, and growing as followers of Jesus Christ.
                 </p>
-                <div class="mt-7 flex flex-wrap gap-3">
+                <div class="mt-7 flex flex-wrap gap-3" data-hero-item>
                     <x-ui.button :href="route('worship')">예배 안내 →</x-ui.button>
                     <x-ui.button :href="route('location')" variant="secondary">오시는 길</x-ui.button>
                 </div>

@@ -48,5 +48,9 @@ export class MobileNav {
         this.toggle.setAttribute('aria-expanded', String(open));
         this.menu?.classList.toggle('hidden', !open);
         document.body.classList.toggle('overflow-hidden', open);
+
+        if (open) {
+            document.dispatchEvent(new CustomEvent('mobilenav:opened'));
+        }
     }
 }
