@@ -68,7 +68,7 @@
 
     {{-- News + latest sermon band --}}
     <section class="container-site py-8 md:py-10 lg:py-14">
-        <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-11">
+        <div class="grid gap-16 lg:grid-cols-[1fr_1.3fr] lg:gap-11">
             <div>
                 <x-ui.kicker>교회 소식 · News</x-ui.kicker>
                 <div class="mt-4">
@@ -109,7 +109,7 @@
 
     {{-- Meal sharing (반찬나눔) --}}
     <section class="container-site py-8 md:py-10 lg:py-14">
-        <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
+        <div class="grid gap-16 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
             <div class="flex items-center">
                 <x-ui.photo-placeholder label="Meal Sharing · 반찬나눔" class="aspect-video w-full" />
             </div>
