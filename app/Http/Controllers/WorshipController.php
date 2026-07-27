@@ -11,25 +11,21 @@ use Illuminate\View\View;
 class WorshipController extends Controller
 {
     /**
-     * Display service times, the featured sermon and the sermon archive.
+     * Display the archive of recent worship recordings.
+     *
+     * The latest recording is excluded because it is featured on the
+     * home page; the archive shows the six recordings before it.
      */
     public function __invoke(): View
     {
-        /** Most recent recording, featured above the archive grid */
-        $featured = Sermon::query()
-            ->published()
-            ->with('serviceType')
-            ->orderByDesc('sermon_date')
-            ->first();
-
-        /** Remaining recordings, newest first */
         $sermons = Sermon::query()
             ->published()
             ->with('serviceType')
-            ->when($featured, fn ($query) => $query->whereKeyNot($featured->id))
             ->orderByDesc('sermon_date')
-            ->paginate(9);
+            ->skip(1)
+            ->take(6)
+            ->get();
 
-        return view('pages.worship', compact('featured', 'sermons'));
+        return view('pages.worship', compact('sermons'));
     }
 }
