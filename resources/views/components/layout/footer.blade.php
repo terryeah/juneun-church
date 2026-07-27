@@ -37,12 +37,16 @@
                 <h2 class="text-kicker font-extrabold uppercase tracking-[0.16em] text-accent">Locations</h2>
                 <ul class="mt-4 space-y-4 text-[13px] leading-relaxed text-navy-700">
                     <li>
-                        <span class="block font-kr font-medium text-navy">{{ SiteSetting::get('address_main_label', '본당') }}</span>
-                        {{ SiteSetting::get('address_main') }}
+                        <a href="https://www.google.com/maps?q={{ urlencode(SiteSetting::get('address_main', '')) }}" target="_blank" rel="noopener" class="block hover:text-accent">
+                            <span class="block font-kr font-medium text-navy">{{ SiteSetting::get('address_main_label', '본관') }}</span>
+                            {{ SiteSetting::get('address_main') }}
+                        </a>
                     </li>
                     <li>
-                        <span class="block font-kr font-medium text-navy">{{ SiteSetting::get('address_education_label', '교육관') }}</span>
-                        {{ SiteSetting::get('address_education') }}
+                        <a href="https://www.google.com/maps?q={{ urlencode(SiteSetting::get('address_education', '')) }}" target="_blank" rel="noopener" class="block hover:text-accent">
+                            <span class="block font-kr font-medium text-navy">{{ SiteSetting::get('address_education_label', '교육관') }}</span>
+                            {{ SiteSetting::get('address_education') }}
+                        </a>
                     </li>
                 </ul>
             </div>
