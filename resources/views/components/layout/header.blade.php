@@ -3,9 +3,11 @@
 
     $navItems = [
         ['label' => '예배 안내', 'href' => route('worship'), 'active' => request()->routeIs('worship')],
+        ['label' => '교회 행사', 'href' => route('events'), 'active' => request()->routeIs('events')],
         ['label' => '교회 소식', 'href' => route('news.index'), 'active' => request()->routeIs('news.*')],
         ['label' => '주보', 'href' => route('bulletins'), 'active' => request()->routeIs('bulletins')],
         ['label' => '갤러리', 'href' => route('gallery.index'), 'active' => request()->routeIs('gallery.*')],
+        ['label' => '섬기는 사람들', 'href' => route('people'), 'active' => request()->routeIs('people')],
         ['label' => '온라인헌금', 'href' => route('giving'), 'active' => request()->routeIs('giving')],
         ['label' => '오시는 길', 'href' => route('location'), 'active' => request()->routeIs('location')],
     ];
@@ -46,8 +48,6 @@
             @foreach ($navItems as $item)
                 <div><x-layout.nav-link :href="$item['href']" :active="$item['active']" :mobile="true">{{ $item['label'] }}</x-layout.nav-link></div>
             @endforeach
-            <div><x-layout.nav-link :href="route('events')" :active="request()->routeIs('events')" :mobile="true">교회 행사</x-layout.nav-link></div>
-            <div><x-layout.nav-link :href="route('people')" :active="request()->routeIs('people')" :mobile="true">섬기는 사람들</x-layout.nav-link></div>
         </div>
     </nav>
 </header>
