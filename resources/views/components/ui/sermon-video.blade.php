@@ -17,8 +17,8 @@
     >
     <span class="absolute inset-0 flex items-center justify-center">
         <span class="flex h-[58px] w-[58px] items-center justify-center rounded-play bg-accent text-on-accent group-hover:bg-accent-700">
-            <svg class="h-6 w-6 translate-x-[2px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M8 5.5v13l11-6.5z"/>
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M5 3.5v17L21 12z"/>
             </svg>
         </span>
     </span>
