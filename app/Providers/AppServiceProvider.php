@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Filament\Analytics\TrafficChartWidget;
 use App\Filament\Analytics\TrafficStatsWidget;
 use App\Policies\ActivityPolicy;
+use Filament\Tables\Table;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -30,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Activity::class, ActivityPolicy::class);
+
+        Table::configureUsing(fn (Table $table) => $table->defaultPaginationPageOption(25));
 
         $this->registerAnalyticsWidgets();
         $this->logAuthenticationActivity();
