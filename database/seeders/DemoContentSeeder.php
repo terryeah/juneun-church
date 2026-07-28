@@ -219,7 +219,6 @@ class DemoContentSeeder extends Seeder
         ob_start();
         imagejpeg($image, null, 70);
         $contents = ob_get_clean();
-        imagedestroy($image);
 
         $path = 'gallery/demo/'.Str::uuid().'.jpg';
         Storage::disk(config('filesystems.media'))->put($path, $contents);

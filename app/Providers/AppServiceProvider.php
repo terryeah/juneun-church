@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Filament\Analytics\TrafficChartWidget;
 use App\Filament\Analytics\TrafficStatsWidget;
+use App\Filament\Support\SaveUploadsAsWebp;
 use App\Policies\ActivityPolicy;
 use Filament\Tables\Table;
 use Illuminate\Auth\Events\Failed;
@@ -33,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Activity::class, ActivityPolicy::class);
 
         Table::configureUsing(fn (Table $table) => $table->defaultPaginationPageOption(25));
+        SaveUploadsAsWebp::register();
 
         $this->registerAnalyticsWidgets();
         $this->logAuthenticationActivity();
