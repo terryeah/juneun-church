@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\GeneratesReadableSlug;
 use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 /**
  * A photo album (갤러리) grouping photos from a church event.
@@ -26,7 +26,7 @@ use Illuminate\Support\Str;
 ])]
 class Album extends Model
 {
-    use HasFactory, LogsModelActivity;
+    use GeneratesReadableSlug, HasFactory, LogsModelActivity;
 
     /**
      * Get the attributes that should be cast.
@@ -48,7 +48,11 @@ class Album extends Model
     {
         static::saving(function (Album $album) {
             if (blank($album->slug)) {
-                $album->slug = Str::slug($album->title).'-'.Str::lower(Str::random(6));
+                $album->slug = static::readableSlug(
+                    $album->title,
+                    'album',
+                    ($album->event_date ?? now())->format('Ymd'),
+                );
             }
         });
     }

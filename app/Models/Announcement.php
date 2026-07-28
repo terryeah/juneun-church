@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\GeneratesReadableSlug;
 use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,7 +31,7 @@ use Illuminate\Support\Str;
 ])]
 class Announcement extends Model
 {
-    use HasFactory, LogsModelActivity;
+    use GeneratesReadableSlug, HasFactory, LogsModelActivity;
 
     /**
      * Get the attributes that should be cast.
@@ -54,7 +55,11 @@ class Announcement extends Model
     {
         static::saving(function (Announcement $announcement) {
             if (blank($announcement->slug)) {
-                $announcement->slug = Str::slug($announcement->title).'-'.Str::lower(Str::random(6));
+                $announcement->slug = static::readableSlug(
+                    $announcement->title,
+                    'news',
+                    ($announcement->published_at ?? now())->format('Ymd'),
+                );
             }
         });
     }

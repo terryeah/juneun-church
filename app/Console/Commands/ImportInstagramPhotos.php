@@ -18,9 +18,9 @@ use Illuminate\Support\Str;
  * with carousel posts contributing all of their images, so the gallery
  * reflects church events rather than a single Instagram dump. Video
  * posts and reels are skipped. Instagram's anonymous endpoint exposes
- * only the twelve most recent posts; albums are keyed by post shortcode
- * so repeated runs never duplicate, and titles or visibility curated in
- * the admin panel afterwards are preserved.
+ * only the twelve most recent posts; imported photos are recognised by
+ * their post shortcode filenames so repeated runs never duplicate, and
+ * curation done in the admin panel afterwards is preserved.
  */
 class ImportInstagramPhotos extends Command
 {
@@ -74,9 +74,7 @@ class ImportInstagramPhotos extends Command
         $imported = 0;
 
         foreach ($posts as $node) {
-            $slug = 'ig-'.Str::lower($node['shortcode']);
-
-            if (Album::query()->where('slug', $slug)->exists()) {
+            if (Photo::query()->where('filename', $node['shortcode'].'-1.jpg')->exists()) {
                 continue;
             }
 
@@ -86,7 +84,6 @@ class ImportInstagramPhotos extends Command
 
             $album = Album::query()->create([
                 'title' => $this->titleFor($node),
-                'slug' => $slug,
                 'description' => $this->captionFor($node),
                 'event_date' => $takenAt,
                 'is_published' => true,

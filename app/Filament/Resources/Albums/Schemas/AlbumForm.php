@@ -44,7 +44,7 @@ class AlbumForm
                     ->default(true),
                 TextInput::make('slug')
                     ->label('슬러그')
-                    ->helperText('비워두면 앨범명으로 자동 생성됩니다.')
+                    ->helperText('비워두면 영문 제목 또는 album-YYYYMMDD 형식으로 자동 생성됩니다.')
                     ->maxLength(255),
             ]);
     }

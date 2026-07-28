@@ -56,7 +56,7 @@ class AnnouncementForm
                     ->helperText('비워두면 계속 게시됩니다.'),
                 TextInput::make('slug')
                     ->label('슬러그')
-                    ->helperText('비워두면 제목으로 자동 생성됩니다.')
+                    ->helperText('비워두면 영문 제목 또는 news-YYYYMMDD 형식으로 자동 생성됩니다.')
                     ->maxLength(255),
             ]);
     }
