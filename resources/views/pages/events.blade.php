@@ -4,32 +4,28 @@
 
     <section class="container-site pb-12 lg:pb-16">
         @forelse ($eventsByMonth as $month => $events)
-            <div class="mb-10">
+            <div class="mb-10 lg:mb-12">
                 <h2 class="font-kr text-display-sm font-medium">{{ $month }}</h2>
-                <div class="mt-4 overflow-x-auto">
-                    <table class="w-full border-t-2 border-navy text-left">
-                        <thead>
-                            <tr class="border-b border-line text-[11px] uppercase tracking-[0.16em] text-navy-400">
-                                <th class="py-3 pr-4 font-extrabold">행사일</th>
-                                <th class="py-3 pr-4 font-extrabold">행사명</th>
-                                <th class="py-3 font-extrabold">행사장</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($events as $event)
-                                <tr class="border-b border-line">
-                                    <td class="whitespace-nowrap py-4 pr-4 text-[13px] text-navy-700">
-                                        {{ $event->event_date->translatedFormat('n월 j일 (D)') }}
-                                        @if ($event->event_time)
-                                            <span class="text-navy-400">{{ \Illuminate\Support\Carbon::parse($event->event_time)->format('H:i') }}</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-4 pr-4 font-kr text-[15px] font-medium">{{ $event->title }}</td>
-                                    <td class="py-4 font-kr text-[13px] text-navy-700">{{ $event->location }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+
+                <div class="mt-4 border-t-2 border-navy">
+                    <div class="hidden gap-6 py-3 text-[11px] font-extrabold uppercase tracking-[0.16em] text-navy-400 md:grid md:grid-cols-[180px_minmax(0,1fr)_200px]">
+                        <span>행사일</span>
+                        <span>행사명</span>
+                        <span>행사장</span>
+                    </div>
+
+                    @foreach ($events as $event)
+                        <div class="grid gap-1 border-t border-line py-4 md:grid-cols-[180px_minmax(0,1fr)_200px] md:items-baseline md:gap-6 md:border-t md:py-4">
+                            <p class="text-[13px] text-navy-700">
+                                {{ $event->event_date->translatedFormat('n월 j일 (D)') }}
+                                @if ($event->event_time)
+                                    <span class="text-navy-400">{{ \Illuminate\Support\Carbon::parse($event->event_time)->format('H:i') }}</span>
+                                @endif
+                            </p>
+                            <h3 class="font-kr text-[15px] font-medium">{{ $event->title }}</h3>
+                            <p class="font-kr text-[13px] text-navy-400 md:text-navy-700">{{ $event->location }}</p>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         @empty
