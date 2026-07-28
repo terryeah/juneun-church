@@ -90,6 +90,7 @@ class ActivitiesTable
                     ]),
             ])
             ->defaultSort('created_at', 'desc')
+            ->defaultPaginationPageOption(25)
             ->poll(null);
     }
 }
