@@ -20,6 +20,12 @@ class PositionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
 
+    protected static ?string $navigationLabel = '직분';
+
+    protected static ?string $modelLabel = '직분';
+
+    protected static ?string $pluralModelLabel = '직분';
+
     public static function form(Schema $schema): Schema
     {
         return PositionForm::configure($schema);

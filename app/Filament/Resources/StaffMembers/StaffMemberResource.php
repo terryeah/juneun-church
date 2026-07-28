@@ -20,6 +20,12 @@ class StaffMemberResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
+    protected static ?string $navigationLabel = '섬기는 사람들';
+
+    protected static ?string $modelLabel = '구성원';
+
+    protected static ?string $pluralModelLabel = '구성원';
+
     public static function form(Schema $schema): Schema
     {
         return StaffMemberForm::configure($schema);

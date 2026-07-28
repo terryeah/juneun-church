@@ -26,6 +26,10 @@ class Analytics extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    protected static ?string $navigationLabel = '방문자 통계';
+
+    protected static ?string $title = '방문자 통계';
+
     protected static ?int $navigationSort = 90;
 
     /**

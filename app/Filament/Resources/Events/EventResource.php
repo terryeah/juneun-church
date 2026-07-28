@@ -20,6 +20,12 @@ class EventResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
+    protected static ?string $navigationLabel = '교회 행사';
+
+    protected static ?string $modelLabel = '행사';
+
+    protected static ?string $pluralModelLabel = '행사';
+
     public static function form(Schema $schema): Schema
     {
         return EventForm::configure($schema);

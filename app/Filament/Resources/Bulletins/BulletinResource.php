@@ -20,6 +20,12 @@ class BulletinResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
+    protected static ?string $navigationLabel = '주보';
+
+    protected static ?string $modelLabel = '주보';
+
+    protected static ?string $pluralModelLabel = '주보';
+
     public static function form(Schema $schema): Schema
     {
         return BulletinForm::configure($schema);

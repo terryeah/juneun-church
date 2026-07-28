@@ -20,6 +20,12 @@ class ServiceTypeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
+    protected static ?string $navigationLabel = '예배 구분';
+
+    protected static ?string $modelLabel = '예배 구분';
+
+    protected static ?string $pluralModelLabel = '예배 구분';
+
     public static function form(Schema $schema): Schema
     {
         return ServiceTypeForm::configure($schema);

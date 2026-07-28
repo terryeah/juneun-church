@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Photos;
 
+use App\Filament\Clusters\Media\MediaCluster;
 use App\Filament\Resources\Photos\Pages\CreatePhoto;
 use App\Filament\Resources\Photos\Pages\EditPhoto;
 use App\Filament\Resources\Photos\Pages\ListPhotos;
 use App\Filament\Resources\Photos\Schemas\PhotoForm;
 use App\Filament\Resources\Photos\Tables\PhotosTable;
-use App\Filament\Clusters\Media\MediaCluster;
 use App\Models\Photo;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -22,6 +22,12 @@ class PhotoResource extends Resource
     protected static ?string $cluster = MediaCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
+
+    protected static ?string $navigationLabel = '사진';
+
+    protected static ?string $modelLabel = '사진';
+
+    protected static ?string $pluralModelLabel = '사진';
 
     public static function form(Schema $schema): Schema
     {

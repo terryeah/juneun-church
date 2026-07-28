@@ -20,6 +20,12 @@ class SiteSettingResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
+    protected static ?string $navigationLabel = '사이트 설정';
+
+    protected static ?string $modelLabel = '설정';
+
+    protected static ?string $pluralModelLabel = '설정';
+
     public static function form(Schema $schema): Schema
     {
         return SiteSettingForm::configure($schema);

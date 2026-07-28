@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Albums;
 
+use App\Filament\Clusters\Media\MediaCluster;
 use App\Filament\Resources\Albums\Pages\CreateAlbum;
 use App\Filament\Resources\Albums\Pages\EditAlbum;
 use App\Filament\Resources\Albums\Pages\ListAlbums;
 use App\Filament\Resources\Albums\Schemas\AlbumForm;
 use App\Filament\Resources\Albums\Tables\AlbumsTable;
-use App\Filament\Clusters\Media\MediaCluster;
 use App\Models\Album;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -22,6 +22,12 @@ class AlbumResource extends Resource
     protected static ?string $cluster = MediaCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?string $navigationLabel = '앨범';
+
+    protected static ?string $modelLabel = '앨범';
+
+    protected static ?string $pluralModelLabel = '앨범';
 
     public static function form(Schema $schema): Schema
     {

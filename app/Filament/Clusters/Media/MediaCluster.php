@@ -14,7 +14,7 @@ class MediaCluster extends Cluster
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
-    protected static ?string $navigationLabel = 'Media';
+    protected static ?string $navigationLabel = '미디어';
 
-    protected static ?string $clusterBreadcrumb = 'Media';
+    protected static ?string $clusterBreadcrumb = '미디어';
 }

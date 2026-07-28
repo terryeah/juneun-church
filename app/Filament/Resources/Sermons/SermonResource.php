@@ -20,6 +20,12 @@ class SermonResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedVideoCamera;
 
+    protected static ?string $navigationLabel = '예배 영상';
+
+    protected static ?string $modelLabel = '예배 영상';
+
+    protected static ?string $pluralModelLabel = '예배 영상';
+
     public static function form(Schema $schema): Schema
     {
         return SermonForm::configure($schema);
