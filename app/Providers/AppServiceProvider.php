@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Filament\Analytics\TrafficChartWidget;
+use App\Filament\Analytics\TrafficStatsWidget;
 use App\Policies\ActivityPolicy;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -9,6 +11,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 use Spatie\Activitylog\Models\Activity;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,7 +31,21 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Activity::class, ActivityPolicy::class);
 
+        $this->registerAnalyticsWidgets();
         $this->logAuthenticationActivity();
+    }
+
+    /**
+     * Register the analytics widgets as Livewire components.
+     *
+     * They live outside Filament's widget discovery path on purpose so
+     * they never appear on the dashboard, which means Livewire needs an
+     * explicit registration to resolve their update requests.
+     */
+    private function registerAnalyticsWidgets(): void
+    {
+        Livewire::component('app.filament.analytics.traffic-stats-widget', TrafficStatsWidget::class);
+        Livewire::component('app.filament.analytics.traffic-chart-widget', TrafficChartWidget::class);
     }
 
     /**
