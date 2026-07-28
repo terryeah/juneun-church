@@ -15,6 +15,11 @@ class TrafficChartWidget extends ChartWidget
     protected int|string|array $columnSpan = 'full';
 
     /**
+     * Snapshots change once a day, so live polling is unnecessary.
+     */
+    protected ?string $pollingInterval = null;
+
+    /**
      * Chart dataset built from the local snapshots.
      *
      * @return array<string, mixed>

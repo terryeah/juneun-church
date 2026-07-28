@@ -13,6 +13,11 @@ use Illuminate\Support\Number;
 class TrafficStatsWidget extends StatsOverviewWidget
 {
     /**
+     * Snapshots change once a day, so live polling is unnecessary.
+     */
+    protected ?string $pollingInterval = null;
+
+    /**
      * Build the four headline statistics.
      *
      * @return array<Stat>
