@@ -9,5 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('analytics:snapshot')->dailyAt('03:00');
+Schedule::command('activitylog:clean', ['--force'])->dailyAt('03:15');
 Schedule::command('instagram:import')->dailyAt('03:30');
 Schedule::command('youtube:import')->dailyAt('04:00');

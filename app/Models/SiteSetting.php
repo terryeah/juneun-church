@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\Cache;
 #[Fillable(['key', 'value', 'group'])]
 class SiteSetting extends Model
 {
+    use LogsModelActivity;
+
     /**
      * Flush the settings cache whenever a setting changes.
      */

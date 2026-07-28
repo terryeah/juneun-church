@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class Photo extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsModelActivity;
 
     /**
      * The album this photo belongs to.
