@@ -2,22 +2,38 @@
 
 namespace App\Filament\Support;
 
-use App\Services\WebpImageConverter;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
+use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
+use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\ImageManager;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Throwable;
 
 /**
  * Global file upload behaviour that stores images as WebP.
  *
- * Applied to every Filament FileUpload component: raster images in any
- * other format are converted to WebP before being written to the media
- * disk, images already in WebP are stored as they are, and non-image
- * files (for example bulletin PDFs) pass through untouched.
+ * Applied to every Filament FileUpload component and powered entirely
+ * by Intervention Image: raster images are converted to WebP (scaled to
+ * a sensible maximum edge, EXIF orientation applied), while WebP and
+ * GIF images and non-image files such as bulletin PDFs pass through
+ * untouched. With the Imagick extension and libheif installed, iPhone
+ * HEIC photos convert as well; without them the original is stored.
  */
 class SaveUploadsAsWebp
 {
+    /**
+     * Quality used for the WebP encoder.
+     */
+    private const QUALITY = 82;
+
+    /**
+     * Maximum width or height of a stored image in pixels.
+     */
+    private const MAX_DIMENSION = 2560;
+
     /**
      * Register the behaviour for all FileUpload components.
      */
@@ -31,11 +47,38 @@ class SaveUploadsAsWebp
     }
 
     /**
-     * Store the uploaded file, converting images to WebP when needed.
+     * Convert an image binary to WebP, or null when not applicable.
+     *
+     * WebP and GIF inputs return null by design so they are stored in
+     * their original format.
+     */
+    public static function toWebp(string $binary): ?string
+    {
+        $isWebp = str_starts_with($binary, 'RIFF') && substr($binary, 8, 4) === 'WEBP';
+        $isGif = str_starts_with($binary, 'GIF8');
+
+        if ($isWebp || $isGif) {
+            return null;
+        }
+
+        try {
+            $driver = extension_loaded('imagick') ? ImagickDriver::class : GdDriver::class;
+
+            return (new ImageManager($driver))
+                ->decodeBinary($binary)
+                ->scaleDown(self::MAX_DIMENSION, self::MAX_DIMENSION)
+                ->encode(new WebpEncoder(quality: self::QUALITY))
+                ->toString();
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Store the uploaded file, converting images to WebP when possible.
      */
     protected static function store(FileUpload $component, TemporaryUploadedFile $file): string
     {
-        $converter = app(WebpImageConverter::class);
         $binary = (string) file_get_contents($file->getRealPath());
 
         $directory = trim((string) $component->getDirectory(), '/');
@@ -43,21 +86,16 @@ class SaveUploadsAsWebp
         $options = ['visibility' => $component->getVisibility()];
         $disk = Storage::disk($component->getDiskName());
 
-        if (! $converter->isWebp($binary) && $converter->isConvertibleImage($binary)) {
-            $converted = $converter->toWebp($binary);
+        $converted = static::toWebp($binary);
 
-            if ($converted !== null) {
-                $path = $prefix.Str::uuid().'.webp';
-                $disk->put($path, $converted, $options);
+        if ($converted !== null) {
+            $path = $prefix.Str::uuid().'.webp';
+            $disk->put($path, $converted, $options);
 
-                return $path;
-            }
+            return $path;
         }
 
-        $extension = $converter->isWebp($binary)
-            ? 'webp'
-            : strtolower($file->getClientOriginalExtension() ?: 'bin');
-
+        $extension = strtolower($file->getClientOriginalExtension() ?: 'bin');
         $path = $prefix.Str::uuid().'.'.$extension;
         $disk->put($path, $binary, $options);
 
