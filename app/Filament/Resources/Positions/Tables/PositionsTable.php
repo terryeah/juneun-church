@@ -15,17 +15,22 @@ class PositionsTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('이름')
                     ->searchable(),
                 TextColumn::make('category')
+                    ->label('분류')
                     ->searchable(),
                 TextColumn::make('sort_order')
+                    ->label('정렬 순서')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('생성일')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('수정일')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

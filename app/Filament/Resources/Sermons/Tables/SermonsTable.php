@@ -16,28 +16,38 @@ class SermonsTable
         return $table
             ->columns([
                 TextColumn::make('title')
+                    ->label('제목')
                     ->searchable(),
                 TextColumn::make('youtube_video_id')
+                    ->label('YouTube ID')
                     ->searchable(),
                 TextColumn::make('preacher')
+                    ->label('설교자')
                     ->searchable(),
                 TextColumn::make('sermon_date')
+                    ->label('예배 날짜')
                     ->date('Y-m-d')
                     ->sortable(),
                 TextColumn::make('serviceType.name')
+                    ->label('예배 종류')
                     ->searchable(),
                 TextColumn::make('scripture_reference')
+                    ->label('본문 말씀')
                     ->searchable(),
                 IconColumn::make('is_published')
+                    ->label('게시')
                     ->boolean(),
                 TextColumn::make('created_by')
+                    ->label('작성자')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('생성일')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('수정일')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

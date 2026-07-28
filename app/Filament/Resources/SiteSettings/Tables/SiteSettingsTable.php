@@ -15,14 +15,18 @@ class SiteSettingsTable
         return $table
             ->columns([
                 TextColumn::make('key')
+                    ->label('키')
                     ->searchable(),
                 TextColumn::make('group')
+                    ->label('그룹')
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label('생성일')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('수정일')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

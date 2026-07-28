@@ -32,7 +32,7 @@ class SermonForm
                     ->regex('/^[A-Za-z0-9_-]{11}$/')
                     ->helperText('영상 주소의 v= 뒤 11자리 (예: dQw4w9WgXcQ)'),
                 Select::make('service_type_id')
-                    ->label('예배 구분')
+                    ->label('예배 종류')
                     ->relationship('serviceType', 'name')
                     ->required(),
                 TextInput::make('preacher')

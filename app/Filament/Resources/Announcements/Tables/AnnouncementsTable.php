@@ -17,28 +17,38 @@ class AnnouncementsTable
         return $table
             ->columns([
                 TextColumn::make('title')
+                    ->label('제목')
                     ->searchable(),
                 TextColumn::make('slug')
+                    ->label('슬러그')
                     ->searchable(),
-                ImageColumn::make('featured_image'),
+                ImageColumn::make('featured_image')
+                    ->label('대표 이미지'),
                 IconColumn::make('is_published')
+                    ->label('게시')
                     ->boolean(),
                 IconColumn::make('is_pinned')
+                    ->label('상단 고정')
                     ->boolean(),
                 TextColumn::make('published_at')
+                    ->label('게시 일시')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable(),
                 TextColumn::make('expires_at')
+                    ->label('게시 종료')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable(),
                 TextColumn::make('created_by')
+                    ->label('작성자')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('생성일')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('수정일')
                     ->dateTime('Y-m-d, h:i:s A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
