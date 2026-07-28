@@ -38,14 +38,27 @@ class AnalyticsPageTest extends TestCase
     }
 
     /**
-     * Users without the developer role are refused.
+     * Administrators can open the analytics page.
      */
-    public function test_non_developers_cannot_view_the_analytics_page(): void
+    public function test_admins_can_view_the_analytics_page(): void
     {
         $admin = User::factory()->create();
         $admin->assignRole('admin');
 
         $this->actingAs($admin)
+            ->get('/admin/analytics')
+            ->assertStatus(200);
+    }
+
+    /**
+     * Content editors are refused.
+     */
+    public function test_content_editors_cannot_view_the_analytics_page(): void
+    {
+        $editor = User::factory()->create();
+        $editor->assignRole('content_editor');
+
+        $this->actingAs($editor)
             ->get('/admin/analytics')
             ->assertStatus(403);
     }

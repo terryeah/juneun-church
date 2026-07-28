@@ -29,11 +29,11 @@ class Analytics extends Page
     protected static ?int $navigationSort = 90;
 
     /**
-     * Only users holding the developer role may access this page.
+     * Administrators and developers may access this page.
      */
     public static function canAccess(): bool
     {
-        return auth()->user()?->hasRole('developer') ?? false;
+        return auth()->user()?->hasAnyRole(['developer', 'admin', 'super_admin']) ?? false;
     }
 
     /**
