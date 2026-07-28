@@ -23,6 +23,7 @@ class RoleSeeder extends Seeder
 
         collect([
             'super_admin',
+            'developer',
             'admin',
             'content_editor',
             'media_coordinator',
