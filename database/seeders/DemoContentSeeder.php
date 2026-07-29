@@ -184,7 +184,7 @@ class DemoContentSeeder extends Seeder
             ]);
 
             foreach (range(1, 6) as $photoIndex) {
-                $path = $this->createPlaceholderImage($albumIndex, $photoIndex);
+                $path = $this->createPlaceholderImage($album->slug, $albumIndex, $photoIndex);
 
                 Photo::query()->create([
                     'album_id' => $album->id,
@@ -206,7 +206,7 @@ class DemoContentSeeder extends Seeder
     /**
      * Generate a muted grayscale placeholder JPEG on the media disk.
      */
-    private function createPlaceholderImage(int $albumIndex, int $photoIndex): string
+    private function createPlaceholderImage(string $albumSlug, int $albumIndex, int $photoIndex): string
     {
         $image = imagecreatetruecolor(1200, 800);
         $shade = 150 + (($albumIndex * 17 + $photoIndex * 23) % 70);
@@ -220,7 +220,7 @@ class DemoContentSeeder extends Seeder
         imagejpeg($image, null, 70);
         $contents = ob_get_clean();
 
-        $path = 'gallery/demo/'.Str::uuid().'.jpg';
+        $path = 'albums/'.$albumSlug.'/'.Str::uuid().'.jpg';
         Storage::disk(config('filesystems.media'))->put($path, $contents);
 
         return $path;

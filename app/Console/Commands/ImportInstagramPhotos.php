@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Filament\Support\SaveUploadsAsWebp;
 use App\Models\Album;
 use App\Models\Photo;
 use App\Models\SiteSetting;
@@ -74,7 +75,7 @@ class ImportInstagramPhotos extends Command
         $imported = 0;
 
         foreach ($posts as $node) {
-            if (Photo::query()->where('filename', $node['shortcode'].'-1.jpg')->exists()) {
+            if (Photo::query()->where('filename', 'like', $node['shortcode'].'-1.%')->exists()) {
                 continue;
             }
 
@@ -98,16 +99,21 @@ class ImportInstagramPhotos extends Command
                     continue;
                 }
 
-                $filename = $node['shortcode'].'-'.($index + 1).'.jpg';
-                $path = 'gallery/instagram/'.$filename;
-                Storage::disk(config('filesystems.media'))->put($path, $image->body());
+                $binary = $image->body();
+                $converted = SaveUploadsAsWebp::toWebp($binary);
+                $extension = $converted !== null ? 'webp' : 'jpg';
+                $binary = $converted ?? $binary;
+
+                $filename = $node['shortcode'].'-'.($index + 1).'.'.$extension;
+                $path = 'albums/'.$album->slug.'/'.$filename;
+                Storage::disk(config('filesystems.media'))->put($path, $binary);
 
                 Photo::query()->create([
                     'album_id' => $album->id,
                     'filename' => $filename,
-                    'original_filename' => $filename,
+                    'original_filename' => $node['shortcode'].'-'.($index + 1).'.jpg',
                     'path' => $path,
-                    'file_size' => strlen($image->body()),
+                    'file_size' => strlen($binary),
                     'sort_order' => ($index + 1) * 10,
                 ]);
             }

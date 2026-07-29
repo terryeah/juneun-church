@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Albums\Schemas;
 
+use App\Models\Album;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
@@ -37,7 +38,7 @@ class AlbumForm
                     ->label('커버 사진')
                     ->image()
                     ->disk(config('filesystems.media'))
-                    ->directory('gallery/covers')
+                    ->directory(fn (?Album $record): string => 'albums/'.($record?->slug ?? 'covers'))
                     ->visibility('public'),
                 Toggle::make('is_published')
                     ->label('게시')
