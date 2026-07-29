@@ -8,6 +8,53 @@
         <x-home.service-strip />
     </section>
 
+    <section class="section-worship-groups container-site pt-8 lg:pt-10">
+        @php
+            $fellowship = [
+                ['name' => '남/여전도회', 'note' => '주일예배 후 · 매월 첫째 주'],
+                ['name' => '셀 모임', 'note' => '주일예배 후 · 둘째-다섯째 주'],
+                ['name' => '청년부 모임', 'note' => '주일예배 이후'],
+                ['name' => '성경 공부', 'note' => '월요일-금요일 · 교육관'],
+            ];
+            $sundaySchool = [
+                ['name' => 'Joy Little Kids', 'grade' => '30개월-Kindy', 'note' => '주일 오후 1:30 · Hall'],
+                ['name' => 'Glory Kids', 'grade' => 'Prep-Y6', 'note' => '주일 오후 1:30 · Hall'],
+                ['name' => 'Holy Youth', 'grade' => 'Y7-Y12', 'note' => '주일 오후 1:30 · Chapel'],
+                ['name' => 'Holy Youth 월모임', 'grade' => null, 'note' => '장소 및 시간 추후 공지'],
+            ];
+        @endphp
+
+        <div class="grid gap-10 md:grid-cols-2 md:gap-8 lg:gap-11">
+            <div>
+                <x-ui.kicker>모임 · Fellowship</x-ui.kicker>
+                <div class="mt-4 border-t-2 border-navy">
+                    @foreach ($fellowship as $group)
+                        <div class="flex items-baseline justify-between gap-4 border-b border-line py-3.5">
+                            <h3 class="font-kr text-[14px] font-medium">{{ $group['name'] }}</h3>
+                            <p class="text-right font-kr text-[12.5px] text-navy-400">{{ $group['note'] }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            <div>
+                <x-ui.kicker>주일학교 · Sunday School</x-ui.kicker>
+                <div class="mt-4 border-t-2 border-navy">
+                    @foreach ($sundaySchool as $class)
+                        <div class="flex items-baseline justify-between gap-4 border-b border-line py-3.5">
+                            <h3 class="text-[14px] font-medium">
+                                {{ $class['name'] }}
+                                @if ($class['grade'])
+                                    <span class="ml-1 text-[11.5px] font-normal text-navy-400">{{ $class['grade'] }}</span>
+                                @endif
+                            </h3>
+                            <p class="text-right font-kr text-[12.5px] text-navy-400">{{ $class['note'] }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="section-worship-archive container-site pt-8 pb-12 lg:pt-10 lg:pb-16">
         <x-ui.kicker>지난 예배 · Archive</x-ui.kicker>
         <div class="mt-6 grid gap-8 md:grid-cols-2 lg:grid-cols-3">

@@ -29,22 +29,22 @@
         @php
             $identities = [
                 [
-                    'korean' => '주는', 'english' => 'Lord',
-                    'verse' => '너희가 나를 선생이라 또는 주라 하니 너희 말이 옳도다 내가 그러하다',
-                    'reference' => '요한복음 13:13',
-                    'description' => '예수님을 주님으로 고백하며 그분의 다스리심을 따르는 교회입니다.',
+                    'korean' => '주는', 'english' => 'Lord', 'suffix' => '교회',
+                    'verse' => '주는 그리스도시요 살아계신 하나님의 아들이시니이다',
+                    'reference' => '마태복음 16:16',
+                    'description' => '귀한 믿음의 고백 위에 세워진 교회입니다.',
                 ],
                 [
-                    'korean' => '보여주는', 'english' => 'Revealing',
-                    'verse' => '이같이 너희 빛이 사람 앞에 비치게 하여 그들로 너희 착한 행실을 보고 하늘에 계신 너희 아버지께 영광을 돌리게 하라',
-                    'reference' => '마태복음 5:16',
-                    'description' => '말이 아닌 삶으로 복음을 보여주는 교회입니다.',
+                    'korean' => '보여', 'english' => 'Revealing', 'suffix' => '주는교회',
+                    'verse' => '너희가 서로 사랑하면 이로써 모든 사람이 너희가 내 제자인 줄 알리라',
+                    'reference' => '요한복음 13:35',
+                    'description' => '간판이 아닌 모인 이들을 통해 교회라 인정받는 교회입니다.',
                 ],
                 [
-                    'korean' => '주는', 'english' => 'Giving',
-                    'verse' => '주라 그리하면 너희에게 줄 것이니 곧 후히 되어 누르고 흔들어 넘치도록 하여 너희에게 안겨 주리라',
-                    'reference' => '누가복음 6:38',
-                    'description' => '받은 은혜를 이웃과 넉넉히 나누는 교회입니다.',
+                    'korean' => '주는', 'english' => 'Giving', 'suffix' => '교회',
+                    'verse' => '예수께서 친히 말씀하신 바 주는 것이 받는 것보다 복이 있다 하심을 기억하여야 할지니라',
+                    'reference' => '사도행전 20:35',
+                    'description' => '우리에게 일용할 양식을 주심을 위해 기도하며 이웃의 부족함을 채워주는 교회입니다.',
                 ],
             ];
         @endphp
@@ -53,7 +53,7 @@
             @foreach ($identities as $identity)
                 <div class="grid gap-4 py-[26px] first:pt-0 last:pb-0 md:grid-cols-[minmax(0,280px)_minmax(0,1fr)] md:gap-10">
                     <h2 class="font-kr text-display-sm font-medium">
-                        {{ $identity['korean'] }}<span class="text-accent">({{ $identity['english'] }})</span>교회
+                        {{ $identity['korean'] }}<span class="text-accent">({{ $identity['english'] }})</span>{{ $identity['suffix'] }}
                     </h2>
                     <div>
                         <p class="-mt-[3px] font-kr text-[15px] leading-relaxed">{{ $identity['verse'] }}</p>

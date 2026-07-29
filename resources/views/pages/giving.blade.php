@@ -56,7 +56,8 @@
         </div>
 
         <p class="mt-6 max-w-4xl font-kr text-[12.5px] leading-relaxed text-navy-400">
-            이체 시 참조란에 이름과 헌금 종류(십일조, 감사, 선교 등)를 적어 주세요.
+            이체 시 참조란에 이름과 헌금 종류를 약자로 함께 적어 주세요 -
+            주일헌금 O · 십일조 T · 감사헌금 TH · 선교헌금 M · 기타헌금 E
         </p>
     </section>
 

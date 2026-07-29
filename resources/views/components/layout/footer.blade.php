@@ -23,7 +23,7 @@
                     <span class="h-[34px]"><x-ui.logo /></span>
                     <span>
                         <span class="block font-kr text-[18px] font-medium leading-tight">{{ SiteSetting::get('church_name', '브리즈번 주는교회') }}</span>
-                        <span class="block text-[10px] font-medium tracking-[0.04em] text-navy-400">{{ SiteSetting::get('denomination', '대한예수교 장로회') }}</span>
+                        <span class="block text-[10px] font-medium tracking-[0.04em] text-navy-400">{{ SiteSetting::get('denomination', '대한예수교장로회') }}</span>
                     </span>
                 </a>
                 <p class="mt-4 max-w-sm font-kr text-[13.5px] leading-relaxed text-navy-700">
@@ -51,7 +51,7 @@
                 <ul class="mt-4 space-y-2 text-[13px] leading-relaxed text-navy-700">
                     <li>
                         <a href="https://www.google.com/maps?q={{ urlencode(SiteSetting::get('address_main', '')) }}" target="_blank" rel="noopener" class="block hover:text-accent">
-                            <span class="block font-kr font-medium text-navy">{{ SiteSetting::get('address_main_label', '본관') }}</span>
+                            <span class="block font-kr font-medium text-navy">{{ SiteSetting::get('address_main_label', '본당') }}</span>
                             {{ SiteSetting::get('address_main') }}
                         </a>
                     </li>

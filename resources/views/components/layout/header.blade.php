@@ -19,7 +19,7 @@
             <span class="h-[34px]"><x-ui.logo /></span>
             <span>
                 <span class="block font-kr text-[18px] font-medium leading-tight">{{ SiteSetting::get('church_name', '브리즈번 주는교회') }}</span>
-                <span class="block text-[10px] font-medium tracking-[0.04em] text-navy-400">{{ SiteSetting::get('denomination', '대한예수교 장로회') }}</span>
+                <span class="block text-[10px] font-medium tracking-[0.04em] text-navy-400">{{ SiteSetting::get('denomination', '대한예수교장로회') }}</span>
             </span>
         </a>
 
