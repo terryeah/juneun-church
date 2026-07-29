@@ -64,6 +64,22 @@ class Analytics extends Page
     }
 
     /**
+     * Web Analytics breakdowns, cached for an hour so the page stays
+     * fresh without hitting the API on every visit.
+     *
+     * @return array<string, array<int, array{label: string, count: int}>>
+     */
+    #[Computed]
+    public function breakdowns(): array
+    {
+        return \Illuminate\Support\Facades\Cache::remember(
+            'cf-rum-breakdowns',
+            3600,
+            fn (): array => app(CloudflareAnalyticsService::class)->breakdowns(today()->subDays(30), today()),
+        );
+    }
+
+    /**
      * Widgets rendered above the page content.
      *
      * @return array<class-string>
@@ -88,6 +104,7 @@ class Analytics extends Page
                 ->label('지금 동기화')
                 ->icon(Heroicon::OutlinedArrowPath)
                 ->action(function (): void {
+                    \Illuminate\Support\Facades\Cache::forget('cf-rum-breakdowns');
                     Artisan::call('analytics:snapshot');
 
                     Notification::make()

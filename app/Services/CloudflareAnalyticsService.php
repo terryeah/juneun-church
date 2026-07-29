@@ -147,4 +147,86 @@ class CloudflareAnalyticsService
                 'page_views' => $group['count'] ?? 0,
             ]);
     }
+
+    /**
+     * Page-view breakdowns from Web Analytics for the date range.
+     *
+     * Returns page-view counts grouped by every dimension shown on
+     * Cloudflare's own Web Analytics page: country, referer, path,
+     * host, browser, operating system and device type.
+     *
+     * @return array<string, array<int, array{label: string, count: int}>>
+     */
+    public function breakdowns(CarbonInterface $since, CarbonInterface $until): array
+    {
+        if (! $this->isRumConfigured()) {
+            return [];
+        }
+
+        $dimensions = [
+            'country' => 'countryName',
+            'referer' => 'refererHost',
+            'path' => 'requestPath',
+            'host' => 'requestHost',
+            'browser' => 'userAgentBrowser',
+            'os' => 'userAgentOS',
+            'device' => 'deviceType',
+        ];
+
+        $filter = sprintf(
+            '{ date_geq: "%s", date_leq: "%s", siteTag: "%s" }',
+            $since->toDateString(),
+            $until->toDateString(),
+            config('services.cloudflare.rum_site_tag'),
+        );
+
+        $fields = collect($dimensions)
+            ->map(fn (string $field, string $alias) => <<<GRAPHQL
+                {$alias}: rumPageloadEventsAdaptiveGroups(
+                    limit: 8
+                    filter: {$filter}
+                    orderBy: [count_DESC]
+                ) {
+                    count
+                    dimensions { {$field} }
+                }
+            GRAPHQL)
+            ->implode("\n");
+
+        $query = <<<GRAPHQL
+        query (\$account: String!) {
+            viewer {
+                accounts(filter: { accountTag: \$account }) {
+                    {$fields}
+                }
+            }
+        }
+        GRAPHQL;
+
+        $response = Http::withToken(config('services.cloudflare.api_token'))
+            ->post('https://api.cloudflare.com/client/v4/graphql', [
+                'query' => $query,
+                'variables' => [
+                    'account' => config('services.cloudflare.account_id'),
+                ],
+            ]);
+
+        if (! $response->successful() || filled($response->json('errors'))) {
+            report(new \RuntimeException('Cloudflare RUM breakdown query failed: '.$response->body()));
+
+            return [];
+        }
+
+        $account = $response->json('data.viewer.accounts.0', []);
+
+        return collect($dimensions)
+            ->map(fn (string $field, string $alias) => collect($account[$alias] ?? [])
+                ->map(fn (array $group) => [
+                    'label' => (string) ($group['dimensions'][$field] ?? '-'),
+                    'count' => (int) ($group['count'] ?? 0),
+                ])
+                ->values()
+                ->all())
+            ->all();
+    }
 }
