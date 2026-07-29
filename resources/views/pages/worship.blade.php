@@ -4,7 +4,11 @@
         주는교회의 모든 예배는 누구에게나 열려 있습니다. 이번 주, 함께 예배해요.
     </x-ui.page-header>
 
-    <section class="section-worship-archive container-site pb-12 lg:pb-16">
+    <section class="section-worship-services container-site">
+        <x-home.service-strip />
+    </section>
+
+    <section class="section-worship-archive container-site pt-8 pb-12 lg:pt-10 lg:pb-16">
         <x-ui.kicker>지난 예배 · Archive</x-ui.kicker>
         <div class="mt-6 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             @forelse ($sermons as $sermon)

@@ -17,7 +17,7 @@
             {!! $announcement->content !!}
         </div>
 
-        <div class="mt-10 border-t border-line pt-6">
+        <div class="mt-10">
             <a href="{{ route('news.index') }}" class="text-[11px] font-bold text-accent hover:text-accent-700">← 소식 전체 보기</a>
         </div>
     </article>
