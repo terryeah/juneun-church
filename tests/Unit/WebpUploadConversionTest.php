@@ -54,6 +54,23 @@ class WebpUploadConversionTest extends TestCase
     }
 
     /**
+     * Oversized WebP uploads are scaled down and recompressed too.
+     */
+    public function test_webp_uploads_are_recompressed(): void
+    {
+        $image = imagecreatetruecolor(3000, 1000);
+        ob_start();
+        imagewebp($image, null, 100);
+        $webp = (string) ob_get_clean();
+
+        $processed = SaveUploadsAsWebp::toWebp($webp);
+
+        $this->assertNotNull($processed);
+        [$width] = getimagesizefromstring($processed);
+        $this->assertSame(2560, $width);
+    }
+
+    /**
      * GIF files are deliberately left unconverted.
      */
     public function test_gifs_are_not_converted(): void

@@ -16,7 +16,7 @@
             </div>
             <div class="lg:flex-1">
                 @if ($heroPhoto)
-                    <img src="{{ $heroPhoto->url() }}" alt="함께 예배하는 주는교회 성도들" class="h-[300px] w-full rounded-media object-cover md:h-[420px]">
+                    <img src="{{ $heroPhoto->url() }}" alt="함께 예배하는 주는교회 성도들" class="h-[300px] w-full rounded-media object-cover md:h-[420px]" fetchpriority="high" decoding="async">
                 @else
                     <x-ui.photo-placeholder label="Worship · Congregation" class="h-[300px] md:h-[420px]" />
                 @endif

@@ -53,15 +53,13 @@ class SaveUploadsAsWebp
     /**
      * Convert an image binary to WebP, or null when not applicable.
      *
-     * WebP and GIF inputs return null by design so they are stored in
-     * their original format.
+     * WebP inputs are processed as well so oversized uploads are
+     * scaled down and recompressed; only GIF returns null by design
+     * to preserve animation frames.
      */
     public static function toWebp(string $binary): ?string
     {
-        $isWebp = str_starts_with($binary, 'RIFF') && substr($binary, 8, 4) === 'WEBP';
-        $isGif = str_starts_with($binary, 'GIF8');
-
-        if ($isWebp || $isGif) {
+        if (str_starts_with($binary, 'GIF8')) {
             return null;
         }
 
