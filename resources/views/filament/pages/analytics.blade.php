@@ -1,4 +1,33 @@
 <x-filament-panels::page>
+    @if ($this->dailySnapshots->isNotEmpty())
+        <x-filament::section>
+            <x-slot name="heading">일별 상세</x-slot>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-gray-500 dark:text-gray-400">
+                            <th class="py-2 font-medium">날짜</th>
+                            <th class="py-2 text-right font-medium">실방문자</th>
+                            <th class="py-2 text-right font-medium">페이지뷰</th>
+                            <th class="py-2 text-right font-medium">총 요청 (봇 포함)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-white/10">
+                        @foreach ($this->dailySnapshots as $snapshot)
+                            <tr>
+                                <td class="py-2 tabular-nums">{{ $snapshot->snapshot_date->format('Y-m-d') }}</td>
+                                <td class="py-2 text-right tabular-nums">{{ number_format($snapshot->unique_visitors) }}</td>
+                                <td class="py-2 text-right tabular-nums">{{ number_format($snapshot->page_views) }}</td>
+                                <td class="py-2 text-right tabular-nums">{{ number_format($snapshot->requests) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </x-filament::section>
+    @endif
+
     @unless ($this->isConfigured)
         <x-filament::section>
             <x-slot name="heading">Cloudflare 연동이 아직 설정되지 않았습니다</x-slot>

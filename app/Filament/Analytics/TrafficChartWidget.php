@@ -34,19 +34,51 @@ class TrafficChartWidget extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => '방문자',
+                    'label' => '실방문자',
                     'data' => $snapshots->pluck('unique_visitors')->all(),
                     'borderColor' => '#004aad',
                     'backgroundColor' => 'rgba(0, 74, 173, 0.1)',
                     'fill' => true,
+                    'yAxisID' => 'y',
                 ],
                 [
                     'label' => '페이지뷰',
                     'data' => $snapshots->pluck('page_views')->all(),
                     'borderColor' => '#7688aa',
+                    'yAxisID' => 'y',
+                ],
+                [
+                    'label' => '총 요청 (봇 포함)',
+                    'data' => $snapshots->pluck('requests')->all(),
+                    'borderColor' => '#c2cbdb',
+                    'borderDash' => [6, 4],
+                    'yAxisID' => 'y1',
                 ],
             ],
             'labels' => $snapshots->map(fn (AnalyticsSnapshot $s) => $s->snapshot_date->format('m/d'))->all(),
+        ];
+    }
+
+    /**
+     * Requests dwarf visitor counts, so they get their own axis on
+     * the right while visitors and page views share the left one.
+     *
+     * @return array<string, mixed>
+     */
+    protected function getOptions(): array
+    {
+        return [
+            'scales' => [
+                'y' => [
+                    'beginAtZero' => true,
+                    'position' => 'left',
+                ],
+                'y1' => [
+                    'beginAtZero' => true,
+                    'position' => 'right',
+                    'grid' => ['drawOnChartArea' => false],
+                ],
+            ],
         ];
     }
 

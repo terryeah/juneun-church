@@ -50,6 +50,20 @@ class Analytics extends Page
     }
 
     /**
+     * The last thirty daily snapshots, newest first, for the table.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\AnalyticsSnapshot>
+     */
+    #[Computed]
+    public function dailySnapshots(): \Illuminate\Database\Eloquent\Collection
+    {
+        return \App\Models\AnalyticsSnapshot::query()
+            ->where('snapshot_date', '>=', today()->subDays(30))
+            ->orderByDesc('snapshot_date')
+            ->get();
+    }
+
+    /**
      * Widgets rendered above the page content.
      *
      * @return array<class-string>
