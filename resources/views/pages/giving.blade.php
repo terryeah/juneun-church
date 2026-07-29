@@ -9,7 +9,7 @@
     </x-ui.page-header>
 
     <section class="section-giving-details container-site pb-12 lg:pb-16">
-        <div class="grid max-w-4xl gap-6 md:grid-cols-2 md:items-start">
+        <div class="grid max-w-4xl gap-6 md:grid-cols-2">
             <div class="rounded-frame border-2 border-navy bg-paper p-8">
                 <x-ui.kicker>호주 계좌 · Australia</x-ui.kicker>
                 <dl class="mt-5 space-y-4">
