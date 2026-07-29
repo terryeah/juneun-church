@@ -9,7 +9,7 @@
     </x-ui.page-header>
 
     <section class="section-giving-details container-site pb-12 lg:pb-16">
-        <div class="grid max-w-4xl gap-6 md:grid-cols-2">
+        <div class="grid gap-6 md:grid-cols-2 md:gap-8 lg:gap-11">
             <div class="rounded-frame border-2 border-navy bg-paper p-8">
                 <x-ui.kicker>호주 계좌 · Australia</x-ui.kicker>
                 <dl class="mt-5 space-y-4">
@@ -55,7 +55,7 @@
             @endif
         </div>
 
-        <p class="mt-6 max-w-4xl font-kr text-[12.5px] leading-relaxed text-navy-400">
+        <p class="mt-6 font-kr text-[12.5px] leading-relaxed text-navy-400">
             이체 시 참조란에 이름과 헌금 종류를 약자로 함께 적어 주세요 -
             주일헌금 O · 십일조 T · 감사헌금 TH · 선교헌금 M · 기타헌금 E
         </p>
