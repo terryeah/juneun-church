@@ -1,8 +1,7 @@
 # 브리즈번 주는교회 · Brisbane Juneun Church
 
 The website of Brisbane Juneun Church, a Korean church in Brisbane,
-Australia — a fast, Korean-language public site backed by a fully
-localised, role-based admin panel for pastors, staff and volunteers.
+Australia — a fast, Korean-language site for the church community.
 
 **Live site:** [www.juneun.com](https://www.juneun.com)
 
@@ -11,7 +10,6 @@ localised, role-based admin panel for pastors, staff and volunteers.
 | Component | Technology |
 |---|---|
 | Backend | Laravel 12 (PHP 8.4) |
-| Admin panel | Filament v4 + Filament Shield (Spatie Permission) |
 | Frontend | Blade + Tailwind CSS v4 + vanilla TypeScript |
 | Animation | GSAP + ScrollTrigger (respects `prefers-reduced-motion`) |
 | Database | MySQL 8 |
@@ -42,45 +40,9 @@ without JavaScript.
 The whole site runs in Australia/Brisbane time and keeps Korean-first
 labelling throughout.
 
-## Admin panel (`/admin`)
-
-A fully Korean Filament panel, organised into grouped navigation that
-only shows what the signed-in user is authorised to access.
-
-- **콘텐츠** — announcements, events, sermons and service types
-- **미디어** — albums with nested photos, and bulletins; photo uploads
-  land in per-album folders automatically
-- **구성원** — positions, staff members and site users
-- **모니터링** — visitor analytics and a developer-only activity log
-
-### Roles
-
-| Role | Typical user | Access |
-|---|---|---|
-| `super_admin` | Developer | Everything |
-| `developer` | Developer | Everything incl. activity log |
-| `admin` | Pastor / office | Content, media, people, analytics |
-| `content_editor` | Secretary | Announcements, events, sermons, bulletins |
-| `media_coordinator` | Photographer | Albums and photos |
-| `contributor` | Volunteer | Upload photos, edit own uploads only |
-
-### Visitor analytics
-
-Cloudflare zone metrics and Web Analytics (RUM) are snapshotted into
-the local database hourly, so history survives the free-plan retention
-window. The dashboard shows real-visitor counts (bot-free), page
-views, total requests, a 30-day dual-axis chart, a daily breakdown
-table and page-view breakdowns by country, path, referer, host,
-browser, operating system and device type.
-
-### Activity log
-
-Spatie Activitylog records every content change and login with a
-six-month retention policy, visible only to the developer role.
-
 ## Media pipeline
 
-- Every upload is converted to WebP (max 2560px, quality 82) —
+- Every uploaded image is converted to WebP (max 2560px, quality 82) —
   including oversized WebP originals; iPhone HEIC is supported when
   Imagick with libheif is available; GIFs pass through untouched
 - An 800px WebP thumbnail is generated per photo and served in every
@@ -122,11 +84,10 @@ npm run build
 php artisan serve
 ```
 
-Seeding creates the roles, positions, service types and site settings
-the app needs, plus demo content in the local environment so every
-page renders with realistic density. Fill in the third-party values in
-`.env` to enable the corresponding integrations; anything left blank
-degrades gracefully. The admin panel lives at `/admin`.
+Seeding creates the base data the app needs, plus demo content in the
+local environment so every page renders with realistic density. Fill
+in the third-party values in `.env` to enable the corresponding
+integrations; anything left blank degrades gracefully.
 
 Useful artisan commands:
 
@@ -145,9 +106,8 @@ Useful artisan commands:
 php artisan test
 ```
 
-Feature tests cover the public pages, admin authorisation (analytics
-and activity-log access per role), admin wording, and the WebP
-conversion pipeline.
+Feature tests cover the public pages and the WebP conversion
+pipeline.
 
 ## Deployment
 
