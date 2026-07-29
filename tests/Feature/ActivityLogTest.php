@@ -93,4 +93,26 @@ class ActivityLogTest extends TestCase
             'causer_id' => $user->id,
         ]);
     }
+
+    /**
+     * The sidebar must hide the activity log from non-developers.
+     */
+    public function test_activity_log_navigation_is_hidden_from_admins(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        $this->actingAs($admin)
+            ->get('/admin/analytics')
+            ->assertOk()
+            ->assertDontSee('활동 기록');
+
+        $developer = User::factory()->create();
+        $developer->assignRole('developer');
+
+        $this->actingAs($developer)
+            ->get('/admin/analytics')
+            ->assertOk()
+            ->assertSee('활동 기록');
+    }
 }

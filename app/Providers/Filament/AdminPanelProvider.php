@@ -98,33 +98,50 @@ class AdminPanelProvider extends PanelProvider
     {
         return $builder->groups([
             NavigationGroup::make()->items([
-                ...Dashboard::getNavigationItems(),
-                ...SiteSettingResource::getNavigationItems(),
+                ...static::accessibleItems(Dashboard::class),
+                ...static::accessibleItems(SiteSettingResource::class),
             ]),
             NavigationGroup::make('콘텐츠')->items([
-                ...AnnouncementResource::getNavigationItems(),
-                ...EventResource::getNavigationItems(),
-                ...SermonResource::getNavigationItems(),
-                ...ServiceTypeResource::getNavigationItems(),
+                ...static::accessibleItems(AnnouncementResource::class),
+                ...static::accessibleItems(EventResource::class),
+                ...static::accessibleItems(SermonResource::class),
+                ...static::accessibleItems(ServiceTypeResource::class),
             ]),
             NavigationGroup::make('미디어')->items([
-                ...AlbumResource::getNavigationItems(),
-                ...PhotoResource::getNavigationItems(),
-                ...BulletinResource::getNavigationItems(),
+                ...static::accessibleItems(AlbumResource::class),
+                ...static::accessibleItems(PhotoResource::class),
+                ...static::accessibleItems(BulletinResource::class),
             ]),
             NavigationGroup::make('구성원')->items([
-                ...PositionResource::getNavigationItems(),
-                ...StaffMemberResource::getNavigationItems(),
-                ...Members::getNavigationItems(),
-                ...UserResource::getNavigationItems(),
+                ...static::accessibleItems(PositionResource::class),
+                ...static::accessibleItems(StaffMemberResource::class),
+                ...static::accessibleItems(Members::class),
+                ...static::accessibleItems(UserResource::class),
             ]),
             NavigationGroup::make('모니터링')->items([
-                ...Analytics::getNavigationItems(),
-                ...ActivityResource::getNavigationItems(),
+                ...static::accessibleItems(Analytics::class),
+                ...static::accessibleItems(ActivityResource::class),
             ]),
             NavigationGroup::make('Filament Shield')->items([
-                ...RoleResource::getNavigationItems(),
+                ...static::accessibleItems(RoleResource::class),
             ]),
         ]);
+    }
+
+    /**
+     * A resource's or page's navigation items, only when the current
+     * user is authorised for it. Building the navigation by hand
+     * skips Filament's own registration-time authorisation filter,
+     * so it has to be applied explicitly here.
+     *
+     * @return array<\Filament\Navigation\NavigationItem>
+     */
+    protected static function accessibleItems(string $component): array
+    {
+        if (method_exists($component, 'canAccess') && ! $component::canAccess()) {
+            return [];
+        }
+
+        return $component::getNavigationItems();
     }
 }
