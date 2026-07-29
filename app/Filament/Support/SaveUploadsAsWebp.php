@@ -77,6 +77,30 @@ class SaveUploadsAsWebp
     }
 
     /**
+     * Produce a small WebP thumbnail for grid and slider views.
+     *
+     * Returns null for GIFs and non-image binaries, mirroring toWebp.
+     */
+    public static function thumbnail(string $binary, int $maxDimension = 800): ?string
+    {
+        if (str_starts_with($binary, 'GIF8')) {
+            return null;
+        }
+
+        try {
+            $driver = extension_loaded('imagick') ? ImagickDriver::class : GdDriver::class;
+
+            return (new ImageManager($driver))
+                ->decodeBinary($binary)
+                ->scaleDown($maxDimension, $maxDimension)
+                ->encode(new WebpEncoder(quality: 75))
+                ->toString();
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
      * Store the uploaded file, converting images to WebP when possible.
      */
     protected static function store(FileUpload $component, TemporaryUploadedFile $file): string

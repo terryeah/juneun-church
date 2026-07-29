@@ -108,11 +108,20 @@ class ImportInstagramPhotos extends Command
                 $path = 'albums/'.$album->slug.'/'.$filename;
                 Storage::disk(config('filesystems.media'))->put($path, $binary);
 
+                $thumbnail = SaveUploadsAsWebp::thumbnail($binary);
+                $thumbnailPath = null;
+
+                if ($thumbnail !== null) {
+                    $thumbnailPath = 'albums/'.$album->slug.'/thumbs/'.$filename;
+                    Storage::disk(config('filesystems.media'))->put($thumbnailPath, $thumbnail);
+                }
+
                 Photo::query()->create([
                     'album_id' => $album->id,
                     'filename' => $filename,
                     'original_filename' => $node['shortcode'].'-'.($index + 1).'.jpg',
                     'path' => $path,
+                    'thumbnail_path' => $thumbnailPath,
                     'file_size' => strlen($binary),
                     'sort_order' => ($index + 1) * 10,
                 ]);

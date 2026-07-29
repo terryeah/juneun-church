@@ -16,7 +16,7 @@
             </div>
             <div class="lg:flex-1">
                 @if ($heroPhoto)
-                    <img src="{{ $heroPhoto->url() }}" alt="함께 예배하는 주는교회 성도들" class="h-[300px] w-full rounded-media object-cover md:h-[420px]" fetchpriority="high" decoding="async">
+                    <img src="{{ $heroPhoto->thumbnailUrl() }}" alt="함께 예배하는 주는교회 성도들" class="h-[300px] w-full rounded-media object-cover md:h-[420px]" fetchpriority="high" decoding="async">
                 @else
                     <x-ui.photo-placeholder label="Worship · Congregation" class="h-[300px] md:h-[420px]" />
                 @endif
@@ -116,7 +116,7 @@
         <div class="grid gap-16 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
             <div class="order-2 flex items-center lg:order-1">
                 @if ($mealPhoto)
-                    <img src="{{ $mealPhoto->url() }}" alt="함께 음식을 만들며 나누는 주는교회 식구들" class="aspect-video w-full rounded-media object-cover" loading="lazy">
+                    <img src="{{ $mealPhoto->thumbnailUrl() }}" alt="함께 음식을 만들며 나누는 주는교회 식구들" class="aspect-video w-full rounded-media object-cover" loading="lazy">
                 @else
                     <x-ui.photo-placeholder label="반찬나눔 · Meal Sharing" class="aspect-video w-full" />
                 @endif

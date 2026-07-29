@@ -56,4 +56,21 @@ class CreatePhoto extends CreateRecord
 
         return $data;
     }
+
+    /**
+     * Generate the grid thumbnail once the photo has been stored.
+     */
+    protected function afterCreate(): void
+    {
+        $photo = $this->record;
+        $disk = \Illuminate\Support\Facades\Storage::disk(config('filesystems.media'));
+
+        $thumbnail = \App\Filament\Support\SaveUploadsAsWebp::thumbnail((string) $disk->get($photo->path));
+
+        if ($thumbnail !== null) {
+            $thumbnailPath = dirname($photo->path).'/thumbs/'.basename($photo->path);
+            $disk->put($thumbnailPath, $thumbnail);
+            $photo->forceFill(['thumbnail_path' => $thumbnailPath])->saveQuietly();
+        }
+    }
 }

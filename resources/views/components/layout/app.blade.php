@@ -18,7 +18,6 @@
     <link rel="preconnect" href="https://media.juneun.com">
     <link rel="preconnect" href="https://i.ytimg.com">
     <link rel="preload" href="/fonts/GmarketSansMedium.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/GmarketSansBold.woff2" as="font" type="font/woff2" crossorigin>
     <script type="application/ld+json">{!! json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'Church',
