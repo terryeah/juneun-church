@@ -43,14 +43,22 @@ class SnapshotAnalytics extends Command
         $days = max(1, (int) $this->option('days'));
         $rows = $cloudflare->dailyStats(today()->subDays($days), today());
 
+        /** Real-visitor numbers from Web Analytics override the bot-inflated zone counts */
+        $realVisits = $cloudflare->dailyRealVisits(today()->subDays($days), today())->keyBy('date');
+
         foreach ($rows as $row) {
+            if ($realVisits->has($row['date'])) {
+                $row['unique_visitors'] = $realVisits[$row['date']]['visits'];
+                $row['page_views'] = $realVisits[$row['date']]['page_views'];
+            }
+
             AnalyticsSnapshot::query()->updateOrCreate(
                 ['snapshot_date' => $row['date']],
                 collect($row)->except('date')->all(),
             );
         }
 
-        $this->info("Stored {$rows->count()} day(s) of analytics.");
+        $this->info("Stored {$rows->count()} day(s) of analytics".($realVisits->isNotEmpty() ? ' with real-visitor data' : '').'.');
 
         return self::SUCCESS;
     }

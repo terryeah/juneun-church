@@ -38,6 +38,9 @@ return [
     'cloudflare' => [
         'api_token' => env('CLOUDFLARE_API_TOKEN'),
         'zone_id' => env('CLOUDFLARE_ZONE_ID'),
+        'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
+        'rum_site_tag' => env('CLOUDFLARE_RUM_SITE_TAG'),
+        'web_analytics_token' => env('CLOUDFLARE_WEB_ANALYTICS_TOKEN'),
     ],
 
 ];
