@@ -2,4 +2,4 @@ User-agent: *
 Disallow: /admin
 Disallow: /livewire
 
-Sitemap: https://juneun.com/sitemap.xml
+Sitemap: https://www.juneun.com/sitemap.xml

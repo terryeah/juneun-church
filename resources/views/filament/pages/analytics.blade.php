@@ -17,7 +17,11 @@
             <x-slot name="heading">페이지뷰 분석 · 최근 30일</x-slot>
 
             {{-- Styled inline because the panel's compiled CSS does not include arbitrary utilities from app views. --}}
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem 3rem;">
+            <style>
+                .an-breakdowns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem 3rem; }
+                @media (min-width: 768px) { .an-breakdowns { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+            </style>
+            <div class="an-breakdowns">
                 @foreach ($breakdownGroups as $key => $title)
                     @php
                         $rows = $this->breakdowns[$key] ?? [];
