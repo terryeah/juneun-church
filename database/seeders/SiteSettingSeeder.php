@@ -49,6 +49,9 @@ class SiteSettingSeeder extends Seeder
             ['key' => 'giving_account_name', 'value' => 'Brisbane Juneun Church', 'group' => 'giving'],
             ['key' => 'giving_bsb', 'value' => '034069', 'group' => 'giving'],
             ['key' => 'giving_account_number', 'value' => '615113', 'group' => 'giving'],
+            ['key' => 'giving_kr_bank', 'value' => '카카오뱅크', 'group' => 'giving'],
+            ['key' => 'giving_kr_account_name', 'value' => '', 'group' => 'giving'],
+            ['key' => 'giving_kr_account_number', 'value' => '3333-31-2167745', 'group' => 'giving'],
         ];
 
         foreach ($settings as $setting) {
