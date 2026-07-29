@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Photos\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -26,31 +27,17 @@ class PhotosTable
                 TextColumn::make('path')
                     ->label('경로')
                     ->searchable(),
-                TextColumn::make('thumbnail_path')
-                    ->label('썸네일 경로')
-                    ->searchable(),
-                TextColumn::make('width')
-                    ->label('가로')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('height')
-                    ->label('세로')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('file_size')
                     ->label('파일 크기')
-                    ->numeric()
+                    ->formatStateUsing(fn (?int $state): string => $state ? number_format($state / 1048576, 2).' MB' : '-')
                     ->sortable(),
-                TextColumn::make('caption')
-                    ->label('설명')
-                    ->searchable(),
                 TextColumn::make('sort_order')
                     ->label('정렬 순서')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('uploaded_by')
+                TextColumn::make('uploader.name')
                     ->label('업로더')
-                    ->numeric()
+                    ->default('시스템')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')
@@ -73,6 +60,9 @@ class PhotosTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+            ])
+            ->emptyStateActions([
+                CreateAction::make()->label('업로드'),
             ]);
     }
 }

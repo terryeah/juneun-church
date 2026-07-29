@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Photos\Pages;
 
 use App\Filament\Resources\Photos\PhotoResource;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 
 /**
@@ -11,6 +12,35 @@ use Filament\Resources\Pages\CreateRecord;
 class CreatePhoto extends CreateRecord
 {
     protected static string $resource = PhotoResource::class;
+
+    /**
+     * Breadcrumb label for this page.
+     */
+    protected static ?string $breadcrumb = '업로드';
+
+    /**
+     * Page heading shown above the form.
+     */
+    public function getTitle(): string
+    {
+        return '사진 업로드';
+    }
+
+    /**
+     * Rename the submit button from the default 만들기.
+     */
+    protected function getCreateFormAction(): Action
+    {
+        return parent::getCreateFormAction()->label('업로드');
+    }
+
+    /**
+     * Rename the create-another button to match.
+     */
+    protected function getCreateAnotherFormAction(): Action
+    {
+        return parent::getCreateAnotherFormAction()->label('계속 업로드');
+    }
 
     /**
      * Derive filename metadata and stamp the uploading user.

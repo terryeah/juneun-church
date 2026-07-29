@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\Photos\Schemas;
 
+use App\Models\Album;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 /**
@@ -25,22 +27,19 @@ class PhotoForm
                 Select::make('album_id')
                     ->label('앨범')
                     ->relationship('album', 'title')
+                    ->live()
                     ->required(),
-                FileUpload::make('path')
-                    ->label('사진')
-                    ->image()
-                    ->disk(config('filesystems.media'))
-                    ->directory('gallery')
-                    ->visibility('public')
-                    ->required()
-                    ->columnSpanFull(),
-                TextInput::make('caption')
-                    ->label('설명')
-                    ->maxLength(255),
                 TextInput::make('sort_order')
                     ->label('정렬 순서')
                     ->numeric()
                     ->default(0),
+                FileUpload::make('path')
+                    ->label('사진')
+                    ->image()
+                    ->disk(config('filesystems.media'))
+                    ->directory(fn (Get $get): string => 'albums/'.(Album::query()->find($get('album_id'))?->slug ?? 'unsorted'))
+                    ->visibility('public')
+                    ->required(),
             ]);
     }
 }
