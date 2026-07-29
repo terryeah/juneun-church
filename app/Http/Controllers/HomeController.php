@@ -46,9 +46,27 @@ class HomeController extends Controller
             ->whereHas('album', fn ($query) => $query->where('is_published', true))
             ->orderBy('sort_order')
             ->latest()
-            ->limit(12)
+            ->limit(10)
             ->get();
 
-        return view('pages.home', compact('announcements', 'latestSermon', 'upcomingEvents', 'recentPhotos'));
+        /** Featured photographs are chosen in 사이트 설정 by gallery filename */
+        $heroPhoto = $this->featuredPhoto('home_hero_photo', 'DZ2By_Lk1xC-6.webp');
+        $mealPhoto = $this->featuredPhoto('home_meal_photo', 'Dae_8EbzX4z-1.webp');
+
+        return view('pages.home', compact('announcements', 'latestSermon', 'upcomingEvents', 'recentPhotos', 'heroPhoto', 'mealPhoto'));
+    }
+
+    /**
+     * Resolve a featured photo from a site-setting filename.
+     *
+     * The setting stores a gallery photo's filename, so admins can
+     * swap the image by uploading a photo and putting its filename in
+     * 사이트 설정. Falls back to the given default filename.
+     */
+    private function featuredPhoto(string $settingKey, string $default): ?Photo
+    {
+        $filename = \App\Models\SiteSetting::get($settingKey) ?: $default;
+
+        return Photo::query()->where('filename', trim((string) $filename))->first();
     }
 }

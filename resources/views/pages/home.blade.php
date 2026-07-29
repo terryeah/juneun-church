@@ -1,7 +1,7 @@
 <x-layout.app description="브리즈번 주는교회 - 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라가는 젊은 한인교회입니다.">
 
     {{-- Hero --}}
-    <section class="container-site py-8 md:py-10 lg:py-14">
+    <section class="section-hero container-site py-8 md:py-10 lg:py-14">
         <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-11">
             <div class="lg:flex-[1.05]">
                 <x-ui.kicker data-hero-item>Brisbane Juneun Church · Since 2024</x-ui.kicker>
@@ -15,18 +15,22 @@
                 </div>
             </div>
             <div class="lg:flex-1">
-                <x-ui.photo-placeholder label="Worship · Congregation" class="h-[300px] md:h-[420px]" />
+                @if ($heroPhoto)
+                    <img src="{{ $heroPhoto->url() }}" alt="함께 예배하는 주는교회 성도들" class="h-[300px] w-full rounded-media object-cover md:h-[420px]">
+                @else
+                    <x-ui.photo-placeholder label="Worship · Congregation" class="h-[300px] md:h-[420px]" />
+                @endif
             </div>
         </div>
     </section>
 
     {{-- Service strip --}}
-    <section class="container-site">
+    <section class="section-service-times container-site py-8 md:py-10 lg:py-14">
         <x-home.service-strip />
     </section>
 
     {{-- Value rows: the three 주는교회 identities --}}
-    <section class="container-site py-8 md:py-10 lg:py-14">
+    <section class="section-identity container-site py-8 md:py-10 lg:py-14">
         @php
             $identities = [
                 [
@@ -52,7 +56,7 @@
 
         <div class="divide-y divide-line">
             @foreach ($identities as $identity)
-                <div class="grid gap-4 py-[26px] md:grid-cols-[minmax(0,280px)_minmax(0,1fr)] md:gap-10">
+                <div class="grid gap-4 py-[26px] first:pt-0 last:pb-0 md:grid-cols-[minmax(0,280px)_minmax(0,1fr)] md:gap-10">
                     <h2 class="font-kr text-display-sm font-medium">
                         {{ $identity['korean'] }}<span class="text-accent">({{ $identity['english'] }})</span>교회
                     </h2>
@@ -67,13 +71,13 @@
     </section>
 
     {{-- News + latest sermon band --}}
-    <section class="container-site py-8 md:py-10 lg:py-14">
+    <section class="section-news-sermon container-site py-8 md:py-10 lg:py-14">
         <div class="grid gap-16 lg:grid-cols-[1fr_1.3fr] lg:gap-11">
             <div>
                 <x-ui.kicker>교회 소식 · News</x-ui.kicker>
                 <div class="mt-4">
                     @forelse ($announcements as $announcement)
-                        <a href="{{ route('news.show', $announcement) }}" class="group block border-t border-line py-4 first:border-t-0">
+                        <a href="{{ route('news.show', $announcement) }}" class="group block border-t border-line py-4 first:border-t-0 first:pt-0">
                             <p class="text-[11px] text-navy-400">
                                 {{ $announcement->published_at?->translatedFormat('Y년 n월 j일') }}
                                 @if ($announcement->is_pinned)
@@ -86,14 +90,14 @@
                         <p class="py-4 text-[13px] text-navy-400">등록된 소식이 없습니다.</p>
                     @endforelse
                 </div>
-                <a href="{{ route('news.index') }}" class="mt-2 inline-block text-[13px] font-bold text-accent hover:text-accent-700">소식 전체 보기 →</a>
+                <a href="{{ route('news.index') }}" class="mt-2 inline-block text-[11px] font-bold text-accent hover:text-accent-700">소식 전체 보기 →</a>
             </div>
 
             @if ($latestSermon)
                 <div>
                     <div class="flex items-baseline justify-between">
                         <x-ui.kicker>최근 예배 · Latest Sermon</x-ui.kicker>
-                        <a href="{{ \App\Models\SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="text-[12px] font-bold leading-none text-accent hover:text-accent-700">YouTube →</a>
+                        <a href="{{ \App\Models\SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="text-[11px] font-bold leading-none text-accent hover:text-accent-700">YouTube →</a>
                     </div>
                     <div class="mt-4">
                         <x-ui.sermon-video :sermon="$latestSermon" />
@@ -108,13 +112,17 @@
     </section>
 
     {{-- Meal sharing (반찬나눔) --}}
-    <section class="container-site py-8 md:py-10 lg:py-14">
+    <section class="section-meal-sharing container-site py-8 md:py-10 lg:py-14">
         <div class="grid gap-16 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
-            <div class="flex items-center">
-                <x-ui.photo-placeholder label="Meal Sharing · 반찬나눔" class="aspect-video w-full" />
+            <div class="order-2 flex items-center lg:order-1">
+                @if ($mealPhoto)
+                    <img src="{{ $mealPhoto->url() }}" alt="함께 음식을 만들며 나누는 주는교회 식구들" class="aspect-video w-full rounded-media object-cover" loading="lazy">
+                @else
+                    <x-ui.photo-placeholder label="반찬나눔 · Meal Sharing" class="aspect-video w-full" />
+                @endif
             </div>
-            <div class="lg:border-l lg:border-line lg:pl-10">
-                <x-ui.kicker>Meal Sharing · 반찬나눔</x-ui.kicker>
+            <div class="order-1 lg:order-2 lg:border-l lg:border-line lg:pl-10">
+                <x-ui.kicker>반찬나눔 · Meal Sharing</x-ui.kicker>
                 <h2 class="mt-3 font-kr text-[1.7rem] font-medium leading-snug">정성껏 준비한 반찬을<br>이웃과 나눕니다</h2>
                 <p class="mt-4 font-kr text-[13.5px] leading-relaxed text-navy-700">
                     주는교회는 매월 정성껏 준비한 반찬을 이웃과 나누며 받은 은혜를 흘려보냅니다.
@@ -135,27 +143,28 @@
     </section>
 
     {{-- Poster band introducing the sliding gallery preview --}}
-    <section class="bg-navy py-12 md:py-16 lg:py-[76px]">
+    <section class="section-moments-intro bg-navy py-12 md:py-16 lg:py-[76px]">
         <div class="container-site">
-            <p class="text-kicker font-extrabold uppercase tracking-[0.16em] text-cream/55">Moments · 주는교회의 순간들</p>
+            <p class="text-kicker font-extrabold uppercase tracking-[0.16em] text-cream/55">주는교회의 순간들 · Moments</p>
             <p class="mt-5 font-kr text-display-lg text-cream">함께 예배하고, 함께 나누는<br>교회의 일상입니다.</p>
         </div>
     </section>
 
     {{-- Sliding gallery preview band --}}
-    <section class="bg-navy pb-[2px]">
+    <section class="section-moments-slider bg-navy pb-5">
         @if ($recentPhotos->isNotEmpty())
             <div class="overflow-hidden" data-photo-slider>
-                <div class="flex gap-[2px] transition-transform duration-700 ease-in-out" data-slider-track>
+                <div class="flex gap-1 transition-transform duration-700 ease-in-out" data-slider-track>
                     @foreach ($recentPhotos as $photo)
-                        <a href="{{ route('gallery.show', $photo->album) }}" class="block w-[calc((100%-2px)/2)] shrink-0 overflow-hidden rounded-[10px] md:w-[calc((100%-4px)/3)] lg:w-[calc((100%-8px)/5)]">
+                        <a href="{{ route('gallery.show', $photo->album) }}" class="block w-[calc((100%-4px)/2)] shrink-0 overflow-hidden rounded-[10px] md:w-[calc((100%-8px)/3)] lg:w-[calc((100%-16px)/5)]">
                             <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
                         </a>
                     @endforeach
                 </div>
             </div>
+            <div class="mt-5 flex items-center justify-center gap-2" data-slider-dots></div>
         @else
-            <div class="grid grid-cols-1 gap-[2px] md:grid-cols-3">
+            <div class="grid grid-cols-1 gap-1 md:grid-cols-3">
                 @foreach (['Fellowship', 'Worship', 'Next-Gen'] as $label)
                     <x-ui.photo-placeholder :label="$label" class="aspect-square rounded-[10px] bg-navy-700/60 text-cream/40" />
                 @endforeach
