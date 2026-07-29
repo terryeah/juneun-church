@@ -20,8 +20,14 @@ class UsersTable
                     ->sortable(),
                 TextColumn::make('email')
                     ->label('이메일')
-                    ->label('Email address')
                     ->searchable(),
+                TextColumn::make('roles.name')
+                    ->label('롤')
+                    ->badge(),
+                TextColumn::make('creator.name')
+                    ->label('만든 사람')
+                    ->default('시스템')
+                    ->sortable(),
                 TextColumn::make('email_verified_at')
                     ->label('이메일 인증일')
                     ->dateTime('Y-m-d, h:i:s A')

@@ -18,10 +18,6 @@ class ServiceTypesTable
                     ->label('이름')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('sort_order')
-                    ->label('정렬 순서')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')
                     ->dateTime('Y-m-d, h:i:s A')
@@ -33,6 +29,7 @@ class ServiceTypesTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->reorderable('sort_order')
             ->filters([
                 //
             ])

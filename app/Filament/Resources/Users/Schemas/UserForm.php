@@ -41,7 +41,7 @@ class UserForm
                     ->required(fn (string $operation): bool => $operation === 'create')
                     ->helperText('수정 시 비워두면 기존 비밀번호가 유지됩니다.'),
                 Select::make('roles')
-                    ->label('역할')
+                    ->label('롤')
                     ->relationship(
                         name: 'roles',
                         titleAttribute: 'name',

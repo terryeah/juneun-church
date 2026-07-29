@@ -23,8 +23,6 @@ class AnnouncementsTable
                 TextColumn::make('slug')
                     ->label('슬러그')
                     ->searchable(),
-                ImageColumn::make('featured_image')
-                    ->label('대표 이미지'),
                 IconColumn::make('is_published')
                     ->label('게시')
                     ->boolean(),

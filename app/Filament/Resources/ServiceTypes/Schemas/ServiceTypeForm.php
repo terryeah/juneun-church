@@ -13,10 +13,6 @@ class ServiceTypeForm
             ->components([
                 TextInput::make('name')
                     ->required(),
-                TextInput::make('sort_order')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
             ]);
     }
 }

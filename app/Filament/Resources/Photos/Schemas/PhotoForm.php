@@ -29,10 +29,6 @@ class PhotoForm
                     ->relationship('album', 'title')
                     ->live()
                     ->required(),
-                TextInput::make('sort_order')
-                    ->label('정렬 순서')
-                    ->numeric()
-                    ->default(0),
                 FileUpload::make('path')
                     ->label('사진')
                     ->image()

@@ -50,10 +50,6 @@ class StaffMemberForm
                     ->label('전화번호')
                     ->tel()
                     ->maxLength(255),
-                TextInput::make('sort_order')
-                    ->label('정렬 순서')
-                    ->numeric()
-                    ->default(0),
                 Toggle::make('is_published')
                     ->label('게시')
                     ->default(true),

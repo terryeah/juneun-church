@@ -20,7 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
  * registration. Access levels are governed by Spatie roles managed
  * through Filament Shield.
  */
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'created_by'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
@@ -49,5 +49,13 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * The admin who created this account; null means the system did.
+     */
+    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(self::class, 'created_by');
     }
 }

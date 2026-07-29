@@ -15,10 +15,6 @@ class PositionForm
                     ->required(),
                 TextInput::make('category')
                     ->required(),
-                TextInput::make('sort_order')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
             ]);
     }
 }

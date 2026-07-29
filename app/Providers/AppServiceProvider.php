@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Activity::class, ActivityPolicy::class);
 
         Table::configureUsing(fn (Table $table) => $table
-            ->defaultPaginationPageOption(25)
+            ->defaultPaginationPageOption(10)
             ->defaultSort('created_at', 'desc'));
         SaveUploadsAsWebp::register();
 

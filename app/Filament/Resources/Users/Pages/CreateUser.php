@@ -8,4 +8,17 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
+
+    /**
+     * Stamp the admin who is creating this account.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['created_by'] = auth()->id();
+
+        return $data;
+    }
 }

@@ -35,10 +35,6 @@ class StaffMembersTable
                 TextColumn::make('phone')
                     ->label('전화번호')
                     ->searchable(),
-                TextColumn::make('sort_order')
-                    ->label('정렬 순서')
-                    ->numeric()
-                    ->sortable(),
                 IconColumn::make('is_published')
                     ->label('게시')
                     ->boolean(),
@@ -53,6 +49,7 @@ class StaffMembersTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->reorderable('sort_order')
             ->filters([
                 //
             ])

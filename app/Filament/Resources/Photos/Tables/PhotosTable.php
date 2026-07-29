@@ -21,19 +21,12 @@ class PhotosTable
                 TextColumn::make('filename')
                     ->label('파일명')
                     ->searchable(),
-                TextColumn::make('original_filename')
-                    ->label('원본 파일명')
-                    ->searchable(),
                 TextColumn::make('path')
                     ->label('경로')
                     ->searchable(),
                 TextColumn::make('file_size')
                     ->label('파일 크기')
                     ->formatStateUsing(fn (?int $state): string => $state ? number_format($state / 1048576, 2).' MB' : '-')
-                    ->sortable(),
-                TextColumn::make('sort_order')
-                    ->label('정렬 순서')
-                    ->numeric()
                     ->sortable(),
                 TextColumn::make('uploader.name')
                     ->label('업로더')
@@ -50,6 +43,7 @@ class PhotosTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->reorderable('sort_order')
             ->filters([
                 //
             ])
