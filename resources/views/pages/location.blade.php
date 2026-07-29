@@ -17,13 +17,13 @@
 
 <x-layout.app title="오시는 길" description="브리즈번 주는교회 오시는 길과 예배 시간 안내입니다.">
 
-    <x-ui.page-header kicker="Visit · 오시는 길" title="오시는 길" />
+    <x-ui.page-header kicker="오시는 길 · Visit" title="오시는 길" />
 
-    <section class="container-site">
+    <section class="section-location-services container-site">
         <x-home.service-strip />
     </section>
 
-    <section class="container-site py-10 lg:py-14">
+    <section class="section-location-maps container-site pt-8 pb-12 lg:pt-10 lg:pb-16">
         <div class="grid gap-10 md:grid-cols-2 md:gap-8 lg:gap-11">
             @foreach ($locations as $location)
                 <div class="flex flex-col">

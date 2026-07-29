@@ -1,7 +1,7 @@
 <x-layout.app :title="$announcement->title">
 
-    <article class="container-site py-12 lg:py-16">
-        <x-ui.kicker>News · 교회 소식</x-ui.kicker>
+    <article class="section-news-article container-site py-12 lg:py-16">
+        <x-ui.kicker>교회 소식 · News</x-ui.kicker>
         <h1 class="mt-3 font-kr text-display-md font-medium">{{ $announcement->title }}</h1>
         <p class="mt-3 text-[12px] text-navy-400">{{ $announcement->published_at?->translatedFormat('Y년 n월 j일') }}</p>
 
@@ -18,7 +18,7 @@
         </div>
 
         <div class="mt-10 border-t border-line pt-6">
-            <a href="{{ route('news.index') }}" class="text-[13px] font-bold text-accent hover:text-accent-700">← 소식 전체 보기</a>
+            <a href="{{ route('news.index') }}" class="text-[11px] font-bold text-accent hover:text-accent-700">← 소식 전체 보기</a>
         </div>
     </article>
 

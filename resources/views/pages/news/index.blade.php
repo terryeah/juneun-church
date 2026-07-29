@@ -1,8 +1,8 @@
 <x-layout.app title="교회 소식" description="브리즈번 주는교회의 소식과 공지사항입니다.">
 
-    <x-ui.page-header kicker="News · 교회 소식" title="교회 소식" />
+    <x-ui.page-header kicker="교회 소식 · News" title="교회 소식" />
 
-    <section class="container-site pb-12 lg:pb-16">
+    <section class="section-news-list container-site pb-12 lg:pb-16">
         <div class="border-t-2 border-navy pt-3 lg:pt-5">
             @forelse ($announcements as $announcement)
                 <a href="{{ route('news.show', $announcement) }}" class="group block py-5">

@@ -13,8 +13,9 @@ class WorshipController extends Controller
     /**
      * Display the archive of recent worship recordings.
      *
-     * The latest recording is excluded because it is featured on the
-     * home page; the archive shows the six recordings before it.
+     * The archive always aims to show six recordings, three per row on
+     * desktop. The latest recording is excluded because it is featured
+     * on the home page, unless skipping it would leave fewer than six.
      */
     public function __invoke(): View
     {
@@ -22,9 +23,12 @@ class WorshipController extends Controller
             ->published()
             ->with('serviceType')
             ->orderByDesc('sermon_date')
-            ->skip(1)
-            ->take(6)
+            ->take(7)
             ->get();
+
+        $sermons = $sermons->count() > 6
+            ? $sermons->skip(1)->values()
+            : $sermons->take(6);
 
         return view('pages.worship', compact('sermons'));
     }

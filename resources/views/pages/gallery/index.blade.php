@@ -1,8 +1,8 @@
 <x-layout.app title="갤러리" description="브리즈번 주는교회의 활동 사진 앨범입니다.">
 
-    <x-ui.page-header kicker="Gallery · 갤러리" title="갤러리" />
+    <x-ui.page-header kicker="갤러리 · Gallery" title="갤러리" />
 
-    <section class="container-site pb-12 lg:pb-16">
+    <section class="section-gallery-albums container-site pb-12 lg:pb-16">
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($albums as $album)
                 <a href="{{ route('gallery.show', $album) }}" class="group block">

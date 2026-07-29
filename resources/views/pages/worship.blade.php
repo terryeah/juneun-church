@@ -1,10 +1,10 @@
 <x-layout.app title="예배 안내" description="브리즈번 주는교회 예배 시간과 지난 예배 영상을 안내합니다.">
 
-    <x-ui.page-header kicker="Worship · 예배 안내" title="함께 드리는 예배">
+    <x-ui.page-header kicker="예배 안내 · Worship" title="함께 드리는 예배">
         주는교회의 모든 예배는 누구에게나 열려 있습니다. 이번 주, 함께 예배해요.
     </x-ui.page-header>
 
-    <section class="container-site pb-12 lg:pb-16">
+    <section class="section-worship-archive container-site pb-12 lg:pb-16">
         <x-ui.kicker>지난 예배 · Archive</x-ui.kicker>
         <div class="mt-6 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             @forelse ($sermons as $sermon)
