@@ -3,23 +3,24 @@
         <x-filament::section>
             <x-slot name="heading">일별 상세</x-slot>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+            {{-- Styled inline because the panel's compiled CSS does not include arbitrary utilities from app views. --}}
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; font-variant-numeric: tabular-nums;">
                     <thead>
-                        <tr class="text-left text-gray-500 dark:text-gray-400">
-                            <th class="py-2 font-medium">날짜</th>
-                            <th class="py-2 text-right font-medium">실방문자</th>
-                            <th class="py-2 text-right font-medium">페이지뷰</th>
-                            <th class="py-2 text-right font-medium">총 요청 (봇 포함)</th>
+                        <tr>
+                            <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: rgb(148 158 178); border-bottom: 1px solid rgba(128, 138, 160, 0.3);">날짜</th>
+                            <th style="padding: 0.625rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: rgb(148 158 178); border-bottom: 1px solid rgba(128, 138, 160, 0.3);">실방문자</th>
+                            <th style="padding: 0.625rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: rgb(148 158 178); border-bottom: 1px solid rgba(128, 138, 160, 0.3);">페이지뷰</th>
+                            <th style="padding: 0.625rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: rgb(148 158 178); border-bottom: 1px solid rgba(128, 138, 160, 0.3);">총 요청 (봇 포함)</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-white/10">
+                    <tbody>
                         @foreach ($this->dailySnapshots as $snapshot)
                             <tr>
-                                <td class="py-2 tabular-nums">{{ $snapshot->snapshot_date->format('Y-m-d') }}</td>
-                                <td class="py-2 text-right tabular-nums">{{ number_format($snapshot->unique_visitors) }}</td>
-                                <td class="py-2 text-right tabular-nums">{{ number_format($snapshot->page_views) }}</td>
-                                <td class="py-2 text-right tabular-nums">{{ number_format($snapshot->requests) }}</td>
+                                <td style="padding: 0.625rem 1rem; text-align: left; border-bottom: 1px solid rgba(128, 138, 160, 0.15); white-space: nowrap;">{{ $snapshot->snapshot_date->format('Y-m-d') }}</td>
+                                <td style="padding: 0.625rem 1rem; text-align: right; border-bottom: 1px solid rgba(128, 138, 160, 0.15); font-weight: 600;">{{ number_format($snapshot->unique_visitors) }}</td>
+                                <td style="padding: 0.625rem 1rem; text-align: right; border-bottom: 1px solid rgba(128, 138, 160, 0.15);">{{ number_format($snapshot->page_views) }}</td>
+                                <td style="padding: 0.625rem 1rem; text-align: right; border-bottom: 1px solid rgba(128, 138, 160, 0.15); color: rgb(148 158 178);">{{ number_format($snapshot->requests) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
