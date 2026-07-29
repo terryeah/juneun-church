@@ -38,12 +38,12 @@
                     <dl class="mt-5 space-y-4">
                         <div class="flex items-baseline justify-between border-b border-line pb-3">
                             <dt class="text-[12px] uppercase tracking-[0.16em] text-navy-400">은행</dt>
-                            <dd class="min-w-0 text-right font-kr text-[15px] font-bold">{{ SiteSetting::get('giving_kr_bank') }}</dd>
+                            <dd class="min-w-0 text-right font-kr text-[15px] font-medium">{{ SiteSetting::get('giving_kr_bank') }}</dd>
                         </div>
                         @if (SiteSetting::get('giving_kr_account_name'))
                             <div class="flex items-baseline justify-between border-b border-line pb-3">
                                 <dt class="text-[12px] uppercase tracking-[0.16em] text-navy-400">예금주</dt>
-                                <dd class="min-w-0 text-right font-kr text-[15px] font-bold">{{ SiteSetting::get('giving_kr_account_name') }}</dd>
+                                <dd class="min-w-0 text-right font-kr text-[15px] font-medium">{{ SiteSetting::get('giving_kr_account_name') }}</dd>
                             </div>
                         @endif
                         <div class="flex items-baseline justify-between">
