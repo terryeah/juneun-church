@@ -153,8 +153,8 @@
     {{-- Sliding gallery preview band --}}
     <section class="section-moments-slider bg-navy pb-5">
         @if ($recentPhotos->isNotEmpty())
-            <div class="overflow-hidden" data-photo-slider>
-                <div class="flex gap-1 transition-transform duration-700 ease-in-out" data-slider-track>
+            <div class="touch-pan-y overflow-hidden" data-photo-slider>
+                <div class="flex cursor-grab select-none gap-1 transition-transform duration-700 ease-in-out active:cursor-grabbing" data-slider-track>
                     @foreach ($recentPhotos as $photo)
                         <a href="{{ route('gallery.show', $photo->album) }}" class="block w-[calc((100%-4px)/2)] shrink-0 overflow-hidden rounded-[10px] md:w-[calc((100%-8px)/3)] lg:w-[calc((100%-16px)/5)]">
                             <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
