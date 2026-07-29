@@ -9,11 +9,11 @@
             <img
                 src="{{ Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($announcement->featured_image) }}"
                 alt="{{ $announcement->title }}"
-                class="mt-8 w-full max-w-3xl object-cover rounded-media"
+                class="mx-auto mt-8 w-full max-w-3xl rounded-media object-cover"
             >
         @endif
 
-        <div class="prose-announcement mt-8 max-w-3xl border-t border-line pt-8 font-kr text-[15px] leading-relaxed text-navy-700 [&_a]:text-accent [&_a]:underline [&_h2]:mt-6 [&_h2]:font-medium [&_h2]:text-navy [&_h3]:mt-4 [&_h3]:font-medium [&_h3]:text-navy [&_p]:mt-4">
+        <div class="prose-announcement mx-auto mt-8 max-w-3xl border-t border-line pt-8 font-kr text-[15px] leading-relaxed text-navy-700 [&_a]:text-accent [&_a]:underline [&_h2]:mt-6 [&_h2]:font-medium [&_h2]:text-navy [&_h3]:mt-4 [&_h3]:font-medium [&_h3]:text-navy [&_p]:mt-4">
             {!! $announcement->content !!}
         </div>
 
