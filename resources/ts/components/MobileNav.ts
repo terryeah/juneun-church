@@ -46,6 +46,7 @@ export class MobileNav {
      */
     private setOpen(open: boolean): void {
         this.toggle.setAttribute('aria-expanded', String(open));
+        this.toggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
         this.menu?.classList.toggle('hidden', !open);
         document.body.classList.toggle('overflow-hidden', open);
 

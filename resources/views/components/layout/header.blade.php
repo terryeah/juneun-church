@@ -8,7 +8,7 @@
         ['label' => '주보', 'href' => route('bulletins'), 'active' => request()->routeIs('bulletins')],
         ['label' => '갤러리', 'href' => route('gallery.index'), 'active' => request()->routeIs('gallery.*')],
         ['label' => '섬기는 사람들', 'href' => route('people'), 'active' => request()->routeIs('people')],
-        ['label' => '온라인헌금', 'href' => route('giving'), 'active' => request()->routeIs('giving')],
+        ['label' => '온라인 헌금', 'href' => route('giving'), 'active' => request()->routeIs('giving')],
         ['label' => '오시는 길', 'href' => route('location'), 'active' => request()->routeIs('location')],
     ];
 @endphp
@@ -31,22 +31,28 @@
 
         <button
             type="button"
-            class="rounded-nav p-2 text-navy hover:bg-accent-100 lg:hidden"
+            class="group rounded-nav p-2 text-navy hover:bg-accent-100 lg:hidden"
             aria-expanded="false"
             aria-controls="mobile-menu"
             aria-label="메뉴 열기"
             data-mobile-nav-toggle
         >
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/>
-            </svg>
+            <span class="relative block h-6 w-6">
+                <svg class="absolute inset-0 h-6 w-6 transition-all duration-300 ease-in-out group-aria-expanded:-rotate-90 group-aria-expanded:scale-75 group-aria-expanded:opacity-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/>
+                </svg>
+                <svg class="absolute inset-0 h-6 w-6 rotate-90 scale-75 opacity-0 transition-all duration-300 ease-in-out group-aria-expanded:rotate-0 group-aria-expanded:scale-100 group-aria-expanded:opacity-100" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path stroke-linecap="round" d="m9.2 9.2 5.6 5.6m0-5.6-5.6 5.6"/>
+                </svg>
+            </span>
         </button>
     </div>
 
     <nav id="mobile-menu" class="hidden fixed inset-0 top-[74px] z-40 bg-paper lg:hidden" aria-label="모바일 메뉴" data-mobile-nav-menu>
         <div class="container-site divide-y divide-line py-4">
             @foreach ($navItems as $item)
-                <div><x-layout.nav-link :href="$item['href']" :active="$item['active']" :mobile="true">{{ $item['label'] }}</x-layout.nav-link></div>
+                <div class="py-1.5"><x-layout.nav-link :href="$item['href']" :active="$item['active']" :mobile="true">{{ $item['label'] }}</x-layout.nav-link></div>
             @endforeach
         </div>
     </nav>
