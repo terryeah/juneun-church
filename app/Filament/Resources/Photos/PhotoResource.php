@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Photos;
 
-use App\Filament\Clusters\Media\MediaCluster;
 use App\Filament\Resources\Photos\Pages\CreatePhoto;
 use App\Filament\Resources\Photos\Pages\EditPhoto;
 use App\Filament\Resources\Photos\Pages\ListPhotos;
@@ -19,9 +18,8 @@ class PhotoResource extends Resource
 {
     protected static ?string $model = Photo::class;
 
-    protected static ?string $cluster = MediaCluster::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCamera;
 
     protected static ?string $navigationLabel = '사진';
 

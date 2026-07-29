@@ -22,6 +22,11 @@ class SermonResource extends Resource
 
     protected static ?string $navigationLabel = '예배 영상';
 
+    /**
+     * Position of this item in the sidebar navigation.
+     */
+    protected static ?int $navigationSort = 5;
+
     protected static ?string $modelLabel = '예배 영상';
 
     protected static ?string $pluralModelLabel = '예배 영상';

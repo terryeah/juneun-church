@@ -20,11 +20,16 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static ?string $navigationLabel = '사용자';
+    protected static ?string $navigationLabel = '사이트 유저';
 
-    protected static ?string $modelLabel = '사용자';
+    /**
+     * Position of this item in the sidebar navigation.
+     */
+    protected static ?int $navigationSort = 11;
 
-    protected static ?string $pluralModelLabel = '사용자';
+    protected static ?string $modelLabel = '사이트 유저';
+
+    protected static ?string $pluralModelLabel = '사이트 유저';
 
     public static function form(Schema $schema): Schema
     {

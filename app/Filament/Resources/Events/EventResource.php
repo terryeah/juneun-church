@@ -22,6 +22,11 @@ class EventResource extends Resource
 
     protected static ?string $navigationLabel = '교회 행사';
 
+    /**
+     * Position of this item in the sidebar navigation.
+     */
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $modelLabel = '행사';
 
     protected static ?string $pluralModelLabel = '행사';

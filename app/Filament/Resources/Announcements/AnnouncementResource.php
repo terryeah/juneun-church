@@ -22,6 +22,11 @@ class AnnouncementResource extends Resource
 
     protected static ?string $navigationLabel = '교회 소식';
 
+    /**
+     * Position of this item in the sidebar navigation.
+     */
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $modelLabel = '소식';
 
     protected static ?string $pluralModelLabel = '소식';

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Albums;
 
-use App\Filament\Clusters\Media\MediaCluster;
 use App\Filament\Resources\Albums\Pages\CreateAlbum;
 use App\Filament\Resources\Albums\Pages\EditAlbum;
 use App\Filament\Resources\Albums\Pages\ListAlbums;
@@ -19,7 +18,6 @@ class AlbumResource extends Resource
 {
     protected static ?string $model = Album::class;
 
-    protected static ?string $cluster = MediaCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 

@@ -22,6 +22,11 @@ class StaffMemberResource extends Resource
 
     protected static ?string $navigationLabel = '섬기는 사람들';
 
+    /**
+     * Position of this item in the sidebar navigation.
+     */
+    protected static ?int $navigationSort = 10;
+
     protected static ?string $modelLabel = '구성원';
 
     protected static ?string $pluralModelLabel = '구성원';
