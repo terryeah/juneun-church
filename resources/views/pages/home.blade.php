@@ -108,17 +108,19 @@
 
     {{-- Meal sharing (반찬 나눔) --}}
     <section class="section-meal-sharing container-site py-8 md:py-10 lg:py-14">
-        <div class="grid gap-16 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
+        <div class="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
             <div class="order-2 flex items-center lg:order-1">
-                @if ($mealPhoto)
-                    <img src="{{ $mealPhoto->thumbnailUrl() }}" alt="함께 음식을 만들며 나누는 주는교회 식구들" class="aspect-video w-full rounded-media object-cover" loading="lazy">
-                @else
-                    <x-ui.photo-placeholder label="반찬 나눔 · Meal Sharing" class="aspect-video w-full" />
-                @endif
+                <a href="{{ route('gallery.show', 'meal-sharing') }}" class="block w-full">
+                    @if ($mealPhoto)
+                        <img src="{{ $mealPhoto->thumbnailUrl() }}" alt="함께 음식을 만들며 나누는 주는교회 식구들" class="aspect-video w-full rounded-media object-cover" loading="lazy">
+                    @else
+                        <x-ui.photo-placeholder label="반찬 나눔 · Meal Sharing" class="aspect-video w-full" />
+                    @endif
+                </a>
             </div>
             <div class="order-1 lg:order-2 lg:border-l lg:border-line lg:pl-10">
                 <x-ui.kicker>반찬 나눔 · Meal Sharing</x-ui.kicker>
-                <h2 class="mt-3 font-kr text-[1.7rem] font-medium leading-snug">정성껏 준비한 반찬을<br>이웃과 나눕니다</h2>
+                <a href="{{ route('gallery.show', 'meal-sharing') }}" class="block"><h2 class="mt-3 font-kr text-[1.7rem] font-medium leading-snug transition-colors duration-300 hover:text-accent">정성껏 준비한 반찬을<br>이웃과 나눕니다</h2></a>
                 <p class="mt-4 font-kr text-[13.5px] leading-relaxed text-navy-700">
                     주는교회는 매월 정성껏 준비한 반찬을 이웃과 나누며 받은 은혜를 흘려보냅니다.
                     누구나 함께할 수 있습니다.

@@ -31,10 +31,10 @@
 
 {{-- Four equal service-time columns, divided by 1px cells on wide screens. --}}
 <div class="border-y border-line py-6 lg:py-[26px]">
-    <div class="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr] lg:gap-[30px]">
+    <div class="grid gap-6 md:grid-cols-2 md:gap-8 xl:grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr] xl:gap-[30px]">
         @foreach ($services as $service)
             @if (! $loop->first)
-                <div class="hidden bg-line lg:block"></div>
+                <div class="hidden bg-line xl:block"></div>
             @endif
             <div>
                 <x-ui.kicker>{{ $service['name'] }}</x-ui.kicker>

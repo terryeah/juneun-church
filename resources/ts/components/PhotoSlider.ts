@@ -128,6 +128,12 @@ export class PhotoSlider {
 
             if (target === this.currentIndex && Math.abs(delta) > 40) {
                 target += delta < 0 ? 1 : -1;
+
+                if (target > this.maxIndex()) {
+                    target = 0;
+                } else if (target < 0) {
+                    target = this.maxIndex();
+                }
             }
 
             this.goTo(target);
