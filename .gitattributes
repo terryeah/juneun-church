@@ -9,3 +9,10 @@
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
+
+# Keep GitHub's language statistics focused on the application code.
+design-assets/** linguist-vendored
+public/fonts/** linguist-vendored
+*.blade.php linguist-language=Blade
+*.woff binary
+*.woff2 binary
