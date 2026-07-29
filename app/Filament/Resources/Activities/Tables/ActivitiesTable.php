@@ -23,7 +23,7 @@ class ActivitiesTable
             ->columns([
                 TextColumn::make('created_at')
                     ->label('일시')
-                    ->dateTime('Y-m-d, h:i:s A', 'Australia/Brisbane')
+                    ->dateTime('Y-m-d, H:i:s', 'Australia/Brisbane')
                     ->sortable(),
                 TextColumn::make('causer.name')
                     ->label('사용자')
@@ -71,7 +71,7 @@ class ActivitiesTable
                     ->schema([
                         TextEntry::make('created_at')
                             ->label('일시')
-                            ->dateTime('Y-m-d, h:i:s A', 'Australia/Brisbane'),
+                            ->dateTime('Y-m-d, H:i:s', 'Australia/Brisbane'),
                         TextEntry::make('causer.name')
                             ->label('사용자')
                             ->placeholder('시스템'),
