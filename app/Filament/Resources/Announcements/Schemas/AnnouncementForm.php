@@ -35,8 +35,7 @@ class AnnouncementForm
                     ->image()
                     ->disk(config('filesystems.media'))
                     ->directory('announcements')
-                    ->visibility('public')
-                    ->columnSpanFull(),
+                    ->visibility('public'),
                 Toggle::make('is_published')
                     ->label('게시')
                     ->default(true),

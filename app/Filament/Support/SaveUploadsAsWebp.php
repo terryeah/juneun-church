@@ -35,14 +35,18 @@ class SaveUploadsAsWebp
     private const MAX_DIMENSION = 2560;
 
     /**
-     * Register the behaviour for all FileUpload components.
+     * Register the behaviour for all FileUpload components, along with
+     * a generous image preview height so uploaded photos fill the
+     * taller drop area instead of floating in it.
      */
     public static function register(): void
     {
         FileUpload::configureUsing(function (FileUpload $component): void {
-            $component->saveUploadedFileUsing(
-                static fn (FileUpload $component, TemporaryUploadedFile $file): string => static::store($component, $file),
-            );
+            $component
+                ->imagePreviewHeight('220')
+                ->saveUploadedFileUsing(
+                    static fn (FileUpload $component, TemporaryUploadedFile $file): string => static::store($component, $file),
+                );
         });
     }
 
