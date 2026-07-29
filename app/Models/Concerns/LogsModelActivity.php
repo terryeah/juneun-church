@@ -26,4 +26,16 @@ trait LogsModelActivity
             ->dontLogEmptyChanges()
             ->logExcept(['password', 'remember_token']);
     }
+
+    /**
+     * Attach the request IP address to every recorded activity.
+     */
+    public function tapActivity(\Spatie\Activitylog\Models\Activity $activity, string $eventName): void
+    {
+        if (app()->runningInConsole()) {
+            return;
+        }
+
+        $activity->properties = $activity->properties->put('ip', request()->ip());
+    }
 }

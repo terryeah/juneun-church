@@ -35,7 +35,10 @@ class AppServiceProvider extends ServiceProvider
 
         Table::configureUsing(fn (Table $table) => $table
             ->defaultPaginationPageOption(10)
-            ->defaultSort('created_at', 'desc'));
+            ->defaultSort('created_at', 'desc')
+            ->defaultDateDisplayFormat('Y-m-d')
+            ->defaultDateTimeDisplayFormat('Y-m-d, H:i:s')
+            ->defaultTimeDisplayFormat('H:i'));
         SaveUploadsAsWebp::register();
 
         $this->registerAnalyticsWidgets();
@@ -64,6 +67,7 @@ class AppServiceProvider extends ServiceProvider
             activity('auth')
                 ->causedBy($event->user)
                 ->event('login')
+                ->withProperties(['ip' => request()->ip()])
                 ->log('로그인');
         });
 
@@ -72,6 +76,7 @@ class AppServiceProvider extends ServiceProvider
                 activity('auth')
                     ->causedBy($event->user)
                     ->event('logout')
+                    ->withProperties(['ip' => request()->ip()])
                     ->log('로그아웃');
             }
         });
@@ -79,7 +84,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(function (Failed $event): void {
             activity('auth')
                 ->event('failed_login')
-                ->withProperties(['email' => $event->credentials['email'] ?? null])
+                ->withProperties(['email' => $event->credentials['email'] ?? null, 'ip' => request()->ip()])
                 ->log('로그인 실패');
         });
     }

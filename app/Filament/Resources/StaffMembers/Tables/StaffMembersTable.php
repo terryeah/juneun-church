@@ -30,7 +30,6 @@ class StaffMembersTable
                     ->searchable(),
                 TextColumn::make('email')
                     ->label('이메일')
-                    ->label('Email address')
                     ->searchable(),
                 TextColumn::make('phone')
                     ->label('전화번호')
@@ -40,12 +39,12 @@ class StaffMembersTable
                     ->boolean(),
                 TextColumn::make('created_at')
                     ->label('생성일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('수정일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

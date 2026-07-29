@@ -15,6 +15,10 @@
     <meta property="og:title" content="{{ $title ?? config('app.name') }}">
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <meta name="theme-color" content="#16223c">
     <link rel="preconnect" href="https://media.juneun.com">
     <link rel="preconnect" href="https://i.ytimg.com">
     <link rel="preload" href="/fonts/GmarketSansMedium.woff2" as="font" type="font/woff2" crossorigin>

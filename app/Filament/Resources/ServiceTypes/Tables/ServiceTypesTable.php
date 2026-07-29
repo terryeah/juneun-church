@@ -20,12 +20,12 @@ class ServiceTypesTable
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('수정일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

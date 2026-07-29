@@ -23,7 +23,7 @@ class ActivitiesTable
             ->columns([
                 TextColumn::make('created_at')
                     ->label('일시')
-                    ->dateTime('Y-m-d, H:i:s', 'Australia/Brisbane')
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('causer.name')
                     ->label('사용자')
@@ -43,10 +43,9 @@ class ActivitiesTable
                     ->formatStateUsing(fn (?string $state, Activity $record): string => $state
                         ? class_basename($state).' #'.$record->subject_id
                         : '-'),
-                TextColumn::make('description')
-                    ->label('내용')
-                    ->searchable()
-                    ->limit(60),
+                TextColumn::make('properties.ip')
+                    ->label('IP 주소')
+                    ->placeholder('-'),
             ])
             ->filters([
                 SelectFilter::make('event')
@@ -71,7 +70,7 @@ class ActivitiesTable
                     ->schema([
                         TextEntry::make('created_at')
                             ->label('일시')
-                            ->dateTime('Y-m-d, H:i:s', 'Australia/Brisbane'),
+                            ->dateTime(),
                         TextEntry::make('causer.name')
                             ->label('사용자')
                             ->placeholder('시스템'),

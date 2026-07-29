@@ -25,22 +25,18 @@ class BulletinsTable
                     ->label('발행일')
                     ->date('Y-m-d')
                     ->sortable(),
-                TextColumn::make('created_by')
-                    ->label('작성자')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('author.name')
                     ->label('작성자')
                     ->default('시스템')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('수정일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

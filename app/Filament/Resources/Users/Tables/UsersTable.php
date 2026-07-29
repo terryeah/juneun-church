@@ -25,21 +25,21 @@ class UsersTable
                     ->label('롤')
                     ->badge(),
                 TextColumn::make('creator.name')
-                    ->label('만든 사람')
+                    ->label('작성자')
                     ->default('시스템')
                     ->sortable(),
                 TextColumn::make('email_verified_at')
                     ->label('이메일 인증일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('수정일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

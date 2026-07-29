@@ -31,15 +31,11 @@ class AnnouncementsTable
                     ->boolean(),
                 TextColumn::make('published_at')
                     ->label('게시 일시')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('expires_at')
                     ->label('게시 종료')
-                    ->dateTime('Y-m-d, h:i:s A')
-                    ->sortable(),
-                TextColumn::make('created_by')
-                    ->label('작성자')
-                    ->numeric()
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('author.name')
                     ->label('작성자')
@@ -47,12 +43,12 @@ class AnnouncementsTable
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('수정일')
-                    ->dateTime('Y-m-d, h:i:s A')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
