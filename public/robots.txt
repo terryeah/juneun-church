@@ -1,2 +1,5 @@
 User-agent: *
-Disallow:
+Disallow: /admin
+Disallow: /livewire
+
+Sitemap: https://juneun.com/sitemap.xml

@@ -12,6 +12,7 @@ use App\Http\Controllers\WorshipController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/sitemap.xml', App\Http\Controllers\SitemapController::class)->name('sitemap');
 Route::get('/worship', WorshipController::class)->name('worship');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{announcement}', [NewsController::class, 'show'])->name('news.show');
