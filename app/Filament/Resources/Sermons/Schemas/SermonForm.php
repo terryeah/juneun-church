@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Sermons\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -48,7 +49,24 @@ class SermonForm
                     ->maxLength(255),
                 Textarea::make('description')
                     ->label('설명')
-                    ->columnSpanFull(),
+                    ->rows(9),
+                FileUpload::make('thumbnail_path')
+                    ->label('썸네일')
+                    ->image()
+                    ->disk(config('filesystems.media'))
+                    ->directory('youtube')
+                    ->visibility('public')
+                    ->saveUploadedFileUsing(function (\Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file): string {
+                        $binary = (string) file_get_contents($file->getRealPath());
+                        $path = 'youtube/thumbnail-'.now('Australia/Brisbane')->format('Y-m-d-His');
+                        \Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->put(
+                            $path,
+                            \App\Filament\Support\SaveUploadsAsWebp::toWebp($binary) ?? $binary,
+                            ['ContentType' => 'image/webp', 'CacheControl' => 'public, max-age=31536000, immutable'],
+                        );
+
+                        return $path;
+                    }),
                 Toggle::make('is_published')
                     ->label('게시')
                     ->default(true),

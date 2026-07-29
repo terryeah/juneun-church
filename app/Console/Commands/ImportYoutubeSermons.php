@@ -83,6 +83,7 @@ class ImportYoutubeSermons extends Command
                 'youtube_video_id' => $entry['video_id'],
                 'preacher' => $parts['preacher'],
                 'sermon_date' => $entry['published'],
+                'thumbnail_path' => \App\Services\YoutubeThumbnail::store($entry['video_id'], $entry['published']),
                 'service_type_id' => $serviceTypeId,
                 'scripture_reference' => $parts['scripture'],
                 'is_published' => true,

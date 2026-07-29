@@ -4,11 +4,11 @@
         주는교회의 모든 예배는 누구에게나 열려 있습니다. 이번 주, 함께 예배해요.
     </x-ui.page-header>
 
-    <section class="section-worship-services container-site">
+    <section class="section-worship-services container-site pb-8 md:pb-10 lg:pb-14">
         <x-home.service-strip />
     </section>
 
-    <section class="section-worship-groups container-site pt-8 lg:pt-10">
+    <section class="section-worship-groups container-site py-8 md:py-10 lg:py-14">
         @php
             $fellowship = [
                 ['name' => '남/여전도회', 'note' => '주일예배 후 · 매월 첫째 주'],
@@ -55,7 +55,7 @@
         </div>
     </section>
 
-    <section class="section-worship-archive container-site pt-8 pb-12 lg:pt-10 lg:pb-16">
+    <section class="section-worship-archive container-site pt-8 pb-12 md:pt-10 lg:pt-14 lg:pb-16">
         <x-ui.kicker>지난 예배 · Archive</x-ui.kicker>
         <div class="mt-6 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             @forelse ($sermons as $sermon)
