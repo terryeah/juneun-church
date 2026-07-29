@@ -16,7 +16,8 @@ class BulletinsTable
             ->columns([
                 TextColumn::make('title')
                     ->label('제목')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('file_path')
                     ->label('파일')
                     ->searchable(),
@@ -27,6 +28,10 @@ class BulletinsTable
                 TextColumn::make('created_by')
                     ->label('작성자')
                     ->numeric()
+                    ->sortable(),
+                TextColumn::make('author.name')
+                    ->label('작성자')
+                    ->default('시스템')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')

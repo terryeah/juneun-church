@@ -16,7 +16,8 @@ class PositionsTable
             ->columns([
                 TextColumn::make('name')
                     ->label('이름')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('category')
                     ->label('분류')
                     ->searchable(),

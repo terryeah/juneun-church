@@ -16,7 +16,8 @@ class UsersTable
             ->columns([
                 TextColumn::make('name')
                     ->label('이름')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('email')
                     ->label('이메일')
                     ->label('Email address')

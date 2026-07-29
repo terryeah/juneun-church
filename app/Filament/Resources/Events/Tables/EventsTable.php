@@ -17,7 +17,8 @@ class EventsTable
             ->columns([
                 TextColumn::make('title')
                     ->label('제목')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('event_date')
                     ->label('행사일')
                     ->date('Y-m-d')
@@ -39,6 +40,10 @@ class EventsTable
                 TextColumn::make('created_by')
                     ->label('작성자')
                     ->numeric()
+                    ->sortable(),
+                TextColumn::make('author.name')
+                    ->label('작성자')
+                    ->default('시스템')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')

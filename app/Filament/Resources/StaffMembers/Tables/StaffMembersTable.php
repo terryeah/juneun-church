@@ -17,7 +17,8 @@ class StaffMembersTable
             ->columns([
                 TextColumn::make('name')
                     ->label('이름')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('position.name')
                     ->label('직분')
                     ->searchable(),

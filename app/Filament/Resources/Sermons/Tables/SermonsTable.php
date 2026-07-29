@@ -17,7 +17,8 @@ class SermonsTable
             ->columns([
                 TextColumn::make('title')
                     ->label('제목')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('youtube_video_id')
                     ->label('YouTube ID')
                     ->searchable(),
@@ -40,6 +41,10 @@ class SermonsTable
                 TextColumn::make('created_by')
                     ->label('작성자')
                     ->numeric()
+                    ->sortable(),
+                TextColumn::make('author.name')
+                    ->label('작성자')
+                    ->default('시스템')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')

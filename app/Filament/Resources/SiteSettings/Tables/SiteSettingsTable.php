@@ -16,9 +16,15 @@ class SiteSettingsTable
             ->columns([
                 TextColumn::make('key')
                     ->label('키')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('value')
+                    ->label('설정값')
+                    ->limit(60)
                     ->searchable(),
                 TextColumn::make('group')
                     ->label('그룹')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label('생성일')

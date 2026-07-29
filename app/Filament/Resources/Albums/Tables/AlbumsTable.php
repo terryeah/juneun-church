@@ -17,7 +17,8 @@ class AlbumsTable
             ->columns([
                 TextColumn::make('title')
                     ->label('앨범명')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('slug')
                     ->label('슬러그')
                     ->searchable(),
@@ -34,6 +35,10 @@ class AlbumsTable
                 TextColumn::make('created_by')
                     ->label('작성자')
                     ->numeric()
+                    ->sortable(),
+                TextColumn::make('author.name')
+                    ->label('작성자')
+                    ->default('시스템')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('생성일')

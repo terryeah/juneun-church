@@ -16,7 +16,8 @@ class ServiceTypesTable
             ->columns([
                 TextColumn::make('name')
                     ->label('이름')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('sort_order')
                     ->label('정렬 순서')
                     ->numeric()
