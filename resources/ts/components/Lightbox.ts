@@ -39,9 +39,12 @@ export class Lightbox {
             'fixed inset-0 z-50 hidden items-center justify-center bg-navy-900/95 p-4';
         this.overlay.setAttribute('role', 'dialog');
         this.overlay.setAttribute('aria-modal', 'true');
+        this.overlay.style.opacity = '0';
+        this.overlay.style.transition = 'opacity 280ms ease';
 
         this.image = document.createElement('img');
         this.image.className = 'max-h-full max-w-full rounded-media';
+        this.image.style.transition = 'opacity 260ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1)';
         this.overlay.appendChild(this.image);
 
         const close = this.overlayButton('✕', 'absolute right-4 top-4', '닫기');
@@ -166,19 +169,33 @@ export class Lightbox {
      */
     private open(index: number): void {
         this.currentIndex = index;
-        this.render();
+        this.render(0);
         this.overlay?.classList.remove('hidden');
         this.overlay?.classList.add('flex');
         document.body.classList.add('overflow-hidden');
+
+        requestAnimationFrame(() => {
+            if (this.overlay) {
+                this.overlay.style.opacity = '1';
+            }
+        });
     }
 
     /**
-     * Closes the overlay and restores scrolling.
+     * Closes the overlay with a fade and restores scrolling.
      */
     private close(): void {
-        this.overlay?.classList.add('hidden');
-        this.overlay?.classList.remove('flex');
+        if (!this.overlay) {
+            return;
+        }
+
+        this.overlay.style.opacity = '0';
         document.body.classList.remove('overflow-hidden');
+
+        window.setTimeout(() => {
+            this.overlay?.classList.add('hidden');
+            this.overlay?.classList.remove('flex');
+        }, 280);
     }
 
     /**
@@ -189,17 +206,50 @@ export class Lightbox {
     private step(delta: number): void {
         const links = this.links();
         this.currentIndex = (this.currentIndex + delta + links.length) % links.length;
-        this.render();
+        this.render(delta);
     }
 
     /**
-     * Shows the photo at the current index.
+     * Shows the photo at the current index, easing the outgoing image
+     * away and sliding the incoming one in from the travel direction.
+     *
+     * @param direction - -1 from the left, +1 from the right, 0 still
      */
-    private render(): void {
+    private render(direction: number): void {
         const link = this.links()[this.currentIndex];
-        if (link && this.image) {
-            this.image.src = link.href;
-            this.image.alt = link.querySelector('img')?.alt ?? '';
+        const image = this.image;
+
+        if (!link || !image) {
+            return;
         }
+
+        image.style.opacity = '0';
+        image.style.transform = direction === 0 ? 'scale(0.965)' : `translateX(${direction * -28}px) scale(0.985)`;
+
+        const swap = (): void => {
+            const reveal = (): void => {
+                image.onload = null;
+                image.style.transition = 'none';
+                image.style.transform = direction === 0 ? 'scale(0.965)' : `translateX(${direction * 28}px) scale(0.985)`;
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        image.style.transition = 'opacity 260ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1)';
+                        image.style.opacity = '1';
+                        image.style.transform = 'translateX(0) scale(1)';
+                    });
+                });
+            };
+
+            image.onload = reveal;
+            image.src = link.href;
+            image.alt = link.querySelector('img')?.alt ?? '';
+
+            if (image.complete) {
+                reveal();
+            }
+        };
+
+        window.setTimeout(swap, direction === 0 ? 0 : 150);
     }
 }
