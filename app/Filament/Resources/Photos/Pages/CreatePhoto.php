@@ -11,6 +11,8 @@ use Filament\Resources\Pages\CreateRecord;
  */
 class CreatePhoto extends CreateRecord
 {
+    use \App\Filament\Resources\Photos\Concerns\LimitsSliderPicks;
+
     protected static string $resource = PhotoResource::class;
 
     /**
@@ -50,6 +52,8 @@ class CreatePhoto extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $this->guardSliderLimit($data);
+
         $data['filename'] = basename((string) $data['path']);
         $data['original_filename'] = $data['original_filename'] ?? $data['filename'];
         $data['uploaded_by'] = auth()->id();

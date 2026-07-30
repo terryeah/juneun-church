@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -28,6 +29,9 @@ class PhotosTable
                     ->label('파일 크기')
                     ->formatStateUsing(fn (?int $state): string => $state ? number_format($state / 1048576, 2).' MB' : '-')
                     ->sortable(),
+                IconColumn::make('featured_in_slider')
+                    ->label('홈 슬라이더')
+                    ->boolean(),
                 TextColumn::make('uploader.name')
                     ->label('업로더')
                     ->default('시스템')

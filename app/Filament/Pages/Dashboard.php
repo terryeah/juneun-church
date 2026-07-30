@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\ContentStatsWidget;
+use App\Filament\Widgets\QuickActionsWidget;
 use App\Filament\Widgets\RecentActivityWidget;
 use App\Filament\Widgets\UpcomingEventsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -32,6 +33,7 @@ class Dashboard extends BaseDashboard
     {
         return [
             AccountWidget::class,
+            QuickActionsWidget::class,
             ContentStatsWidget::class,
             UpcomingEventsWidget::class,
             RecentActivityWidget::class,

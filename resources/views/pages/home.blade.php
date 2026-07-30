@@ -15,11 +15,13 @@
                 </div>
             </div>
             <div class="lg:flex-1">
-                @if ($heroPhoto)
-                    <img src="{{ $heroPhoto->thumbnailUrl() }}" alt="함께 예배하는 주는교회 성도들" class="h-[300px] w-full rounded-media object-cover md:h-[420px]" fetchpriority="high" decoding="async">
-                @else
-                    <x-ui.photo-placeholder label="Worship · Congregation" class="h-[300px] md:h-[420px]" />
-                @endif
+                <a href="{{ route('gallery.index') }}" class="block overflow-hidden rounded-media">
+                    @if ($heroPhoto)
+                        <img src="{{ $heroPhoto->thumbnailUrl() }}" alt="함께 예배하는 주는교회 성도들" class="h-[300px] w-full object-cover md:h-[420px]" fetchpriority="high" decoding="async">
+                    @else
+                        <x-ui.photo-placeholder label="Worship · Congregation" class="h-[300px] md:h-[420px]" />
+                    @endif
+                </a>
             </div>
         </div>
     </section>

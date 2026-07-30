@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
     'file_size',
     'caption',
     'sort_order',
+    'featured_in_slider',
     'uploaded_by',
 ])]
 class Photo extends Model

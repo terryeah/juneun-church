@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Photos\Schemas;
 
 use App\Models\Album;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -29,6 +30,9 @@ class PhotoForm
                     ->relationship('album', 'title')
                     ->live()
                     ->required(),
+                Checkbox::make('featured_in_slider')
+                    ->label('홈 슬라이더에 표시')
+                    ->helperText('최대 10장까지 선택할 수 있습니다.'),
                 FileUpload::make('path')
                     ->label('사진')
                     ->image()
