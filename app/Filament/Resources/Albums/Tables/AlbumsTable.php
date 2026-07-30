@@ -6,7 +6,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 class AlbumsTable
@@ -15,6 +17,19 @@ class AlbumsTable
     {
         return $table
             ->columns([
+                ImageColumn::make('cover_photo_path')
+                    ->label('커버 사진')
+                    ->disk(config('filesystems.media'))
+                    ->state(function (\App\Models\Album $record): ?string {
+                        if (! $record->cover_photo_path) {
+                            return null;
+                        }
+
+                        $photo = \App\Models\Photo::query()->where('path', $record->cover_photo_path)->first();
+
+                        return $photo?->thumbnail_path ?? $record->cover_photo_path;
+                    })
+                    ->imageHeight(44),
                 TextColumn::make('title')
                     ->label('앨범명')
                     ->searchable()
@@ -26,12 +41,8 @@ class AlbumsTable
                     ->label('행사 날짜')
                     ->date('Y-m-d')
                     ->sortable(),
-                TextColumn::make('cover_photo_path')
-                    ->label('커버 사진')
-                    ->searchable(),
-                IconColumn::make('is_published')
-                    ->label('게시')
-                    ->boolean(),
+                ToggleColumn::make('is_published')
+                    ->label('게시'),
                 TextColumn::make('author.name')
                     ->label('작성자')
                     ->default('시스템')

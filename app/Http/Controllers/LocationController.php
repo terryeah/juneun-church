@@ -14,6 +14,9 @@ class LocationController extends Controller
      */
     public function __invoke(): View
     {
-        return view('pages.location');
+        /** The pick-up notice graphic from the church Instagram */
+        $pickupPhoto = \App\Models\Photo::query()->where('filename', 'DYzJDV_EyAf-1.webp')->first();
+
+        return view('pages.location', compact('pickupPhoto'));
     }
 }

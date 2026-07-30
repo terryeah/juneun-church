@@ -108,33 +108,37 @@
         </div>
     </section>
 
-    {{-- Meal sharing (반찬 나눔) --}}
-    <section class="section-meal-sharing container-site py-8 md:py-10 lg:py-14">
+    {{-- Highlight: the church's current featured happening --}}
+    <section class="section-highlight container-site py-8 md:py-10 lg:py-14">
+        @php
+            $highlightLink = \App\Models\SiteSetting::get('highlight_link_album')
+                ? route('gallery.show', \App\Models\SiteSetting::get('highlight_link_album'))
+                : route('gallery.index');
+        @endphp
         <div class="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
             <div class="order-2 flex items-center lg:order-1">
-                <a href="{{ route('gallery.show', 'meal-sharing') }}" class="block w-full overflow-hidden rounded-media">
-                    @if ($mealPhoto)
-                        <img src="{{ $mealPhoto->thumbnailUrl() }}" alt="함께 음식을 만들며 나누는 주는교회 식구들" class="aspect-video w-full rounded-media object-cover" loading="lazy">
+                <a href="{{ $highlightLink }}" class="block w-full overflow-hidden rounded-media">
+                    @if ($highlightPhoto)
+                        <img src="{{ $highlightPhoto->thumbnailUrl() }}" alt="{{ \App\Models\SiteSetting::get('highlight_title') }}" class="aspect-video w-full object-cover" loading="lazy">
                     @else
-                        <x-ui.photo-placeholder label="반찬 나눔 · Meal Sharing" class="aspect-video w-full" />
+                        <x-ui.photo-placeholder label="하이라이트 · Highlight" class="aspect-video w-full" />
                     @endif
                 </a>
             </div>
             <div class="order-1 lg:order-2 lg:border-l lg:border-line lg:pl-10">
-                <x-ui.kicker>반찬 나눔 · Meal Sharing</x-ui.kicker>
-                <a href="{{ route('gallery.show', 'meal-sharing') }}" class="block"><h2 class="mt-3 font-kr text-[1.7rem] font-medium leading-snug transition-colors duration-300 hover:text-accent">정성껏 준비한 반찬을<br>이웃과 나눕니다</h2></a>
+                <x-ui.kicker>하이라이트 · Highlight</x-ui.kicker>
+                <a href="{{ $highlightLink }}" class="block"><h2 class="mt-3 font-kr text-[1.7rem] font-medium leading-snug transition-colors duration-300 hover:text-accent">{!! nl2br(e(\App\Models\SiteSetting::get('highlight_title'))) !!}</h2></a>
                 <p class="mt-4 font-kr text-[13.5px] leading-relaxed text-navy-700">
-                    주는교회는 매월 정성껏 준비한 반찬을 이웃과 나누며 받은 은혜를 흘려보냅니다.
-                    누구나 함께할 수 있습니다.
+                    {{ \App\Models\SiteSetting::get('highlight_body') }}
                 </p>
                 <div class="mt-6 grid grid-cols-2 border-t border-line pt-5">
                     <div>
-                        <p class="font-kr text-display-sm font-medium">71명</p>
-                        <p class="mt-1 text-[11px] text-navy-400">지난 나눔 참여</p>
+                        <p class="font-kr text-display-sm font-medium">{{ \App\Models\SiteSetting::get('highlight_stat1_value') }}</p>
+                        <p class="mt-1 text-[11px] text-navy-400">{{ \App\Models\SiteSetting::get('highlight_stat1_label') }}</p>
                     </div>
                     <div>
-                        <p class="font-kr text-display-sm font-medium">매월 정기</p>
-                        <p class="mt-1 text-[11px] text-navy-400">Regular serving</p>
+                        <p class="font-kr text-display-sm font-medium">{{ \App\Models\SiteSetting::get('highlight_stat2_value') }}</p>
+                        <p class="mt-1 text-[11px] text-navy-400">{{ \App\Models\SiteSetting::get('highlight_stat2_label') }}</p>
                     </div>
                 </div>
             </div>

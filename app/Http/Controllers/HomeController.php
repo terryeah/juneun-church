@@ -46,9 +46,9 @@ class HomeController extends Controller
 
         /** Featured photographs are chosen in 사이트 설정 by gallery filename */
         $heroPhoto = $this->featuredPhoto('home_hero_photo', 'DZ2By_Lk1xC-6.webp');
-        $mealPhoto = $this->featuredPhoto('home_meal_photo', 'Dae_8EbzX4z-1.webp');
+        $highlightPhoto = $this->featuredPhoto('highlight_photo', 'DbBBx0Dk31O-1.webp');
 
-        return view('pages.home', compact('announcements', 'latestSermon', 'upcomingEvents', 'recentPhotos', 'heroPhoto', 'mealPhoto'));
+        return view('pages.home', compact('announcements', 'latestSermon', 'upcomingEvents', 'recentPhotos', 'heroPhoto', 'highlightPhoto'));
     }
 
     /**
