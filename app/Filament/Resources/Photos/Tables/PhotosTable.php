@@ -6,7 +6,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use App\Models\Photo;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -16,6 +18,11 @@ class PhotosTable
     {
         return $table
             ->columns([
+                ImageColumn::make('thumbnail_path')
+                    ->label('썸네일')
+                    ->disk(config('filesystems.media'))
+                    ->state(fn (Photo $record): string => $record->thumbnail_path ?? $record->path)
+                    ->imageHeight(44),
                 TextColumn::make('album.title')
                     ->label('앨범')
                     ->searchable(),
