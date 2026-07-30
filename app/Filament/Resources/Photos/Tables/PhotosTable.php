@@ -22,9 +22,6 @@ class PhotosTable
                 TextColumn::make('filename')
                     ->label('파일명')
                     ->searchable(),
-                TextColumn::make('path')
-                    ->label('경로')
-                    ->searchable(),
                 TextColumn::make('file_size')
                     ->label('파일 크기')
                     ->formatStateUsing(fn (?int $state): string => $state ? number_format($state / 1048576, 2).' MB' : '-')
@@ -32,6 +29,9 @@ class PhotosTable
                 IconColumn::make('featured_in_slider')
                     ->label('홈 슬라이더')
                     ->boolean(),
+                TextColumn::make('path')
+                    ->label('경로')
+                    ->searchable(),
                 TextColumn::make('uploader.name')
                     ->label('업로더')
                     ->default('시스템')
