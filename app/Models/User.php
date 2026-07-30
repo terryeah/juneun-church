@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\LogsModelActivity;
 use Database\Factories\UserFactory;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -21,8 +23,8 @@ use Spatie\Permission\Traits\HasRoles;
  * through Filament Shield.
  */
 #[Fillable(['name', 'email', 'password', 'created_by'])]
-#[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser
+#[Hidden(['password', 'remember_token', 'app_authentication_secret', 'app_authentication_recovery_codes'])]
+class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, LogsModelActivity, Notifiable;
@@ -48,6 +50,8 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'app_authentication_secret' => 'encrypted',
+            'app_authentication_recovery_codes' => 'encrypted:array',
         ];
     }
 
@@ -57,5 +61,49 @@ class User extends Authenticatable implements FilamentUser
     public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(self::class, 'created_by');
+    }
+
+    /**
+     * The stored authenticator-app secret, if two-factor is set up.
+     */
+    public function getAppAuthenticationSecret(): ?string
+    {
+        return $this->app_authentication_secret;
+    }
+
+    /**
+     * Persist (or clear) the authenticator-app secret.
+     */
+    public function saveAppAuthenticationSecret(?string $secret): void
+    {
+        $this->forceFill(['app_authentication_secret' => $secret])->save();
+    }
+
+    /**
+     * The account label shown inside authenticator apps.
+     */
+    public function getAppAuthenticationHolderName(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * The stored two-factor recovery codes.
+     *
+     * @return ?array<string>
+     */
+    public function getAppAuthenticationRecoveryCodes(): ?array
+    {
+        return $this->app_authentication_recovery_codes;
+    }
+
+    /**
+     * Persist (or clear) the two-factor recovery codes.
+     *
+     * @param  ?array<string>  $codes
+     */
+    public function saveAppAuthenticationRecoveryCodes(?array $codes): void
+    {
+        $this->forceFill(['app_authentication_recovery_codes' => $codes])->save();
     }
 }

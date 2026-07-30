@@ -18,6 +18,7 @@ use App\Filament\Resources\SiteSettings\SiteSettingResource;
 use App\Filament\Resources\StaffMembers\StaffMemberResource;
 use App\Filament\Resources\Users\UserResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
@@ -48,6 +49,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile()
+            ->multiFactorAuthentication([
+                AppAuthentication::make()->recoverable(),
+            ])
             ->favicon(asset('favicon.svg'))
             ->subNavigationPosition(SubNavigationPosition::Top)
             ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => static::buildNavigation($builder))
