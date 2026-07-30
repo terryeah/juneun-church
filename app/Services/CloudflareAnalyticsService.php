@@ -149,11 +149,12 @@ class CloudflareAnalyticsService
     }
 
     /**
-     * Page-view breakdowns from Web Analytics for the date range.
+     * Real-visitor breakdowns from Web Analytics for the date range.
      *
-     * Returns page-view counts grouped by every dimension shown on
-     * Cloudflare's own Web Analytics page: country, referer, path,
-     * host, browser, operating system and device type.
+     * Counts are visits (sessions), not page views, so they match the
+     * headline visitor figure - one person browsing several pages is a
+     * single visit. Grouped by country, referer, path, host, browser,
+     * operating system and device type.
      *
      * @return array<string, array<int, array{label: string, count: int}>>
      */
@@ -185,9 +186,9 @@ class CloudflareAnalyticsService
                 {$alias}: rumPageloadEventsAdaptiveGroups(
                     limit: 8
                     filter: {$filter}
-                    orderBy: [count_DESC]
+                    orderBy: [sum_visits_DESC]
                 ) {
-                    count
+                    sum { visits }
                     dimensions { {$field} }
                 }
             GRAPHQL)
@@ -223,8 +224,9 @@ class CloudflareAnalyticsService
             ->map(fn (string $field, string $alias) => collect($account[$alias] ?? [])
                 ->map(fn (array $group) => [
                     'label' => (string) ($group['dimensions'][$field] ?? '-'),
-                    'count' => (int) ($group['count'] ?? 0),
+                    'count' => (int) ($group['sum']['visits'] ?? 0),
                 ])
+                ->filter(fn (array $row) => $row['count'] > 0)
                 ->values()
                 ->all())
             ->all();
