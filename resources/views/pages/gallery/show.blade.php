@@ -12,7 +12,7 @@
                         <img
                             src="{{ $photo->thumbnailUrl() }}"
                             alt="{{ $photo->caption ?? $album->title }}"
-                            class="aspect-square w-full object-cover transition-transform duration-150 hover:scale-[1.02]"
+                            class="aspect-square w-full object-cover"
                             loading="lazy"
                         >
                     </a>

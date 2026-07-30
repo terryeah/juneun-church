@@ -19,6 +19,9 @@ class SermonsTable
                     ->label('제목')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('scripture_reference')
+                    ->label('본문 말씀')
+                    ->searchable(),
                 TextColumn::make('youtube_video_id')
                     ->label('YouTube ID')
                     ->searchable(),
@@ -31,9 +34,6 @@ class SermonsTable
                     ->sortable(),
                 TextColumn::make('serviceType.name')
                     ->label('예배 종류')
-                    ->searchable(),
-                TextColumn::make('scripture_reference')
-                    ->label('본문 말씀')
                     ->searchable(),
                 IconColumn::make('is_published')
                     ->label('게시')

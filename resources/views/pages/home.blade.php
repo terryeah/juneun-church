@@ -110,7 +110,7 @@
     <section class="section-meal-sharing container-site py-8 md:py-10 lg:py-14">
         <div class="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
             <div class="order-2 flex items-center lg:order-1">
-                <a href="{{ route('gallery.show', 'meal-sharing') }}" class="block w-full">
+                <a href="{{ route('gallery.show', 'meal-sharing') }}" class="block w-full overflow-hidden rounded-media">
                     @if ($mealPhoto)
                         <img src="{{ $mealPhoto->thumbnailUrl() }}" alt="함께 음식을 만들며 나누는 주는교회 식구들" class="aspect-video w-full rounded-media object-cover" loading="lazy">
                     @else

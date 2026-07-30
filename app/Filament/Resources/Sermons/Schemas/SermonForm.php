@@ -25,8 +25,10 @@ class SermonForm
                 TextInput::make('title')
                     ->label('제목')
                     ->required()
-                    ->maxLength(255)
-                    ->columnSpanFull(),
+                    ->maxLength(255),
+                TextInput::make('scripture_reference')
+                    ->label('본문 말씀')
+                    ->maxLength(255),
                 TextInput::make('youtube_video_id')
                     ->label('YouTube 영상 ID')
                     ->required()
@@ -44,9 +46,6 @@ class SermonForm
                     ->native(false)
                     ->displayFormat('Y-m-d')
                     ->required(),
-                TextInput::make('scripture_reference')
-                    ->label('본문 말씀')
-                    ->maxLength(255),
                 Textarea::make('description')
                     ->label('설명')
                     ->rows(9),
