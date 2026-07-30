@@ -229,4 +229,79 @@ class CloudflareAnalyticsService
                 ->all())
             ->all();
     }
+
+    /**
+     * Request breakdowns from zone analytics, bots included.
+     *
+     * These count every HTTP request Cloudflare saw, so they reflect
+     * bots and crawlers as well as people. The free plan limits this
+     * data to a one-day window, so it always covers the last 24 hours
+     * regardless of the range requested elsewhere.
+     *
+     * @return array<string, array<int, array{label: string, count: int}>>
+     */
+    public function botIncludedBreakdowns(): array
+    {
+        if (! $this->isConfigured()) {
+            return [];
+        }
+
+        $dimensions = [
+            'country' => 'clientCountryName',
+            'path' => 'clientRequestPath',
+            'host' => 'clientRequestHTTPHost',
+            'browser' => 'userAgentBrowser',
+        ];
+
+        $window = '{ datetime_geq: "'.now()->subDay()->toIso8601ZuluString().'", datetime_leq: "'.now()->toIso8601ZuluString().'" }';
+
+        $fields = collect($dimensions)
+            ->map(fn (string $field, string $alias) => <<<GRAPHQL
+                {$alias}: httpRequestsAdaptiveGroups(
+                    limit: 8
+                    filter: {$window}
+                    orderBy: [count_DESC]
+                ) {
+                    count
+                    dimensions { {$field} }
+                }
+            GRAPHQL)
+            ->implode("\n");
+
+        $query = <<<GRAPHQL
+        query (\$zone: String!) {
+            viewer {
+                zones(filter: { zoneTag: \$zone }) {
+                    {$fields}
+                }
+            }
+        }
+        GRAPHQL;
+
+        $response = Http::withToken(config('services.cloudflare.api_token'))
+            ->post('https://api.cloudflare.com/client/v4/graphql', [
+                'query' => $query,
+                'variables' => [
+                    'zone' => config('services.cloudflare.zone_id'),
+                ],
+            ]);
+
+        if (! $response->successful() || filled($response->json('errors'))) {
+            report(new \RuntimeException('Cloudflare zone breakdown query failed: '.$response->body()));
+
+            return [];
+        }
+
+        $zone = $response->json('data.viewer.zones.0', []);
+
+        return collect($dimensions)
+            ->map(fn (string $field, string $alias) => collect($zone[$alias] ?? [])
+                ->map(fn (array $group) => [
+                    'label' => (string) ($group['dimensions'][$field] ?? '-'),
+                    'count' => (int) ($group['count'] ?? 0),
+                ])
+                ->values()
+                ->all())
+            ->all();
+    }
 }

@@ -80,6 +80,21 @@ class Analytics extends Page
     }
 
     /**
+     * Bot-included request breakdowns, cached for an hour.
+     *
+     * @return array<string, array<int, array{label: string, count: int}>>
+     */
+    #[Computed]
+    public function botBreakdowns(): array
+    {
+        return \Illuminate\Support\Facades\Cache::remember(
+            'cf-zone-breakdowns',
+            3600,
+            fn (): array => app(CloudflareAnalyticsService::class)->botIncludedBreakdowns(),
+        );
+    }
+
+    /**
      * Widgets rendered above the page content.
      *
      * @return array<class-string>
@@ -105,6 +120,7 @@ class Analytics extends Page
                 ->icon(Heroicon::OutlinedArrowPath)
                 ->action(function (): void {
                     \Illuminate\Support\Facades\Cache::forget('cf-rum-breakdowns');
+                    \Illuminate\Support\Facades\Cache::forget('cf-zone-breakdowns');
                     Artisan::call('analytics:snapshot');
 
                     Notification::make()
