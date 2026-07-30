@@ -97,7 +97,6 @@ export class PhotoSlider {
             this.dragMoved = false;
             this.dragStartX = event.clientX;
             this.dragStartOffset = this.slides()[this.currentIndex]?.offsetLeft ?? 0;
-            track.setPointerCapture(event.pointerId);
             track.style.transition = 'none';
         });
 
@@ -108,11 +107,20 @@ export class PhotoSlider {
 
             const delta = event.clientX - this.dragStartX;
 
-            if (Math.abs(delta) > 6) {
+            if (Math.abs(delta) > 6 && ! this.dragMoved) {
                 this.dragMoved = true;
+
+                /**
+                 * Capture only once a real drag begins; capturing on
+                 * pointerdown would retarget the click away from the
+                 * photo links and break plain clicks on desktop.
+                 */
+                track.setPointerCapture(event.pointerId);
             }
 
-            track.style.transform = `translateX(${-this.rubberBand(this.dragStartOffset - delta)}px)`;
+            if (this.dragMoved) {
+                track.style.transform = `translateX(${-this.rubberBand(this.dragStartOffset - delta)}px)`;
+            }
         });
 
         const finish = (event: PointerEvent): void => {
@@ -148,6 +156,7 @@ export class PhotoSlider {
 
         track.addEventListener('pointerup', finish);
         track.addEventListener('pointercancel', finish);
+        window.addEventListener('pointerup', finish);
 
         this.container.addEventListener(
             'click',
