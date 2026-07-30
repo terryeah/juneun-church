@@ -7,6 +7,7 @@
 export class Lightbox {
     private container: HTMLElement;
     private overlay: HTMLElement | null = null;
+    private stage: HTMLElement | null = null;
     private image: HTMLImageElement | null = null;
     private currentIndex: number = 0;
     private suppressOverlayClick: boolean = false;
@@ -42,10 +43,12 @@ export class Lightbox {
         this.overlay.style.opacity = '0';
         this.overlay.style.transition = 'opacity 280ms ease';
 
-        this.image = document.createElement('img');
-        this.image.className = 'max-h-full max-w-full rounded-media';
-        this.image.style.transition = 'opacity 260ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1)';
-        this.overlay.appendChild(this.image);
+        this.stage = document.createElement('div');
+        this.stage.style.cssText = 'position: relative; width: 100%; height: 100%;';
+        this.overlay.appendChild(this.stage);
+
+        this.image = this.createImageLayer();
+        this.stage.appendChild(this.image);
 
         const close = this.overlayButton('✕', 'absolute right-4 top-4', '닫기');
         close.addEventListener('click', () => this.close());
@@ -57,7 +60,7 @@ export class Lightbox {
         next.addEventListener('click', () => this.step(1));
 
         this.overlay.addEventListener('click', (event: MouseEvent) => {
-            if (event.target === this.overlay && ! this.suppressOverlayClick) {
+            if ((event.target === this.overlay || event.target === this.stage) && ! this.suppressOverlayClick) {
                 this.close();
             }
             this.suppressOverlayClick = false;
@@ -66,6 +69,18 @@ export class Lightbox {
         this.bindSwipe();
 
         document.body.appendChild(this.overlay);
+    }
+
+    /**
+     * A centred, size-constrained image layer for the crossfade stage.
+     */
+    private createImageLayer(): HTMLImageElement {
+        const image = document.createElement('img');
+        image.className = 'rounded-media';
+        image.style.cssText = 'position: absolute; inset: 0; margin: auto; max-width: 100%; max-height: 100%; '
+            + 'transition: opacity 300ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1);';
+
+        return image;
     }
 
     /**
@@ -210,46 +225,72 @@ export class Lightbox {
     }
 
     /**
-     * Shows the photo at the current index, easing the outgoing image
-     * away and sliding the incoming one in from the travel direction.
+     * Shows the photo at the current index. Photo changes crossfade:
+     * the incoming image slides in over the outgoing one, which stays
+     * visible underneath the whole time, so the screen never dips to
+     * the dark backdrop between photos.
      *
      * @param direction - -1 from the left, +1 from the right, 0 still
      */
     private render(direction: number): void {
         const link = this.links()[this.currentIndex];
-        const image = this.image;
+        const stage = this.stage;
+        const outgoing = this.image;
 
-        if (!link || !image) {
+        if (!link || !stage || !outgoing) {
             return;
         }
 
-        image.style.opacity = '0';
-        image.style.transform = direction === 0 ? 'scale(0.965)' : `translateX(${direction * -28}px) scale(0.985)`;
+        if (direction === 0) {
+            outgoing.onload = null;
+            outgoing.style.transition = 'none';
+            outgoing.style.opacity = '0';
+            outgoing.style.transform = 'scale(0.965)';
+            outgoing.src = link.href;
+            outgoing.alt = link.querySelector('img')?.alt ?? '';
 
-        const swap = (): void => {
             const reveal = (): void => {
-                image.onload = null;
-                image.style.transition = 'none';
-                image.style.transform = direction === 0 ? 'scale(0.965)' : `translateX(${direction * 28}px) scale(0.985)`;
-
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
-                        image.style.transition = 'opacity 260ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1)';
-                        image.style.opacity = '1';
-                        image.style.transform = 'translateX(0) scale(1)';
+                        outgoing.style.transition = 'opacity 300ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1)';
+                        outgoing.style.opacity = '1';
+                        outgoing.style.transform = 'scale(1)';
                     });
                 });
             };
 
-            image.onload = reveal;
-            image.src = link.href;
-            image.alt = link.querySelector('img')?.alt ?? '';
+            outgoing.complete ? reveal() : (outgoing.onload = reveal);
 
-            if (image.complete) {
-                reveal();
-            }
+            return;
+        }
+
+        const incoming = this.createImageLayer();
+        incoming.style.opacity = '0';
+        incoming.style.transform = `translateX(${direction * 36}px)`;
+        incoming.alt = link.querySelector('img')?.alt ?? '';
+        this.image = incoming;
+
+        const start = (): void => {
+            incoming.onload = null;
+            stage.appendChild(incoming);
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    incoming.style.opacity = '1';
+                    incoming.style.transform = 'translateX(0)';
+                    outgoing.style.opacity = '0';
+                    outgoing.style.transform = `translateX(${direction * -36}px)`;
+                });
+            });
+
+            window.setTimeout(() => outgoing.remove(), 400);
         };
 
-        window.setTimeout(swap, direction === 0 ? 0 : 150);
+        incoming.onload = start;
+        incoming.src = link.href;
+
+        if (incoming.complete) {
+            start();
+        }
     }
 }
