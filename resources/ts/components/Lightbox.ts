@@ -9,6 +9,7 @@ export class Lightbox {
     private overlay: HTMLElement | null = null;
     private image: HTMLImageElement | null = null;
     private currentIndex: number = 0;
+    private suppressOverlayClick: boolean = false;
 
     /**
      * Creates a new Lightbox instance.
@@ -53,12 +54,60 @@ export class Lightbox {
         next.addEventListener('click', () => this.step(1));
 
         this.overlay.addEventListener('click', (event: MouseEvent) => {
-            if (event.target === this.overlay) {
+            if (event.target === this.overlay && ! this.suppressOverlayClick) {
+                this.close();
+            }
+            this.suppressOverlayClick = false;
+        });
+
+        this.bindSwipe();
+
+        document.body.appendChild(this.overlay);
+    }
+
+    /**
+     * Lets touch users swipe left/right for the next and previous
+     * photo, and swipe down to close, matching native gallery UX.
+     */
+    private bindSwipe(): void {
+        const overlay = this.overlay;
+        if (!overlay) {
+            return;
+        }
+
+        overlay.style.touchAction = 'none';
+
+        let startX = 0;
+        let startY = 0;
+        let tracking = false;
+
+        overlay.addEventListener('pointerdown', (event: PointerEvent) => {
+            tracking = true;
+            startX = event.clientX;
+            startY = event.clientY;
+        });
+
+        overlay.addEventListener('pointerup', (event: PointerEvent) => {
+            if (!tracking) {
+                return;
+            }
+
+            tracking = false;
+            const deltaX = event.clientX - startX;
+            const deltaY = event.clientY - startY;
+
+            if (Math.abs(deltaX) > 48 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                this.suppressOverlayClick = true;
+                this.step(deltaX < 0 ? 1 : -1);
+            } else if (deltaY > 72 && Math.abs(deltaY) > Math.abs(deltaX)) {
+                this.suppressOverlayClick = true;
                 this.close();
             }
         });
 
-        document.body.appendChild(this.overlay);
+        overlay.addEventListener('pointercancel', () => {
+            tracking = false;
+        });
     }
 
     /**

@@ -140,6 +140,9 @@ export class PhotoSlider {
 
             if (this.dragMoved) {
                 this.suppressClick = true;
+                window.setTimeout(() => {
+                    this.suppressClick = false;
+                }, 350);
             }
         };
 
