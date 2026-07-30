@@ -125,10 +125,21 @@
  * Site-wide hover zoom for linked imagery. Wrapping anchors clip the
  * scaled image with overflow-hidden and rounded corners.
  */
-main a img {
+main a img,
+main [data-zoom] img {
     transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-main a:hover img {
+main a:hover img,
+main [data-zoom]:hover img {
     transform: scale(1.045);
+}
+
+/**
+ * Announcement bodies fill each line fully instead of balancing the
+ * rag early, which read as premature line breaks.
+ */
+.prose-announcement,
+.prose-announcement * {
+    text-wrap: wrap;
 }

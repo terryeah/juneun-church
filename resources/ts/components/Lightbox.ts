@@ -11,6 +11,12 @@ export class Lightbox {
     private image: HTMLImageElement | null = null;
     private currentIndex: number = 0;
     private suppressOverlayClick: boolean = false;
+    private pointers: Map<number, { x: number; y: number }> = new Map();
+    private zoomScale: number = 1;
+    private zoomX: number = 0;
+    private zoomY: number = 0;
+    private pinchStart: { distance: number; scale: number } | null = null;
+    private lastTapAt: number = 0;
 
     /**
      * Creates a new Lightbox instance.
@@ -84,8 +90,9 @@ export class Lightbox {
     }
 
     /**
-     * Lets touch users swipe left/right for the next and previous
-     * photo, and swipe down to close, matching native gallery UX.
+     * Touch gestures: swipe left/right for the next and previous
+     * photo, swipe down to close, pinch (or double-tap) to zoom and
+     * one-finger pan while zoomed in.
      */
     private bindSwipe(): void {
         const overlay = this.overlay;
@@ -97,35 +104,153 @@ export class Lightbox {
 
         let startX = 0;
         let startY = 0;
-        let tracking = false;
+        let lastX = 0;
+        let lastY = 0;
 
         overlay.addEventListener('pointerdown', (event: PointerEvent) => {
-            tracking = true;
-            startX = event.clientX;
-            startY = event.clientY;
+            this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+            if (this.pointers.size === 1) {
+                startX = lastX = event.clientX;
+                startY = lastY = event.clientY;
+            }
+
+            if (this.pointers.size === 2) {
+                this.pinchStart = { distance: this.pointerDistance(), scale: this.zoomScale };
+                this.setImageTransition(false);
+            }
         });
 
-        overlay.addEventListener('pointerup', (event: PointerEvent) => {
-            if (!tracking) {
+        overlay.addEventListener('pointermove', (event: PointerEvent) => {
+            if (! this.pointers.has(event.pointerId)) {
                 return;
             }
 
-            tracking = false;
+            this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+            if (this.pointers.size === 2 && this.pinchStart) {
+                const ratio = this.pointerDistance() / this.pinchStart.distance;
+                this.zoomScale = Math.min(4, Math.max(1, this.pinchStart.scale * ratio));
+                this.applyZoom();
+
+                return;
+            }
+
+            if (this.pointers.size === 1 && this.zoomScale > 1.05) {
+                this.zoomX += event.clientX - lastX;
+                this.zoomY += event.clientY - lastY;
+                lastX = event.clientX;
+                lastY = event.clientY;
+                this.setImageTransition(false);
+                this.applyZoom();
+            }
+        });
+
+        const release = (event: PointerEvent): void => {
+            const hadPinch = this.pinchStart !== null;
+            this.pointers.delete(event.pointerId);
+
+            if (this.pointers.size < 2) {
+                this.pinchStart = null;
+            }
+
+            if (this.pointers.size > 0) {
+                return;
+            }
+
+            this.setImageTransition(true);
+
+            if (hadPinch || this.zoomScale > 1.05) {
+                if (this.zoomScale <= 1.05) {
+                    this.resetZoom();
+                }
+
+                this.suppressOverlayClick = true;
+
+                return;
+            }
+
             const deltaX = event.clientX - startX;
             const deltaY = event.clientY - startY;
 
             if (Math.abs(deltaX) > 48 && Math.abs(deltaX) > Math.abs(deltaY)) {
                 this.suppressOverlayClick = true;
                 this.step(deltaX < 0 ? 1 : -1);
-            } else if (deltaY > 72 && Math.abs(deltaY) > Math.abs(deltaX)) {
+
+                return;
+            }
+
+            if (deltaY > 72 && Math.abs(deltaY) > Math.abs(deltaX)) {
                 this.suppressOverlayClick = true;
                 this.close();
-            }
-        });
 
-        overlay.addEventListener('pointercancel', () => {
-            tracking = false;
-        });
+                return;
+            }
+
+            /** Double-tap toggles between fit and 2.5x zoom. */
+            if (Math.abs(deltaX) < 12 && Math.abs(deltaY) < 12 && event.pointerType === 'touch') {
+                const now = Date.now();
+
+                if (now - this.lastTapAt < 300) {
+                    this.suppressOverlayClick = true;
+                    this.zoomScale = this.zoomScale > 1.05 ? 1 : 2.5;
+
+                    if (this.zoomScale === 1) {
+                        this.resetZoom();
+                    } else {
+                        this.applyZoom();
+                    }
+                }
+
+                this.lastTapAt = now;
+            }
+        };
+
+        overlay.addEventListener('pointerup', release);
+        overlay.addEventListener('pointercancel', release);
+    }
+
+    /**
+     * The distance between the two active pinch pointers.
+     */
+    private pointerDistance(): number {
+        const [a, b] = Array.from(this.pointers.values());
+
+        return Math.hypot(a.x - b.x, a.y - b.y) || 1;
+    }
+
+    /**
+     * Applies the current zoom scale and pan offset to the image.
+     */
+    private applyZoom(): void {
+        if (this.image) {
+            this.image.style.transform = `translate(${this.zoomX}px, ${this.zoomY}px) scale(${this.zoomScale})`;
+        }
+    }
+
+    /**
+     * Returns the image to its fitted, centred state.
+     */
+    private resetZoom(): void {
+        this.zoomScale = 1;
+        this.zoomX = 0;
+        this.zoomY = 0;
+
+        if (this.image) {
+            this.setImageTransition(true);
+            this.image.style.transform = 'translate(0px, 0px) scale(1)';
+        }
+    }
+
+    /**
+     * Toggles the image transition while gestures are in progress.
+     */
+    private setImageTransition(enabled: boolean): void {
+        if (this.image) {
+            this.image.style.transition = enabled
+                ? 'opacity 300ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1)'
+                : 'none';
+        }
     }
 
     /**
@@ -205,6 +330,9 @@ export class Lightbox {
         }
 
         this.overlay.style.opacity = '0';
+        this.zoomScale = 1;
+        this.zoomX = 0;
+        this.zoomY = 0;
         document.body.classList.remove('overflow-hidden');
 
         window.setTimeout(() => {
@@ -219,6 +347,10 @@ export class Lightbox {
      * @param delta - +1 for next, -1 for previous
      */
     private step(delta: number): void {
+        this.zoomScale = 1;
+        this.zoomX = 0;
+        this.zoomY = 0;
+
         const links = this.links();
         this.currentIndex = (this.currentIndex + delta + links.length) % links.length;
         this.render(delta);
