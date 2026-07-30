@@ -32,7 +32,8 @@ class PhotoForm
                     ->required(),
                 Checkbox::make('featured_in_slider')
                     ->label('홈 슬라이더에 표시')
-                    ->helperText('최대 10장까지 선택할 수 있습니다.'),
+                    ->helperText('최대 10장까지 선택할 수 있습니다.')
+                    ->extraFieldWrapperAttributes(['style' => 'margin-top: 2.35rem;']),
                 FileUpload::make('path')
                     ->label('사진')
                     ->image()
