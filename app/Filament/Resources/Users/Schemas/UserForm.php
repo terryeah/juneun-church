@@ -61,7 +61,20 @@ class UserForm
                         },
                     )
                     ->multiple()
-                    ->preload(),
+                    ->preload()
+                    ->rule(fn (): \Closure => function (string $attribute, mixed $value, \Closure $fail): void {
+                        $user = auth()->user();
+                        $allowed = \Spatie\Permission\Models\Role::query()
+                            ->when(! $user?->hasRole('super_admin'), fn ($query) => $query->where('name', '!=', 'super_admin'))
+                            ->when(! $user?->hasRole('developer'), fn ($query) => $query->where('name', '!=', 'developer'))
+                            ->pluck('id');
+
+                        foreach ((array) $value as $roleId) {
+                            if (! $allowed->contains((int) $roleId)) {
+                                $fail('부여할 수 없는 롤이 포함되어 있습니다.');
+                            }
+                        }
+                    }),
             ]);
     }
 }

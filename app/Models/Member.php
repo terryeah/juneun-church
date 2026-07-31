@@ -39,6 +39,18 @@ class Member extends Model
     use HasFactory, LogsModelActivity;
 
     /**
+     * Personal details stay out of the activity log; only roster
+     * structure changes (status, position, household) are recorded.
+     */
+    public function getActivitylogOptions(): \Spatie\Activitylog\Support\LogOptions
+    {
+        return \Spatie\Activitylog\Support\LogOptions::defaults()
+            ->logOnly(['name', 'status', 'position_id', 'department', 'head_id', 'relationship', 'registered_at'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

@@ -19,13 +19,19 @@ class SuperAdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::query()->firstOrCreate(
-            ['email' => env('SUPER_ADMIN_EMAIL', 'terryeah7@gmail.com')],
-            [
-                'name' => env('SUPER_ADMIN_NAME', 'Terry'),
-                'password' => Hash::make(env('SUPER_ADMIN_PASSWORD', 'password')),
-            ],
-        );
+        $user = User::query()->where('email', env('SUPER_ADMIN_EMAIL', 'terryeah7@gmail.com'))->first();
+
+        if (! $user && ! env('SUPER_ADMIN_PASSWORD')) {
+            $this->command?->warn('SUPER_ADMIN_PASSWORD is not set; skipping super admin creation.');
+
+            return;
+        }
+
+        $user ??= User::query()->create([
+            'email' => env('SUPER_ADMIN_EMAIL', 'terryeah7@gmail.com'),
+            'name' => env('SUPER_ADMIN_NAME', 'Terry'),
+            'password' => Hash::make(env('SUPER_ADMIN_PASSWORD')),
+        ]);
 
         $user->assignRole('super_admin');
     }

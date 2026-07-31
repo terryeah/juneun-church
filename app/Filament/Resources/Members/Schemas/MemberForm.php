@@ -101,6 +101,7 @@ class MemberForm
                 FileUpload::make('photo')
                     ->label('사진')
                     ->image()
+                    ->maxSize(10240)
                     ->imageEditor()
                     ->disk(config('filesystems.media'))
                     ->directory('members')

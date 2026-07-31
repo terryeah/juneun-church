@@ -41,6 +41,7 @@ class AlbumForm
                 FileUpload::make('cover_photo_path')
                     ->label('커버 사진')
                     ->image()
+                    ->maxSize(15360)
                     ->disk(config('filesystems.media'))
                     ->directory(fn (?Album $record): string => 'albums/'.($record?->slug ?? 'covers'))
                     ->visibility('public'),

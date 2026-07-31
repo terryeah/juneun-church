@@ -33,6 +33,7 @@ class BulletinForm
                     ->default(now()),
                 FileUpload::make('file_path')
                     ->label('주보 PDF')
+                    ->maxSize(20480)
                     ->acceptedFileTypes(['application/pdf'])
                     ->disk(config('filesystems.media'))
                     ->directory('bulletins')

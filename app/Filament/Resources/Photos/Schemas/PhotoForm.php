@@ -32,6 +32,7 @@ class PhotoForm
                 FileUpload::make('path')
                     ->label('사진')
                     ->image()
+                    ->maxSize(15360)
                     ->disk(config('filesystems.media'))
                     ->directory(fn (Get $get): string => 'albums/'.(Album::query()->find($get('album_id'))?->slug ?? 'unsorted'))
                     ->visibility('public')

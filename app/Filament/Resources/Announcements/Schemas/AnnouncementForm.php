@@ -36,6 +36,7 @@ class AnnouncementForm
                 FileUpload::make('featured_image')
                     ->label('대표 이미지')
                     ->image()
+                    ->maxSize(15360)
                     ->disk(config('filesystems.media'))
                     ->directory('announcements')
                     ->visibility('public'),
