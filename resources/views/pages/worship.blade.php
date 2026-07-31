@@ -30,8 +30,8 @@
                 <div class="mt-4 border-t-2 border-navy">
                     @foreach ($fellowship as $group)
                         <div class="flex items-baseline justify-between gap-4 border-b border-line py-3.5">
-                            <h3 class="font-kr text-[14px] font-medium">{{ $group['name'] }}</h3>
-                            <p class="text-right font-kr text-[12.5px] text-navy-400">{{ $group['note'] }}</p>
+                            <h3 class="font-kr text-body font-medium">{{ $group['name'] }}</h3>
+                            <p class="text-right font-kr text-body-sm text-navy-400">{{ $group['note'] }}</p>
                         </div>
                     @endforeach
                 </div>
@@ -41,13 +41,13 @@
                 <div class="mt-4 border-t-2 border-navy">
                     @foreach ($sundaySchool as $class)
                         <div class="flex items-baseline justify-between gap-4 border-b border-line py-3.5">
-                            <h3 class="text-[14px] font-medium">
+                            <h3 class="text-body font-medium">
                                 {{ $class['name'] }}
                                 @if ($class['grade'])
-                                    <span class="ml-1 text-[11.5px] font-normal text-navy-400">{{ $class['grade'] }}</span>
+                                    <span class="ml-1 text-caption font-normal text-navy-400">{{ $class['grade'] }}</span>
                                 @endif
                             </h3>
-                            <p class="text-right font-kr text-[12.5px] text-navy-400">{{ $class['note'] }}</p>
+                            <p class="text-right font-kr text-body-sm text-navy-400">{{ $class['note'] }}</p>
                         </div>
                     @endforeach
                 </div>
@@ -61,13 +61,13 @@
             @forelse ($sermons as $sermon)
                 <div>
                     <x-ui.sermon-video :sermon="$sermon" />
-                    <h3 class="mt-3 font-kr text-[15px] font-medium">{{ $sermon->title }}</h3>
-                    <p class="mt-1 text-[12px] text-navy-400">
+                    <h3 class="mt-3 font-kr text-body font-medium">{{ $sermon->title }}</h3>
+                    <p class="mt-1 text-body-sm text-navy-400">
                         {{ $sermon->sermon_date->translatedFormat('Y년 n월 j일') }} · {{ $sermon->serviceType?->name }}
                     </p>
                 </div>
             @empty
-                <p class="text-[13px] text-navy-400">등록된 예배 영상이 없습니다.</p>
+                <p class="text-body-sm text-navy-400">등록된 예배 영상이 없습니다.</p>
             @endforelse
         </div>
     </section>

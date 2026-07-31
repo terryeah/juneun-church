@@ -68,6 +68,11 @@
     --color-on-accent: #ffffff;
     --color-line: rgba(22, 34, 60, 0.16);
 
+    --text-caption: 0.6875rem;
+    --text-body-sm: 0.8125rem;
+    --text-body: 0.9375rem;
+    --text-body-lg: 1rem;
+    --header-h: 4.625rem;
     --text-kicker: 0.6875rem;
     --text-kicker--line-height: 1;
     --text-kicker--letter-spacing: 0.16em;

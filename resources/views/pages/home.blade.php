@@ -6,7 +6,7 @@
             <div class="lg:flex-[1.05]">
                 <x-ui.kicker data-hero-item>Brisbane Juneun Church · Since 2024</x-ui.kicker>
                 <h1 class="mt-4 font-kr text-display-lg" data-hero-item>받은 은혜를<br>흘려보내는 교회</h1>
-                <p lang="en" class="mt-5 max-w-[400px] text-[16px] leading-relaxed text-navy-700" data-hero-item>
+                <p lang="en" class="mt-5 max-w-[25rem] text-body-lg leading-relaxed text-navy-700" data-hero-item>
                     A young Korean church in Brisbane - worshipping together, giving generously, and growing as followers of Jesus Christ.
                 </p>
                 <div class="mt-7 flex flex-wrap gap-3" data-hero-item>
@@ -17,9 +17,9 @@
             <div class="lg:flex-1">
                 <div data-zoom class="overflow-hidden rounded-media">
                     @if ($heroPhoto)
-                        <img src="{{ $heroPhoto->thumbnailUrl() }}" alt="함께 예배하는 주는교회 성도들" class="h-[300px] w-full object-cover md:h-[420px]" fetchpriority="high" decoding="async">
+                        <img src="{{ $heroPhoto->thumbnailUrl() }}" alt="함께 예배하는 주는교회 성도들" class="aspect-[4/3] w-full object-cover" fetchpriority="high" decoding="async">
                     @else
-                        <x-ui.photo-placeholder label="Worship · Congregation" class="h-[300px] md:h-[420px]" />
+                        <x-ui.photo-placeholder label="Worship · Congregation" class="aspect-[4/3]" />
                     @endif
                 </div>
             </div>
@@ -53,14 +53,14 @@
 
         <div class="divide-y divide-line">
             @foreach ($identities as $identity)
-                <div class="grid gap-4 py-[26px] first:pt-0 last:pb-0 md:grid-cols-[minmax(0,280px)_minmax(0,1fr)] md:gap-10">
+                <div class="grid gap-4 py-[1.625rem] first:pt-0 last:pb-0 md:grid-cols-[minmax(0,280px)_minmax(0,1fr)] md:gap-10">
                     <h2 class="font-kr text-display-sm font-medium">
                         {{ $identity['korean'] }}<span class="text-accent">({{ $identity['english'] }})</span>{{ $identity['suffix'] }}
                     </h2>
                     <div>
-                        <p class="-mt-[3px] font-kr text-[15px] leading-relaxed">{{ $identity['verse'] }}</p>
-                        <p class="mt-2 text-[11px] font-bold tracking-[0.08em] text-accent">{{ $identity['reference'] }}</p>
-                        <p class="mt-3 font-kr text-[13.5px] leading-relaxed text-navy-700">{{ $identity['description'] }}</p>
+                        <p class="-mt-[0.1875rem] font-kr text-body leading-relaxed">{{ $identity['verse'] }}</p>
+                        <p class="mt-2 text-caption font-bold tracking-[0.08em] text-accent">{{ $identity['reference'] }}</p>
+                        <p class="mt-3 font-kr text-body-sm leading-relaxed text-navy-700">{{ $identity['description'] }}</p>
                     </div>
                 </div>
             @endforeach
@@ -75,32 +75,32 @@
                 <div class="mt-4">
                     @forelse ($announcements as $announcement)
                         <a href="{{ route('news.show', $announcement) }}" class="group block border-t border-line py-4 first:border-t-0 first:pt-0">
-                            <p class="text-[11px] text-navy-400">
+                            <p class="text-caption text-navy-400">
                                 {{ $announcement->published_at?->translatedFormat('Y년 n월 j일') }}
                                 @if ($announcement->is_pinned)
                                     <span class="ml-2 font-extrabold uppercase tracking-[0.16em] text-accent">Pinned</span>
                                 @endif
                             </p>
-                            <h3 class="mt-1 font-kr text-[15px] font-medium group-hover:text-accent">{{ $announcement->title }}</h3>
+                            <h3 class="mt-1 font-kr text-body font-medium group-hover:text-accent">{{ $announcement->title }}</h3>
                         </a>
                     @empty
-                        <p class="py-4 text-[13px] text-navy-400">등록된 소식이 없습니다.</p>
+                        <p class="py-4 text-body-sm text-navy-400">등록된 소식이 없습니다.</p>
                     @endforelse
                 </div>
-                <a href="{{ route('news.index') }}" class="mt-2 inline-block text-[11px] font-bold text-accent hover:text-accent-700">소식 전체 보기 →</a>
+                <a href="{{ route('news.index') }}" class="mt-2 inline-block text-caption font-bold text-accent hover:text-accent-700">소식 전체 보기 →</a>
             </div>
 
             @if ($latestSermon)
                 <div>
                     <div class="flex items-baseline justify-between">
                         <x-ui.kicker>최근 예배 · Latest Sermon</x-ui.kicker>
-                        <a href="{{ \App\Models\SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="text-[11px] font-bold leading-none text-accent hover:text-accent-700">YouTube →<span class="sr-only"> (새 창)</span></a>
+                        <a href="{{ \App\Models\SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="text-caption font-bold leading-none text-accent hover:text-accent-700">YouTube →<span class="sr-only"> (새 창)</span></a>
                     </div>
                     <div class="mt-4">
                         <x-ui.sermon-video :sermon="$latestSermon" />
                     </div>
                     <h3 class="mt-4 font-kr text-display-sm font-medium">{{ $latestSermon->title }}</h3>
-                    <p class="mt-1 text-[12px] text-navy-400">
+                    <p class="mt-1 text-body-sm text-navy-400">
                         {{ $latestSermon->preacher }} · {{ $latestSermon->sermon_date->translatedFormat('Y년 n월 j일') }}
                     </p>
                 </div>
@@ -127,18 +127,18 @@
             </div>
             <div class="order-1 lg:order-2 lg:border-l lg:border-line lg:pl-10">
                 <x-ui.kicker>하이라이트 · Highlight</x-ui.kicker>
-                <a href="{{ $highlightLink }}" class="block"><h2 class="mt-3 font-kr text-[1.7rem] font-medium leading-snug transition-colors duration-300 hover:text-accent">{!! nl2br(e(\App\Models\SiteSetting::get('highlight_title'))) !!}</h2></a>
-                <p class="mt-4 font-kr text-[13.5px] leading-relaxed text-navy-700">
+                <a href="{{ $highlightLink }}" class="block"><h2 class="mt-3 font-kr text-display-md font-medium leading-snug transition-colors duration-300 hover:text-accent">{!! nl2br(e(\App\Models\SiteSetting::get('highlight_title'))) !!}</h2></a>
+                <p class="mt-4 font-kr text-body-sm leading-relaxed text-navy-700">
                     {{ \App\Models\SiteSetting::get('highlight_body') }}
                 </p>
                 <div class="mt-6 grid grid-cols-2 border-t border-line pt-5">
                     <div>
                         <p class="font-kr text-display-sm font-medium">{{ \App\Models\SiteSetting::get('highlight_stat1_value') }}</p>
-                        <p class="mt-1 text-[11px] text-navy-400">{{ \App\Models\SiteSetting::get('highlight_stat1_label') }}</p>
+                        <p class="mt-1 text-caption text-navy-400">{{ \App\Models\SiteSetting::get('highlight_stat1_label') }}</p>
                     </div>
                     <div>
                         <p class="font-kr text-display-sm font-medium">{{ \App\Models\SiteSetting::get('highlight_stat2_value') }}</p>
-                        <p class="mt-1 text-[11px] text-navy-400">{{ \App\Models\SiteSetting::get('highlight_stat2_label') }}</p>
+                        <p class="mt-1 text-caption text-navy-400">{{ \App\Models\SiteSetting::get('highlight_stat2_label') }}</p>
                     </div>
                 </div>
             </div>
@@ -146,9 +146,9 @@
     </section>
 
     {{-- Poster band introducing the sliding gallery preview --}}
-    <section class="section-moments-intro bg-navy py-12 md:py-16 lg:py-[76px]">
+    <section class="section-moments-intro bg-navy py-12 md:py-16 lg:py-[4.75rem]">
         <div class="container-site">
-            <p class="text-kicker font-extrabold uppercase tracking-[0.16em] text-cream/55">주는교회의 순간들 · Moments</p>
+            <x-ui.kicker color="text-cream/55">주는교회의 순간들 · Moments</x-ui.kicker>
             <p class="mt-5 font-kr text-display-lg text-cream">함께 예배하고, 함께 나누는<br>교회의 일상입니다.</p>
         </div>
     </section>
@@ -159,7 +159,7 @@
             <div class="touch-pan-y overflow-hidden" data-photo-slider>
                 <div class="flex cursor-grab select-none gap-1 transition-transform duration-700 ease-in-out active:cursor-grabbing" data-slider-track>
                     @foreach ($recentPhotos as $photo)
-                        <a href="{{ route('gallery.show', $photo->album) }}" class="block w-[calc((100%-4px)/2)] shrink-0 overflow-hidden rounded-[10px] md:w-[calc((100%-8px)/3)] lg:w-[calc((100%-16px)/5)]">
+                        <a href="{{ route('gallery.show', $photo->album) }}" class="block w-[calc((100%-4px)/2)] shrink-0 overflow-hidden rounded-[0.625rem] md:w-[calc((100%-8px)/3)] lg:w-[calc((100%-16px)/5)]">
                             <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
                         </a>
                     @endforeach
@@ -169,7 +169,7 @@
         @else
             <div class="grid grid-cols-1 gap-1 md:grid-cols-3">
                 @foreach (['Fellowship', 'Worship', 'Next-Gen'] as $label)
-                    <x-ui.photo-placeholder :label="$label" class="aspect-square rounded-[10px] bg-navy-700/60 text-cream/55" />
+                    <x-ui.photo-placeholder :label="$label" class="aspect-square rounded-[0.625rem] bg-navy-700/60 text-cream/55" />
                 @endforeach
             </div>
         @endif

@@ -185,9 +185,9 @@ class CloudflareAnalyticsService
         ];
 
         $filter = sprintf(
-            '{ date_geq: "%s", date_leq: "%s", siteTag: "%s", userAgentBrowser_notin: %s }',
-            $since->toDateString(),
-            $until->toDateString(),
+            '{ datetime_geq: "%s", datetime_leq: "%s", siteTag: "%s", userAgentBrowser_notin: %s }',
+            $since->copy()->utc()->toIso8601ZuluString(),
+            $until->copy()->utc()->toIso8601ZuluString(),
             config('services.cloudflare.rum_site_tag'),
             json_encode(self::BOT_BROWSERS),
         );

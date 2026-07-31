@@ -94,16 +94,16 @@ class Analytics extends Page
     {
         $since = match ($this->visitorRange) {
             'today' => today(),
-            '24h' => today()->subDay(),
-            '7d' => today()->subDays(7),
+            '24h' => now()->subDay(),
+            '7d' => today()->subDays(6),
             'all' => today()->subMonths(6),
             default => today()->subDays(29),
         };
 
         return Cache::remember(
             "cf-rum-breakdowns-{$this->visitorRange}",
-            3600,
-            fn (): array => app(CloudflareAnalyticsService::class)->breakdowns($since, today()),
+            in_array($this->visitorRange, ['today', '24h']) ? 900 : 3600,
+            fn (): array => app(CloudflareAnalyticsService::class)->breakdowns($since, now()),
         );
     }
 

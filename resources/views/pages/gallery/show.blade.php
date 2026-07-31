@@ -20,7 +20,7 @@
 
                 @if ($photos->hasMorePages())
                     <div class="col-span-full py-6 text-center">
-                        <a href="{{ $photos->nextPageUrl() }}" data-next-page class="text-[11px] font-bold text-accent hover:text-accent-700">
+                        <a href="{{ $photos->nextPageUrl() }}" data-next-page class="text-caption font-bold text-accent hover:text-accent-700">
                             사진 더 보기 →
                         </a>
                     </div>
@@ -29,7 +29,7 @@
         </div>
 
         <div class="mt-10">
-            <a href="{{ route('gallery.index') }}" class="text-[11px] font-bold text-accent hover:text-accent-700">← 앨범 전체 보기</a>
+            <a href="{{ route('gallery.index') }}" class="text-caption font-bold text-accent hover:text-accent-700">← 앨범 전체 보기</a>
         </div>
     </section>
 

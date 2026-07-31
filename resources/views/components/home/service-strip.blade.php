@@ -30,16 +30,16 @@
 @endphp
 
 {{-- Four equal service-time columns, divided by 1px cells on wide screens. --}}
-<div class="border-y border-line py-6 lg:py-[26px]">
-    <div class="grid gap-6 md:grid-cols-2 md:gap-8 xl:grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr] xl:gap-[30px]">
+<div class="border-y border-line py-6 lg:py-[1.625rem]">
+    <div class="grid gap-6 md:grid-cols-2 md:gap-8 xl:grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr] xl:gap-[1.875rem]">
         @foreach ($services as $service)
             @if (! $loop->first)
                 <div class="hidden bg-line xl:block"></div>
             @endif
             <div>
-                <x-ui.kicker>{{ $service['name'] }}</x-ui.kicker>
+                <x-ui.kicker tracking="tracking-[0.06em]">{{ $service['name'] }}</x-ui.kicker>
                 <h2 class="mt-2 font-kr text-display-sm font-medium">{{ $service['time'] }} · {{ $service['venue'] }}</h2>
-                <p class="mt-1 text-[12px] text-navy-400">{{ $service['address'] }}</p>
+                <p class="mt-1 text-body-sm text-navy-400">{{ $service['address'] }}</p>
             </div>
         @endforeach
     </div>

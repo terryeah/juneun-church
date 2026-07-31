@@ -1,6 +1,6 @@
 <x-layout.app title="섬기는 사람들" description="브리즈번 주는교회를 섬기는 사람들을 소개합니다.">
 
-    <x-ui.page-header kicker="섬기는 사람들 · People" title="섬기는 사람들" />
+    <x-ui.page-header kicker="함께 세워가는 공동체 · People" title="섬기는 사람들" />
 
     <section class="section-people-directory container-site pb-12 lg:pb-16">
         @forelse ($positions as $position)
@@ -17,12 +17,12 @@
                                 </div>
                             @endif
                             <div>
-                                <h3 class="font-kr text-[15px] font-medium">{{ $member->name }}</h3>
-                                <p class="mt-0.5 text-[12px] text-navy-400">
+                                <h3 class="font-kr text-body font-medium">{{ $member->name }}</h3>
+                                <p class="mt-0.5 text-body-sm text-navy-400">
                                     {{ $position->name }}@if ($member->department) · {{ $member->department }}@endif
                                 </p>
                                 @if ($member->bio)
-                                    <p class="mt-2 font-kr text-[13px] leading-relaxed text-navy-700">{{ $member->bio }}</p>
+                                    <p class="mt-2 font-kr text-body-sm leading-relaxed text-navy-700">{{ $member->bio }}</p>
                                 @endif
                             </div>
                         </div>
@@ -30,7 +30,7 @@
                 </div>
             </div>
         @empty
-            <p class="text-[13px] text-navy-400">등록된 내용이 없습니다.</p>
+            <p class="text-body-sm text-navy-400">등록된 내용이 없습니다.</p>
         @endforelse
     </section>
 

@@ -35,7 +35,7 @@
         </x-filament::section>
     @endif
 
-    @if (filled($this->breakdowns))
+    @if ($this->isConfigured)
         <x-filament::section>
             <x-slot name="heading">페이지뷰 분석 · 실방문자 · {{ $this->rangeOptions[$this->visitorRange] }}</x-slot>
             <x-slot name="description">알려진 봇을 제외한 방문 기준입니다. 실제 브라우저로 위장한 해외 크롤러는 무료 플랜에서 걸러지지 않으므로, 1페이지만 보고 나가는 해외 트래픽은 크롤러일 가능성이 큽니다.</x-slot>
@@ -47,7 +47,11 @@
                 </select>
             </x-slot>
 
-            @include('filament.pages.partials.breakdowns', ['data' => $this->breakdowns])
+            @if (filled($this->breakdowns))
+                @include('filament.pages.partials.breakdowns', ['data' => $this->breakdowns])
+            @else
+                <p class="fi-color-gray" style="font-size: 0.875rem;">선택한 기간에 집계된 방문이 아직 없습니다.</p>
+            @endif
         </x-filament::section>
     @endif
 

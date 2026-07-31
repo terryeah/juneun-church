@@ -16,10 +16,10 @@
 <header class="border-b-2 border-navy bg-paper">
     <div class="container-site flex items-center justify-between py-4">
         <a href="{{ route('home') }}" class="flex items-center gap-3 text-navy">
-            <span class="h-[34px]"><x-ui.logo /></span>
+            <span class="h-[2.125rem]"><x-ui.logo /></span>
             <span>
-                <span class="block font-kr text-[18px] font-medium leading-tight">{{ SiteSetting::get('church_name', '브리즈번 주는교회') }}</span>
-                <span class="block text-[10px] font-medium tracking-[0.04em] text-navy-400">{{ SiteSetting::get('denomination', '대한예수교장로회') }}</span>
+                <span class="block font-kr text-[1.125rem] font-medium leading-tight">{{ SiteSetting::get('church_name', '브리즈번 주는교회') }}</span>
+                <span class="block text-caption font-medium tracking-[0.04em] text-navy-400">{{ SiteSetting::get('denomination', '대한예수교장로회') }}</span>
             </span>
         </a>
 
@@ -49,7 +49,7 @@
         </button>
     </div>
 
-    <nav id="mobile-menu" class="hidden fixed inset-0 top-[74px] z-40 bg-paper lg:hidden" aria-label="모바일 메뉴" data-mobile-nav-menu>
+    <nav id="mobile-menu" class="hidden fixed inset-0 top-(--header-h) z-40 bg-paper lg:hidden" aria-label="모바일 메뉴" data-mobile-nav-menu>
         <div class="container-site divide-y divide-line py-4">
             @foreach ($navItems as $item)
                 <div class="py-1.5"><x-layout.nav-link :href="$item['href']" :active="$item['active']" :mobile="true">{{ $item['label'] }}</x-layout.nav-link></div>

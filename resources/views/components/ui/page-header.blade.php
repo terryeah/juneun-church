@@ -8,6 +8,6 @@
     <x-ui.kicker>{{ $kicker }}</x-ui.kicker>
     <h1 class="mt-3 font-kr text-display-md font-medium">{{ $title }}</h1>
     @if ($slot->isNotEmpty())
-        <p class="mt-4 max-w-lg text-[15px] leading-relaxed text-navy-700">{{ $slot }}</p>
+        <p class="mt-4 max-w-lg text-body leading-relaxed text-navy-700">{{ $slot }}</p>
     @endif
 </header>
