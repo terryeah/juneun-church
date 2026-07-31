@@ -1,6 +1,6 @@
-<x-layout.app title="뉴스" description="브리즈번 주는교회의 뉴스와 공지사항입니다.">
+<x-layout.app title="교회 소식" description="브리즈번 주는교회의 소식과 공지사항입니다.">
 
-    <x-ui.page-header kicker="뉴스 · News" title="뉴스" />
+    <x-ui.page-header kicker="교회 소식 · News" title="교회 소식" />
 
     <section class="section-news-list container-site pb-12 lg:pb-16">
         <div class="border-t-2 border-navy pt-3 lg:pt-5">
@@ -18,7 +18,7 @@
                     </p>
                 </a>
             @empty
-                <p class="py-8 text-[13px] text-navy-400">등록된 뉴스가 없습니다.</p>
+                <p class="py-8 text-[13px] text-navy-400">등록된 소식이 없습니다.</p>
             @endforelse
         </div>
         <div class="mt-8">

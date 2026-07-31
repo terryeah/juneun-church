@@ -11,7 +11,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 
 /**
- * Form schema for church announcements (뉴스).
+ * Form schema for church announcements (교회 소식).
  */
 class AnnouncementForm
 {

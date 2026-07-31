@@ -17,13 +17,13 @@ class CreateAnnouncement extends CreateRecord
      */
     public function getTitle(): string
     {
-        return '새로운 뉴스';
+        return '새로운 소식';
     }
 
     /**
      * Breadcrumb label for this page.
      */
-    protected static ?string $breadcrumb = '새로운 뉴스';
+    protected static ?string $breadcrumb = '새로운 소식';
 
     /**
      * Stamp the authenticated user as the record creator.
