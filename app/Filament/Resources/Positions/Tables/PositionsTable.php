@@ -18,9 +18,6 @@ class PositionsTable
                     ->label('이름')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('category')
-                    ->label('분류')
-                    ->searchable(),
                 TextColumn::make('created_at')
                     ->label('생성일')
                     ->dateTime()
@@ -32,6 +29,7 @@ class PositionsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->filters([
                 //

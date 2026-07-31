@@ -12,9 +12,9 @@ class PositionForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
-                TextInput::make('category')
-                    ->required(),
+                    ->label('이름')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 }

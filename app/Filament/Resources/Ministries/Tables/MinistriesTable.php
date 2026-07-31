@@ -18,6 +18,9 @@ class MinistriesTable
                     ->label('이름')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('description')
+                    ->label('설명')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->label('생성일')
                     ->dateTime()

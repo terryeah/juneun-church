@@ -7,9 +7,9 @@
  */
 return [
 
-    'title' => ':label 만들기',
+    'title' => '새로운 :label',
 
-    'breadcrumb' => '만들기',
+    'breadcrumb' => '새로운 :label',
 
     'form' => [
 

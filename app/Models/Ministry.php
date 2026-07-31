@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * Staff members reference these by name through their department field.
  */
-#[Fillable(['name', 'sort_order'])]
+#[Fillable(['name', 'description', 'sort_order'])]
 class Ministry extends Model
 {
     use HasFactory, LogsModelActivity;

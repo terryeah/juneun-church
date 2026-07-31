@@ -11,10 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * A church position (직분) such as 담임목사, 장로 or 집사.
  *
- * Positions are grouped by category (pastoral, elder, deacon, volunteer)
- * and ordered with sort_order to drive the hierarchical staff page.
+ * Positions are ordered with sort_order in Presbyterian rank order.
  */
-#[Fillable(['name', 'category', 'sort_order'])]
+#[Fillable(['name', 'sort_order'])]
 class Position extends Model
 {
     use HasFactory, LogsModelActivity;
