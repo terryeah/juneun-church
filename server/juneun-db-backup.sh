@@ -27,7 +27,7 @@ mkdir -p "$DUMP_ROOT/$STAMP"
 chmod 750 "$DUMP_ROOT"
 
 mysqldump --defaults-extra-file="$CNF" --single-transaction --quick \
-    --routines --triggers "$(get DB_DATABASE)" \
+    --no-tablespaces --routines --triggers "$(get DB_DATABASE)" \
     | zstd -q -o "$DUMP_ROOT/$STAMP/dump.sql.zst"
 
 find "$DUMP_ROOT" -mindepth 1 -maxdepth 1 -type d -mtime +90 -exec rm -rf {} +
