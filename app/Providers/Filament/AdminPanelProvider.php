@@ -4,12 +4,12 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Analytics;
 use App\Filament\Pages\Dashboard;
-use App\Filament\Pages\Members;
 use App\Filament\Resources\Activities\ActivityResource;
 use App\Filament\Resources\Albums\AlbumResource;
 use App\Filament\Resources\Announcements\AnnouncementResource;
 use App\Filament\Resources\Bulletins\BulletinResource;
 use App\Filament\Resources\Events\EventResource;
+use App\Filament\Resources\Members\MemberResource;
 use App\Filament\Resources\Ministries\MinistryResource;
 use App\Filament\Resources\Photos\PhotoResource;
 use App\Filament\Resources\Positions\PositionResource;
@@ -105,9 +105,9 @@ class AdminPanelProvider extends PanelProvider
         return $builder->groups([
             NavigationGroup::make()->items([
                 ...static::accessibleItems(Dashboard::class),
-                ...static::accessibleItems(SiteSettingResource::class),
             ]),
             NavigationGroup::make('콘텐츠')->items([
+                ...static::accessibleItems(SiteSettingResource::class),
                 ...static::accessibleItems(AnnouncementResource::class),
                 ...static::accessibleItems(EventResource::class),
                 ...static::accessibleItems(SermonResource::class),
@@ -119,7 +119,7 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(BulletinResource::class),
             ]),
             NavigationGroup::make('구성원')->items([
-                ...static::accessibleItems(Members::class),
+                ...static::accessibleItems(MemberResource::class),
                 ...static::accessibleItems(StaffMemberResource::class),
                 ...static::accessibleItems(MinistryResource::class),
                 ...static::accessibleItems(PositionResource::class),
