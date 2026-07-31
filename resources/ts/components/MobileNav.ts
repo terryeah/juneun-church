@@ -61,15 +61,20 @@ export class MobileNav {
          * made inert for keyboard and screen reader users. The header
          * stays live because it contains the toggle button itself.
          */
-        document.querySelectorAll<HTMLElement>('main, footer').forEach((region) => {
-            region.toggleAttribute('inert', open);
-        });
-
         if (open) {
-            this.menu?.querySelector<HTMLElement>('a, button')?.focus();
             document.dispatchEvent(new CustomEvent('mobilenav:opened'));
-        } else {
-            this.toggle.focus();
         }
+
+        requestAnimationFrame(() => {
+            document.querySelectorAll<HTMLElement>('main, footer').forEach((region) => {
+                region.toggleAttribute('inert', open);
+            });
+
+            if (open) {
+                this.menu?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true });
+            } else {
+                this.toggle.focus({ preventScroll: true });
+            }
+        });
     }
 }

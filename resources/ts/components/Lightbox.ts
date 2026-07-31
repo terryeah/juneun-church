@@ -53,6 +53,7 @@ export class Lightbox {
         this.overlay.setAttribute('aria-modal', 'true');
         this.overlay.setAttribute('aria-label', '사진 크게 보기');
         this.overlay.tabIndex = -1;
+        this.overlay.style.outline = 'none';
 
         this.status = document.createElement('span');
         this.status.setAttribute('role', 'status');
@@ -368,7 +369,7 @@ export class Lightbox {
         this.overlay?.classList.remove('hidden');
         this.overlay?.classList.add('flex');
         document.body.classList.add('overflow-hidden');
-        this.overlay?.querySelector<HTMLElement>('button')?.focus();
+        this.overlay?.focus({ preventScroll: true });
 
         requestAnimationFrame(() => {
             if (this.overlay) {
