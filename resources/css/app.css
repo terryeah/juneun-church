@@ -2,10 +2,8 @@
 
 @import '@fontsource/archivo/400.css';
 @import '@fontsource/archivo/500.css';
-@import '@fontsource/archivo/600.css';
 @import '@fontsource/archivo/700.css';
 @import '@fontsource/archivo/800.css';
-@import '@fontsource/archivo/900.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -16,23 +14,39 @@
  */
 @font-face {
     font-family: 'GmarketSans';
-    src: url('/fonts/GmarketSansLight.woff2') format('woff2'), url('/fonts/GmarketSansLight.woff') format('woff');
+    src: url('/fonts/GmarketSansLight-modern.woff2') format('woff2');
     font-weight: 300;
     font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00FF, U+2000-206F, U+20A9, U+3000-303F, U+3131-318E, U+AC00-D7A3, U+FF01-FF60;
 }
 
 @font-face {
     font-family: 'GmarketSans';
-    src: url('/fonts/GmarketSansMedium.woff2') format('woff2'), url('/fonts/GmarketSansMedium.woff') format('woff');
+    src: url('/fonts/GmarketSansMedium-modern.woff2') format('woff2');
     font-weight: 500;
     font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00FF, U+2000-206F, U+20A9, U+3000-303F, U+3131-318E, U+AC00-D7A3, U+FF01-FF60;
 }
 
 @font-face {
     font-family: 'GmarketSans';
-    src: url('/fonts/GmarketSansBold.woff2') format('woff2'), url('/fonts/GmarketSansBold.woff') format('woff');
+    src: url('/fonts/GmarketSansBold-modern.woff2') format('woff2');
     font-weight: 700;
     font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00FF, U+2000-206F, U+20A9, U+3000-303F, U+3131-318E, U+AC00-D7A3, U+FF01-FF60;
+}
+
+/**
+ * Metric-matched stand-in shown while Gmarket Sans loads, so the swap
+ * does not shift the layout. Overrides mirror the Gmarket hhea metrics
+ * (ascent 847, descent 340, line gap 90 at 1000 upm).
+ */
+@font-face {
+    font-family: 'GmarketSans Fallback';
+    src: local('Apple SD Gothic Neo'), local('Malgun Gothic');
+    ascent-override: 84.7%;
+    descent-override: 34%;
+    line-gap-override: 9%;
 }
 
 /**
@@ -40,7 +54,7 @@
  */
 @theme {
     --font-sans: 'Archivo', system-ui, sans-serif;
-    --font-kr: 'GmarketSans', 'Gothic A1', 'Archivo', system-ui, sans-serif;
+    --font-kr: 'GmarketSans', 'GmarketSans Fallback', 'Gothic A1', 'Archivo', system-ui, sans-serif;
 
     --color-navy: #16223c;
     --color-navy-900: #0d1730;

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Filament\Support\SaveUploadsAsWebp;
 use App\Models\Concerns\GeneratesReadableSlug;
 use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
     'description',
     'event_date',
     'cover_photo_path',
+    'cover_thumbnail_path',
     'is_published',
     'created_by',
 ])]
@@ -96,11 +98,34 @@ class Album extends Model
      */
     public function coverUrl(): ?string
     {
+        if ($this->cover_thumbnail_path) {
+            return Storage::disk(config('filesystems.media'))->url($this->cover_thumbnail_path);
+        }
+
         if ($this->cover_photo_path) {
             return Storage::disk(config('filesystems.media'))->url($this->cover_photo_path);
         }
 
         return $this->photos()->first()?->thumbnailUrl();
+    }
+
+    /**
+     * Generate and store the 800px cover thumbnail if it is missing.
+     */
+    public function refreshCoverThumbnail(): void
+    {
+        if (! $this->cover_photo_path || $this->cover_thumbnail_path) {
+            return;
+        }
+
+        $disk = Storage::disk(config('filesystems.media'));
+        $thumbnail = SaveUploadsAsWebp::thumbnail((string) $disk->get($this->cover_photo_path));
+
+        if ($thumbnail !== null) {
+            $path = dirname($this->cover_photo_path).'/thumbs/'.basename($this->cover_photo_path);
+            $disk->put($path, $thumbnail);
+            $this->forceFill(['cover_thumbnail_path' => $path])->saveQuietly();
+        }
     }
 
     /**

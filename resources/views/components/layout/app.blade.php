@@ -20,10 +20,9 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <meta name="theme-color" content="#16223c">
     <link rel="preconnect" href="https://media.juneun.com">
-    <link rel="preconnect" href="https://i.ytimg.com">
-    <link rel="preload" href="/fonts/GmarketSansMedium.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/GmarketSansMedium-modern.woff2" as="font" type="font/woff2" crossorigin>
     <script type="application/ld+json">{!! json_encode([
-        '@context' => 'https://schema.org',
+        '@'.'context' => 'https://schema.org',
         '@type' => 'Church',
         'name' => config('app.name'),
         'alternateName' => 'Brisbane Juneun Church',

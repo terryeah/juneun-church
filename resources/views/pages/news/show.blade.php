@@ -8,6 +8,7 @@
 
             @if ($announcement->featured_image)
                 <img
+                    width="1200" height="675"
                     src="{{ Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($announcement->featured_image) }}"
                     alt="{{ $announcement->title }}"
                     class="mt-8 w-full rounded-media object-cover"

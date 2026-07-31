@@ -24,4 +24,12 @@ class CreateAlbum extends CreateRecord
 
         return $data;
     }
+
+    /**
+     * Build the cover thumbnail once the album is stored.
+     */
+    protected function afterCreate(): void
+    {
+        $this->record->refreshCoverThumbnail();
+    }
 }

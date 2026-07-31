@@ -4,9 +4,10 @@ namespace App\Filament\Resources\Photos\Pages;
 
 use App\Filament\Resources\Photos\Concerns\LimitsSliderPicks;
 use App\Filament\Resources\Photos\PhotoResource;
-use App\Support\SaveUploadsAsWebp;
+use App\Filament\Support\SaveUploadsAsWebp;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Storage;
 
 class EditPhoto extends EditRecord
 {
@@ -37,10 +38,17 @@ class EditPhoto extends EditRecord
      */
     protected function afterSave(): void
     {
-        if ($this->record->thumbnail_path === null) {
-            $this->record->update([
-                'thumbnail_path' => SaveUploadsAsWebp::thumbnail($this->record->path),
-            ]);
+        if ($this->record->thumbnail_path !== null) {
+            return;
+        }
+
+        $disk = Storage::disk(config('filesystems.media'));
+        $thumbnail = SaveUploadsAsWebp::thumbnail((string) $disk->get($this->record->path));
+
+        if ($thumbnail !== null) {
+            $thumbnailPath = dirname($this->record->path).'/thumbs/'.basename($this->record->path);
+            $disk->put($thumbnailPath, $thumbnail);
+            $this->record->forceFill(['thumbnail_path' => $thumbnailPath])->saveQuietly();
         }
     }
 
