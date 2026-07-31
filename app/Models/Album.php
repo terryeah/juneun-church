@@ -46,6 +46,14 @@ class Album extends Model
      */
     protected static function booted(): void
     {
+        static::deleting(function (Album $album): void {
+            $album->photos()->get()->each->delete();
+
+            if ($album->cover_photo_path) {
+                Storage::disk(config('filesystems.media'))->delete($album->cover_photo_path);
+            }
+        });
+
         static::saving(function (Album $album) {
             if (blank($album->slug)) {
                 $album->slug = static::readableSlug(
@@ -62,7 +70,7 @@ class Album extends Model
      */
     public function photos(): HasMany
     {
-        return $this->hasMany(Photo::class)->orderBy('sort_order');
+        return $this->hasMany(Photo::class)->orderBy('sort_order')->orderBy('id');
     }
 
     /**

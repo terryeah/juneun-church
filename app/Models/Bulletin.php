@@ -15,6 +15,16 @@ use Illuminate\Support\Facades\Storage;
 #[Fillable(['title', 'file_path', 'published_at', 'created_by'])]
 class Bulletin extends Model
 {
+    /**
+     * Remove the stored file alongside the record.
+     */
+    protected static function booted(): void
+    {
+        static::deleted(function (Bulletin $bulletin): void {
+            Storage::disk(config('filesystems.media'))->delete($bulletin->file_path);
+        });
+    }
+
     use HasFactory, LogsModelActivity;
 
     /**

@@ -61,7 +61,7 @@ class Analytics extends Page
     public function dailySnapshots(): Collection
     {
         return AnalyticsSnapshot::query()
-            ->where('snapshot_date', '>=', today()->subDays(30))
+            ->where('snapshot_date', '>=', today()->subDays(29))
             ->orderByDesc('snapshot_date')
             ->get();
     }
@@ -97,7 +97,7 @@ class Analytics extends Page
             '24h' => today()->subDay(),
             '7d' => today()->subDays(7),
             'all' => today()->subMonths(6),
-            default => today()->subDays(30),
+            default => today()->subDays(29),
         };
 
         return Cache::remember(

@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -25,9 +26,10 @@ class StaffMembersTable
                 TextColumn::make('department')
                     ->label('부서 / 사역')
                     ->searchable(),
-                TextColumn::make('photo')
+                ImageColumn::make('photo')
                     ->label('사진')
-                    ->searchable(),
+                    ->disk(config('filesystems.media'))
+                    ->circular(),
                 TextColumn::make('email')
                     ->label('이메일')
                     ->searchable(),
@@ -48,6 +50,7 @@ class StaffMembersTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->filters([
                 //

@@ -27,7 +27,7 @@ class TrafficStatsWidget extends StatsOverviewWidget
     protected function getStats(): array
     {
         $snapshots = AnalyticsSnapshot::query()
-            ->where('snapshot_date', '>=', today()->subDays(30))
+            ->where('snapshot_date', '>=', today()->subDays(29))
             ->get();
 
         return [

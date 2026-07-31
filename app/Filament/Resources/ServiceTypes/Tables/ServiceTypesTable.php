@@ -29,6 +29,7 @@ class ServiceTypesTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->filters([
                 //

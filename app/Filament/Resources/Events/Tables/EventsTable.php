@@ -31,6 +31,10 @@ class EventsTable
                     ->label('종료일')
                     ->date('Y-m-d')
                     ->sortable(),
+                TextColumn::make('end_time')
+                    ->label('종료 시간')
+                    ->time('H:i')
+                    ->sortable(),
                 TextColumn::make('location')
                     ->label('행사장')
                     ->searchable(),

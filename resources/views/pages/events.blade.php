@@ -21,6 +21,14 @@
                                 @if ($event->event_time)
                                     <span class="text-navy-400">{{ \Illuminate\Support\Carbon::parse($event->event_time)->format('H:i') }}</span>
                                 @endif
+                                @if ($event->end_date && ! $event->end_date->isSameDay($event->event_date))
+                                    ~ {{ $event->end_date->translatedFormat('n월 j일 (D)') }}
+                                    @if ($event->end_time)
+                                        <span class="text-navy-400">{{ \Illuminate\Support\Carbon::parse($event->end_time)->format('H:i') }}</span>
+                                    @endif
+                                @elseif ($event->end_time)
+                                    ~ <span class="text-navy-400">{{ \Illuminate\Support\Carbon::parse($event->end_time)->format('H:i') }}</span>
+                                @endif
                             </p>
                             <h3 class="font-kr text-[15px] font-medium">{{ $event->title }}</h3>
                             <p class="font-kr text-[13px] text-navy-400 md:text-navy-700">{{ $event->location }}</p>

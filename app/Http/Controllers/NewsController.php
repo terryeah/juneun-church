@@ -30,7 +30,7 @@ class NewsController extends Controller
      */
     public function show(Announcement $announcement): View
     {
-        abort_unless($announcement->is_published, 404);
+        abort_unless(Announcement::query()->published()->whereKey($announcement->getKey())->exists(), 404);
 
         return view('pages.news.show', compact('announcement'));
     }

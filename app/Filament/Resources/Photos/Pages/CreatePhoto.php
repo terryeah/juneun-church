@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Photos\Pages;
 use App\Filament\Resources\Photos\Concerns\LimitsSliderPicks;
 use App\Filament\Resources\Photos\PhotoResource;
 use App\Filament\Support\SaveUploadsAsWebp;
+use App\Models\Photo;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Storage;
@@ -60,6 +61,9 @@ class CreatePhoto extends CreateRecord
         $data['filename'] = basename((string) $data['path']);
         $data['original_filename'] = $data['original_filename'] ?? $data['filename'];
         $data['uploaded_by'] = auth()->id();
+        $data['sort_order'] = (int) Photo::query()
+            ->where('album_id', $data['album_id'] ?? null)
+            ->max('sort_order') + 10;
 
         return $data;
     }

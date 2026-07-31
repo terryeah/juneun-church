@@ -31,6 +31,17 @@ class Photo extends Model
     use HasFactory, LogsModelActivity;
 
     /**
+     * Remove the stored image and thumbnail alongside the record.
+     */
+    protected static function booted(): void
+    {
+        static::deleted(function (Photo $photo): void {
+            Storage::disk(config('filesystems.media'))
+                ->delete(array_filter([$photo->path, $photo->thumbnail_path]));
+        });
+    }
+
+    /**
      * The album this photo belongs to.
      */
     public function album(): BelongsTo

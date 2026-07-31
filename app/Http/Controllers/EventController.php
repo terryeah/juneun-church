@@ -18,7 +18,10 @@ class EventController extends Controller
         /** Upcoming and current-month events grouped for monthly tables */
         $eventsByMonth = Event::query()
             ->published()
-            ->whereDate('event_date', '>=', today()->startOfMonth())
+            ->where(function ($query) {
+                $query->whereDate('event_date', '>=', today()->startOfMonth())
+                    ->orWhereDate('end_date', '>=', today()->startOfMonth());
+            })
             ->orderBy('event_date')
             ->get()
             ->groupBy(fn (Event $event) => $event->event_date->translatedFormat('Y년 n월'));

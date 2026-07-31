@@ -37,8 +37,8 @@ class EventForm
                 TimePicker::make('event_time')
                     ->label('시작 시간')
                     ->native(false)
-                    ->displayFormat('h:i:s A')
-                    ->seconds(true),
+                    ->displayFormat('H:i')
+                    ->seconds(false),
                 DatePicker::make('end_date')
                     ->label('종료일')
                     ->native(false)

@@ -83,7 +83,15 @@ class MemberForm
                         ->pluck('name', 'id')
                         ->all())
                     ->searchable()
-                    ->helperText('본인이 세대주이면 비워두세요.'),
+                    ->helperText('본인이 세대주이면 비워두세요.')
+                    ->rule(fn (?Member $record): \Closure => function (string $attribute, mixed $value, \Closure $fail) use ($record): void {
+                        if ($value && $record && $record->family()->exists()) {
+                            $fail('가족을 거느린 세대주에게는 세대주를 지정할 수 없습니다.');
+                        }
+                        if ($value && Member::query()->whereKey($value)->whereNotNull('head_id')->exists()) {
+                            $fail('세대주가 아닌 성도를 세대주로 지정할 수 없습니다.');
+                        }
+                    }),
                 Select::make('relationship')
                     ->label('세대주와의 관계')
                     ->options([

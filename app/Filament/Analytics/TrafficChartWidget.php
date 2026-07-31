@@ -27,7 +27,7 @@ class TrafficChartWidget extends ChartWidget
     protected function getData(): array
     {
         $snapshots = AnalyticsSnapshot::query()
-            ->where('snapshot_date', '>=', today()->subDays(30))
+            ->where('snapshot_date', '>=', today()->subDays(29))
             ->orderBy('snapshot_date')
             ->get();
 

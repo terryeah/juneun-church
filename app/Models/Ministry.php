@@ -16,4 +16,24 @@ use Illuminate\Database\Eloquent\Model;
 class Ministry extends Model
 {
     use HasFactory, LogsModelActivity;
+
+    /**
+     * Keep the string references on staff and members in step when a
+     * ministry is renamed or removed.
+     */
+    protected static function booted(): void
+    {
+        static::updated(function (Ministry $ministry): void {
+            if ($ministry->wasChanged('name')) {
+                $original = $ministry->getOriginal('name');
+                StaffMember::query()->where('department', $original)->update(['department' => $ministry->name]);
+                Member::query()->where('department', $original)->update(['department' => $ministry->name]);
+            }
+        });
+
+        static::deleted(function (Ministry $ministry): void {
+            StaffMember::query()->where('department', $ministry->name)->update(['department' => null]);
+            Member::query()->where('department', $ministry->name)->update(['department' => null]);
+        });
+    }
 }
