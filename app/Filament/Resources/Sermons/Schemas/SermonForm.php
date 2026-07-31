@@ -55,6 +55,7 @@ class SermonForm
                 FileUpload::make('thumbnail_path')
                     ->label('썸네일')
                     ->image()
+                    ->maxSize(10240)
                     ->disk(config('filesystems.media'))
                     ->directory('youtube')
                     ->visibility('public')
