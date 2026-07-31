@@ -31,3 +31,18 @@ mysqldump --defaults-extra-file="$CNF" --single-transaction --quick \
     | zstd -q -o "$DUMP_ROOT/$STAMP/dump.sql.zst"
 
 find "$DUMP_ROOT" -mindepth 1 -maxdepth 1 -type d -mtime +90 -exec rm -rf {} +
+
+# Off-site copy to a private R2 bucket, when its credentials exist.
+# /root/.juneun-r2-backup.env defines R2_BACKUP_ENDPOINT, R2_BACKUP_BUCKET,
+# AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for a token scoped to that
+# bucket only. Retention there is handled by the bucket's lifecycle rule.
+R2_ENV=/root/.juneun-r2-backup.env
+if [[ -f "$R2_ENV" ]]; then
+    set -a
+    source "$R2_ENV"
+    set +a
+    AWS_DEFAULT_REGION=auto aws s3 cp --only-show-errors \
+        "$DUMP_ROOT/$STAMP/dump.sql.zst" \
+        "s3://$R2_BACKUP_BUCKET/$STAMP/dump.sql.zst" \
+        --endpoint-url "$R2_BACKUP_ENDPOINT"
+fi
