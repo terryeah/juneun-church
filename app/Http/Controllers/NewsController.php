@@ -6,7 +6,7 @@ use App\Models\Announcement;
 use Illuminate\View\View;
 
 /**
- * Handles announcement display (교회 소식).
+ * Handles announcement display (뉴스).
  */
 class NewsController extends Controller
 {

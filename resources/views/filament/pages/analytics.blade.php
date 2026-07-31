@@ -14,7 +14,7 @@
         </x-filament::section>
     @endif
 
-    @if (filled($this->botBreakdowns))
+    @if ($this->isDeveloper && filled($this->botBreakdowns))
         <x-filament::section>
             <x-slot name="heading">요청 분석 · 봇 포함 (최근 24시간)</x-slot>
             <x-slot name="description">크롤러와 봇을 포함한 전체 HTTP 요청 기준입니다. 무료 플랜 제한으로 최근 24시간만 제공됩니다.</x-slot>

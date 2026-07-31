@@ -71,7 +71,7 @@
     <section class="section-news-sermon container-site py-8 md:py-10 lg:py-14">
         <div class="grid gap-16 lg:grid-cols-[1fr_1.3fr] lg:gap-11">
             <div>
-                <x-ui.kicker>교회 소식 · News</x-ui.kicker>
+                <x-ui.kicker>뉴스 · News</x-ui.kicker>
                 <div class="mt-4">
                     @forelse ($announcements as $announcement)
                         <a href="{{ route('news.show', $announcement) }}" class="group block border-t border-line py-4 first:border-t-0 first:pt-0">
@@ -84,10 +84,10 @@
                             <h3 class="mt-1 font-kr text-[15px] font-medium group-hover:text-accent">{{ $announcement->title }}</h3>
                         </a>
                     @empty
-                        <p class="py-4 text-[13px] text-navy-400">등록된 소식이 없습니다.</p>
+                        <p class="py-4 text-[13px] text-navy-400">등록된 뉴스가 없습니다.</p>
                     @endforelse
                 </div>
-                <a href="{{ route('news.index') }}" class="mt-2 inline-block text-[11px] font-bold text-accent hover:text-accent-700">소식 전체 보기 →</a>
+                <a href="{{ route('news.index') }}" class="mt-2 inline-block text-[11px] font-bold text-accent hover:text-accent-700">뉴스 전체 보기 →</a>
             </div>
 
             @if ($latestSermon)

@@ -41,7 +41,7 @@ class AlbumForm
                     ->directory(fn (?Album $record): string => 'albums/'.($record?->slug ?? 'covers'))
                     ->visibility('public'),
                 Toggle::make('is_published')
-                    ->label('게시')
+                    ->label('활성화')
                     ->default(true),
                 TextInput::make('slug')
                     ->label('슬러그')

@@ -103,8 +103,29 @@ class Analytics extends Page
     {
         return [
             TrafficStatsWidget::class,
+        ];
+    }
+
+    /**
+     * The traffic chart renders below the page body, under the daily
+     * detail table.
+     *
+     * @return array<class-string>
+     */
+    protected function getFooterWidgets(): array
+    {
+        return [
             TrafficChartWidget::class,
         ];
+    }
+
+    /**
+     * Whether the signed-in user holds the developer role.
+     */
+    #[Computed]
+    public function isDeveloper(): bool
+    {
+        return auth()->user()?->hasRole('developer') ?? false;
     }
 
     /**

@@ -45,9 +45,20 @@ class UserForm
                     ->relationship(
                         name: 'roles',
                         titleAttribute: 'name',
-                        modifyQueryUsing: fn ($query) => auth()->user()?->hasRole('super_admin')
-                            ? $query
-                            : $query->where('name', '!=', 'super_admin'),
+                        modifyQueryUsing: function ($query) {
+                            $user = auth()->user();
+
+                            if (! $user?->hasRole('super_admin')) {
+                                $query->where('name', '!=', 'super_admin');
+                            }
+
+                            /** The developer role is invisible to non-developers. */
+                            if (! $user?->hasRole('developer')) {
+                                $query->where('name', '!=', 'developer');
+                            }
+
+                            return $query;
+                        },
                     )
                     ->multiple()
                     ->preload(),

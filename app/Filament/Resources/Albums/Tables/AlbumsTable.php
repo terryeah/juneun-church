@@ -42,7 +42,7 @@ class AlbumsTable
                     ->date('Y-m-d')
                     ->sortable(),
                 ToggleColumn::make('is_published')
-                    ->label('게시'),
+                    ->label('활성화'),
                 TextColumn::make('author.name')
                     ->label('작성자')
                     ->default('시스템')

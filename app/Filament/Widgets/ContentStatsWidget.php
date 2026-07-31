@@ -42,7 +42,7 @@ class ContentStatsWidget extends StatsOverviewWidget
                 ->color('primary'),
             Stat::make('다가오는 행사', Number::format(Event::query()->where('is_published', true)->whereDate('event_date', '>=', today())->count()))
                 ->description('교회 행사 일정'),
-            Stat::make('게시된 소식', Number::format(Announcement::query()->where('is_published', true)->count()))
+            Stat::make('게시된 뉴스', Number::format(Announcement::query()->where('is_published', true)->count()))
                 ->description('예배 영상 '.Number::format(Sermon::query()->where('is_published', true)->count()).'편'),
             Stat::make('갤러리 사진', Number::format(Photo::query()->count()))
                 ->description('앨범 '.Number::format(\App\Models\Album::query()->where('is_published', true)->count()).'개'),

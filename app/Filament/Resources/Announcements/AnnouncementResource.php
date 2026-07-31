@@ -20,16 +20,16 @@ class AnnouncementResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
 
-    protected static ?string $navigationLabel = '교회 소식';
+    protected static ?string $navigationLabel = '뉴스';
 
     /**
      * Position of this item in the sidebar navigation.
      */
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $modelLabel = '소식';
+    protected static ?string $modelLabel = '뉴스';
 
-    protected static ?string $pluralModelLabel = '소식';
+    protected static ?string $pluralModelLabel = '뉴스';
 
     public static function form(Schema $schema): Schema
     {

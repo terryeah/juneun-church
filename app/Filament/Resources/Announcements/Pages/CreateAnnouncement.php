@@ -13,6 +13,19 @@ class CreateAnnouncement extends CreateRecord
     protected static string $resource = AnnouncementResource::class;
 
     /**
+     * Page heading shown above the form.
+     */
+    public function getTitle(): string
+    {
+        return '새로운 뉴스';
+    }
+
+    /**
+     * Breadcrumb label for this page.
+     */
+    protected static ?string $breadcrumb = '새로운 뉴스';
+
+    /**
      * Stamp the authenticated user as the record creator.
      *
      * @param  array<string, mixed>  $data

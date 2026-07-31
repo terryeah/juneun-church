@@ -7,7 +7,7 @@
             </div>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                 <x-filament::button tag="a" href="{{ url('/') }}" target="_blank" color="gray" size="sm">사이트 보기</x-filament::button>
-                <x-filament::button tag="a" href="{{ url('/admin/announcements/create') }}" color="gray" size="sm">소식 작성</x-filament::button>
+                <x-filament::button tag="a" href="{{ url('/admin/announcements/create') }}" color="gray" size="sm">뉴스 작성</x-filament::button>
                 <x-filament::button tag="a" href="{{ url('/admin/photos/create') }}" color="gray" size="sm">사진 업로드</x-filament::button>
                 <x-filament::button tag="a" href="{{ url('/admin/bulletins/create') }}" color="gray" size="sm">주보 올리기</x-filament::button>
             </div>

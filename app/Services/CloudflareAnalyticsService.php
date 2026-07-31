@@ -16,6 +16,15 @@ use Illuminate\Support\Facades\Http;
 class CloudflareAnalyticsService
 {
     /**
+     * Browser identifiers that are automation, not real people, and so
+     * are excluded from real-visitor figures - headless browsers used
+     * for testing and requests Cloudflare could not classify (bots).
+     *
+     * @var array<string>
+     */
+    private const BOT_BROWSERS = ['ChromeHeadless', 'HeadlessChrome', 'Unknown'];
+
+    /**
      * Whether the Cloudflare credentials have been configured.
      */
     public function isConfigured(): bool
@@ -106,12 +115,12 @@ class CloudflareAnalyticsService
         }
 
         $query = <<<'GRAPHQL'
-        query ($account: String!, $site: String!, $since: Date!, $until: Date!) {
+        query ($account: String!, $site: String!, $since: Date!, $until: Date!, $bots: [String!]) {
             viewer {
                 accounts(filter: { accountTag: $account }) {
                     rumPageloadEventsAdaptiveGroups(
                         limit: 40
-                        filter: { date_geq: $since, date_leq: $until, siteTag: $site }
+                        filter: { date_geq: $since, date_leq: $until, siteTag: $site, userAgentBrowser_notin: $bots }
                         orderBy: [date_ASC]
                     ) {
                         dimensions { date }
@@ -131,6 +140,7 @@ class CloudflareAnalyticsService
                     'site' => config('services.cloudflare.rum_site_tag'),
                     'since' => $since->toDateString(),
                     'until' => $until->toDateString(),
+                    'bots' => self::BOT_BROWSERS,
                 ],
             ]);
 
@@ -175,10 +185,11 @@ class CloudflareAnalyticsService
         ];
 
         $filter = sprintf(
-            '{ date_geq: "%s", date_leq: "%s", siteTag: "%s" }',
+            '{ date_geq: "%s", date_leq: "%s", siteTag: "%s", userAgentBrowser_notin: %s }',
             $since->toDateString(),
             $until->toDateString(),
             config('services.cloudflare.rum_site_tag'),
+            json_encode(self::BOT_BROWSERS),
         );
 
         $fields = collect($dimensions)

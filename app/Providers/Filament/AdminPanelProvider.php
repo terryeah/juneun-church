@@ -19,7 +19,7 @@ use App\Filament\Resources\StaffMembers\StaffMemberResource;
 use App\Filament\Resources\Users\UserResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
-use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
+use App\Filament\Resources\Roles\RoleResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
