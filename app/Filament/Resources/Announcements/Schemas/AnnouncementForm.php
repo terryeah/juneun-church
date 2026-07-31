@@ -39,16 +39,6 @@ class AnnouncementForm
                     ->disk(config('filesystems.media'))
                     ->directory('announcements')
                     ->visibility('public'),
-                Flex::make([
-                    Toggle::make('is_published')
-                        ->label('게시')
-                        ->default(true)
-                        ->grow(false),
-                    Toggle::make('is_pinned')
-                        ->label('상단 고정')
-                        ->grow(false),
-                ])
-                    ->columnSpanFull(),
                 DateTimePicker::make('published_at')
                     ->label('게시 일시')
                     ->native(false)
@@ -61,6 +51,16 @@ class AnnouncementForm
                     ->displayFormat('Y-m-d, H:i:s')
                     ->seconds(true)
                     ->helperText('비워두면 계속 게시됩니다.'),
+                Flex::make([
+                    Toggle::make('is_published')
+                        ->label('게시')
+                        ->default(true)
+                        ->grow(false),
+                    Toggle::make('is_pinned')
+                        ->label('상단 고정')
+                        ->grow(false),
+                ])
+                    ->columnSpanFull(),
             ]);
     }
 }
