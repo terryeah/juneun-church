@@ -64,18 +64,41 @@ class Analytics extends Page
     }
 
     /**
-     * Web Analytics breakdowns, cached for an hour so the page stays
-     * fresh without hitting the API on every visit.
+     * Selected range for the real-visitor breakdowns: 24h, 7d, 30d or all.
+     */
+    public string $visitorRange = '30d';
+
+    /**
+     * Range options offered on the breakdown sections.
+     *
+     * @var array<string, string>
+     */
+    public array $rangeOptions = [
+        '24h' => '최근 24시간',
+        '7d' => '최근 7일',
+        '30d' => '최근 30일',
+        'all' => '전체',
+    ];
+
+    /**
+     * Web Analytics breakdowns for the selected range, cached per range.
      *
      * @return array<string, array<int, array{label: string, count: int}>>
      */
     #[Computed]
     public function breakdowns(): array
     {
+        $since = match ($this->visitorRange) {
+            '24h' => today()->subDay(),
+            '7d' => today()->subDays(7),
+            'all' => today()->subMonths(6),
+            default => today()->subDays(30),
+        };
+
         return \Illuminate\Support\Facades\Cache::remember(
-            'cf-rum-breakdowns',
+            "cf-rum-breakdowns-{$this->visitorRange}",
             3600,
-            fn (): array => app(CloudflareAnalyticsService::class)->breakdowns(today()->subDays(30), today()),
+            fn (): array => app(CloudflareAnalyticsService::class)->breakdowns($since, today()),
         );
     }
 

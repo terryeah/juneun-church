@@ -5,24 +5,6 @@
         @media (min-width: 768px) { .an-breakdowns { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     </style>
 
-    @if (filled($this->breakdowns))
-        <x-filament::section>
-            <x-slot name="heading">페이지뷰 분석 · 실방문자 (최근 30일)</x-slot>
-            <x-slot name="description">봇을 제외한 실제 방문자 기준입니다.</x-slot>
-
-            @include('filament.pages.partials.breakdowns', ['data' => $this->breakdowns])
-        </x-filament::section>
-    @endif
-
-    @if ($this->isDeveloper && filled($this->botBreakdowns))
-        <x-filament::section>
-            <x-slot name="heading">요청 분석 · 봇 포함 (최근 24시간)</x-slot>
-            <x-slot name="description">크롤러와 봇을 포함한 전체 HTTP 요청 기준입니다. 무료 플랜 제한으로 최근 24시간만 제공됩니다.</x-slot>
-
-            @include('filament.pages.partials.breakdowns', ['data' => $this->botBreakdowns])
-        </x-filament::section>
-    @endif
-
     @if ($this->dailySnapshots->isNotEmpty())
         <x-filament::section>
             <x-slot name="heading">일별 상세</x-slot>
@@ -50,6 +32,31 @@
                     </tbody>
                 </table>
             </div>
+        </x-filament::section>
+    @endif
+
+    @if (filled($this->breakdowns))
+        <x-filament::section>
+            <x-slot name="heading">페이지뷰 분석 · 실방문자 · {{ $this->rangeOptions[$this->visitorRange] }}</x-slot>
+            <x-slot name="description">봇을 제외한 실제 방문자 기준입니다.</x-slot>
+            <x-slot name="afterHeader">
+                <select wire:model.live="visitorRange" class="fi-input fi-select-input" style="border-radius: 0.5rem; padding: 0.375rem 2rem 0.375rem 0.75rem; font-size: 0.875rem;">
+                    @foreach ($this->rangeOptions as $value => $label)
+                        <option value="{{ $value }}">{{ $label }}</option>
+                    @endforeach
+                </select>
+            </x-slot>
+
+            @include('filament.pages.partials.breakdowns', ['data' => $this->breakdowns])
+        </x-filament::section>
+    @endif
+
+    @if ($this->isDeveloper && filled($this->botBreakdowns))
+        <x-filament::section>
+            <x-slot name="heading">요청 분석 · 봇 포함 · 최근 24시간</x-slot>
+            <x-slot name="description">크롤러와 봇을 포함한 전체 HTTP 요청 기준입니다. 무료 플랜에서는 상세 분석이 24시간으로 제한됩니다.</x-slot>
+
+            @include('filament.pages.partials.breakdowns', ['data' => $this->botBreakdowns])
         </x-filament::section>
     @endif
 
