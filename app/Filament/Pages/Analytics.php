@@ -69,7 +69,7 @@ class Analytics extends Page
     /**
      * Selected range for the real-visitor breakdowns: 24h, 7d, 30d or all.
      */
-    public string $visitorRange = '24h';
+    public string $visitorRange = 'today';
 
     /**
      * Range options offered on the breakdown sections.
@@ -77,6 +77,7 @@ class Analytics extends Page
      * @var array<string, string>
      */
     public array $rangeOptions = [
+        'today' => '오늘',
         '24h' => '최근 24시간',
         '7d' => '최근 7일',
         '30d' => '최근 30일',
@@ -92,6 +93,7 @@ class Analytics extends Page
     public function breakdowns(): array
     {
         $since = match ($this->visitorRange) {
+            'today' => today(),
             '24h' => today()->subDay(),
             '7d' => today()->subDays(7),
             'all' => today()->subMonths(6),
