@@ -235,9 +235,8 @@ export class PhotoSlider {
         for (let index = 0; index <= this.maxIndex(); index++) {
             const dot = document.createElement('button');
             dot.type = 'button';
-            dot.className = 'flex h-6 w-6 items-center justify-center';
+            dot.className = 'h-1.5 w-1.5 rounded-full bg-cream/45 transition-colors duration-300 hover:bg-cream/60';
             dot.setAttribute('aria-label', `${index + 1}번째 사진으로 이동`);
-            dot.innerHTML = '<span class="pointer-events-none h-1.5 w-1.5 rounded-full bg-cream/45 transition-colors duration-300"></span>';
             dot.addEventListener('click', () => this.goTo(index));
             this.dots?.appendChild(dot);
         }
@@ -255,9 +254,8 @@ export class PhotoSlider {
 
         Array.from(this.dots.children).forEach((dot, index) => {
             const active = index === this.currentIndex;
-            const fill = dot.firstElementChild;
-            fill?.classList.toggle('bg-cream', active);
-            fill?.classList.toggle('bg-cream/45', ! active);
+            dot.classList.toggle('bg-cream', active);
+            dot.classList.toggle('bg-cream/45', ! active);
 
             if (active) {
                 dot.setAttribute('aria-current', 'true');
