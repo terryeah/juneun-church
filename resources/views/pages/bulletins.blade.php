@@ -5,7 +5,7 @@
     <section class="section-bulletin-list container-site pb-12 lg:pb-16">
         <div class="border-t-2 border-navy">
             @forelse ($bulletins as $bulletin)
-                <a href="{{ $bulletin->fileUrl() }}" class="group flex items-center justify-between gap-4 border-b border-line py-5" target="_blank" rel="noopener">
+                <a href="{{ $bulletin->fileUrl() }}" class="group flex items-center justify-between gap-4 border-b border-line py-5" target="_blank" rel="noopener" aria-label="{{ $bulletin->title }} 주보 PDF 열기 (새 창)">
                     <div>
                         <p class="text-[11px] text-navy-400">{{ $bulletin->published_at->translatedFormat('Y년 n월 j일') }}</p>
                         <h2 class="mt-1 font-kr text-[15px] font-medium group-hover:text-accent">{{ $bulletin->title }}</h2>

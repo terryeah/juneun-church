@@ -16,7 +16,12 @@ export class Lightbox {
     private zoomX: number = 0;
     private zoomY: number = 0;
     private pinchStart: { distance: number; scale: number } | null = null;
+    private gestureHadPinch: boolean = false;
     private lastTapAt: number = 0;
+    private renderGeneration: number = 0;
+    private opener: HTMLElement | null = null;
+    private status: HTMLElement | null = null;
+    private reducedMotion: boolean = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /**
      * Creates a new Lightbox instance.
@@ -46,8 +51,15 @@ export class Lightbox {
             'fixed inset-0 z-50 hidden items-center justify-center bg-navy-900/95 p-4';
         this.overlay.setAttribute('role', 'dialog');
         this.overlay.setAttribute('aria-modal', 'true');
+        this.overlay.setAttribute('aria-label', '사진 크게 보기');
+        this.overlay.tabIndex = -1;
+
+        this.status = document.createElement('span');
+        this.status.setAttribute('role', 'status');
+        this.status.className = 'sr-only';
+        this.overlay.appendChild(this.status);
         this.overlay.style.opacity = '0';
-        this.overlay.style.transition = 'opacity 280ms ease';
+        this.overlay.style.transition = this.reducedMotion ? 'none' : 'opacity 280ms ease';
 
         this.stage = document.createElement('div');
         this.stage.style.cssText = 'position: relative; width: 100%; height: 100%;';
@@ -83,8 +95,10 @@ export class Lightbox {
     private createImageLayer(): HTMLImageElement {
         const image = document.createElement('img');
         image.className = 'rounded-media';
-        image.style.cssText = 'position: absolute; inset: 0; margin: auto; max-width: 100%; max-height: 100%; '
-            + 'transition: opacity 300ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1);';
+        image.style.cssText = 'position: absolute; inset: 0; margin: auto; max-width: 100%; max-height: 100%;';
+        image.style.transition = this.reducedMotion
+            ? 'none'
+            : 'opacity 300ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1)';
 
         return image;
     }
@@ -117,6 +131,7 @@ export class Lightbox {
 
             if (this.pointers.size === 2) {
                 this.pinchStart = { distance: this.pointerDistance(), scale: this.zoomScale };
+                this.gestureHadPinch = true;
                 this.setImageTransition(false);
             }
         });
@@ -147,7 +162,6 @@ export class Lightbox {
         });
 
         const release = (event: PointerEvent): void => {
-            const hadPinch = this.pinchStart !== null;
             this.pointers.delete(event.pointerId);
 
             if (this.pointers.size < 2) {
@@ -157,6 +171,9 @@ export class Lightbox {
             if (this.pointers.size > 0) {
                 return;
             }
+
+            const hadPinch = this.gestureHadPinch;
+            this.gestureHadPinch = false;
 
             this.setImageTransition(true);
 
@@ -200,6 +217,10 @@ export class Lightbox {
                     } else {
                         this.applyZoom();
                     }
+
+                    this.lastTapAt = 0;
+
+                    return;
                 }
 
                 this.lastTapAt = now;
@@ -247,7 +268,7 @@ export class Lightbox {
      */
     private setImageTransition(enabled: boolean): void {
         if (this.image) {
-            this.image.style.transition = enabled
+            this.image.style.transition = enabled && ! this.reducedMotion
                 ? 'opacity 300ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1)'
                 : 'none';
         }
@@ -299,6 +320,39 @@ export class Lightbox {
             if (event.key === 'ArrowRight') {
                 this.step(1);
             }
+            if (event.key === '+' || event.key === '=') {
+                this.zoomScale = Math.min(4, this.zoomScale + 0.5);
+                this.applyZoom();
+            }
+            if (event.key === '-') {
+                this.zoomScale = Math.max(1, this.zoomScale - 0.5);
+                this.zoomScale <= 1.05 ? this.resetZoom() : this.applyZoom();
+            }
+            if (event.key === '0') {
+                this.resetZoom();
+            }
+
+            if (event.key === 'Tab') {
+                const focusables = Array.from(
+                    this.overlay?.querySelectorAll<HTMLElement>('button') ?? [],
+                );
+
+                if (focusables.length === 0) {
+                    return;
+                }
+
+                const first = focusables[0];
+                const last = focusables[focusables.length - 1];
+                const active = document.activeElement as HTMLElement;
+
+                if (event.shiftKey && (active === first || ! focusables.includes(active))) {
+                    event.preventDefault();
+                    last.focus();
+                } else if (! event.shiftKey && active === last) {
+                    event.preventDefault();
+                    first.focus();
+                }
+            }
         });
     }
 
@@ -308,11 +362,13 @@ export class Lightbox {
      * @param index - Position within the current link list
      */
     private open(index: number): void {
+        this.opener = document.activeElement as HTMLElement;
         this.currentIndex = index;
         this.render(0);
         this.overlay?.classList.remove('hidden');
         this.overlay?.classList.add('flex');
         document.body.classList.add('overflow-hidden');
+        this.overlay?.querySelector<HTMLElement>('button')?.focus();
 
         requestAnimationFrame(() => {
             if (this.overlay) {
@@ -338,7 +394,9 @@ export class Lightbox {
         window.setTimeout(() => {
             this.overlay?.classList.add('hidden');
             this.overlay?.classList.remove('flex');
-        }, 280);
+            this.opener?.focus();
+            this.opener = null;
+        }, this.reducedMotion ? 0 : 280);
     }
 
     /**
@@ -368,9 +426,14 @@ export class Lightbox {
         const link = this.links()[this.currentIndex];
         const stage = this.stage;
         const outgoing = this.image;
+        const generation = ++this.renderGeneration;
 
         if (!link || !stage || !outgoing) {
             return;
+        }
+
+        if (this.status) {
+            this.status.textContent = `사진 ${this.currentIndex + 1} / ${this.links().length}`;
         }
 
         if (direction === 0) {
@@ -404,6 +467,11 @@ export class Lightbox {
 
         const start = (): void => {
             incoming.onload = null;
+
+            if (generation !== this.renderGeneration) {
+                return;
+            }
+
             stage.appendChild(incoming);
 
             requestAnimationFrame(() => {

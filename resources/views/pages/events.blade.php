@@ -30,8 +30,8 @@
                                     ~ <span class="text-navy-400">{{ \Illuminate\Support\Carbon::parse($event->end_time)->format('H:i') }}</span>
                                 @endif
                             </p>
-                            <h3 class="font-kr text-[15px] font-medium">{{ $event->title }}</h3>
-                            <p class="font-kr text-[13px] text-navy-400 md:text-navy-700">{{ $event->location }}</p>
+                            <h3 class="font-kr text-[15px] font-medium"><span class="sr-only md:hidden">행사명: </span>{{ $event->title }}</h3>
+                            <p class="font-kr text-[13px] text-navy-400 md:text-navy-700"><span class="sr-only md:hidden">행사장: </span>{{ $event->location }}</p>
                         </div>
                     @endforeach
                 </div>

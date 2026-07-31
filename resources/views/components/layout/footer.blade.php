@@ -30,14 +30,14 @@
                     받은 은혜를 흘려보내는 교회 - 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라갑니다.
                 </p>
                 <div class="mt-4 flex gap-3">
-                    <a href="{{ SiteSetting::get('instagram_url', '#') }}" target="_blank" rel="noopener" class="flex text-navy hover:text-accent" aria-label="Instagram">
+                    <a href="{{ SiteSetting::get('instagram_url', '#') }}" target="_blank" rel="noopener" class="flex text-navy hover:text-accent" aria-label="Instagram (새 창)">
                         <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
                             <rect x="3" y="3" width="18" height="18" rx="5"/>
                             <circle cx="12" cy="12" r="4"/>
                             <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none"/>
                         </svg>
                     </a>
-                    <a href="{{ SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="flex text-navy hover:text-accent" aria-label="YouTube">
+                    <a href="{{ SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="flex text-navy hover:text-accent" aria-label="YouTube (새 창)">
                         <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
                             <rect x="2" y="4.5" width="20" height="15" rx="4"/>
                             <path d="M10 9.3v5.4l5-2.7z" fill="currentColor" stroke="none"/>
@@ -47,25 +47,25 @@
             </div>
 
             <div>
-                <h2 class="text-kicker font-extrabold uppercase tracking-[0.16em] text-accent">Locations</h2>
+                <h2 lang="en" class="text-kicker font-extrabold uppercase tracking-[0.16em] text-accent">Locations</h2>
                 <ul class="mt-4 space-y-2 text-[13px] leading-relaxed text-navy-700">
                     <li>
                         <a href="https://www.google.com/maps?q={{ urlencode(SiteSetting::get('address_main', '')) }}" target="_blank" rel="noopener" class="block hover:text-accent">
                             <span class="block font-kr font-medium text-navy">{{ SiteSetting::get('address_main_label', '본당') }}</span>
-                            {{ SiteSetting::get('address_main') }}
+                            {{ SiteSetting::get('address_main') }}<span class="sr-only"> (새 창)</span>
                         </a>
                     </li>
                     <li>
                         <a href="https://www.google.com/maps?q={{ urlencode(SiteSetting::get('address_education', '')) }}" target="_blank" rel="noopener" class="block hover:text-accent">
                             <span class="block font-kr font-medium text-navy">{{ SiteSetting::get('address_education_label', '교육관') }}</span>
-                            {{ SiteSetting::get('address_education') }}
+                            {{ SiteSetting::get('address_education') }}<span class="sr-only"> (새 창)</span>
                         </a>
                     </li>
                 </ul>
             </div>
 
             <div>
-                <h2 class="text-kicker font-extrabold uppercase tracking-[0.16em] text-accent">Contact</h2>
+                <h2 lang="en" class="text-kicker font-extrabold uppercase tracking-[0.16em] text-accent">Contact</h2>
                 <ul class="mt-4 space-y-2 text-[13px] leading-relaxed text-navy-700">
                     @if (SiteSetting::get('contact_email'))
                         <li><a href="mailto:{{ SiteSetting::get('contact_email') }}" class="hover:text-accent">{{ SiteSetting::get('contact_email') }}</a></li>

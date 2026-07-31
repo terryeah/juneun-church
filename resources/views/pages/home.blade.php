@@ -6,7 +6,7 @@
             <div class="lg:flex-[1.05]">
                 <x-ui.kicker data-hero-item>Brisbane Juneun Church · Since 2024</x-ui.kicker>
                 <h1 class="mt-4 font-kr text-display-lg" data-hero-item>받은 은혜를<br>흘려보내는 교회</h1>
-                <p class="mt-5 max-w-[400px] text-[16px] leading-relaxed text-navy-700" data-hero-item>
+                <p lang="en" class="mt-5 max-w-[400px] text-[16px] leading-relaxed text-navy-700" data-hero-item>
                     A young Korean church in Brisbane - worshipping together, giving generously, and growing as followers of Jesus Christ.
                 </p>
                 <div class="mt-7 flex flex-wrap gap-3" data-hero-item>
@@ -94,7 +94,7 @@
                 <div>
                     <div class="flex items-baseline justify-between">
                         <x-ui.kicker>최근 예배 · Latest Sermon</x-ui.kicker>
-                        <a href="{{ \App\Models\SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="text-[11px] font-bold leading-none text-accent hover:text-accent-700">YouTube →</a>
+                        <a href="{{ \App\Models\SiteSetting::get('youtube_url', '#') }}" target="_blank" rel="noopener" class="text-[11px] font-bold leading-none text-accent hover:text-accent-700">YouTube →<span class="sr-only"> (새 창)</span></a>
                     </div>
                     <div class="mt-4">
                         <x-ui.sermon-video :sermon="$latestSermon" />
@@ -169,7 +169,7 @@
         @else
             <div class="grid grid-cols-1 gap-1 md:grid-cols-3">
                 @foreach (['Fellowship', 'Worship', 'Next-Gen'] as $label)
-                    <x-ui.photo-placeholder :label="$label" class="aspect-square rounded-[10px] bg-navy-700/60 text-cream/40" />
+                    <x-ui.photo-placeholder :label="$label" class="aspect-square rounded-[10px] bg-navy-700/60 text-cream/55" />
                 @endforeach
             </div>
         @endif

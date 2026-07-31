@@ -69,6 +69,17 @@ export class PhotoSlider {
         this.container.addEventListener('pointerleave', () => {
             this.paused = false;
         });
+        this.container.addEventListener('focusin', (event: FocusEvent) => {
+            this.paused = true;
+
+            const slide = (event.target as HTMLElement).closest<HTMLElement>('[data-slider-track] > *');
+            if (slide?.parentElement === this.track) {
+                this.goTo(Math.min(this.slides().indexOf(slide), this.maxIndex()));
+            }
+        });
+        this.container.addEventListener('focusout', () => {
+            this.paused = false;
+        });
         window.addEventListener('resize', () => {
             this.renderDots();
             this.goTo(Math.min(this.currentIndex, this.maxIndex()));
@@ -217,11 +228,16 @@ export class PhotoSlider {
 
         this.dots.innerHTML = '';
 
+        if (this.maxIndex() === 0) {
+            return;
+        }
+
         for (let index = 0; index <= this.maxIndex(); index++) {
             const dot = document.createElement('button');
             dot.type = 'button';
-            dot.className = 'h-1.5 w-1.5 rounded-full bg-cream/30 transition-colors duration-300 hover:bg-cream/60';
+            dot.className = 'flex h-6 w-6 items-center justify-center';
             dot.setAttribute('aria-label', `${index + 1}번째 사진으로 이동`);
+            dot.innerHTML = '<span class="pointer-events-none h-1.5 w-1.5 rounded-full bg-cream/45 transition-colors duration-300"></span>';
             dot.addEventListener('click', () => this.goTo(index));
             this.dots?.appendChild(dot);
         }
@@ -238,8 +254,16 @@ export class PhotoSlider {
         }
 
         Array.from(this.dots.children).forEach((dot, index) => {
-            dot.classList.toggle('bg-cream', index === this.currentIndex);
-            dot.classList.toggle('bg-cream/30', index !== this.currentIndex);
+            const active = index === this.currentIndex;
+            const fill = dot.firstElementChild;
+            fill?.classList.toggle('bg-cream', active);
+            fill?.classList.toggle('bg-cream/45', ! active);
+
+            if (active) {
+                dot.setAttribute('aria-current', 'true');
+            } else {
+                dot.removeAttribute('aria-current');
+            }
         });
     }
 
@@ -247,7 +271,7 @@ export class PhotoSlider {
      * Starts the automatic advance timer.
      */
     private start(): void {
-        if (this.slides().length < 2) {
+        if (this.maxIndex() === 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             return;
         }
 

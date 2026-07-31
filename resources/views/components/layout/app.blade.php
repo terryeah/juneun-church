@@ -42,9 +42,10 @@
     @endif
 </head>
 <body class="flex min-h-screen flex-col bg-paper font-sans text-navy antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-nav focus:bg-navy focus:px-4 focus:py-2 focus:text-cream">본문 바로가기</a>
     <x-layout.header />
 
-    <main class="flex-1">
+    <main id="main" class="flex-1">
         {{ $slot }}
     </main>
 

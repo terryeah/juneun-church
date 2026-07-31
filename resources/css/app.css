@@ -45,7 +45,7 @@
     --color-navy: #16223c;
     --color-navy-900: #0d1730;
     --color-navy-700: #233559;
-    --color-navy-400: #7688aa;
+    --color-navy-400: #5c6f94;
     --color-cream: #f4f1ea;
     --color-paper: #ffffff;
     --color-accent: #004aad;
@@ -142,4 +142,18 @@ main [data-zoom]:hover img {
 .prose-announcement,
 .prose-announcement * {
     text-wrap: wrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    main a:hover img {
+        transform: none;
+    }
+
+    *,
+    ::before,
+    ::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
 }

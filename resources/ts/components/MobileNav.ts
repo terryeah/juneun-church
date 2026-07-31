@@ -30,6 +30,12 @@ export class MobileNav {
                 this.setOpen(false);
             }
         });
+
+        window.matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+            if (event.matches && this.isOpen()) {
+                this.setOpen(false);
+            }
+        });
     }
 
     /**
@@ -50,8 +56,20 @@ export class MobileNav {
         this.menu?.classList.toggle('hidden', !open);
         document.body.classList.toggle('overflow-hidden', open);
 
+        /**
+         * The open menu overlays the page, so everything outside it is
+         * made inert for keyboard and screen reader users. The header
+         * stays live because it contains the toggle button itself.
+         */
+        document.querySelectorAll<HTMLElement>('main, footer').forEach((region) => {
+            region.toggleAttribute('inert', open);
+        });
+
         if (open) {
+            this.menu?.querySelector<HTMLElement>('a, button')?.focus();
             document.dispatchEvent(new CustomEvent('mobilenav:opened'));
+        } else {
+            this.toggle.focus();
         }
     }
 }

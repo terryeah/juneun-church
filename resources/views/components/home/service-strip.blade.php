@@ -38,7 +38,7 @@
             @endif
             <div>
                 <x-ui.kicker>{{ $service['name'] }}</x-ui.kicker>
-                <h3 class="mt-2 font-kr text-display-sm font-medium">{{ $service['time'] }} · {{ $service['venue'] }}</h3>
+                <h2 class="mt-2 font-kr text-display-sm font-medium">{{ $service['time'] }} · {{ $service['venue'] }}</h2>
                 <p class="mt-1 text-[12px] text-navy-400">{{ $service['address'] }}</p>
             </div>
         @endforeach

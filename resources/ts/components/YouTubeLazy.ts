@@ -11,7 +11,7 @@
 export class YouTubeLazy {
     private container: HTMLElement;
     private videoId: string;
-    private posterHtml: string = '';
+    private player: HTMLElement | null = null;
     private failed: boolean = false;
 
     /**
@@ -80,9 +80,16 @@ export class YouTubeLazy {
             }, 300);
         });
 
-        this.posterHtml = this.container.innerHTML;
-        this.container.innerHTML = '';
-        this.container.appendChild(iframe);
+        /**
+         * An iframe nested inside an <a> is invalid and confuses
+         * assistive tech, so the anchor is swapped for a neutral
+         * wrapper while the player is active.
+         */
+        const wrapper = document.createElement('div');
+        wrapper.className = this.container.className;
+        wrapper.appendChild(iframe);
+        this.container.replaceWith(wrapper);
+        this.player = wrapper;
     }
 
     /**
@@ -91,7 +98,8 @@ export class YouTubeLazy {
      */
     private restorePoster(): void {
         this.failed = true;
-        this.container.innerHTML = this.posterHtml;
+        this.player?.replaceWith(this.container);
+        this.player = null;
         this.container.setAttribute('target', '_blank');
         this.container.setAttribute('rel', 'noopener');
     }
