@@ -10,6 +10,7 @@ use App\Filament\Resources\Albums\AlbumResource;
 use App\Filament\Resources\Announcements\AnnouncementResource;
 use App\Filament\Resources\Bulletins\BulletinResource;
 use App\Filament\Resources\Events\EventResource;
+use App\Filament\Resources\Ministries\MinistryResource;
 use App\Filament\Resources\Photos\PhotoResource;
 use App\Filament\Resources\Positions\PositionResource;
 use App\Filament\Resources\Roles\RoleResource;
@@ -59,7 +60,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => static::buildNavigation($builder))
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:0.875rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}</style>'),
+                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/staff-members"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/ministries"]{margin-inline-start:1.75rem}.fi-sidebar-nav a[href$="/admin/positions"]{margin-inline-start:2.625rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}</style>'),
             )
             ->colors([
                 'primary' => Color::Amber,
@@ -118,9 +119,10 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(BulletinResource::class),
             ]),
             NavigationGroup::make('구성원')->items([
-                ...static::accessibleItems(PositionResource::class),
-                ...static::accessibleItems(StaffMemberResource::class),
                 ...static::accessibleItems(Members::class),
+                ...static::accessibleItems(StaffMemberResource::class),
+                ...static::accessibleItems(MinistryResource::class),
+                ...static::accessibleItems(PositionResource::class),
                 ...static::accessibleItems(UserResource::class),
             ]),
             NavigationGroup::make('모니터링')->items([

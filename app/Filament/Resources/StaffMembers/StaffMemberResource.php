@@ -29,7 +29,7 @@ class StaffMemberResource extends Resource
 
     protected static ?string $modelLabel = '섬김이';
 
-    protected static ?string $pluralModelLabel = '섬기는 사람들';
+    protected static ?string $pluralModelLabel = '섬김이';
 
     public static function form(Schema $schema): Schema
     {

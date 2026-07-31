@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\StaffMembers\Schemas;
 
+use App\Models\Ministry;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -29,9 +30,9 @@ class StaffMemberForm
                     ->label('직분')
                     ->relationship('position', 'name')
                     ->required(),
-                TextInput::make('department')
+                Select::make('department')
                     ->label('부서 / 사역')
-                    ->maxLength(255),
+                    ->options(fn (): array => Ministry::query()->orderBy('sort_order')->pluck('name', 'name')->all()),
                 FileUpload::make('photo')
                     ->label('사진')
                     ->image()
