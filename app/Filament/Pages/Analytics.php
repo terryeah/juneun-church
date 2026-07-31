@@ -4,13 +4,16 @@ namespace App\Filament\Pages;
 
 use App\Filament\Analytics\TrafficChartWidget;
 use App\Filament\Analytics\TrafficStatsWidget;
+use App\Models\AnalyticsSnapshot;
 use App\Services\CloudflareAnalyticsService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 
 /**
@@ -52,12 +55,12 @@ class Analytics extends Page
     /**
      * The last thirty daily snapshots, newest first, for the table.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\AnalyticsSnapshot>
+     * @return Collection<int, AnalyticsSnapshot>
      */
     #[Computed]
-    public function dailySnapshots(): \Illuminate\Database\Eloquent\Collection
+    public function dailySnapshots(): Collection
     {
-        return \App\Models\AnalyticsSnapshot::query()
+        return AnalyticsSnapshot::query()
             ->where('snapshot_date', '>=', today()->subDays(30))
             ->orderByDesc('snapshot_date')
             ->get();
@@ -95,7 +98,7 @@ class Analytics extends Page
             default => today()->subDays(30),
         };
 
-        return \Illuminate\Support\Facades\Cache::remember(
+        return Cache::remember(
             "cf-rum-breakdowns-{$this->visitorRange}",
             3600,
             fn (): array => app(CloudflareAnalyticsService::class)->breakdowns($since, today()),
@@ -110,7 +113,7 @@ class Analytics extends Page
     #[Computed]
     public function botBreakdowns(): array
     {
-        return \Illuminate\Support\Facades\Cache::remember(
+        return Cache::remember(
             'cf-zone-breakdowns',
             3600,
             fn (): array => app(CloudflareAnalyticsService::class)->botIncludedBreakdowns(),
@@ -163,8 +166,10 @@ class Analytics extends Page
                 ->label('지금 동기화')
                 ->icon(Heroicon::OutlinedArrowPath)
                 ->action(function (): void {
-                    \Illuminate\Support\Facades\Cache::forget('cf-rum-breakdowns');
-                    \Illuminate\Support\Facades\Cache::forget('cf-zone-breakdowns');
+                    foreach (array_keys($this->rangeOptions) as $range) {
+                        Cache::forget("cf-rum-breakdowns-{$range}");
+                    }
+                    Cache::forget('cf-zone-breakdowns');
                     Artisan::call('analytics:snapshot');
 
                     Notification::make()

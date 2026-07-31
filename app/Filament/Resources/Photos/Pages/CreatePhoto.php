@@ -2,16 +2,19 @@
 
 namespace App\Filament\Resources\Photos\Pages;
 
+use App\Filament\Resources\Photos\Concerns\LimitsSliderPicks;
 use App\Filament\Resources\Photos\PhotoResource;
+use App\Filament\Support\SaveUploadsAsWebp;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Create page that fills photo metadata from the uploaded file.
  */
 class CreatePhoto extends CreateRecord
 {
-    use \App\Filament\Resources\Photos\Concerns\LimitsSliderPicks;
+    use LimitsSliderPicks;
 
     protected static string $resource = PhotoResource::class;
 
@@ -67,9 +70,9 @@ class CreatePhoto extends CreateRecord
     protected function afterCreate(): void
     {
         $photo = $this->record;
-        $disk = \Illuminate\Support\Facades\Storage::disk(config('filesystems.media'));
+        $disk = Storage::disk(config('filesystems.media'));
 
-        $thumbnail = \App\Filament\Support\SaveUploadsAsWebp::thumbnail((string) $disk->get($photo->path));
+        $thumbnail = SaveUploadsAsWebp::thumbnail((string) $disk->get($photo->path));
 
         if ($thumbnail !== null) {
             $thumbnailPath = dirname($photo->path).'/thumbs/'.basename($photo->path);

@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\Albums\Tables;
 
+use App\Models\Album;
+use App\Models\Photo;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -20,12 +21,12 @@ class AlbumsTable
                 ImageColumn::make('cover_photo_path')
                     ->label('커버 사진')
                     ->disk(config('filesystems.media'))
-                    ->state(function (\App\Models\Album $record): ?string {
+                    ->state(function (Album $record): ?string {
                         if (! $record->cover_photo_path) {
                             return null;
                         }
 
-                        $photo = \App\Models\Photo::query()->where('path', $record->cover_photo_path)->first();
+                        $photo = Photo::query()->where('path', $record->cover_photo_path)->first();
 
                         return $photo?->thumbnail_path ?? $record->cover_photo_path;
                     })

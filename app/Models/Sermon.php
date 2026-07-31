@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * A worship recording (예배) hosted on YouTube.
@@ -85,7 +86,7 @@ class Sermon extends Model
     public function thumbnailUrl(): string
     {
         if ($this->thumbnail_path) {
-            return \Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($this->thumbnail_path);
+            return Storage::disk(config('filesystems.media'))->url($this->thumbnail_path);
         }
 
         return 'https://i.ytimg.com/vi/'.$this->youtube_video_id.'/hqdefault.jpg';

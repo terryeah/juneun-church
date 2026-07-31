@@ -18,7 +18,6 @@ class AlbumResource extends Resource
 {
     protected static ?string $model = Album::class;
 
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $navigationLabel = '앨범';

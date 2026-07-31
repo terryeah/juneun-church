@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Sermon;
 use App\Models\ServiceType;
 use App\Models\SiteSetting;
+use App\Services\YoutubeThumbnail;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
@@ -83,7 +84,7 @@ class ImportYoutubeSermons extends Command
                 'youtube_video_id' => $entry['video_id'],
                 'preacher' => $parts['preacher'],
                 'sermon_date' => $entry['published'],
-                'thumbnail_path' => \App\Services\YoutubeThumbnail::store($entry['video_id'], $entry['published']),
+                'thumbnail_path' => YoutubeThumbnail::store($entry['video_id'], $entry['published']),
                 'service_type_id' => $serviceTypeId,
                 'scripture_reference' => $parts['scripture'],
                 'is_published' => true,

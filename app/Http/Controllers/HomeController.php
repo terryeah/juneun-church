@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Album;
 use App\Models\Announcement;
 use App\Models\Event;
 use App\Models\Photo;
 use App\Models\Sermon;
+use App\Models\SiteSetting;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 /**
@@ -60,9 +63,9 @@ class HomeController extends Controller
      * so on - so the band always shows ten photos from a spread of
      * events rather than one album's dump.
      *
-     * @return \Illuminate\Support\Collection<int, Photo>
+     * @return Collection<int, Photo>
      */
-    private function sliderPhotos(): \Illuminate\Support\Collection
+    private function sliderPhotos(): Collection
     {
         $picked = Photo::query()
             ->whereHas('album', fn ($query) => $query->where('is_published', true))
@@ -75,7 +78,7 @@ class HomeController extends Controller
             return $picked->values();
         }
 
-        $queues = \App\Models\Album::query()
+        $queues = Album::query()
             ->where('is_published', true)
             ->orderByDesc('event_date')
             ->with(['photos' => fn ($query) => $query->latest()])
@@ -117,7 +120,7 @@ class HomeController extends Controller
      */
     private function featuredPhoto(string $settingKey, string $default): ?Photo
     {
-        $filename = \App\Models\SiteSetting::get($settingKey) ?: $default;
+        $filename = SiteSetting::get($settingKey) ?: $default;
 
         return Photo::query()->where('filename', trim((string) $filename))->first();
     }

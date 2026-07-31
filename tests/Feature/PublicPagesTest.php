@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Announcement;
 use Database\Seeders\PositionSeeder;
 use Database\Seeders\ServiceTypeSeeder;
 use Database\Seeders\SiteSettingSeeder;
@@ -49,7 +50,7 @@ class PublicPagesTest extends TestCase
      */
     public function test_unpublished_announcements_are_not_visible(): void
     {
-        $announcement = \App\Models\Announcement::factory()->draft()->create();
+        $announcement = Announcement::factory()->draft()->create();
 
         $this->get('/news/'.$announcement->slug)->assertStatus(404);
         $this->get('/news')->assertDontSee($announcement->title);
@@ -60,7 +61,7 @@ class PublicPagesTest extends TestCase
      */
     public function test_published_announcements_are_visible(): void
     {
-        $announcement = \App\Models\Announcement::factory()->create();
+        $announcement = Announcement::factory()->create();
 
         $this->get('/news/'.$announcement->slug)
             ->assertStatus(200)

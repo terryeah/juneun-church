@@ -11,6 +11,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -58,7 +59,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     /**
      * The admin who created this account; null means the system did.
      */
-    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(self::class, 'created_by');
     }

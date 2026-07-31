@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Photo;
 use Illuminate\View\View;
 
 /**
@@ -15,7 +16,7 @@ class LocationController extends Controller
     public function __invoke(): View
     {
         /** The pick-up notice graphic from the church Instagram */
-        $pickupPhoto = \App\Models\Photo::query()->where('filename', 'DYzJDV_EyAf-1.webp')->first();
+        $pickupPhoto = Photo::query()->where('filename', 'DYzJDV_EyAf-1.webp')->first();
 
         return view('pages.location', compact('pickupPhoto'));
     }

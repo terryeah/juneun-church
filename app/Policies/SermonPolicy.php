@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Sermon;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User as AuthUser;
 
 class SermonPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:Sermon');
@@ -71,5 +71,4 @@ class SermonPolicy
     {
         return $authUser->can('Reorder:Sermon');
     }
-
 }

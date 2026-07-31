@@ -1,5 +1,11 @@
 # Korean Church Website
 
+> **This project uses [ponytail](https://github.com/DietrichGebert/ponytail) — lazy senior dev mode.**
+> Before writing any code, follow `AGENTS.md`: YAGNI, reuse what's here, stdlib/native/existing-dep first,
+> deletion over addition, shortest working diff. No unrequested abstractions. Question complex requests.
+> This applies to every future change in this repo.
+
+
 A Laravel-based church website with Filament admin panel, Cloudflare R2 media storage, and role-based content management for multiple church staff and volunteers.
 
 ## Tech Stack
@@ -13,7 +19,7 @@ A Laravel-based church website with Filament admin panel, Cloudflare R2 media st
 | **Database** | MySQL 8 |
 | **Object Storage** | Cloudflare R2 (S3-compatible, zero egress fees) |
 | **CDN / Proxy** | Cloudflare (free tier) |
-| **Hosting** | Digital Ocean Droplet ($7/mo - 1GB RAM, 25GB SSD) |
+| **Hosting** | AWS Lightsail Sydney ($7/mo - 1GB RAM, 40GB SSD) |
 | **Permissions** | Spatie Laravel Permission + Filament Shield |
 | **Authentication** | Custom Laravel Auth (no starter kit, admin-created accounts) |
 

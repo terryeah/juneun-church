@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Album;
 use App\Models\AnalyticsSnapshot;
 use App\Models\Announcement;
 use App\Models\Event;
@@ -45,7 +46,7 @@ class ContentStatsWidget extends StatsOverviewWidget
             Stat::make('게시된 뉴스', Number::format(Announcement::query()->where('is_published', true)->count()))
                 ->description('예배 영상 '.Number::format(Sermon::query()->where('is_published', true)->count()).'편'),
             Stat::make('갤러리 사진', Number::format(Photo::query()->count()))
-                ->description('앨범 '.Number::format(\App\Models\Album::query()->where('is_published', true)->count()).'개'),
+                ->description('앨범 '.Number::format(Album::query()->where('is_published', true)->count()).'개'),
         ];
     }
 }

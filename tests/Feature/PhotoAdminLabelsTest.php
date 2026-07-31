@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Filament\Resources\Photos\Pages\CreatePhoto;
 use App\Filament\Resources\Photos\Pages\ListPhotos;
 use App\Models\User;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 /**
@@ -19,13 +21,13 @@ class PhotoAdminLabelsTest extends TestCase
 
     public function test_photo_list_and_create_pages_say_upload_not_create(): void
     {
-        $this->seed(\Database\Seeders\RoleSeeder::class);
+        $this->seed(RoleSeeder::class);
 
         $user = User::factory()->create();
         $user->assignRole('super_admin');
 
         foreach (['ViewAny:Photo', 'View:Photo', 'Create:Photo'] as $permission) {
-            \Spatie\Permission\Models\Permission::query()->firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+            Permission::query()->firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
             $user->givePermissionTo($permission);
         }
 

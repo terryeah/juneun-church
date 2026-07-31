@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources\Photos\Pages;
 
+use App\Filament\Resources\Photos\Concerns\LimitsSliderPicks;
 use App\Filament\Resources\Photos\PhotoResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditPhoto extends EditRecord
 {
-    use \App\Filament\Resources\Photos\Concerns\LimitsSliderPicks;
+    use LimitsSliderPicks;
 
     protected static string $resource = PhotoResource::class;
 

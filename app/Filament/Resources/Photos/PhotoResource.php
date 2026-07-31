@@ -18,7 +18,6 @@ class PhotoResource extends Resource
 {
     protected static ?string $model = Photo::class;
 
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCamera;
 
     protected static ?string $navigationLabel = '사진';

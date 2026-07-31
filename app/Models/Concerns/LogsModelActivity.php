@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -30,7 +31,7 @@ trait LogsModelActivity
     /**
      * Attach the request IP address to every recorded activity.
      */
-    public function tapActivity(\Spatie\Activitylog\Models\Activity $activity, string $eventName): void
+    public function tapActivity(Activity $activity, string $eventName): void
     {
         if (app()->runningInConsole()) {
             return;

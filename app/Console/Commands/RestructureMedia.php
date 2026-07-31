@@ -6,6 +6,8 @@ use App\Models\Album;
 use App\Models\Bulletin;
 use App\Models\Photo;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -77,8 +79,8 @@ class RestructureMedia extends Command
     /**
      * Copy one file to its new key and update the model attribute.
      *
-     * @param  \Illuminate\Contracts\Filesystem\Filesystem  $disk
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  Filesystem  $disk
+     * @param  Model  $model
      * @return int 1 when the record changed, 0 when skipped
      */
     protected function relocate($disk, $model, string $attribute, string $newPath): int

@@ -12,6 +12,7 @@ use App\Filament\Resources\Bulletins\BulletinResource;
 use App\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Photos\PhotoResource;
 use App\Filament\Resources\Positions\PositionResource;
+use App\Filament\Resources\Roles\RoleResource;
 use App\Filament\Resources\Sermons\SermonResource;
 use App\Filament\Resources\ServiceTypes\ServiceTypeResource;
 use App\Filament\Resources\SiteSettings\SiteSettingResource;
@@ -19,25 +20,25 @@ use App\Filament\Resources\StaffMembers\StaffMemberResource;
 use App\Filament\Resources\Users\UserResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
-use App\Filament\Resources\Roles\RoleResource;
 use Filament\Http\Middleware\Authenticate;
-use Filament\Navigation\NavigationBuilder;
-use Filament\Navigation\NavigationGroup;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Support\HtmlString;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -138,7 +139,7 @@ class AdminPanelProvider extends PanelProvider
      * skips Filament's own registration-time authorisation filter,
      * so it has to be applied explicitly here.
      *
-     * @return array<\Filament\Navigation\NavigationItem>
+     * @return array<NavigationItem>
      */
     protected static function accessibleItems(string $component): array
     {
