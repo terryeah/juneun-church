@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\Photos\Schemas;
 
 use App\Models\Album;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -29,10 +29,6 @@ class PhotoForm
                     ->relationship('album', 'title')
                     ->live()
                     ->required(),
-                Checkbox::make('featured_in_slider')
-                    ->label('홈 슬라이더에 표시')
-                    ->helperText('최대 10장까지 선택할 수 있습니다.')
-                    ->extraFieldWrapperAttributes(['style' => 'margin-top: 2.35rem;']),
                 FileUpload::make('path')
                     ->label('사진')
                     ->image()
@@ -40,6 +36,10 @@ class PhotoForm
                     ->directory(fn (Get $get): string => 'albums/'.(Album::query()->find($get('album_id'))?->slug ?? 'unsorted'))
                     ->visibility('public')
                     ->required(),
+                Toggle::make('featured_in_slider')
+                    ->label('홈 슬라이더에 표시')
+                    ->helperText('최대 10장까지 선택할 수 있습니다.')
+                    ->columnSpanFull(),
             ]);
     }
 }

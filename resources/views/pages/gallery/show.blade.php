@@ -1,7 +1,7 @@
 <x-layout.app :title="$album->title">
 
     <x-ui.page-header kicker="갤러리 · Gallery" :title="$album->title">
-        {{ $album->event_date->translatedFormat('Y년 n월 j일') }}@if ($album->description) - {{ $album->description }}@endif
+        @if ($album->event_date){{ $album->event_date->translatedFormat('Y년 n월 j일') }}@if ($album->description) - @endif@endif{{ $album->description }}
     </x-ui.page-header>
 
     <section class="section-album-photos container-site pb-12 lg:pb-16">

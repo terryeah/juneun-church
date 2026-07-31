@@ -26,14 +26,18 @@ class AlbumForm
                     ->label('앨범명')
                     ->required()
                     ->maxLength(255),
+                TextInput::make('slug')
+                    ->label('슬러그')
+                    ->helperText('비워두면 영문 제목 또는 album-YYYYMMDD 형식으로 자동 생성됩니다.')
+                    ->maxLength(255),
                 DatePicker::make('event_date')
                     ->label('행사 날짜')
                     ->native(false)
                     ->displayFormat('Y-m-d')
-                    ->required(),
+                    ->columnSpanFull(),
                 Textarea::make('description')
                     ->label('설명')
-                    ->columnSpanFull(),
+                    ->rows(9),
                 FileUpload::make('cover_photo_path')
                     ->label('커버 사진')
                     ->image()
@@ -42,11 +46,8 @@ class AlbumForm
                     ->visibility('public'),
                 Toggle::make('is_published')
                     ->label('활성화')
-                    ->default(true),
-                TextInput::make('slug')
-                    ->label('슬러그')
-                    ->helperText('비워두면 영문 제목 또는 album-YYYYMMDD 형식으로 자동 생성됩니다.')
-                    ->maxLength(255),
+                    ->default(true)
+                    ->columnSpanFull(),
             ]);
     }
 }

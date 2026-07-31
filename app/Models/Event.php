@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'event_date',
     'event_time',
     'end_date',
+    'end_time',
     'location',
     'description',
     'is_published',

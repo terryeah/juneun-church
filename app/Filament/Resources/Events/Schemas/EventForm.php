@@ -44,11 +44,17 @@ class EventForm
                     ->native(false)
                     ->displayFormat('Y-m-d')
                     ->helperText('하루 행사는 비워두세요.'),
-                Toggle::make('is_published')
-                    ->label('게시')
-                    ->default(true),
+                TimePicker::make('end_time')
+                    ->label('종료 시간')
+                    ->native(false)
+                    ->displayFormat('H:i')
+                    ->seconds(false),
                 Textarea::make('description')
                     ->label('설명')
+                    ->columnSpanFull(),
+                Toggle::make('is_published')
+                    ->label('게시')
+                    ->default(true)
                     ->columnSpanFull(),
             ]);
     }

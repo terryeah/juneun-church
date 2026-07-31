@@ -69,7 +69,7 @@ class Analytics extends Page
     /**
      * Selected range for the real-visitor breakdowns: 24h, 7d, 30d or all.
      */
-    public string $visitorRange = '30d';
+    public string $visitorRange = '24h';
 
     /**
      * Range options offered on the breakdown sections.

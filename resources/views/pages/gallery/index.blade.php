@@ -13,7 +13,7 @@
                     @endif
                     <h2 class="mt-3 font-kr text-[15px] font-medium group-hover:text-accent">{{ $album->title }}</h2>
                     <p class="mt-1 text-[12px] text-navy-400">
-                        {{ $album->event_date->translatedFormat('Y년 n월 j일') }} · 사진 {{ $album->photos_count }}장
+                        @if ($album->event_date){{ $album->event_date->translatedFormat('Y년 n월 j일') }} · @endif사진 {{ $album->photos_count }}장
                     </p>
                 </a>
             @empty
