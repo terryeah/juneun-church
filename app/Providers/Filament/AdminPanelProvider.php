@@ -59,7 +59,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => static::buildNavigation($builder))
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:1.75rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}</style>'),
+                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:0.875rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}</style>'),
             )
             ->colors([
                 'primary' => Color::Amber,
