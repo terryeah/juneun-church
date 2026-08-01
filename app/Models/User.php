@@ -31,6 +31,33 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     use HasFactory, HasRoles, LogsModelActivity, Notifiable;
 
     /**
+     * Record 2FA lifecycle changes in the activity log. Only the event
+     * is logged - secrets and recovery codes never leave the model.
+     */
+    protected static function booted(): void
+    {
+        static::updated(function (User $user): void {
+            if ($user->wasChanged('app_authentication_secret')) {
+                activity()
+                    ->performedOn($user)
+                    ->causedBy(auth()->user())
+                    ->event($user->app_authentication_secret === null ? '2fa_disabled' : '2fa_enabled')
+                    ->log($user->app_authentication_secret === null ? '2단계 인증 해제' : '2단계 인증 등록');
+
+                return;
+            }
+
+            if ($user->wasChanged('app_authentication_recovery_codes')) {
+                activity()
+                    ->performedOn($user)
+                    ->causedBy(auth()->user())
+                    ->event('2fa_recovery_codes')
+                    ->log('2단계 인증 복구 코드 재생성');
+            }
+        });
+    }
+
+    /**
      * Determine whether the user may access the given Filament panel.
      *
      * Any user holding at least one role may sign in to the admin panel;

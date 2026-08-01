@@ -25,7 +25,7 @@ trait LogsModelActivity
             ->logFillable()
             ->logOnlyDirty()
             ->dontLogEmptyChanges()
-            ->logExcept(['password', 'remember_token']);
+            ->logExcept(['password', 'remember_token', 'app_authentication_secret', 'app_authentication_recovery_codes']);
     }
 
     /**
