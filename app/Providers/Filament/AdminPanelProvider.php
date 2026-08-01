@@ -60,7 +60,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => static::buildNavigation($builder))
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/staff-members"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/ministries"]{margin-inline-start:1.75rem}.fi-sidebar-nav a[href$="/admin/positions"]{margin-inline-start:2.625rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}</style>'),
+                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/staff-members"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/ministries"]{margin-inline-start:1.75rem}.fi-sidebar-nav a[href$="/admin/positions"]{margin-inline-start:2.625rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}.fi-one-time-code-input-ctn{width:100%;justify-content:center}.fi-one-time-code-input-ctn .fi-one-time-code-input-digit{flex:1 1 0;min-width:0;max-width:3.75rem;height:3.5rem;font-size:1.25rem;text-align:center}</style>'),
             )
             ->colors([
                 'primary' => Color::Amber,

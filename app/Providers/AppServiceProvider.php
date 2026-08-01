@@ -36,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('pagination.juneun');
 
         Table::configureUsing(fn (Table $table) => $table
+            ->stackedOnMobile()
             ->defaultPaginationPageOption(10)
             ->defaultSort('created_at', 'desc')
             ->defaultDateDisplayFormat('Y-m-d')
