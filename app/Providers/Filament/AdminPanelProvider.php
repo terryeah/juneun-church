@@ -54,7 +54,7 @@ class AdminPanelProvider extends PanelProvider
             ->profile()
             ->multiFactorAuthentication([
                 AppAuthentication::make()->recoverable(),
-            ])
+            ], isRequired: true)
             ->favicon(asset('favicon.svg'))
             ->subNavigationPosition(SubNavigationPosition::Top)
             ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => static::buildNavigation($builder))
