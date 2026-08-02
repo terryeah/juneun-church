@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Members\Pages;
 
 use App\Filament\Resources\Members\Concerns\ManagesSiteAccount;
 use App\Filament\Resources\Members\MemberResource;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
@@ -21,9 +22,16 @@ class EditMember extends EditRecord
         $this->syncSiteAccount();
     }
 
-    protected function getHeaderActions(): array
+    /**
+     * Keep the delete action at the bottom of the form, next to 취소,
+     * instead of in the page header.
+     *
+     * @return array<Action>
+     */
+    protected function getFormActions(): array
     {
         return [
+            ...parent::getFormActions(),
             DeleteAction::make(),
         ];
     }

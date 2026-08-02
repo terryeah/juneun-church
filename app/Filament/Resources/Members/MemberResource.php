@@ -40,7 +40,6 @@ class MemberResource extends Resource
         '새가족' => '새가족',
         '재적' => '재적',
         '장기결석' => '장기결석',
-        '이명' => '이명',
         '별세' => '별세',
     ];
 

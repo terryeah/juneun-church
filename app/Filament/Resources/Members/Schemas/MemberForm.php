@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\Members\Schemas;
 
 use App\Filament\Resources\Members\MemberResource;
+use App\Models\Cell;
 use App\Models\Member;
 use App\Models\Ministry;
+use App\Models\Position;
 use App\Models\User;
 use App\Support\RoleLabel;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -53,12 +56,16 @@ class MemberForm
                     ->maxLength(255),
                 Select::make('position_id')
                     ->label('직분')
-                    ->relationship('position', 'name'),
+                    ->relationship('position', 'name')
+                    ->default(fn (): ?int => Position::query()->where('name', '성도')->value('id')),
                 Select::make('department')
-                    ->label('부서 / 사역')
+                    ->label('부서')
                     ->options(fn (): array => Ministry::query()->orderBy('sort_order')->pluck('name', 'name')->all()),
+                Select::make('cell_id')
+                    ->label('셀')
+                    ->options(fn (): array => Cell::query()->orderBy('sort_order')->pluck('name', 'id')->all()),
                 Select::make('baptism_type')
-                    ->label('세례 구분')
+                    ->label('세례 여부')
                     ->options([
                         '유아세례' => '유아세례',
                         '세례' => '세례',
@@ -79,8 +86,12 @@ class MemberForm
                     ->native(false)
                     ->displayFormat('Y-m-d')
                     ->default(today()),
+                DatePicker::make('new_family_completed_at')
+                    ->label('새가족 수료')
+                    ->native(false)
+                    ->displayFormat('Y-m-d'),
                 Select::make('head_id')
-                    ->label('세대주')
+                    ->label('가족 대표')
                     ->options(fn (?Member $record): array => Member::query()
                         ->whereNull('head_id')
                         ->whereKeyNot($record?->getKey())
@@ -88,17 +99,17 @@ class MemberForm
                         ->pluck('name', 'id')
                         ->all())
                     ->searchable()
-                    ->helperText('본인이 세대주이면 비워두세요.')
+                    ->helperText('본인이 가족 대표이면 비워두세요.')
                     ->rule(fn (?Member $record): \Closure => function (string $attribute, mixed $value, \Closure $fail) use ($record): void {
                         if ($value && $record && $record->family()->exists()) {
-                            $fail('가족을 거느린 세대주에게는 세대주를 지정할 수 없습니다.');
+                            $fail('가족을 거느린 가족 대표에게는 가족 대표를 지정할 수 없습니다.');
                         }
                         if ($value && Member::query()->whereKey($value)->whereNotNull('head_id')->exists()) {
-                            $fail('세대주가 아닌 성도를 세대주로 지정할 수 없습니다.');
+                            $fail('가족 대표가 아닌 성도를 가족 대표로 지정할 수 없습니다.');
                         }
                     }),
                 Select::make('relationship')
-                    ->label('세대주와의 관계')
+                    ->label('가족 대표와의 관계')
                     ->options([
                         '배우자' => '배우자',
                         '자녀' => '자녀',
@@ -176,6 +187,10 @@ class MemberForm
                             }
                         }
                     }),
+                Placeholder::make('two_factor')
+                    ->label('2단계 인증')
+                    ->content(fn (?Member $record): string => filled($record?->user?->app_authentication_secret) ? '사용 중' : '사용 안 함')
+                    ->visible(fn (?Member $record): bool => $record?->user_id !== null),
             ]);
     }
 }

@@ -7,7 +7,6 @@ use App\Models\Member;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -39,17 +38,14 @@ class StaffMemberResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where(fn (Builder $query) => $query->whereNotNull('position_id')->orWhereNotNull('department'));
+            ->where(fn (Builder $query) => $query->whereNotNull('position_id')->orWhereNotNull('department'))
+            ->withoutLayPositions();
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                ImageColumn::make('photo')
-                    ->label('사진')
-                    ->disk(config('filesystems.media'))
-                    ->circular(),
                 TextColumn::make('name')
                     ->label('이름')
                     ->searchable()
@@ -58,7 +54,7 @@ class StaffMemberResource extends Resource
                     ->label('직분')
                     ->placeholder('-'),
                 TextColumn::make('department')
-                    ->label('부서 / 사역')
+                    ->label('부서')
                     ->placeholder('-'),
                 TextColumn::make('email')
                     ->label('이메일')
@@ -67,11 +63,6 @@ class StaffMemberResource extends Resource
                 TextColumn::make('phone')
                     ->label('전화번호')
                     ->placeholder('-'),
-                TextColumn::make('is_published')
-                    ->label('공개')
-                    ->badge()
-                    ->formatStateUsing(fn (bool $state): string => $state ? '공개' : '비공개')
-                    ->color(fn (bool $state): string => $state ? 'success' : 'gray'),
             ])
             ->defaultSort('sort_order')
             ->recordActions([])

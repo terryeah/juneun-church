@@ -20,8 +20,7 @@ class PositionFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->randomElement(['담임목사', '부목사', '전도사', '장로', '권사', '집사']),
-            'category' => fake()->randomElement(['pastoral', 'elder', 'deacon', 'volunteer']),
+            'name' => fake()->unique()->randomElement(['담임목사', '부목사', '전도사', '장로', '권사', '집사']),
             'sort_order' => fake()->numberBetween(0, 100),
         ];
     }

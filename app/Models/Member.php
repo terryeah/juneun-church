@@ -33,7 +33,9 @@ use Spatie\Activitylog\Support\LogOptions;
     'baptism_date',
     'status',
     'registered_at',
+    'new_family_completed_at',
     'head_id',
+    'cell_id',
     'relationship',
     'notes',
     'bio',
@@ -46,13 +48,21 @@ class Member extends Model
     use HasFactory, LogsModelActivity;
 
     /**
+     * Position names that never count as serving on the public people
+     * page, even when the member holds the position or a department.
+     *
+     * @var list<string>
+     */
+    public const NON_SERVING_POSITIONS = ['성도', '집사', '권사', '장로'];
+
+    /**
      * Personal details stay out of the activity log; only roster
      * structure changes (status, position, household) are recorded.
      */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'status', 'position_id', 'department', 'head_id', 'relationship', 'registered_at'])
+            ->logOnly(['name', 'status', 'position_id', 'department', 'cell_id', 'head_id', 'relationship', 'registered_at', 'new_family_completed_at'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }
@@ -68,6 +78,7 @@ class Member extends Model
             'birth_date' => 'date',
             'baptism_date' => 'date',
             'registered_at' => 'date',
+            'new_family_completed_at' => 'date',
             'is_published' => 'boolean',
         ];
     }
@@ -90,14 +101,27 @@ class Member extends Model
 
     /**
      * Scope to members shown on the public serving-people page: anyone
-     * holding a position or serving in a ministry, and published.
+     * holding a position or serving in a department, published, and not
+     * holding a lay position such as 성도 or 집사.
      *
      * @param  Builder<Member>  $query
      */
     public function scopeServing($query): void
     {
         $query->where('is_published', true)
-            ->where(fn ($inner) => $inner->whereNotNull('position_id')->orWhereNotNull('department'));
+            ->where(fn ($inner) => $inner->whereNotNull('position_id')->orWhereNotNull('department'))
+            ->withoutLayPositions();
+    }
+
+    /**
+     * Scope excluding members whose position is a lay one (성도, 집사,
+     * 권사, 장로); members without a position are kept.
+     *
+     * @param  Builder<Member>  $query
+     */
+    public function scopeWithoutLayPositions($query): void
+    {
+        $query->whereDoesntHave('position', fn ($positions) => $positions->whereIn('name', self::NON_SERVING_POSITIONS));
     }
 
     /**
@@ -124,5 +148,13 @@ class Member extends Model
     public function family(): HasMany
     {
         return $this->hasMany(self::class, 'head_id');
+    }
+
+    /**
+     * The cell small group (셀) this member belongs to.
+     */
+    public function cell(): BelongsTo
+    {
+        return $this->belongsTo(Cell::class);
     }
 }
