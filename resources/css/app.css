@@ -176,3 +176,34 @@ main [data-zoom]:hover img {
         animation-iteration-count: 1 !important;
     }
 }
+
+/**
+ * Moments carousel: slide counts per breakpoint live here because the
+ * width math is layout-critical and must not depend on Tailwind
+ * arbitrary-value parsing. The start padding pins the first card to
+ * the site container edge while the band itself is full-bleed.
+ */
+.moments-track {
+    --slides: 1.35;
+    --edge: max(1.375rem, calc((100vw - 80rem) / 2 + 1.375rem));
+    padding-inline-start: var(--edge);
+    scroll-padding-inline-start: var(--edge);
+}
+
+@media (min-width: 48rem) {
+    .moments-track {
+        --slides: 2.4;
+    }
+}
+
+@media (min-width: 64rem) {
+    .moments-track {
+        --slides: 4.2;
+    }
+}
+
+.moments-track > a {
+    width: calc(100% / var(--slides) - 0.8rem);
+    flex-shrink: 0;
+    scroll-snap-align: start;
+}
