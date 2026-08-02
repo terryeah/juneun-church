@@ -3,6 +3,8 @@
     <style>
         .an-breakdowns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem 3rem; }
         @media (min-width: 768px) { .an-breakdowns { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        .an-range { display: block; width: 100%; margin-bottom: 1.5rem; border-radius: 0.5rem; padding: 0.375rem 2rem 0.375rem 0.75rem; font-size: 0.875rem; }
+        @media (min-width: 640px) { .an-range { width: auto; min-width: 12rem; } }
     </style>
 
     @if ($this->dailySnapshots->isNotEmpty())
@@ -39,13 +41,11 @@
         <x-filament::section>
             <x-slot name="heading">페이지뷰 분석 · 실방문자 · {{ $this->rangeOptions[$this->visitorRange] }}</x-slot>
             <x-slot name="description">알려진 봇을 제외한 방문 기준입니다. 실제 브라우저로 위장한 해외 크롤러는 무료 플랜에서 걸러지지 않으므로, 1페이지만 보고 나가는 해외 트래픽은 크롤러일 가능성이 큽니다.</x-slot>
-            <x-slot name="afterHeader">
-                <select wire:model.live="visitorRange" class="fi-input fi-select-input" style="border-radius: 0.5rem; padding: 0.375rem 2rem 0.375rem 0.75rem; font-size: 0.875rem;">
-                    @foreach ($this->rangeOptions as $value => $label)
-                        <option value="{{ $value }}">{{ $label }}</option>
-                    @endforeach
-                </select>
-            </x-slot>
+            <select wire:model.live="visitorRange" class="fi-input fi-select-input an-range">
+                @foreach ($this->rangeOptions as $value => $label)
+                    <option value="{{ $value }}">{{ $label }}</option>
+                @endforeach
+            </select>
 
             @if (filled($this->breakdowns))
                 @include('filament.pages.partials.breakdowns', ['data' => $this->breakdowns])

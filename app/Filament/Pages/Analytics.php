@@ -101,7 +101,7 @@ class Analytics extends Page
         };
 
         return Cache::remember(
-            "cf-rum-breakdowns-{$this->visitorRange}",
+            "cf-rum-breakdowns-v2-{$this->visitorRange}",
             in_array($this->visitorRange, ['today', '24h']) ? 900 : 3600,
             fn (): array => app(CloudflareAnalyticsService::class)->breakdowns($since, now()),
         );
@@ -169,10 +169,12 @@ class Analytics extends Page
                 ->icon(Heroicon::OutlinedArrowPath)
                 ->action(function (): void {
                     foreach (array_keys($this->rangeOptions) as $range) {
-                        Cache::forget("cf-rum-breakdowns-{$range}");
+                        Cache::forget("cf-rum-breakdowns-v2-{$range}");
                     }
                     Cache::forget('cf-zone-breakdowns');
-                    Artisan::call('analytics:snapshot');
+
+                    /** A month-wide refresh repairs days stored under the old UTC bucketing */
+                    Artisan::call('analytics:snapshot', ['--days' => 30]);
 
                     Notification::make()
                         ->title(trim(Artisan::output()) ?: 'Snapshot complete')

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -106,6 +107,13 @@ class CloudflareAnalyticsService
     /**
      * Daily real-visitor totals from Web Analytics for the date range.
      *
+     * Cloudflare's date dimension buckets by UTC day, which mislabels
+     * evening Brisbane traffic onto the wrong row, so this fetches
+     * hourly buckets for the local-day range and aggregates them into
+     * app-timezone days in PHP. Every day in the range is returned,
+     * zero-filled when the beacon saw nobody, so callers never fall
+     * back to bot-inflated zone counts for a quiet day.
+     *
      * @return Collection<int, array{date: string, visits: int, page_views: int}>
      */
     public function dailyRealVisits(CarbonInterface $since, CarbonInterface $until): Collection
@@ -114,16 +122,27 @@ class CloudflareAnalyticsService
             return collect();
         }
 
-        $query = <<<'GRAPHQL'
-        query ($account: String!, $site: String!, $since: Date!, $until: Date!, $bots: [String!]) {
+        $start = $since->copy()->startOfDay();
+        $end = $until->copy()->endOfDay();
+
+        $filter = sprintf(
+            '{ datetime_geq: "%s", datetime_leq: "%s", siteTag: "%s", userAgentBrowser_notin: %s }',
+            $start->copy()->utc()->toIso8601ZuluString(),
+            $end->copy()->utc()->toIso8601ZuluString(),
+            config('services.cloudflare.rum_site_tag'),
+            json_encode(self::BOT_BROWSERS),
+        );
+
+        $query = <<<GRAPHQL
+        query (\$account: String!) {
             viewer {
-                accounts(filter: { accountTag: $account }) {
+                accounts(filter: { accountTag: \$account }) {
                     rumPageloadEventsAdaptiveGroups(
-                        limit: 40
-                        filter: { date_geq: $since, date_leq: $until, siteTag: $site, userAgentBrowser_notin: $bots }
-                        orderBy: [date_ASC]
+                        limit: 1000
+                        filter: {$filter}
+                        orderBy: [datetimeHour_ASC]
                     ) {
-                        dimensions { date }
+                        dimensions { datetimeHour }
                         sum { visits }
                         count
                     }
@@ -137,10 +156,6 @@ class CloudflareAnalyticsService
                 'query' => $query,
                 'variables' => [
                     'account' => config('services.cloudflare.account_id'),
-                    'site' => config('services.cloudflare.rum_site_tag'),
-                    'since' => $since->toDateString(),
-                    'until' => $until->toDateString(),
-                    'bots' => self::BOT_BROWSERS,
                 ],
             ]);
 
@@ -150,12 +165,43 @@ class CloudflareAnalyticsService
             return collect();
         }
 
-        return collect($response->json('data.viewer.accounts.0.rumPageloadEventsAdaptiveGroups', []))
-            ->map(fn (array $group) => [
-                'date' => $group['dimensions']['date'],
-                'visits' => $group['sum']['visits'] ?? 0,
-                'page_views' => $group['count'] ?? 0,
-            ]);
+        return $this->bucketHoursIntoLocalDays(
+            $response->json('data.viewer.accounts.0.rumPageloadEventsAdaptiveGroups', []),
+            $start,
+            $end,
+        );
+    }
+
+    /**
+     * Aggregates UTC hourly buckets into app-timezone days.
+     *
+     * @param  array<int, array{dimensions: array{datetimeHour: string}, sum: array{visits: int}, count: int}>  $groups
+     * @return Collection<int, array{date: string, visits: int, page_views: int}>
+     */
+    public function bucketHoursIntoLocalDays(array $groups, CarbonInterface $start, CarbonInterface $end): Collection
+    {
+        $days = collect();
+
+        for ($day = $start->copy()->startOfDay(); $day->lte($end); $day = $day->copy()->addDay()) {
+            $days->put($day->toDateString(), ['date' => $day->toDateString(), 'visits' => 0, 'page_views' => 0]);
+        }
+
+        foreach ($groups as $group) {
+            $date = Carbon::parse($group['dimensions']['datetimeHour'])
+                ->setTimezone(config('app.timezone'))
+                ->toDateString();
+
+            if (! $days->has($date)) {
+                continue;
+            }
+
+            $row = $days[$date];
+            $row['visits'] += $group['sum']['visits'] ?? 0;
+            $row['page_views'] += $group['count'] ?? 0;
+            $days->put($date, $row);
+        }
+
+        return $days->values();
     }
 
     /**
