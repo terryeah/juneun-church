@@ -82,7 +82,8 @@ export class PhotoSlider {
     }
 
     /**
-     * Pages by roughly one visible viewport, wrapping at both ends.
+     * Pages by exactly one card - the same distance as a light swipe -
+     * wrapping at both ends.
      *
      * @param direction - -1 for backwards, +1 for forwards
      */
@@ -94,8 +95,11 @@ export class PhotoSlider {
             this.jump(track.scrollLeft + this.setWidth);
         }
 
+        const card = track.firstElementChild as HTMLElement | null;
+        const step = card ? card.offsetWidth + 16 : track.clientWidth * 0.85;
+
         track.scrollBy({
-            left: direction * track.clientWidth * 0.85,
+            left: direction * step,
             behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
         });
     }
