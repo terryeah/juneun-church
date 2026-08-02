@@ -157,14 +157,14 @@
     <section class="section-moments-slider bg-navy pb-5">
         @if ($recentPhotos->isNotEmpty())
             <div data-photo-slider>
-                <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-5 [scrollbar-width:none] md:px-10 [&::-webkit-scrollbar]:hidden" data-slider-track tabindex="0" aria-label="교회 사진 모음">
+                <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pe-5 ps-[max(1.375rem,calc((100vw-80rem)/2+1.375rem))] scroll-ps-[max(1.375rem,calc((100vw-80rem)/2+1.375rem))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-slider-track tabindex="0" aria-label="교회 사진 모음">
                     @foreach ($recentPhotos as $photo)
-                        <a href="{{ route('gallery.show', $photo->album) }}" class="block w-[76%] shrink-0 snap-start overflow-hidden rounded-[1.35rem] transition-transform duration-300 md:w-[42%] lg:w-[28%]">
+                        <a href="{{ route('gallery.show', $photo->album) }}" class="block w-[calc((100%-1rem)/1.35)] shrink-0 snap-start overflow-hidden rounded-[1.35rem] md:w-[calc((100%-2rem)/2.4)] lg:w-[calc((100%-4rem)/4.2)]">
                             <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
                         </a>
                     @endforeach
                 </div>
-                <div class="mt-6 flex items-center justify-end gap-3 px-5 md:px-10">
+                <div class="container-site mt-6 flex items-center justify-end gap-3">
                     <button type="button" data-slider-prev aria-label="이전 사진" class="flex h-9 w-9 items-center justify-center rounded-full bg-cream/10 text-cream transition-colors hover:bg-cream/20 disabled:pointer-events-none disabled:opacity-30">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
                     </button>

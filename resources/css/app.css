@@ -129,7 +129,7 @@
 @utility container-site {
     margin-inline: auto;
     max-width: 80rem;
-    padding-inline: 22px;
+    padding-inline: 1.375rem;
 
     @variant md {
         padding-inline: 34px;
