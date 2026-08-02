@@ -41,7 +41,8 @@ class AlbumsTable
                 TextColumn::make('event_date')
                     ->label('행사 날짜')
                     ->date('Y-m-d')
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('-'),
                 ToggleColumn::make('is_published')
                     ->label('활성화'),
                 TextColumn::make('author.name')

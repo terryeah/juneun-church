@@ -20,7 +20,8 @@ class MinistriesTable
                     ->sortable(),
                 TextColumn::make('description')
                     ->label('설명')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 TextColumn::make('created_at')
                     ->label('생성일')
                     ->dateTime()

@@ -27,7 +27,8 @@ class SermonsTable
                     ->searchable(),
                 TextColumn::make('preacher')
                     ->label('설교자')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 TextColumn::make('sermon_date')
                     ->label('예배 날짜')
                     ->date('Y-m-d')

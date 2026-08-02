@@ -26,18 +26,22 @@ class EventsTable
                 TextColumn::make('event_time')
                     ->label('시작 시간')
                     ->time('H:i')
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('-'),
                 TextColumn::make('end_date')
                     ->label('종료일')
                     ->date('Y-m-d')
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('-'),
                 TextColumn::make('end_time')
                     ->label('종료 시간')
                     ->time('H:i')
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('-'),
                 TextColumn::make('location')
                     ->label('행사장')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 IconColumn::make('is_published')
                     ->label('게시')
                     ->boolean(),
