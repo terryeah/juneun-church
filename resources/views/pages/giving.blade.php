@@ -74,7 +74,7 @@
                         <ul class="mt-1">
                             @foreach ($items as $item)
                                 <li class="flex items-baseline justify-between gap-4 border-b border-line py-2.5">
-                                    <span class="font-kr text-body-sm">{{ $item['name'] ?: '무명' }}</span>
+                                    <span class="font-kr text-body-sm">{{ $item['name'] ?? '' }}</span>
                                     @if (filled($item['amount'] ?? null))
                                         <span class="text-body-sm font-bold tabular-nums">${{ number_format((float) $item['amount'], 2) }}</span>
                                     @endif

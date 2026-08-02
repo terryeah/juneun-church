@@ -66,7 +66,7 @@ class OfferingCreateTest extends TestCase
 
         $undoRepeaterFake();
 
-        $offering = Offering::sole();
+        $offering = Offering::whereDate('sunday_date', '2026-08-02')->sole();
 
         $this->assertSame('2026-08-02', $offering->sunday_date->toDateString());
         $this->assertSame('광고 후 집계', $offering->note);
