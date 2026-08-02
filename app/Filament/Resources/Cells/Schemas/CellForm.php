@@ -9,6 +9,10 @@ use Filament\Schemas\Schema;
 
 /**
  * Form schema for cell small groups (셀).
+ *
+ * The cell has no name field: its name is derived from the leader
+ * (셀장 이름 + ' 셀') by the Cell model, and ordering is handled by
+ * dragging rows on the list.
  */
 class CellForm
 {
@@ -19,21 +23,14 @@ class CellForm
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->label('셀 이름')
-                    ->required()
-                    ->maxLength(255),
                 Select::make('leader_id')
                     ->label('셀장')
                     ->options(fn (): array => Member::query()->orderBy('name')->pluck('name', 'id')->all())
-                    ->searchable(),
+                    ->searchable()
+                    ->required(),
                 TextInput::make('description')
                     ->label('설명')
                     ->maxLength(255),
-                TextInput::make('sort_order')
-                    ->label('순서')
-                    ->numeric()
-                    ->default(0),
             ]);
     }
 }

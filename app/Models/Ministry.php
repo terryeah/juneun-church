@@ -6,6 +6,7 @@ use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * A ministry or department (부서 / 사역) such as 찬양팀 or 안내팀.
@@ -16,6 +17,15 @@ use Illuminate\Database\Eloquent\Model;
 class Ministry extends Model
 {
     use HasFactory, LogsModelActivity;
+
+    /**
+     * The roster members serving in this 부서, matched on the string
+     * department field.
+     */
+    public function members(): HasMany
+    {
+        return $this->hasMany(Member::class, 'department', 'name');
+    }
 
     /**
      * Keep the string references on staff and members in step when a

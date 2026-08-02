@@ -6,6 +6,7 @@ namespace App\Filament\Resources\Roles\Pages;
 
 use App\Filament\Resources\Roles\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
@@ -18,9 +19,16 @@ class EditRole extends EditRecord
 
     protected static string $resource = RoleResource::class;
 
-    protected function getActions(): array
+    /**
+     * Keep the delete action at the bottom of the form, next to 취소,
+     * instead of in the page header.
+     *
+     * @return array<Action>
+     */
+    protected function getFormActions(): array
     {
         return [
+            ...parent::getFormActions(),
             DeleteAction::make(),
         ];
     }

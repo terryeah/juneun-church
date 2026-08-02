@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Photos\Pages;
 use App\Filament\Resources\Photos\Concerns\LimitsSliderPicks;
 use App\Filament\Resources\Photos\PhotoResource;
 use App\Filament\Support\SaveUploadsAsWebp;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Storage;
@@ -52,9 +53,16 @@ class EditPhoto extends EditRecord
         }
     }
 
-    protected function getHeaderActions(): array
+    /**
+     * Keep the delete action at the bottom of the form, next to 취소,
+     * instead of in the page header.
+     *
+     * @return array<Action>
+     */
+    protected function getFormActions(): array
     {
         return [
+            ...parent::getFormActions(),
             DeleteAction::make(),
         ];
     }

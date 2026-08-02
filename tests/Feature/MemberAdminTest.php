@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\Cells\Pages\CreateCell;
 use App\Filament\Resources\Members\Pages\CreateMember;
+use App\Models\Cell;
 use App\Models\Member;
 use App\Models\Position;
 use App\Models\User;
@@ -44,6 +45,27 @@ class MemberAdminTest extends TestCase
         $this->assertTrue($serving->contains($missionary->id));
         $this->assertTrue($serving->contains($departmentOnly->id));
         $this->assertFalse($serving->contains($plain->id));
+    }
+
+    /**
+     * A cell is named after its leader (이름 + ' 셀'), follows a leader
+     * change, and keeps the last name when the leader is deleted.
+     */
+    public function test_cell_name_is_derived_from_its_leader(): void
+    {
+        $leader = Member::factory()->create(['name' => '최윤영']);
+        $cell = Cell::create(['leader_id' => $leader->id]);
+
+        $this->assertSame('최윤영 셀', $cell->name);
+
+        $newLeader = Member::factory()->create(['name' => '김한별']);
+        $cell->update(['leader_id' => $newLeader->id]);
+
+        $this->assertSame('김한별 셀', $cell->name);
+
+        $newLeader->delete();
+
+        $this->assertSame('김한별 셀', $cell->fresh()->name);
     }
 
     /**

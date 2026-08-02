@@ -19,6 +19,25 @@ class Cell extends Model
     use HasFactory, LogsModelActivity;
 
     /**
+     * Derive the cell name from its leader (셀장 이름 + ' 셀') on every
+     * save, so it follows leader changes. When the leader has been
+     * deleted (leader_id nulled by the database), the last derived
+     * name is kept.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (Cell $cell): void {
+            $leaderName = $cell->leader_id
+                ? Member::query()->whereKey($cell->leader_id)->value('name')
+                : null;
+
+            if ($leaderName !== null) {
+                $cell->name = $leaderName.' 셀';
+            }
+        });
+    }
+
+    /**
      * The member leading this cell (셀장).
      */
     public function leader(): BelongsTo

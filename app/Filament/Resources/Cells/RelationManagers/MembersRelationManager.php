@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Cells\RelationManagers;
 
+use App\Filament\Resources\Members\MemberResource;
+use App\Models\Member;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\DissociateAction;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -10,6 +12,7 @@ use Filament\Tables\Table;
 
 /**
  * Lists the 셀원 of a cell; associating a member sets their cell_id.
+ * Clicking a row opens that member's edit page.
  */
 class MembersRelationManager extends RelationManager
 {
@@ -30,6 +33,9 @@ class MembersRelationManager extends RelationManager
                 TextColumn::make('name')
                     ->label('이름')
                     ->searchable(),
+                TextColumn::make('gender')
+                    ->label('성별')
+                    ->placeholder('-'),
                 TextColumn::make('position.name')
                     ->label('직분')
                     ->placeholder('-'),
@@ -37,6 +43,7 @@ class MembersRelationManager extends RelationManager
                     ->label('전화번호')
                     ->placeholder('-'),
             ])
+            ->recordUrl(fn (Member $record): string => MemberResource::getUrl('edit', ['record' => $record]))
             ->headerActions([
                 AssociateAction::make()
                     ->recordSelectSearchColumns(['name']),
