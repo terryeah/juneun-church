@@ -26,7 +26,7 @@ class OfferingForm
                     ->label('주일 날짜')
                     ->native(false)
                     ->displayFormat('Y-m-d')
-                    ->default(today()->previousOrSame(CarbonInterface::SUNDAY))
+                    ->default(today()->startOfWeek(CarbonInterface::SUNDAY))
                     ->unique(ignoreRecord: true)
                     ->required(),
                 TextInput::make('note')
