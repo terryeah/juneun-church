@@ -18,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -46,14 +47,17 @@ class MemberForm
                 TextInput::make('phone')
                     ->label('전화번호')
                     ->tel()
-                    ->maxLength(255),
+                    ->placeholder('0411222333')
+                    ->maxLength(10)
+                    ->extraInputAttributes(['maxlength' => '10']),
                 TextInput::make('email')
                     ->label('이메일')
                     ->email()
                     ->maxLength(255),
                 TextInput::make('address')
                     ->label('주소')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->extraInputAttributes(['data-google-places' => 'true', 'autocomplete' => 'off']),
                 Select::make('position_id')
                     ->label('직분')
                     ->relationship('position', 'name')
@@ -189,7 +193,9 @@ class MemberForm
                     }),
                 Placeholder::make('two_factor')
                     ->label('2단계 인증')
-                    ->content(fn (?Member $record): string => filled($record?->user?->app_authentication_secret) ? '사용 중' : '사용 안 함')
+                    ->content(fn (?Member $record): HtmlString|string => filled($record?->user?->app_authentication_secret)
+                        ? new HtmlString('<span class="fi-badge fi-size-md fi-color fi-color-success"><span class="fi-badge-label-ctn"><span class="fi-badge-label">사용 중</span></span></span>')
+                        : '사용 안 함')
                     ->visible(fn (?Member $record): bool => $record?->user_id !== null),
             ]);
     }

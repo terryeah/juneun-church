@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\StaffMembers;
 
+use App\Filament\Resources\Members\MemberResource;
 use App\Filament\Resources\StaffMembers\Pages\ListStaffMembers;
 use App\Models\Member;
 use BackedEnum;
@@ -14,7 +15,9 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * Read-only view of the congregation members currently serving: any
  * roster record with a position or ministry appears here (and on the
- * public /people page) automatically. Editing happens on the roster.
+ * public /people page) automatically. Rows link through to the roster
+ * edit page. Column order matters: the mobile stylesheet pairs cells
+ * in DOM order, giving 이름/성별 then 직분/부서.
  */
 class StaffMemberResource extends Resource
 {
@@ -50,20 +53,17 @@ class StaffMemberResource extends Resource
                     ->label('이름')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('gender')
+                    ->label('성별')
+                    ->placeholder('-'),
                 TextColumn::make('position.name')
                     ->label('직분')
                     ->placeholder('-'),
                 TextColumn::make('department')
                     ->label('부서')
                     ->placeholder('-'),
-                TextColumn::make('email')
-                    ->label('이메일')
-                    ->placeholder('-')
-                    ->extraCellAttributes(['class' => 'stacked-span-full']),
-                TextColumn::make('phone')
-                    ->label('전화번호')
-                    ->placeholder('-'),
             ])
+            ->recordUrl(fn (Member $record): string => MemberResource::getUrl('edit', ['record' => $record]))
             ->defaultSort('sort_order')
             ->recordActions([])
             ->toolbarActions([]);
