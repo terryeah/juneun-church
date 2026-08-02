@@ -20,16 +20,16 @@ class MinistryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleGroup;
 
-    protected static ?string $navigationLabel = '부서 / 사역';
+    protected static ?string $navigationLabel = '부서';
 
     /**
      * Position of this item in the sidebar navigation.
      */
     protected static ?int $navigationSort = 9;
 
-    protected static ?string $modelLabel = '부서 / 사역';
+    protected static ?string $modelLabel = '부서';
 
-    protected static ?string $pluralModelLabel = '부서 / 사역';
+    protected static ?string $pluralModelLabel = '부서';
 
     public static function form(Schema $schema): Schema
     {

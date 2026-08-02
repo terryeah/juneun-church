@@ -7,6 +7,7 @@ use App\Filament\Analytics\TrafficStatsWidget;
 use App\Filament\Support\SaveUploadsAsWebp;
 use App\Policies\ActivityPolicy;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Table;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -43,6 +44,14 @@ class AppServiceProvider extends ServiceProvider
             ->defaultDateDisplayFormat('Y-m-d')
             ->defaultDateTimeDisplayFormat('Y-m-d, H:i:s')
             ->defaultTimeDisplayFormat('H:i'));
+
+        /**
+         * Calendar weeks start on Sunday (7, per the vendor's own
+         * weekStartsOnSunday helper). Registered on DateTimePicker so
+         * the configuration inherits to DatePicker as well.
+         */
+        DateTimePicker::configureUsing(fn (DateTimePicker $picker) => $picker->firstDayOfWeek(7));
+
         SaveUploadsAsWebp::register();
         CreateAction::configureUsing(fn (CreateAction $action) => $action->createAnother(false));
 

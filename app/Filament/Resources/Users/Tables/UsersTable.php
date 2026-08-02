@@ -20,8 +20,8 @@ class UsersTable
                     ->label('이름')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('member.name')
-                    ->label('성도 레코드')
+                TextColumn::make('member.position.name')
+                    ->label('직분')
                     ->placeholder('-'),
                 TextColumn::make('email')
                     ->label('이메일')
