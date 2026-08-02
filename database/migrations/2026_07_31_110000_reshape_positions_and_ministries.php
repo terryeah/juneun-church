@@ -3,9 +3,9 @@
 use App\Models\Member;
 use App\Models\Ministry;
 use App\Models\Position;
-use App\Models\StaffMember;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -43,7 +43,7 @@ return new class extends Migration
         );
         $missions->update(['description' => '일본']);
 
-        StaffMember::query()->where('department', '일본')->update(['department' => '선교팀']);
+        DB::table('staff_members')->where('department', '일본')->update(['department' => '선교팀']);
         Member::query()->where('department', '일본')->update(['department' => '선교팀']);
         Ministry::query()->where('name', '일본')->delete();
     }

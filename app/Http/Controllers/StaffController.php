@@ -18,7 +18,7 @@ class StaffController extends Controller
         /** Positions in hierarchy order with their published members */
         $positions = Position::query()
             ->orderBy('sort_order')
-            ->with(['staffMembers' => fn ($query) => $query->where('is_published', true)])
+            ->with(['staffMembers' => fn ($query) => $query->serving()])
             ->get()
             ->filter(fn (Position $position) => $position->staffMembers->isNotEmpty());
 

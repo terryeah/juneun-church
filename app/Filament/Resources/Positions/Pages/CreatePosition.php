@@ -7,5 +7,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreatePosition extends CreateRecord
 {
+    protected static bool $canCreateAnother = false;
+
     protected static string $resource = PositionResource::class;
 }

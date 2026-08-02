@@ -5,11 +5,11 @@ namespace Database\Seeders;
 use App\Models\Album;
 use App\Models\Announcement;
 use App\Models\Event;
+use App\Models\Member;
 use App\Models\Photo;
 use App\Models\Position;
 use App\Models\Sermon;
 use App\Models\ServiceType;
-use App\Models\StaffMember;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
@@ -133,7 +133,7 @@ class DemoContentSeeder extends Seeder
      */
     private function seedStaff(): void
     {
-        if (StaffMember::query()->exists()) {
+        if (Member::query()->exists()) {
             return;
         }
 
@@ -149,7 +149,7 @@ class DemoContentSeeder extends Seeder
         ];
 
         foreach ($items as $index => $item) {
-            StaffMember::query()->create([
+            Member::query()->create([
                 'name' => $item['name'],
                 'position_id' => $byName[$item['position']],
                 'department' => $item['department'],

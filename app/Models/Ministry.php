@@ -26,13 +26,11 @@ class Ministry extends Model
         static::updated(function (Ministry $ministry): void {
             if ($ministry->wasChanged('name')) {
                 $original = $ministry->getOriginal('name');
-                StaffMember::query()->where('department', $original)->update(['department' => $ministry->name]);
                 Member::query()->where('department', $original)->update(['department' => $ministry->name]);
             }
         });
 
         static::deleted(function (Ministry $ministry): void {
-            StaffMember::query()->where('department', $ministry->name)->update(['department' => null]);
             Member::query()->where('department', $ministry->name)->update(['department' => null]);
         });
     }

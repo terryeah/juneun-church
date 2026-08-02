@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use App\Support\RoleLabel;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
+/**
+ * Read-only listing of site accounts. Accounts are created and edited
+ * from the linked roster record (성도), not here.
+ */
 class UsersTable
 {
     public static function configure(Table $table): Table
@@ -18,41 +20,30 @@ class UsersTable
                     ->label('이름')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('member.name')
+                    ->label('성도 레코드')
+                    ->placeholder('-'),
                 TextColumn::make('email')
                     ->label('이메일')
-                    ->searchable(),
+                    ->searchable()
+                    ->extraCellAttributes(['class' => 'stacked-span-full']),
                 TextColumn::make('roles.name')
                     ->label('롤')
-                    ->badge(),
-                TextColumn::make('creator.name')
-                    ->label('작성자')
-                    ->default('시스템')
-                    ->sortable(),
-                TextColumn::make('email_verified_at')
-                    ->label('이메일 인증일')
-                    ->dateTime()
-                    ->sortable(),
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => RoleLabel::label($state)),
+                TextColumn::make('app_authentication_secret')
+                    ->label('2단계 인증')
+                    ->badge()
+                    ->formatStateUsing(fn ($state): string => filled($state) ? '사용 중' : '미설정')
+                    ->color(fn ($state): string => filled($state) ? 'success' : 'gray')
+                    ->placeholder('미설정'),
                 TextColumn::make('created_at')
                     ->label('생성일')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->label('수정일')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->recordActions([])
+            ->toolbarActions([]);
     }
 }

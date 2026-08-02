@@ -13,6 +13,8 @@ use Override;
 
 class CreateRole extends CreateRecord
 {
+    protected static bool $canCreateAnother = false;
+
     public Collection $permissions;
 
     protected static string $resource = RoleResource::class;

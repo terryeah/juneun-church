@@ -4,10 +4,13 @@ namespace App\Models;
 
 use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * A congregation member (성도) on the church roster.
@@ -33,6 +36,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'head_id',
     'relationship',
     'notes',
+    'bio',
+    'sort_order',
+    'is_published',
+    'user_id',
 ])]
 class Member extends Model
 {
@@ -42,9 +49,9 @@ class Member extends Model
      * Personal details stay out of the activity log; only roster
      * structure changes (status, position, household) are recorded.
      */
-    public function getActivitylogOptions(): \Spatie\Activitylog\Support\LogOptions
+    public function getActivitylogOptions(): LogOptions
     {
-        return \Spatie\Activitylog\Support\LogOptions::defaults()
+        return LogOptions::defaults()
             ->logOnly(['name', 'status', 'position_id', 'department', 'head_id', 'relationship', 'registered_at'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
@@ -61,6 +68,7 @@ class Member extends Model
             'birth_date' => 'date',
             'baptism_date' => 'date',
             'registered_at' => 'date',
+            'is_published' => 'boolean',
         ];
     }
 
@@ -70,6 +78,36 @@ class Member extends Model
     public function position(): BelongsTo
     {
         return $this->belongsTo(Position::class);
+    }
+
+    /**
+     * The linked site login account, if this member has one.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Scope to members shown on the public serving-people page: anyone
+     * holding a position or serving in a ministry, and published.
+     *
+     * @param  Builder<Member>  $query
+     */
+    public function scopeServing($query): void
+    {
+        $query->where('is_published', true)
+            ->where(fn ($inner) => $inner->whereNotNull('position_id')->orWhereNotNull('department'));
+    }
+
+    /**
+     * Public URL of the member photo on the media disk, if one exists.
+     */
+    public function photoUrl(): ?string
+    {
+        return $this->photo
+            ? Storage::disk(config('filesystems.media'))->url($this->photo)
+            : null;
     }
 
     /**

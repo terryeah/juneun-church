@@ -11,6 +11,7 @@ use App\Filament\Resources\Bulletins\BulletinResource;
 use App\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Members\MemberResource;
 use App\Filament\Resources\Ministries\MinistryResource;
+use App\Filament\Resources\Offerings\OfferingResource;
 use App\Filament\Resources\Photos\PhotoResource;
 use App\Filament\Resources\Positions\PositionResource;
 use App\Filament\Resources\Roles\RoleResource;
@@ -60,7 +61,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => static::buildNavigation($builder))
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/staff-members"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/ministries"]{margin-inline-start:1.75rem}.fi-sidebar-nav a[href$="/admin/positions"]{margin-inline-start:2.625rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}.fi-one-time-code-input-ctn{width:100%;justify-content:center}.fi-one-time-code-input-ctn .fi-one-time-code-input-digit{flex:1 1 0;min-width:0;max-width:3.75rem;height:3.5rem;font-size:1.25rem;text-align:center}@media (min-width:24rem) and (max-width:39.9375rem){.fi-ta-table-stacked-on-mobile>tbody>tr:not(.fi-ta-group-header-row):not(.fi-ta-summary-row){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1rem;align-items:start}.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:has(>.fi-ta-actions),.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:has(.fi-ta-record-checkbox){grid-column:1/-1}}</style>'),
+                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/staff-members"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/users"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/ministries"]{margin-inline-start:1.75rem}.fi-sidebar-nav a[href$="/admin/positions"]{margin-inline-start:2.625rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}.fi-one-time-code-input-ctn{width:100%;justify-content:center}.fi-one-time-code-input-ctn .fi-one-time-code-input-digit{flex:1 1 0;min-width:0;max-width:3.75rem;height:3.5rem;font-size:1.25rem;text-align:center}@media (min-width:24rem) and (max-width:39.9375rem){.fi-ta-table-stacked-on-mobile>tbody>tr:not(.fi-ta-group-header-row):not(.fi-ta-summary-row){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1rem;align-items:start}.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell.stacked-span-full,.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:has(>.fi-ta-actions),.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:has(.fi-ta-record-checkbox){grid-column:1/-1}}</style>'),
             )
             ->colors([
                 'primary' => Color::Amber,
@@ -112,18 +113,19 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(EventResource::class),
                 ...static::accessibleItems(SermonResource::class),
                 ...static::accessibleItems(ServiceTypeResource::class),
+                ...static::accessibleItems(OfferingResource::class),
             ]),
             NavigationGroup::make('미디어')->items([
                 ...static::accessibleItems(AlbumResource::class),
                 ...static::accessibleItems(PhotoResource::class),
                 ...static::accessibleItems(BulletinResource::class),
             ]),
-            NavigationGroup::make('구성원')->items([
+            NavigationGroup::make('공동체')->items([
                 ...static::accessibleItems(MemberResource::class),
+                ...static::accessibleItems(UserResource::class),
                 ...static::accessibleItems(StaffMemberResource::class),
                 ...static::accessibleItems(MinistryResource::class),
                 ...static::accessibleItems(PositionResource::class),
-                ...static::accessibleItems(UserResource::class),
             ]),
             NavigationGroup::make('모니터링')->items([
                 ...static::accessibleItems(Analytics::class),

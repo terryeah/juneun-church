@@ -6,6 +6,7 @@ use App\Filament\Analytics\TrafficChartWidget;
 use App\Filament\Analytics\TrafficStatsWidget;
 use App\Filament\Support\SaveUploadsAsWebp;
 use App\Policies\ActivityPolicy;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Table;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -43,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
             ->defaultDateTimeDisplayFormat('Y-m-d, H:i:s')
             ->defaultTimeDisplayFormat('H:i'));
         SaveUploadsAsWebp::register();
+        CreateAction::configureUsing(fn (CreateAction $action) => $action->createAnother(false));
 
         $this->registerAnalyticsWidgets();
         $this->logAuthenticationActivity();

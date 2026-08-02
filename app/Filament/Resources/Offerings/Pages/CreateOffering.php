@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\Sermons\Pages;
+namespace App\Filament\Resources\Offerings\Pages;
 
-use App\Filament\Resources\Sermons\SermonResource;
+use App\Filament\Resources\Offerings\OfferingResource;
 use Filament\Resources\Pages\CreateRecord;
 
-/**
- * Create page that records the authoring user.
- */
-class CreateSermon extends CreateRecord
+class CreateOffering extends CreateRecord
 {
-    protected static bool $canCreateAnother = false;
+    protected static string $resource = OfferingResource::class;
 
-    protected static string $resource = SermonResource::class;
+    protected static bool $canCreateAnother = false;
 
     /**
      * Stamp the authenticated user as the record creator.

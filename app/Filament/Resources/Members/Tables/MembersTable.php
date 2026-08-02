@@ -31,20 +31,25 @@ class MembersTable
                     }),
                 TextColumn::make('position.name')
                     ->label('직분')
+                    ->placeholder('-')
                     ->toggleable(),
                 TextColumn::make('department')
                     ->label('부서 / 사역')
+                    ->placeholder('-')
                     ->toggleable(),
                 TextColumn::make('phone')
                     ->label('전화번호')
+                    ->placeholder('-')
                     ->searchable(),
                 TextColumn::make('birth_date')
                     ->label('생년월일')
+                    ->placeholder('-')
                     ->date('Y-m-d')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('head.name')
                     ->label('세대주')
+                    ->placeholder('-')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('registered_at')
                     ->label('등록일')

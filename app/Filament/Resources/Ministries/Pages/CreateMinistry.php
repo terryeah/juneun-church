@@ -7,5 +7,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateMinistry extends CreateRecord
 {
+    protected static bool $canCreateAnother = false;
+
     protected static string $resource = MinistryResource::class;
 }

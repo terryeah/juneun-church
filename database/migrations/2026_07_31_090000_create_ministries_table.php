@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Ministry;
-use App\Models\StaffMember;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +28,7 @@ return new class extends Migration
         });
 
         $names = collect(['찬양팀', '주차봉사팀', '안내팀'])
-            ->merge(StaffMember::query()->distinct()->pluck('department')->filter())
+            ->merge(DB::table('staff_members')->distinct()->pluck('department')->filter())
             ->unique()
             ->values();
 

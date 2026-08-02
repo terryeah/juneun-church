@@ -5,12 +5,16 @@ namespace App\Filament\Resources\Members\Schemas;
 use App\Filament\Resources\Members\MemberResource;
 use App\Models\Member;
 use App\Models\Ministry;
+use App\Models\User;
+use App\Support\RoleLabel;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Spatie\Permission\Models\Role;
 
 /**
  * Form schema for the congregation roster (성도).
@@ -114,6 +118,63 @@ class MemberForm
                     ->disk(config('filesystems.media'))
                     ->directory('members')
                     ->visibility('public'),
+                Toggle::make('site_account')
+                    ->label('사이트 계정')
+                    ->helperText('켜면 이 성도가 관리자 사이트에 로그인할 수 있는 계정을 갖게 됩니다.')
+                    ->dehydrated(false)
+                    ->afterStateHydrated(fn (Toggle $component, ?Member $record) => $component->state($record?->user_id !== null))
+                    ->live()
+                    ->columnSpanFull(),
+                TextInput::make('site_email')
+                    ->label('로그인 이메일')
+                    ->email()
+                    ->dehydrated(false)
+                    ->afterStateHydrated(fn (TextInput $component, ?Member $record) => $component->state($record?->user?->email))
+                    ->visible(fn (Get $get): bool => (bool) $get('site_account'))
+                    ->requiredIf('site_account', true)
+                    ->rule(fn (?Member $record): \Closure => function (string $attribute, mixed $value, \Closure $fail) use ($record): void {
+                        if ($value && User::query()->where('email', $value)->whereKeyNot($record?->user_id)->exists()) {
+                            $fail('이미 다른 계정이 사용 중인 이메일입니다.');
+                        }
+                    }),
+                TextInput::make('site_password')
+                    ->label('비밀번호')
+                    ->password()
+                    ->revealable()
+                    ->dehydrated(false)
+                    ->visible(fn (Get $get): bool => (bool) $get('site_account'))
+                    ->required(fn (?Member $record): bool => $record?->user_id === null)
+                    ->helperText('수정 시 비워두면 기존 비밀번호가 유지됩니다.'),
+                Select::make('site_roles')
+                    ->label('롤')
+                    ->multiple()
+                    ->dehydrated(false)
+                    ->afterStateHydrated(fn (Select $component, ?Member $record) => $component->state($record?->user?->roles->pluck('id')->all() ?? []))
+                    ->options(function (): array {
+                        $user = auth()->user();
+
+                        return Role::query()
+                            ->when(! $user?->hasRole('super_admin'), fn ($query) => $query->where('name', '!=', 'super_admin'))
+                            ->when(! $user?->hasRole('developer'), fn ($query) => $query->where('name', '!=', 'developer'))
+                            ->get()
+                            ->mapWithKeys(fn ($role) => [$role->id => RoleLabel::label($role->name)])
+                            ->all();
+                    })
+                    ->visible(fn (Get $get): bool => (bool) $get('site_account'))
+                    ->requiredIf('site_account', true)
+                    ->rule(fn (): \Closure => function (string $attribute, mixed $value, \Closure $fail): void {
+                        $user = auth()->user();
+                        $allowed = Role::query()
+                            ->when(! $user?->hasRole('super_admin'), fn ($query) => $query->where('name', '!=', 'super_admin'))
+                            ->when(! $user?->hasRole('developer'), fn ($query) => $query->where('name', '!=', 'developer'))
+                            ->pluck('id');
+
+                        foreach ((array) $value as $roleId) {
+                            if (! $allowed->contains((int) $roleId)) {
+                                $fail('부여할 수 없는 롤이 포함되어 있습니다.');
+                            }
+                        }
+                    }),
             ]);
     }
 }

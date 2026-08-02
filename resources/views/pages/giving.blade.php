@@ -61,4 +61,51 @@
         </p>
     </section>
 
+    @if ($offering)
+        <section class="section-giving-records container-site pb-12 lg:pb-16">
+            <x-ui.kicker>헌금 소식 · Records</x-ui.kicker>
+            <h2 class="mt-3 font-kr text-display-sm font-medium">{{ $offering->sunday_date->translatedFormat('Y년 n월 j일') }} 주일 헌금 내역</h2>
+            <p class="mt-2 font-kr text-body-sm text-navy-400">주보에 실리는 내용과 동일합니다. 함께 드린 손길에 감사드립니다.</p>
+
+            <div class="mt-6 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                @foreach ($offering->groupedItems() as $category => $items)
+                    <div>
+                        <h3 class="border-b-2 border-navy pb-2 font-kr text-body font-bold">{{ $category }}</h3>
+                        <ul class="mt-1">
+                            @foreach ($items as $item)
+                                <li class="flex items-baseline justify-between gap-4 border-b border-line py-2.5">
+                                    <span class="font-kr text-body-sm">{{ $item['name'] ?: '무명' }}</span>
+                                    @if (filled($item['amount'] ?? null))
+                                        <span class="text-body-sm font-bold tabular-nums">${{ number_format((float) $item['amount'], 2) }}</span>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endforeach
+            </div>
+
+            @if ($offering->total() > 0)
+                <p class="mt-6 text-right font-kr text-body font-bold">합계 <span class="tabular-nums">${{ number_format($offering->total(), 2) }}</span></p>
+            @endif
+            @if ($offering->note)
+                <p class="mt-2 text-right font-kr text-body-sm text-navy-400">{{ $offering->note }}</p>
+            @endif
+
+            @if ($weeks->count() > 1)
+                <div class="mt-8">
+                    <h3 class="text-caption font-extrabold uppercase tracking-[0.16em] text-navy-400">지난 주일 보기</h3>
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        @foreach ($weeks as $week)
+                            <a href="{{ route('giving', ['week' => $week->sunday_date->toDateString()]) }}"
+                               class="rounded-nav px-3 py-1.5 font-kr text-body-sm transition-colors {{ $week->is($offering) ? 'bg-navy text-cream' : 'bg-navy/5 text-navy hover:bg-navy/10' }}">
+                                {{ $week->sunday_date->translatedFormat('n월 j일') }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </section>
+    @endif
+
 </x-layout.app>

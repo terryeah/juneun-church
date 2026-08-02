@@ -10,6 +10,8 @@ use Filament\Resources\Pages\CreateRecord;
  */
 class CreateEvent extends CreateRecord
 {
+    protected static bool $canCreateAnother = false;
+
     protected static string $resource = EventResource::class;
 
     /**

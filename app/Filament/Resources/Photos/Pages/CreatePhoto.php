@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Storage;
  */
 class CreatePhoto extends CreateRecord
 {
+    protected static bool $canCreateAnother = false;
+
     use LimitsSliderPicks;
 
     protected static string $resource = PhotoResource::class;

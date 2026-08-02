@@ -23,6 +23,6 @@ class Position extends Model
      */
     public function staffMembers(): HasMany
     {
-        return $this->hasMany(StaffMember::class)->orderBy('sort_order');
+        return $this->hasMany(Member::class)->orderBy('sort_order')->orderBy('name');
     }
 }
