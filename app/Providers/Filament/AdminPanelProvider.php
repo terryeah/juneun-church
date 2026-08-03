@@ -161,62 +161,140 @@ class AdminPanelProvider extends PanelProvider
             return '';
         }
 
-        $src = 'https://maps.googleapis.com/maps/api/js?key='.rawurlencode($key).'&libraries=places&loading=async&callback=__juneunInitGooglePlaces';
+        $src = 'https://maps.googleapis.com/maps/api/js?key='.rawurlencode($key).'&libraries=places&v=weekly&loading=async&callback=__juneunInitGooglePlaces';
 
         return <<<HTML
             <script>
             /**
-             * Google Places address autocomplete.
+             * Google Places (New) address autocomplete.
              *
-             * Binds a classic Autocomplete (restricted to Australian street
-             * addresses) to each input[data-google-places], writing the
-             * formatted address back through native input/change events so
-             * Livewire syncs the value. A MutationObserver rebinds after
-             * Livewire morphs the DOM; a dataset flag backed by a WeakSet
-             * (which survives attribute morphs) guards double-binding.
+             * The classic Autocomplete widget needs the legacy Places API,
+             * which new Google Cloud projects can no longer enable, so this
+             * uses AutocompleteSuggestion from Places API (New) and draws a
+             * small dropdown under each input[data-google-places]. A chosen
+             * suggestion is written back through native input/change events
+             * so Livewire syncs the value. A MutationObserver rebinds after
+             * Livewire morphs the DOM; a WeakSet guards double-binding
+             * because it survives attribute morphs. Session tokens group a
+             * typing session into one billable autocomplete request.
              */
             (function () {
                 var boundInputs = new WeakSet();
+                var debounceTimer = null;
+                var sessionToken = null;
 
-                function attach() {
-                    if (!window.google || !google.maps || !google.maps.places) {
-                        return;
-                    }
+                function makeDropdown(input) {
+                    var list = document.createElement('ul');
+                    list.style.cssText = 'position:absolute;inset-inline:0;top:calc(100% + 0.25rem);z-index:50;margin:0;padding:0.25rem;list-style:none;background:Canvas;color:CanvasText;border:1px solid color-mix(in srgb, currentColor 20%, transparent);border-radius:0.5rem;box-shadow:0 0.5rem 1.5rem rgba(0,0,0,0.25);display:none;max-height:16rem;overflow-y:auto';
+                    list.style.colorScheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+                    var wrapper = input.closest('.fi-input-wrp') || input.parentElement;
+                    wrapper.style.position = 'relative';
+                    wrapper.appendChild(list);
+                    return list;
+                }
 
+                function choose(input, list, text) {
+                    input.value = text;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                    list.style.display = 'none';
+                    list.textContent = '';
+                    sessionToken = null;
+                }
+
+                function render(input, list, suggestions) {
+                    list.textContent = '';
+
+                    suggestions.slice(0, 5).forEach(function (suggestion) {
+                        var text = suggestion.placePrediction && suggestion.placePrediction.text
+                            ? suggestion.placePrediction.text.text
+                            : null;
+
+                        if (!text) {
+                            return;
+                        }
+
+                        var item = document.createElement('li');
+                        item.textContent = text;
+                        item.style.cssText = 'padding:0.5rem 0.625rem;border-radius:0.375rem;cursor:pointer;font-size:0.875rem;line-height:1.35';
+                        item.addEventListener('mouseenter', function () {
+                            item.style.background = 'color-mix(in srgb, currentColor 8%, transparent)';
+                        });
+                        item.addEventListener('mouseleave', function () {
+                            item.style.background = 'transparent';
+                        });
+                        item.addEventListener('pointerdown', function (event) {
+                            event.preventDefault();
+                            choose(input, list, text);
+                        });
+                        list.appendChild(item);
+                    });
+
+                    list.style.display = list.childElementCount ? 'block' : 'none';
+                }
+
+                function bind(input, places) {
+                    var list = makeDropdown(input);
+
+                    input.addEventListener('input', function () {
+                        var value = input.value.trim();
+                        window.clearTimeout(debounceTimer);
+
+                        if (value.length < 3) {
+                            list.style.display = 'none';
+                            return;
+                        }
+
+                        debounceTimer = window.setTimeout(function () {
+                            sessionToken = sessionToken || new places.AutocompleteSessionToken();
+
+                            places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+                                input: value,
+                                sessionToken: sessionToken,
+                                includedRegionCodes: ['au'],
+                                language: 'en-AU',
+                            }).then(function (result) {
+                                render(input, list, result.suggestions || []);
+                            }).catch(function () {
+                                list.style.display = 'none';
+                            });
+                        }, 250);
+                    });
+
+                    input.addEventListener('blur', function () {
+                        window.setTimeout(function () {
+                            list.style.display = 'none';
+                        }, 150);
+                    });
+
+                    input.addEventListener('keydown', function (event) {
+                        if (event.key === 'Escape') {
+                            list.style.display = 'none';
+                        }
+                    });
+                }
+
+                function attach(places) {
                     document.querySelectorAll('input[data-google-places]').forEach(function (input) {
-                        if (boundInputs.has(input) || input.dataset.googlePlacesBound) {
+                        if (boundInputs.has(input)) {
                             return;
                         }
 
                         boundInputs.add(input);
-                        input.dataset.googlePlacesBound = 'true';
-
-                        var autocomplete = new google.maps.places.Autocomplete(input, {
-                            componentRestrictions: { country: 'au' },
-                            fields: ['formatted_address'],
-                            types: ['address'],
-                        });
-
-                        autocomplete.addListener('place_changed', function () {
-                            var place = autocomplete.getPlace();
-
-                            if (!place || !place.formatted_address) {
-                                return;
-                            }
-
-                            input.value = place.formatted_address;
-                            input.dispatchEvent(new Event('input', { bubbles: true }));
-                            input.dispatchEvent(new Event('change', { bubbles: true }));
-                        });
+                        bind(input, places);
                     });
                 }
 
                 window.__juneunInitGooglePlaces = function () {
-                    attach();
+                    google.maps.importLibrary('places').then(function (places) {
+                        attach(places);
 
-                    new MutationObserver(attach).observe(document.body, {
-                        childList: true,
-                        subtree: true,
+                        new MutationObserver(function () {
+                            attach(places);
+                        }).observe(document.body, {
+                            childList: true,
+                            subtree: true,
+                        });
                     });
                 };
 
