@@ -193,6 +193,15 @@ class AdminPanelProvider extends PanelProvider
                     return list;
                 }
 
+                function notice(list, message, isError) {
+                    list.textContent = '';
+                    var item = document.createElement('li');
+                    item.textContent = message;
+                    item.style.cssText = 'padding:0.5rem 0.625rem;font-size:0.75rem;line-height:1.4;' + (isError ? 'color:#ef4444' : 'opacity:0.6');
+                    list.appendChild(item);
+                    list.style.display = 'block';
+                }
+
                 function choose(input, list, text) {
                     input.value = text;
                     input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -246,6 +255,7 @@ class AdminPanelProvider extends PanelProvider
                         }
 
                         debounceTimer = window.setTimeout(function () {
+                            notice(list, '검색 중…', false);
                             sessionToken = sessionToken || new places.AutocompleteSessionToken();
 
                             places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
@@ -255,8 +265,9 @@ class AdminPanelProvider extends PanelProvider
                                 language: 'en-AU',
                             }).then(function (result) {
                                 render(input, list, result.suggestions || []);
-                            }).catch(function () {
-                                list.style.display = 'none';
+                            }).catch(function (error) {
+                                console.error('places autocomplete failed', error);
+                                notice(list, '자동완성 오류: ' + (error && error.message ? error.message : String(error)), true);
                             });
                         }, 250);
                     });
@@ -295,12 +306,17 @@ class AdminPanelProvider extends PanelProvider
                             childList: true,
                             subtree: true,
                         });
+                    }).catch(function (error) {
+                        console.error('places library import failed', error);
                     });
                 };
 
                 var loader = document.createElement('script');
                 loader.src = '{$src}';
                 loader.async = true;
+                loader.onerror = function () {
+                    console.error('google maps loader blocked or unreachable');
+                };
                 document.head.appendChild(loader);
             })();
             </script>
