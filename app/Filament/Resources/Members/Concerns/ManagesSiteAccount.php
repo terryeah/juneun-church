@@ -8,6 +8,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Attributes\Locked;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -36,7 +37,18 @@ trait ManagesSiteAccount
 {
     /**
      * One-shot consent recorded by the confirmation modal.
+     *
+     * Locked because a plain public property on a Livewire component is
+     * writable from the browser: without this, anyone on the edit page
+     * could set the flag from the console, switch the toggle off and
+     * have beforeSave() delete the login without the confirmation modal
+     * ever appearing. The modal is the only thing standing between a
+     * stray save and an irreversible deletion, so the consent may not be
+     * something the client can assert for itself. Nothing binds this
+     * with wire:model and the action sets it server-side in the same
+     * request that submits the form, so locking it costs nothing.
      */
+    #[Locked]
     public bool $hasConfirmedSiteAccountRevocation = false;
 
     /**
