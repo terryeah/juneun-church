@@ -25,6 +25,16 @@ class ContentStatsWidget extends StatsOverviewWidget
     protected ?string $pollingInterval = null;
 
     /**
+     * Visitor and content figures are the church office's business, so
+     * they stay hidden from anyone below an administrator rather than
+     * greeting a 성도 with statistics they have no use for.
+     */
+    public static function canView(): bool
+    {
+        return auth()->user()?->isAdministrator() ?? false;
+    }
+
+    /**
      * Build the dashboard statistics.
      *
      * @return array<Stat>

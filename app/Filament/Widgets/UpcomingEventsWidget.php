@@ -20,6 +20,16 @@ class UpcomingEventsWidget extends TableWidget
     protected int|string|array $columnSpan = ['lg' => 2];
 
     /**
+     * The dashboard as a whole is for the people who run the site, so
+     * this table follows the other widgets and stays hidden from anyone
+     * below an administrator.
+     */
+    public static function canView(): bool
+    {
+        return auth()->user()?->isAdministrator() ?? false;
+    }
+
+    /**
      * Configure the compact upcoming-events table.
      */
     public function table(Table $table): Table

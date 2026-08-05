@@ -7,13 +7,13 @@
 
 <x-layout.app title="가입 신청" description="브리즈번 주는교회 홈페이지 가입 신청 안내입니다.">
 
-    <x-ui.page-header kicker="함께하는 교우 · Sign up" title="가입 신청">
+    <x-ui.page-header kicker="함께하는 교우 · Sign up" title="가입 신청" center>
         헌금 내역처럼 교우에게만 열려 있는 내용을 보시려면 계정이 필요합니다. 신청해 주시면 교적부와 대조한 뒤 관리자가 승인해 드립니다.
     </x-ui.page-header>
 
     <section class="container-site pb-12 lg:pb-16">
         @if ($submitted)
-            <div class="max-w-xl rounded-frame border-2 border-navy bg-paper p-8">
+            <div class="mx-auto max-w-xl rounded-frame border-2 border-navy bg-paper p-8">
                 <x-ui.kicker>신청 완료 · Received</x-ui.kicker>
                 <h2 class="mt-3 font-kr text-display-sm font-medium">가입 신청이 접수되었습니다</h2>
                 <p class="mt-4 font-kr text-body leading-relaxed text-navy-700">
@@ -23,7 +23,7 @@
                 <x-ui.button href="{{ route('home') }}" variant="secondary" class="mt-6">홈으로</x-ui.button>
             </div>
         @else
-            <form method="POST" action="{{ route('signup.store') }}" class="max-w-xl rounded-frame border-2 border-navy bg-paper p-8">
+            <form method="POST" action="{{ route('signup.store') }}" class="mx-auto max-w-xl rounded-frame border-2 border-navy bg-paper p-8">
                 @csrf
 
                 <div class="space-y-5">

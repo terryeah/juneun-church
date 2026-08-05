@@ -25,6 +25,18 @@ class Dashboard extends BaseDashboard
     protected static ?string $title = '대시보드';
 
     /**
+     * The dashboard summarises work an ordinary 성도 has no part in,
+     * and every widget on it is now closed to them anyway, so the page
+     * itself is closed too. Panel auth middleware turns that into a
+     * redirect to their profile rather than a refusal, and it keeps
+     * 대시보드 out of their navigation.
+     */
+    public static function canAccess(): bool
+    {
+        return ! (auth()->user()?->isMemberOnly() ?? false);
+    }
+
+    /**
      * Widgets rendered on the dashboard, in display order.
      *
      * @return array<class-string>

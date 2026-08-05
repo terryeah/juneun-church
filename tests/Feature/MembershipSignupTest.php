@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\Dashboard;
 use App\Filament\Resources\MembershipRequests\MembershipRequestResource;
 use App\Filament\Resources\MembershipRequests\Pages\ViewMembershipRequest;
 use App\Models\Member;
@@ -166,17 +167,24 @@ class MembershipSignupTest extends TestCase
 
     /**
      * An approved 성도 holds the permissionless 'member' role: the
-     * panel still lets them in (the dashboard renders, so they never
-     * meet an error page) but every resource is refused.
+     * panel still lets them in, but only as far as their own profile.
+     * The dashboard and every resource - which the role could never
+     * open anyway - now redirect there instead of refusing outright,
+     * so a 성도 never meets an error page.
      */
-    public function test_an_approved_member_reaches_the_dashboard_but_no_resource(): void
+    public function test_an_approved_member_reaches_only_their_profile(): void
     {
         $request = MembershipRequest::create($this->payload());
         $user = $request->approve(null, $this->reviewer());
+        $profileUrl = Filament::getPanel('admin')->getProfileUrl();
 
-        $this->actingAs($user)->get('/admin')->assertOk();
-        $this->actingAs($user)->get(MembershipRequestResource::getUrl('index'))->assertForbidden();
-        $this->actingAs($user)->get('/admin/members')->assertForbidden();
+        $this->actingAs($user);
+        $this->assertFalse(Dashboard::canAccess());
+
+        $this->actingAs($user)->get('/admin')->assertRedirect($profileUrl);
+        $this->actingAs($user)->get(MembershipRequestResource::getUrl('index'))->assertRedirect($profileUrl);
+        $this->actingAs($user)->get('/admin/members')->assertRedirect($profileUrl);
+        $this->actingAs($user)->get($profileUrl)->assertOk();
     }
 
     /**

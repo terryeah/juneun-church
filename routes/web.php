@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\MembershipRequestController;
 use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\EventController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\WorshipController;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -26,8 +28,17 @@ Route::get('/gallery/{album}', [GalleryController::class, 'show'])->name('galler
 Route::get('/giving', GivingController::class)->name('giving');
 Route::get('/location', LocationController::class)->name('location');
 
+/** The short address handed to 성도 for their account page. */
+Route::get('/profile', fn () => redirect(Filament::getPanel('admin')->getProfileUrl()))->name('profile');
+
 /** Public sign-up: throttled because anyone on the internet can post to it. */
 Route::get('/signup', [MembershipRequestController::class, 'create'])->name('signup');
 Route::post('/signup', [MembershipRequestController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('signup.store');
+
+/** Public login, throttled for the same reason. */
+Route::get('/login', [LoginController::class, 'create'])->name('login');
+Route::post('/login', [LoginController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('login.store');

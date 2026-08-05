@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -37,6 +38,23 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function member(): HasOne
     {
         return $this->hasOne(Member::class);
+    }
+
+    /**
+     * The 가입 신청 this account came from, if it came from one at all.
+     *
+     * The link runs through the roster record the request was matched
+     * to on approval, which is the only thing tying the two together;
+     * an account an administrator created by hand has none.
+     */
+    public function membershipRequest(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            MembershipRequest::class,
+            Member::class,
+            'user_id',
+            'matched_member_id',
+        );
     }
 
     /**
@@ -75,6 +93,29 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->roles()->exists();
+    }
+
+    /**
+     * Whether this account is an ordinary 성도: the permissionless
+     * 'member' role granted through the 가입 신청 flow and nothing else.
+     *
+     * Such an account may sign in - it needs the panel for its own
+     * profile - but reaches no dashboard, no resource and no mandatory
+     * two-factor prompt. A single extra role makes it staff again.
+     */
+    public function isMemberOnly(): bool
+    {
+        return $this->roles->count() === 1 && $this->hasRole('member');
+    }
+
+    /**
+     * Whether this account runs the site: the pastor's office, the
+     * developer, or a super admin. Used wherever something is meant for
+     * the people who administer the church rather than help with it.
+     */
+    public function isAdministrator(): bool
+    {
+        return $this->hasAnyRole(['super_admin', 'admin', 'developer']);
     }
 
     /**

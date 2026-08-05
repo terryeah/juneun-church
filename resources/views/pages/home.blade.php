@@ -115,17 +115,17 @@
                 ? route('gallery.show', \App\Models\SiteSetting::get('highlight_link_album'))
                 : route('gallery.index');
         @endphp
-        <div class="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-11">
-            <div class="order-2 flex items-center lg:order-1">
-                <a href="{{ $highlightLink }}" class="block w-full overflow-hidden rounded-media">
-                    @if ($highlightPhoto)
+        {{-- Until a poster is uploaded the copy simply runs full width; an
+             empty picture frame would read as a fault rather than a gap. --}}
+        <div @class(['grid gap-8 lg:gap-11', 'lg:grid-cols-[1.3fr_1fr]' => $highlightPhoto])>
+            @if ($highlightPhoto)
+                <div class="order-2 flex items-center lg:order-1">
+                    <a href="{{ $highlightLink }}" class="block w-full overflow-hidden rounded-media">
                         <img src="{{ $highlightPhoto->thumbnailUrl() }}" alt="{{ \App\Models\SiteSetting::get('highlight_title') }}" class="aspect-video w-full object-cover" loading="lazy">
-                    @else
-                        <x-ui.photo-placeholder label="하이라이트 · Highlight" class="aspect-video w-full" />
-                    @endif
-                </a>
-            </div>
-            <div class="order-1 lg:order-2 lg:border-l lg:border-line lg:pl-10">
+                    </a>
+                </div>
+            @endif
+            <div @class(['order-1 lg:order-2', 'lg:border-l lg:border-line lg:pl-10' => $highlightPhoto])>
                 <x-ui.kicker>하이라이트 · Highlight</x-ui.kicker>
                 <a href="{{ $highlightLink }}" class="block"><h2 class="mt-3 font-kr text-display-md font-medium leading-snug transition-colors duration-300 hover:text-accent">{!! nl2br(e(\App\Models\SiteSetting::get('highlight_title'))) !!}</h2></a>
                 <p class="mt-4 font-kr text-body-sm leading-relaxed text-navy-700">
