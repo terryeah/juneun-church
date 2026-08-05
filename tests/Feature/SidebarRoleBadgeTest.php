@@ -71,35 +71,26 @@ class SidebarRoleBadgeTest extends TestCase
     }
 
     /**
-     * The three reference resources belong to content editors as well,
-     * so none of them carries a badge.
+     * What a content editor needs to publish carries no badge: the
+     * gallery, and the service types and ministries that a sermon or
+     * an announcement has to be filed under.
      */
-    public function test_reference_data_reaches_content_editors(): void
+    public function test_publishing_work_reaches_content_editors(): void
     {
-        $this->assertNull(AdminPanelProvider::roleBadge(SiteSettingResource::class));
         $this->assertNull(AdminPanelProvider::roleBadge(ServiceTypeResource::class));
         $this->assertNull(AdminPanelProvider::roleBadge(MinistryResource::class));
-    }
-
-    /**
-     * The gallery and the list of position names carry photographs and
-     * labels, nothing personal, so the owner handed them to content
-     * editors and their administrator badge goes with the grant.
-     */
-    public function test_the_gallery_and_positions_reach_content_editors(): void
-    {
         $this->assertNull(AdminPanelProvider::roleBadge(AlbumResource::class));
         $this->assertNull(AdminPanelProvider::roleBadge(PhotoResource::class));
-        $this->assertNull(AdminPanelProvider::roleBadge(PositionResource::class));
     }
 
     /**
      * Personal details, logins and money stay with administrators.
      *
-     * 성도 and 셀 were weighed up alongside 앨범, 사진 and 직분 and kept
-     * here on purpose: a 성도 record holds a birth date, a phone
-     * number, an address and an email address, and 셀 groups those
-     * people, so the whole 공동체 group stays administrator-only.
+     * The whole 공동체 group stays here because a 성도 record holds a
+     * birth date, a phone number, an address and an email address, and
+     * 셀 groups those people. 사이트 설정 holds the giving account
+     * numbers and 직분 the church's order of office, so a mistake in
+     * either reaches the congregation rather than the website.
      */
     public function test_the_remaining_resources_stay_with_administrators(): void
     {
@@ -108,6 +99,8 @@ class SidebarRoleBadgeTest extends TestCase
             CellResource::class,
             UserResource::class,
             StaffMemberResource::class,
+            SiteSettingResource::class,
+            PositionResource::class,
             MembershipRequestResource::class,
             OfferingResource::class,
             PersonalOfferingResource::class,

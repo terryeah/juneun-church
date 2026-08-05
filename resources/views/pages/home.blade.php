@@ -132,16 +132,16 @@
         </section>
     @endif
 
-    {{-- Poster band introducing the sliding gallery preview --}}
-    <section class="section-moments-intro bg-navy py-12 md:py-16 lg:py-[4.75rem]">
-        <div class="container-site">
+    {{-- Poster band and its sliding gallery preview. They are one section
+         so the reveal animation moves the whole navy band together; split
+         across two sections, each got its own trigger and the page
+         background showed through the gap between them. --}}
+    <section class="section-moments bg-navy pb-5">
+        <div class="section-moments-intro container-site py-12 md:py-16 lg:py-[4.75rem]">
             <x-ui.kicker color="text-cream/55">주는교회의 순간들 · Moments</x-ui.kicker>
             <p class="mt-5 font-kr text-display-lg text-cream">함께 예배하고, 함께 나누는<br>교회의 일상입니다.</p>
         </div>
-    </section>
 
-    {{-- Sliding gallery preview band --}}
-    <section class="section-moments-slider bg-navy pb-5" data-reveal="fade">
         @if ($recentPhotos->isNotEmpty())
             <div data-photo-slider>
                 <div class="moments-track flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pe-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-slider-track tabindex="0" aria-label="교회 사진 모음">

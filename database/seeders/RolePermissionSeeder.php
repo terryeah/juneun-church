@@ -47,9 +47,15 @@ class RolePermissionSeeder extends Seeder
          * personal details, so the whole 공동체 group stays with
          * administrators.
          */
+        /**
+         * Site settings hold the service times, addresses and giving
+         * account numbers, and positions carry the church's order of
+         * office - both stay with administrators, because a mistake in
+         * either reaches the congregation rather than the website.
+         */
         Role::findOrCreate('content_editor', 'web')->syncPermissions($forModels([
-            'Announcement', 'Event', 'Sermon', 'Bulletin', 'SiteSetting', 'ServiceType', 'Ministry',
-            'Album', 'Photo', 'Position',
+            'Announcement', 'Event', 'Sermon', 'Bulletin', 'ServiceType', 'Ministry',
+            'Album', 'Photo',
         ]));
     }
 }
