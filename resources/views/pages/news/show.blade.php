@@ -1,4 +1,11 @@
-<x-layout.app :title="$announcement->title">
+@php
+    /** The featured image doubles as the KakaoTalk / search thumbnail. */
+    $shareImage = $announcement->featured_image
+        ? Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($announcement->featured_image)
+        : null;
+@endphp
+
+<x-layout.app :title="$announcement->title" :description="$announcement->excerpt(155)" :image="$shareImage">
 
     <article class="section-news-article container-site py-12 lg:py-16">
         <div class="mx-auto max-w-3xl">

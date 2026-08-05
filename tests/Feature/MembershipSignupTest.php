@@ -11,6 +11,7 @@ use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
@@ -75,6 +76,51 @@ class MembershipSignupTest extends TestCase
         $this->post('/signup', $this->payload());
 
         $this->assertSame(1, MembershipRequest::query()->where('email', 'kim@example.com')->count());
+    }
+
+    /**
+     * A dropped submission must also cost the same time as a stored
+     * one, or the silence is undone by the clock.
+     *
+     * Hashing dominates this request. When only the stored path paid
+     * for it, an address already known to the church answered in about
+     * a millisecond while an unknown address took the better part of a
+     * second, which anyone could measure from anywhere. The two paths
+     * are compared here at the production hashing cost; the margin is
+     * wide because the assertion has to survive a loaded machine, but
+     * the regression it guards against was a factor of two hundred.
+     */
+    public function test_a_dropped_duplicate_costs_the_same_time_as_a_stored_request(): void
+    {
+        config(['hashing.bcrypt.rounds' => 12]);
+        $this->withoutMiddleware(ThrottleRequests::class);
+
+        User::factory()->create(['email' => 'taken@example.com']);
+
+        $stored = $this->timeSignup(['email' => 'fresh@example.com']);
+        $dropped = $this->timeSignup(['email' => 'taken@example.com']);
+
+        $this->assertSame(1, MembershipRequest::query()->count());
+        $this->assertGreaterThan(
+            $stored * 0.5,
+            $dropped,
+            "A dropped submission answered in {$dropped}ms against {$stored}ms for a stored one, "
+                .'which tells a stranger whether the address belongs to the church.',
+        );
+    }
+
+    /**
+     * Milliseconds spent answering one sign-up submission.
+     *
+     * @param  array<string, string>  $overrides
+     */
+    private function timeSignup(array $overrides): float
+    {
+        $start = microtime(true);
+
+        $this->post('/signup', $this->payload($overrides));
+
+        return (microtime(true) - $start) * 1000;
     }
 
     /**

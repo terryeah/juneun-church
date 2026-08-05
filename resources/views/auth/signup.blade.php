@@ -5,7 +5,7 @@
     $errorClass = 'mt-1.5 font-kr text-body-sm text-accent';
 @endphp
 
-<x-layout.app title="가입 신청" description="브리즈번 주는교회 홈페이지 가입 신청 안내입니다.">
+<x-layout.app title="가입 신청" description="브리즈번 주는교회 홈페이지 가입 신청 안내입니다." :noindex="true">
 
     <x-ui.page-header kicker="함께하는 성도 · Sign up" title="가입 신청" narrow>
         헌금 내역처럼 성도에게만 열려 있는 내용을 보시려면 계정이 필요합니다. 신청해 주시면 교적부와 대조한 뒤 관리자가 승인해 드립니다.

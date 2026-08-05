@@ -1,4 +1,4 @@
-<x-layout.app description="브리즈번 주는교회 - 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라가는 젊은 한인교회입니다.">
+<x-layout.app description="브리즈번 주는교회 - 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라가는 젊은 한인교회입니다." :image="$heroPhoto?->url()">
 
     {{-- Hero --}}
     <section class="section-hero container-site py-8 md:py-10 lg:py-14">

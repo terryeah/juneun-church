@@ -1,4 +1,11 @@
-<x-layout.app :title="$album->title">
+@php
+    /** Albums are shared as a link to a photo set, so the cover leads the preview. */
+    $shareDescription = $album->description
+        ?: $album->title.' - 브리즈번 주는교회 갤러리'
+            .($album->event_date ? ' · '.$album->event_date->translatedFormat('Y년 n월 j일') : '');
+@endphp
+
+<x-layout.app :title="$album->title" :description="$shareDescription" :image="$album->coverUrl()">
 
     <x-ui.page-header kicker="갤러리 · Gallery" :title="$album->title">
         @if ($album->event_date){{ $album->event_date->translatedFormat('Y년 n월 j일') }}@if ($album->description) - @endif@endif{{ $album->description }}

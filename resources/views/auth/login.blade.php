@@ -5,7 +5,7 @@
     $errorClass = 'mt-1.5 font-kr text-body-sm text-accent';
 @endphp
 
-<x-layout.app title="로그인" description="브리즈번 주는교회 홈페이지 로그인입니다.">
+<x-layout.app title="로그인" description="브리즈번 주는교회 홈페이지 로그인입니다." :noindex="true">
 
     <x-ui.page-header kicker="함께하는 성도 · Log in" title="로그인" narrow>
         헌금 내역처럼 성도에게만 열려 있는 내용은 로그인하신 뒤에 보실 수 있습니다.
