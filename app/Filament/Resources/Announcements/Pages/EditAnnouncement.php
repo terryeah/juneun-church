@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\Announcements\Pages;
 
 use App\Filament\Resources\Announcements\AnnouncementResource;
+use App\Filament\Resources\Announcements\Pages\Concerns\ConfirmsHighlightTakeover;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditAnnouncement extends EditRecord
 {
+    use ConfirmsHighlightTakeover;
+
     protected static string $resource = AnnouncementResource::class;
 
     /**

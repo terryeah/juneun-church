@@ -49,14 +49,6 @@ class SiteSettingSeeder extends Seeder
             ['key' => 'youtube_url', 'value' => 'https://www.youtube.com/@juneun_church', 'group' => 'social'],
 
             ['key' => 'home_hero_photo', 'value' => '', 'group' => 'home'],
-            ['key' => 'highlight_photo', 'value' => '', 'group' => 'home'],
-            ['key' => 'highlight_title', 'value' => '', 'group' => 'home'],
-            ['key' => 'highlight_body', 'value' => '', 'group' => 'home'],
-            ['key' => 'highlight_link_album', 'value' => '', 'group' => 'home'],
-            ['key' => 'highlight_stat1_value', 'value' => '', 'group' => 'home'],
-            ['key' => 'highlight_stat1_label', 'value' => '', 'group' => 'home'],
-            ['key' => 'highlight_stat2_value', 'value' => '', 'group' => 'home'],
-            ['key' => 'highlight_stat2_label', 'value' => '', 'group' => 'home'],
 
             ['key' => 'giving_bank', 'value' => 'Westpac', 'group' => 'giving'],
             ['key' => 'giving_account_name', 'value' => 'JU-NEUN PRESBYTERIAN CHURCH OF BRISBANE INC.', 'group' => 'giving'],

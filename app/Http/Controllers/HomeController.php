@@ -47,11 +47,16 @@ class HomeController extends Controller
         /** Photos for the sliding gallery preview band */
         $recentPhotos = $this->sliderPhotos();
 
-        /** Featured photographs are chosen in 사이트 설정 by gallery filename */
-        $heroPhoto = $this->featuredPhoto('home_hero_photo');
-        $highlightPhoto = $this->featuredPhoto('highlight_photo', 'highlight_link_album');
+        /** The 하이라이트 section is whichever 교회 소식 carries the flag */
+        $highlight = Announcement::query()
+            ->published()
+            ->where('is_highlighted', true)
+            ->first();
 
-        return view('pages.home', compact('announcements', 'latestSermon', 'upcomingEvents', 'recentPhotos', 'heroPhoto', 'highlightPhoto'));
+        /** The hero photograph is chosen in 사이트 설정 by gallery filename */
+        $heroPhoto = $this->featuredPhoto('home_hero_photo');
+
+        return view('pages.home', compact('announcements', 'latestSermon', 'upcomingEvents', 'recentPhotos', 'heroPhoto', 'highlight'));
     }
 
     /**
@@ -114,32 +119,17 @@ class HomeController extends Controller
     /**
      * Resolve a featured photo named in 사이트 설정.
      *
-     * The setting stores a gallery photo's filename, so admins can
-     * swap the image by putting a new filename in 사이트 설정. A
-     * replacement upload arrives under a fresh filename though, which
-     * leaves the stored one pointing at nothing, so where the section
-     * also names an album the first photo of that album stands in -
-     * the same album-keyed approach the 오시는 길 notice uses.
+     * The setting stores a gallery photo's filename, so admins can swap
+     * the image by putting a new filename in 사이트 설정.
      *
      * @param  string  $settingKey  Setting holding the photo filename
-     * @param  ?string  $albumSettingKey  Setting holding the album slug to fall back to
      */
-    private function featuredPhoto(string $settingKey, ?string $albumSettingKey = null): ?Photo
+    private function featuredPhoto(string $settingKey): ?Photo
     {
         $filename = trim((string) SiteSetting::get($settingKey));
 
-        $photo = $filename === ''
+        return $filename === ''
             ? null
             : Photo::query()->where('filename', $filename)->first();
-
-        if ($photo !== null || $albumSettingKey === null) {
-            return $photo;
-        }
-
-        $slug = trim((string) SiteSetting::get($albumSettingKey));
-
-        return $slug === ''
-            ? null
-            : Album::query()->where('slug', $slug)->first()?->photos()->first();
     }
 }

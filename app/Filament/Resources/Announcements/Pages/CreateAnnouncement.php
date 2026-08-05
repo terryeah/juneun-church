@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Announcements\Pages;
 
 use App\Filament\Resources\Announcements\AnnouncementResource;
+use App\Filament\Resources\Announcements\Pages\Concerns\ConfirmsHighlightTakeover;
 use Filament\Resources\Pages\CreateRecord;
 
 /**
@@ -10,6 +11,8 @@ use Filament\Resources\Pages\CreateRecord;
  */
 class CreateAnnouncement extends CreateRecord
 {
+    use ConfirmsHighlightTakeover;
+
     protected static bool $canCreateAnother = false;
 
     protected static string $resource = AnnouncementResource::class;

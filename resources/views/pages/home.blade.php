@@ -108,42 +108,29 @@
         </div>
     </section>
 
-    {{-- Highlight: the church's current featured happening --}}
-    <section class="section-highlight container-site py-8 md:py-10 lg:py-14">
-        @php
-            $highlightLink = \App\Models\SiteSetting::get('highlight_link_album')
-                ? route('gallery.show', \App\Models\SiteSetting::get('highlight_link_album'))
-                : route('gallery.index');
-        @endphp
-        {{-- Until a poster is uploaded the copy simply runs full width; an
-             empty picture frame would read as a fault rather than a gap. --}}
-        <div @class(['grid gap-8 lg:gap-11', 'lg:grid-cols-[1.3fr_1fr]' => $highlightPhoto])>
-            @if ($highlightPhoto)
-                <div class="order-2 flex items-center lg:order-1">
-                    <a href="{{ $highlightLink }}" class="block w-full overflow-hidden rounded-media">
-                        <img src="{{ $highlightPhoto->thumbnailUrl() }}" alt="{{ \App\Models\SiteSetting::get('highlight_title') }}" class="aspect-video w-full object-cover" loading="lazy">
-                    </a>
-                </div>
-            @endif
-            <div @class(['order-1 lg:order-2', 'lg:border-l lg:border-line lg:pl-10' => $highlightPhoto])>
-                <x-ui.kicker>하이라이트 · Highlight</x-ui.kicker>
-                <a href="{{ $highlightLink }}" class="block"><h2 class="mt-3 font-kr text-display-md font-medium leading-snug transition-colors duration-300 hover:text-accent">{!! nl2br(e(\App\Models\SiteSetting::get('highlight_title'))) !!}</h2></a>
-                <p class="mt-4 font-kr text-body-sm leading-relaxed text-navy-700">
-                    {{ \App\Models\SiteSetting::get('highlight_body') }}
-                </p>
-                <div class="mt-6 grid grid-cols-2 border-t border-line pt-5">
-                    <div>
-                        <p class="font-kr text-display-sm font-medium">{{ \App\Models\SiteSetting::get('highlight_stat1_value') }}</p>
-                        <p class="mt-1 text-caption text-navy-400">{{ \App\Models\SiteSetting::get('highlight_stat1_label') }}</p>
+    {{-- Highlight: the 교회 소식 flagged as the church's current featured happening --}}
+    @if ($highlight)
+        <section class="section-highlight container-site py-8 md:py-10 lg:py-14">
+            @php $highlightLink = route('news.show', $highlight); @endphp
+            {{-- Without a 대표 이미지 the copy simply runs full width; an
+                 empty picture frame would read as a fault rather than a gap. --}}
+            <div @class(['grid gap-8 lg:gap-11', 'lg:grid-cols-[1.3fr_1fr]' => $highlight->featured_image])>
+                @if ($highlight->featured_image)
+                    <div class="order-2 flex items-center lg:order-1">
+                        <a href="{{ $highlightLink }}" class="block w-full overflow-hidden rounded-media">
+                            <img src="{{ Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($highlight->featured_image) }}" alt="{{ $highlight->title }}" class="aspect-video w-full object-cover" loading="lazy">
+                        </a>
                     </div>
-                    <div>
-                        <p class="font-kr text-display-sm font-medium">{{ \App\Models\SiteSetting::get('highlight_stat2_value') }}</p>
-                        <p class="mt-1 text-caption text-navy-400">{{ \App\Models\SiteSetting::get('highlight_stat2_label') }}</p>
-                    </div>
+                @endif
+                <div @class(['order-1 lg:order-2', 'lg:border-l lg:border-line lg:pl-10' => $highlight->featured_image])>
+                    <x-ui.kicker>하이라이트 · Highlight</x-ui.kicker>
+                    <a href="{{ $highlightLink }}" class="block"><h2 class="mt-3 font-kr text-display-md font-medium leading-snug transition-colors duration-300 hover:text-accent">{{ $highlight->title }}</h2></a>
+                    <p class="mt-4 font-kr text-body-sm leading-relaxed text-navy-700">{{ $highlight->excerpt(280) }}</p>
+                    <a href="{{ $highlightLink }}" class="mt-6 inline-block text-caption font-bold text-accent hover:text-accent-700">자세히 보기 →</a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- Poster band introducing the sliding gallery preview --}}
     <section class="section-moments-intro bg-navy py-12 md:py-16 lg:py-[4.75rem]">

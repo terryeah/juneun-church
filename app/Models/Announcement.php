@@ -25,6 +25,7 @@ use Illuminate\Support\Str;
     'featured_image',
     'is_published',
     'is_pinned',
+    'is_highlighted',
     'published_at',
     'expires_at',
     'created_by',
@@ -43,13 +44,15 @@ class Announcement extends Model
         return [
             'is_published' => 'boolean',
             'is_pinned' => 'boolean',
+            'is_highlighted' => 'boolean',
             'published_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
     }
 
     /**
-     * Generate a slug from the title when none has been supplied.
+     * Generate a slug from the title when none has been supplied, and
+     * keep the home page 하이라이트 down to a single announcement.
      */
     protected static function booted(): void
     {
@@ -61,6 +64,23 @@ class Announcement extends Model
                     ($announcement->published_at ?? now())->format('Ymd'),
                 );
             }
+        });
+
+        /**
+         * The flag is taken, not shared: whoever is saved with it on
+         * takes it off everyone else. This lives on the model rather
+         * than in the admin panel so a seeder, a migration or tinker
+         * cannot leave two announcements holding the highlight.
+         */
+        static::saved(function (Announcement $announcement) {
+            if (! $announcement->is_highlighted) {
+                return;
+            }
+
+            static::query()
+                ->whereKeyNot($announcement->getKey())
+                ->where('is_highlighted', true)
+                ->update(['is_highlighted' => false]);
         });
     }
 
