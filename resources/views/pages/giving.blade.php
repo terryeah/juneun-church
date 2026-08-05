@@ -132,7 +132,7 @@
                 <p class="mt-4 font-kr text-body leading-relaxed text-navy-400">주보에 실리는 주일 헌금 내역은 성도에게만 공개됩니다. 계정이 없으시면 가입을 신청해 주세요. 관리자가 교적부와 대조해 확인한 뒤 승인해 드립니다.</p>
                 <div class="mt-6 flex flex-wrap gap-3">
                     <x-ui.button href="{{ route('signup') }}">가입 신청</x-ui.button>
-                    <x-ui.button href="{{ url('/admin/login') }}" variant="secondary">로그인</x-ui.button>
+                    <x-ui.button href="{{ route('login') }}" variant="secondary">로그인</x-ui.button>
                 </div>
             </div>
         </section>

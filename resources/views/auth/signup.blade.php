@@ -42,6 +42,7 @@
                              displayed order follows the browser locale. --}}
                         <input id="birth_date" name="birth_date" type="text" required inputmode="numeric"
                                placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" maxlength="10"
+                               data-date-field
                                value="{{ old('birth_date') }}" class="{{ $inputClass }}">
                         @error('birth_date')<p class="{{ $errorClass }}">{{ $message }}</p>@enderror
                     </div>

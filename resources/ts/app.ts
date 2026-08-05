@@ -4,6 +4,7 @@ import { Lightbox } from './components/Lightbox';
 import { InfiniteScroll } from './components/InfiniteScroll';
 import { PhotoSlider } from './components/PhotoSlider';
 import { GivingWeeks } from './components/GivingWeeks';
+import { DateFieldFormat } from './components/DateFieldFormat';
 
 /**
  * Main entry point.
@@ -41,6 +42,10 @@ document.addEventListener('DOMContentLoaded', (): void => {
     if (givingWeeks) {
         new GivingWeeks(givingWeeks);
     }
+
+    document
+        .querySelectorAll<HTMLInputElement>('input[data-date-field]')
+        .forEach((field) => new DateFieldFormat(field));
 
     void import('./components/Animations').then(({ Animations }) => new Animations());
 });
