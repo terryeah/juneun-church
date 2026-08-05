@@ -44,11 +44,16 @@ export class Animations {
 
     /**
      * Fades each section up as it scrolls into view, once only.
+     *
+     * A section marked `data-reveal="fade"` skips the upward travel.
+     * Sections that sit flush against a neighbour of the same colour
+     * would otherwise open a band of page background between the two
+     * while they animate, because each one is triggered separately.
      */
     private animateSections(): void {
         gsap.utils.toArray<HTMLElement>('main > section:not(:first-child)').forEach((section) => {
             gsap.from(section, {
-                y: 32,
+                y: section.dataset.reveal === 'fade' ? 0 : 32,
                 opacity: 0,
                 duration: 0.7,
                 ease: 'power2.out',

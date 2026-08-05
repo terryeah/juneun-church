@@ -33,14 +33,23 @@ class RolePermissionSeeder extends Seeder
 
         Role::findOrCreate('developer', 'web')->syncPermissions($all->all());
 
+        /** 셀 and 가입 신청 arrived with their own migrations, which granted them to admin there. */
         Role::findOrCreate('admin', 'web')->syncPermissions($forModels([
-            'Announcement', 'Event', 'Position', 'Member', 'Offering', 'PersonalOffering',
-            'ServiceType', 'Sermon', 'Album', 'Photo', 'Bulletin', 'SiteSetting', 'User',
+            'Announcement', 'Event', 'Position', 'Member', 'Cell', 'MembershipRequest',
+            'Offering', 'PersonalOffering', 'ServiceType', 'Sermon', 'Album', 'Photo',
+            'Bulletin', 'SiteSetting', 'User',
         ]));
 
-        /** Reference data - a phone number, the services, the departments - is editing, not administration. */
+        /**
+         * Reference data - a phone number, the services, the departments - is
+         * editing, not administration, and so are the gallery and the list of
+         * position names. 성도 and 셀 are not: they hold the congregation's
+         * personal details, so the whole 공동체 group stays with
+         * administrators.
+         */
         Role::findOrCreate('content_editor', 'web')->syncPermissions($forModels([
             'Announcement', 'Event', 'Sermon', 'Bulletin', 'SiteSetting', 'ServiceType', 'Ministry',
+            'Album', 'Photo', 'Position',
         ]));
     }
 }

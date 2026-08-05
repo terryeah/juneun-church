@@ -7,6 +7,7 @@ use App\Models\MembershipRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
@@ -66,21 +67,37 @@ class MembershipRequestController extends Controller
          * validation error: telling a visitor that an address is
          * already taken would confirm who belongs to the church. A
          * previously rejected request may be submitted again.
+         *
+         * The drop is recorded in the server log so a submission that
+         * never reaches the review queue can be explained afterwards.
          */
-        if (! $this->alreadyPending($data['email'])) {
+        $reason = $this->duplicateReason($data['email']);
+
+        if ($reason === null) {
             MembershipRequest::create($data);
+        } else {
+            Log::warning('Sign-up request dropped as a duplicate.', [
+                'email' => $data['email'],
+                'reason' => $reason,
+            ]);
         }
 
         return redirect()->route('signup')->with('signup_submitted', true);
     }
 
     /**
-     * Whether the address already has a login or a request awaiting
-     * review.
+     * Why the address cannot raise a new request, or null when it can.
      */
-    private function alreadyPending(string $email): bool
+    private function duplicateReason(string $email): ?string
     {
-        return User::query()->where('email', $email)->exists()
-            || MembershipRequest::query()->where('email', $email)->where('status', '대기')->exists();
+        if (User::query()->where('email', $email)->exists()) {
+            return 'account exists';
+        }
+
+        if (MembershipRequest::query()->where('email', $email)->where('status', '대기')->exists()) {
+            return 'request awaiting review';
+        }
+
+        return null;
     }
 }
