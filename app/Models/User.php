@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -27,7 +28,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 #[Fillable(['name', 'email', 'password', 'created_by'])]
 #[Hidden(['password', 'remember_token', 'app_authentication_secret', 'app_authentication_recovery_codes'])]
-class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery
+class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, LogsModelActivity, Notifiable;
@@ -38,6 +39,19 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function member(): HasOne
     {
         return $this->hasOne(Member::class);
+    }
+
+    /**
+     * The admin panel avatar: the roster photo of the 성도 this account
+     * belongs to, when there is one.
+     *
+     * Null - no linked 성도, or one with no photo on file - makes
+     * Filament fall through to the panel's avatar provider, which draws
+     * the account's initials.
+     */
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->member?->photoUrl();
     }
 
     /**
