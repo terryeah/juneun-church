@@ -6,9 +6,18 @@ use App\Filament\Pages\Analytics;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\DatabaseGraph;
 use App\Filament\Resources\Activities\ActivityResource;
+use App\Filament\Resources\Albums\AlbumResource;
 use App\Filament\Resources\Announcements\AnnouncementResource;
+use App\Filament\Resources\Members\MemberResource;
+use App\Filament\Resources\Ministries\MinistryResource;
 use App\Filament\Resources\Offerings\OfferingResource;
 use App\Filament\Resources\PersonalOfferings\PersonalOfferingResource;
+use App\Filament\Resources\Photos\PhotoResource;
+use App\Filament\Resources\Positions\PositionResource;
+use App\Filament\Resources\ServiceTypes\ServiceTypeResource;
+use App\Filament\Resources\SiteSettings\SiteSettingResource;
+use App\Filament\Resources\StaffMembers\StaffMemberResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Providers\Filament\AdminPanelProvider;
 use Database\Seeders\RolePermissionSeeder;
 use Database\Seeders\RoleSeeder;
@@ -52,6 +61,40 @@ class SidebarRoleBadgeTest extends TestCase
         $this->assertSame('admin', AdminPanelProvider::roleBadge(OfferingResource::class));
         $this->assertSame('admin', AdminPanelProvider::roleBadge(PersonalOfferingResource::class));
         $this->assertNull(AdminPanelProvider::roleBadge(AnnouncementResource::class));
+    }
+
+    /**
+     * The three reference resources belong to content editors as well,
+     * so none of them carries a badge.
+     */
+    public function test_reference_data_reaches_content_editors(): void
+    {
+        $this->assertNull(AdminPanelProvider::roleBadge(SiteSettingResource::class));
+        $this->assertNull(AdminPanelProvider::roleBadge(ServiceTypeResource::class));
+        $this->assertNull(AdminPanelProvider::roleBadge(MinistryResource::class));
+    }
+
+    /**
+     * Personal details, logins and money stay with administrators.
+     *
+     * 앨범 and 사진 are here because retiring media_coordinator and
+     * contributor left nobody below an administrator holding them, not
+     * because anyone asked for the gallery to be locked down.
+     */
+    public function test_the_remaining_resources_stay_with_administrators(): void
+    {
+        foreach ([
+            MemberResource::class,
+            UserResource::class,
+            StaffMemberResource::class,
+            OfferingResource::class,
+            PersonalOfferingResource::class,
+            PositionResource::class,
+            AlbumResource::class,
+            PhotoResource::class,
+        ] as $resource) {
+            $this->assertSame('admin', AdminPanelProvider::roleBadge($resource), $resource.' changed audience.');
+        }
     }
 
     /**

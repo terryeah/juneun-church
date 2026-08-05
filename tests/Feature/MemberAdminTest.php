@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\Cells\Pages\CreateCell;
 use App\Filament\Resources\Members\Pages\CreateMember;
+use App\Filament\Resources\Members\Pages\ListMembers;
 use App\Models\Cell;
 use App\Models\Member;
 use App\Models\Position;
@@ -86,5 +87,30 @@ class MemberAdminTest extends TestCase
 
         Livewire::actingAs($user)->test(CreateMember::class)->assertSuccessful();
         Livewire::actingAs($user)->test(CreateCell::class)->assertSuccessful();
+    }
+
+    /**
+     * The 사이트 유저 column reads the roster record's login link, and
+     * its filter narrows the list to one side or the other.
+     */
+    public function test_the_site_account_column_reports_whether_a_member_has_a_login(): void
+    {
+        $this->seed(RoleSeeder::class);
+
+        $staff = User::factory()->create();
+        $staff->assignRole('super_admin');
+        Permission::query()->firstOrCreate(['name' => 'ViewAny:Member', 'guard_name' => 'web']);
+        $staff->givePermissionTo('ViewAny:Member');
+
+        $linked = Member::factory()->create(['user_id' => User::factory()->create()->id]);
+        $unlinked = Member::factory()->create();
+
+        Livewire::actingAs($staff)
+            ->test(ListMembers::class)
+            ->assertTableColumnStateSet('user_id', '있음', $linked)
+            ->assertTableColumnStateSet('user_id', '없음', $unlinked)
+            ->filterTable('user_id', true)
+            ->assertCanSeeTableRecords([$linked])
+            ->assertCanNotSeeTableRecords([$unlinked]);
     }
 }

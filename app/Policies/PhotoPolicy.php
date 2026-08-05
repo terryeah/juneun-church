@@ -28,21 +28,19 @@ class PhotoPolicy
     }
 
     /**
-     * Contributors may edit only photos they uploaded themselves.
+     * The own-upload fallback that used to sit here belonged to the
+     * retired contributor role. Every role left holding Create:Photo
+     * holds Update:Photo and Delete:Photo too, so the permission alone
+     * answers both questions.
      */
     public function update(AuthUser $authUser, Photo $photo): bool
     {
-        return $authUser->can('Update:Photo')
-            || ($authUser->can('Create:Photo') && $photo->uploaded_by === $authUser->getKey());
+        return $authUser->can('Update:Photo');
     }
 
-    /**
-     * Contributors may delete only photos they uploaded themselves.
-     */
     public function delete(AuthUser $authUser, Photo $photo): bool
     {
-        return $authUser->can('Delete:Photo')
-            || ($authUser->can('Create:Photo') && $photo->uploaded_by === $authUser->getKey());
+        return $authUser->can('Delete:Photo');
     }
 
     public function deleteAny(AuthUser $authUser): bool

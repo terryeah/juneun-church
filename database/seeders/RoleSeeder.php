@@ -7,7 +7,9 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 /**
- * Seeds the five application roles defined in the project specification.
+ * Seeds the four staff roles the church actually fills. The
+ * permissionless 'member' role that approved 가입 신청 receive is
+ * created by its own migration rather than here.
  *
  * Role-to-permission assignments are managed with Filament Shield after
  * permissions have been generated for each resource.
@@ -26,8 +28,6 @@ class RoleSeeder extends Seeder
             'developer',
             'admin',
             'content_editor',
-            'media_coordinator',
-            'contributor',
         ])->each(fn (string $name) => Role::findOrCreate($name, 'web'));
     }
 }

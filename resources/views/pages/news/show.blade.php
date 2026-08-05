@@ -6,12 +6,13 @@
             <h1 class="mt-3 font-kr text-display-md font-medium">{{ $announcement->title }}</h1>
             <p class="mt-3 text-body-sm text-navy-400">{{ $announcement->published_at?->translatedFormat('Y년 n월 j일') }}</p>
 
+            {{-- No forced ratio: a portrait poster shows in full rather than
+                 being cropped to a letterbox. --}}
             @if ($announcement->featured_image)
                 <img
-                    width="1200" height="675"
                     src="{{ Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($announcement->featured_image) }}"
                     alt="{{ $announcement->title }}"
-                    class="mt-8 aspect-video w-full rounded-media object-cover"
+                    class="mt-8 h-auto w-full rounded-media"
                 >
             @endif
 

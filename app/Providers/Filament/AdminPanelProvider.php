@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Analytics;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\DatabaseGraph;
+use App\Filament\Pages\GoogleAnalytics;
 use App\Filament\Resources\Activities\ActivityResource;
 use App\Filament\Resources\Albums\AlbumResource;
 use App\Filament\Resources\Announcements\AnnouncementResource;
@@ -65,6 +66,7 @@ class AdminPanelProvider extends PanelProvider
     protected const PAGE_BADGES = [
         Analytics::class => 'admin',
         DatabaseGraph::class => 'developer',
+        GoogleAnalytics::class => 'developer',
     ];
 
     public function panel(Panel $panel): Panel
@@ -170,6 +172,7 @@ class AdminPanelProvider extends PanelProvider
             ]),
             NavigationGroup::make('모니터링')->items([
                 ...static::accessibleItems(Analytics::class),
+                ...static::accessibleItems(GoogleAnalytics::class),
                 ...static::accessibleItems(ActivityResource::class),
                 ...static::accessibleItems(DatabaseGraph::class),
             ]),

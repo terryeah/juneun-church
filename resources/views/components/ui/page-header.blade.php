@@ -1,18 +1,18 @@
 @props([
     'kicker',
     'title',
-    'center' => false,
+    'narrow' => false,
 ])
 
 {{-- Interior page heading: accent eyebrow above a Korean display title.
-     `center` stacks the block on the page centre the way the 교회 소식
-     article heading does, for pages built around a single card. --}}
+     `narrow` drops the block into the same reading column the 교회 소식
+     article uses, for pages built around a single card. --}}
 <header {{ $attributes->merge(['class' => 'container-site pt-12 pb-8 lg:pt-16 lg:pb-10']) }}>
-    <div @class(['mx-auto max-w-xl text-center' => $center])>
+    <div @class(['mx-auto max-w-3xl' => $narrow])>
         <x-ui.kicker>{{ $kicker }}</x-ui.kicker>
         <h1 class="mt-3 font-kr text-display-md font-medium">{{ $title }}</h1>
         @if ($slot->isNotEmpty())
-            <p @class(['mt-4 text-body leading-relaxed text-navy-700', 'max-w-lg' => ! $center])>{{ $slot }}</p>
+            <p @class(['mt-4 text-body leading-relaxed text-navy-700', 'max-w-lg' => ! $narrow])>{{ $slot }}</p>
         @endif
     </div>
 </header>

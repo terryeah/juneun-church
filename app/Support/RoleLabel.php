@@ -14,8 +14,6 @@ class RoleLabel
         'super_admin' => '최고 관리자',
         'admin' => '관리자',
         'content_editor' => '콘텐츠 편집자',
-        'contributor' => '사진 봉사자',
-        'media_coordinator' => '미디어 담당',
         'developer' => '개발자',
         'member' => '성도',
     ];

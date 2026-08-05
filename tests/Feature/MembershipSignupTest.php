@@ -50,7 +50,7 @@ class MembershipSignupTest extends TestCase
         $this->followingRedirects()
             ->post('/signup', $this->payload(['email' => 'other@example.com']))
             ->assertOk()
-            ->assertSee('가입 신청이 접수되었습니다');
+            ->assertSee('가입 신청이 완료되었습니다');
     }
 
     /**
@@ -65,7 +65,7 @@ class MembershipSignupTest extends TestCase
         $this->followingRedirects()
             ->post('/signup', $this->payload(['email' => 'taken@example.com']))
             ->assertOk()
-            ->assertSee('가입 신청이 접수되었습니다')
+            ->assertSee('가입 신청이 완료되었습니다')
             ->assertDontSee('이미');
 
         $this->assertSame(0, MembershipRequest::query()->count());

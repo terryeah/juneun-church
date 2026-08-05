@@ -38,16 +38,9 @@ class RolePermissionSeeder extends Seeder
             'ServiceType', 'Sermon', 'Album', 'Photo', 'Bulletin', 'SiteSetting', 'User',
         ]));
 
+        /** Reference data - a phone number, the services, the departments - is editing, not administration. */
         Role::findOrCreate('content_editor', 'web')->syncPermissions($forModels([
-            'Announcement', 'Event', 'Sermon', 'Bulletin',
+            'Announcement', 'Event', 'Sermon', 'Bulletin', 'SiteSetting', 'ServiceType', 'Ministry',
         ]));
-
-        Role::findOrCreate('media_coordinator', 'web')->syncPermissions($forModels([
-            'Album', 'Photo',
-        ]));
-
-        Role::findOrCreate('contributor', 'web')->syncPermissions(
-            $all->filter(fn (string $name) => in_array($name, ['ViewAny:Photo', 'View:Photo', 'Create:Photo', 'ViewAny:Album', 'View:Album'], true))->all(),
-        );
     }
 }

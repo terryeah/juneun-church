@@ -1,29 +1,31 @@
 @php
     /** Field styling follows the site tokens; no shared input component exists yet. */
     $labelClass = 'block font-kr text-body-sm font-bold text-navy';
-    $inputClass = 'mt-2 block w-full rounded-btn border-2 border-line bg-paper px-4 py-3 font-kr text-body text-navy placeholder:text-navy-400 focus:border-navy';
+    $inputClass = 'mt-2 block w-full rounded-btn border-2 border-line bg-paper px-4 py-3 font-kr text-body text-navy transition-colors duration-200 placeholder:text-navy-400 focus:border-navy focus:outline-none';
     $errorClass = 'mt-1.5 font-kr text-body-sm text-accent';
 @endphp
 
 <x-layout.app title="가입 신청" description="브리즈번 주는교회 홈페이지 가입 신청 안내입니다.">
 
-    <x-ui.page-header kicker="함께하는 교우 · Sign up" title="가입 신청" center>
-        헌금 내역처럼 교우에게만 열려 있는 내용을 보시려면 계정이 필요합니다. 신청해 주시면 교적부와 대조한 뒤 관리자가 승인해 드립니다.
+    <x-ui.page-header kicker="함께하는 성도 · Sign up" title="가입 신청" narrow>
+        헌금 내역처럼 성도에게만 열려 있는 내용을 보시려면 계정이 필요합니다. 신청해 주시면 교적부와 대조한 뒤 관리자가 승인해 드립니다.
     </x-ui.page-header>
 
     <section class="container-site pb-12 lg:pb-16">
         @if ($submitted)
-            <div class="mx-auto max-w-xl rounded-frame border-2 border-navy bg-paper p-8">
-                <x-ui.kicker>신청 완료 · Received</x-ui.kicker>
-                <h2 class="mt-3 font-kr text-display-sm font-medium">가입 신청이 접수되었습니다</h2>
+            <div class="mx-auto max-w-3xl rounded-frame border-2 border-navy bg-paper p-8">
+                <svg class="h-12 w-12 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="m8 12.5 2.8 2.8L16 10"/>
+                </svg>
+                <h2 class="mt-4 font-kr text-display-sm font-medium">가입 신청이 완료되었습니다</h2>
                 <p class="mt-4 font-kr text-body leading-relaxed text-navy-700">
                     관리자가 교적부와 대조하여 확인한 뒤 승인해 드립니다. 승인 전까지는 로그인하실 수 없으며,
                     확인이 필요한 경우 교회 사무실에서 연락드립니다.
                 </p>
-                <x-ui.button href="{{ route('home') }}" variant="secondary" class="mt-6">홈으로</x-ui.button>
             </div>
         @else
-            <form method="POST" action="{{ route('signup.store') }}" class="mx-auto max-w-xl rounded-frame border-2 border-navy bg-paper p-8">
+            <form method="POST" action="{{ route('signup.store') }}" class="mx-auto max-w-3xl rounded-frame border-2 border-navy bg-paper p-8">
                 @csrf
 
                 <div class="space-y-5">
@@ -36,7 +38,10 @@
 
                     <div>
                         <label for="birth_date" class="{{ $labelClass }}">생년월일</label>
-                        <input id="birth_date" name="birth_date" type="date" required
+                        {{-- A text field rather than a native date picker, whose
+                             displayed order follows the browser locale. --}}
+                        <input id="birth_date" name="birth_date" type="text" required inputmode="numeric"
+                               placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" maxlength="10"
                                value="{{ old('birth_date') }}" class="{{ $inputClass }}">
                         @error('birth_date')<p class="{{ $errorClass }}">{{ $message }}</p>@enderror
                     </div>
@@ -77,7 +82,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="mt-7 inline-flex items-center gap-2 rounded-btn bg-accent px-5 py-3 text-body font-extrabold text-on-accent hover:bg-accent-700 active:bg-accent-700">
+                <button type="submit" class="mt-7 inline-flex cursor-pointer items-center gap-2 rounded-btn bg-accent px-5 py-3 text-body font-extrabold text-on-accent transition-colors duration-200 hover:bg-accent-700 active:bg-accent-700">
                     <span class="font-kr">가입 신청하기</span>
                 </button>
 

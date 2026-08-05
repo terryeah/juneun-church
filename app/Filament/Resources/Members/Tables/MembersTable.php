@@ -2,18 +2,24 @@
 
 namespace App\Filament\Resources\Members\Tables;
 
+use App\Models\Member;
 use App\Models\Ministry;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Roster listing. Column order matters: the mobile stylesheet lays the
  * cells out in a two-column grid following DOM order, pairing 이름/상태,
- * 성별/생년월일 and 직분/전화번호.
+ * 성별/생년월일 and 직분/전화번호. 사이트 유저 comes last, on a row of
+ * its own, so those three pairs stay together - a lone badge reads
+ * fine full width, whereas slotting it in mid-list would break every
+ * pair after it.
  */
 class MembersTable
 {
@@ -49,6 +55,12 @@ class MembersTable
                     ->label('전화번호')
                     ->placeholder('-')
                     ->searchable(),
+                TextColumn::make('user_id')
+                    ->label('사이트 유저')
+                    ->state(fn (Member $record): string => $record->user_id === null ? '없음' : '있음')
+                    ->badge()
+                    ->color(fn (string $state): string => $state === '있음' ? 'success' : 'gray')
+                    ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('position_id')
@@ -60,6 +72,16 @@ class MembersTable
                 SelectFilter::make('gender')
                     ->label('성별')
                     ->options(['남' => '남', '여' => '여']),
+                TernaryFilter::make('user_id')
+                    ->label('사이트 유저')
+                    ->placeholder('전체')
+                    ->trueLabel('있음')
+                    ->falseLabel('없음')
+                    ->queries(
+                        true: fn (Builder $query): Builder => $query->whereNotNull('user_id'),
+                        false: fn (Builder $query): Builder => $query->whereNull('user_id'),
+                        blank: fn (Builder $query): Builder => $query,
+                    ),
             ])
             ->recordActions([
                 EditAction::make(),

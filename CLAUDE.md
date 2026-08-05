@@ -106,9 +106,11 @@ site_settings
 |------|---------------|--------------|
 | **super_admin** | Developer | Full system access, all permissions |
 | **admin** | Pastor / Office Manager | Manage content, create users (not super_admin) |
-| **content_editor** | Secretary / Comms Lead | Manage announcements, events, sermons, bulletins |
-| **media_coordinator** | Youth Leader / Photographer | Manage albums, upload/edit/delete photos, batch upload |
-| **contributor** | Volunteer Members | Upload photos to existing albums, edit/delete own only |
+| **content_editor** | Secretary / Comms Lead | Manage announcements, events, sermons, bulletins and the reference data (site settings, service types, ministries) |
+
+`media_coordinator` and `contributor` were tried and retired in
+`2026_08_06_140000_retire_media_coordinator_and_contributor_roles.php`;
+albums and photos are administrator work now.
 
 ### User Management Approach
 
@@ -118,17 +120,19 @@ site_settings
 
 ### Permission Matrix
 
-| Resource | super_admin | admin | content_editor | media_coordinator | contributor |
-|----------|:-----------:|:-----:|:--------------:|:-----------------:|:-----------:|
-| Users | Full | Create/Edit* | ❌ | ❌ | ❌ |
-| Announcements | Full | Full | Full | ❌ | ❌ |
-| Events | Full | Full | Full | ❌ | ❌ |
-| Staff Members | Full | Full | ❌ | ❌ | ❌ |
-| Sermons | Full | Full | Full | ❌ | ❌ |
-| Albums | Full | Full | ❌ | Full | ❌ |
-| Photos | Full | Full | ❌ | Full | Own only |
-| Bulletins | Full | Full | Full | ❌ | ❌ |
-| Site Settings | Full | Full | ❌ | ❌ | ❌ |
+| Resource | super_admin | admin | content_editor |
+|----------|:-----------:|:-----:|:--------------:|
+| Users | Full | Create/Edit* | ❌ |
+| Announcements | Full | Full | Full |
+| Events | Full | Full | Full |
+| Staff Members | Full | Full | ❌ |
+| Sermons | Full | Full | Full |
+| Albums | Full | Full | ❌ |
+| Photos | Full | Full | ❌ |
+| Bulletins | Full | Full | Full |
+| Site Settings | Full | Full | Full |
+| Service Types | Full | Full | Full |
+| Ministries | Full | Full | Full |
 
 *Admin can edit users except super_admin accounts
 

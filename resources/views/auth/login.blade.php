@@ -1,18 +1,18 @@
 @php
     /** Field styling follows the site tokens; no shared input component exists yet. */
     $labelClass = 'block font-kr text-body-sm font-bold text-navy';
-    $inputClass = 'mt-2 block w-full rounded-btn border-2 border-line bg-paper px-4 py-3 font-kr text-body text-navy placeholder:text-navy-400 focus:border-navy';
+    $inputClass = 'mt-2 block w-full rounded-btn border-2 border-line bg-paper px-4 py-3 font-kr text-body text-navy transition-colors duration-200 placeholder:text-navy-400 focus:border-navy focus:outline-none';
     $errorClass = 'mt-1.5 font-kr text-body-sm text-accent';
 @endphp
 
 <x-layout.app title="로그인" description="브리즈번 주는교회 홈페이지 로그인입니다.">
 
-    <x-ui.page-header kicker="함께하는 교우 · Log in" title="로그인" center>
-        헌금 내역처럼 교우에게만 열려 있는 내용은 로그인하신 뒤에 보실 수 있습니다.
+    <x-ui.page-header kicker="함께하는 성도 · Log in" title="로그인" narrow>
+        헌금 내역처럼 성도에게만 열려 있는 내용은 로그인하신 뒤에 보실 수 있습니다.
     </x-ui.page-header>
 
     <section class="container-site pb-12 lg:pb-16">
-        <form method="POST" action="{{ route('login.store') }}" class="mx-auto max-w-xl rounded-frame border-2 border-navy bg-paper p-8">
+        <form method="POST" action="{{ route('login.store') }}" class="mx-auto max-w-3xl rounded-frame border-2 border-navy bg-paper p-8">
             @csrf
 
             @error('two_factor')
@@ -45,7 +45,7 @@
                 </label>
             </div>
 
-            <button type="submit" class="mt-7 inline-flex items-center gap-2 rounded-btn bg-accent px-5 py-3 text-body font-extrabold text-on-accent hover:bg-accent-700 active:bg-accent-700">
+            <button type="submit" class="mt-7 inline-flex cursor-pointer items-center gap-2 rounded-btn bg-accent px-5 py-3 text-body font-extrabold text-on-accent transition-colors duration-200 hover:bg-accent-700 active:bg-accent-700">
                 <span class="font-kr">로그인</span>
             </button>
 

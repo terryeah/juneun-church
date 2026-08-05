@@ -84,7 +84,7 @@ class AdminAccessTest extends TestCase
 
         $this->assertNotEmpty($widgets);
 
-        foreach ([['member'], ['content_editor'], ['media_coordinator'], ['contributor']] as $roles) {
+        foreach ([['member'], ['content_editor']] as $roles) {
             $this->actingAs($this->userWithRoles($roles));
 
             foreach ($widgets as $widget) {
