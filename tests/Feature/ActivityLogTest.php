@@ -70,6 +70,7 @@ class ActivityLogTest extends TestCase
         ]);
 
         $updated = Activity::query()
+            ->where('subject_type', Announcement::class)
             ->where('subject_id', $announcement->id)
             ->where('event', 'updated')
             ->first();
