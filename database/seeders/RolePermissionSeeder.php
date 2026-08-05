@@ -57,5 +57,16 @@ class RolePermissionSeeder extends Seeder
             'Announcement', 'Event', 'Sermon', 'Bulletin', 'ServiceType', 'Ministry',
             'Album', 'Photo',
         ]));
+
+        /**
+         * 재정부 counts the offerings and keeps the church's books, so
+         * the two offering resources are the whole of this role: it
+         * enters 헌금 내역 and 개인 헌금 and reaches nothing else, which
+         * keeps the congregation's personal details - 성도, 셀, 가입
+         * 신청, the logins - out of a specialist's hands.
+         */
+        Role::findOrCreate('finance_officer', 'web')->syncPermissions($forModels([
+            'Offering', 'PersonalOffering',
+        ]));
     }
 }

@@ -27,6 +27,7 @@ use App\Filament\Resources\StaffMembers\StaffMemberResource;
 use App\Filament\Resources\Users\UserResource;
 use App\Http\Middleware\ExemptMembersFromMultiFactorAuthentication;
 use App\Http\Middleware\RedirectMembersToProfile;
+use App\Support\RoleLabel;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\Pages\Login;
@@ -68,6 +69,31 @@ class AdminPanelProvider extends PanelProvider
         DatabaseGraph::class => 'developer',
         GoogleAnalytics::class => 'developer',
     ];
+
+    /**
+     * Roles whose grants say nothing about how wide a resource's
+     * audience is, and which roleBadge() therefore ignores.
+     *
+     * The badge means "beyond an ordinary content editor". A super
+     * admin holds everything, so counting it would erase every badge;
+     * a single-purpose specialist holds one corner of the panel, so
+     * counting it would erase the badge on exactly that corner -
+     * finance officers reach 헌금 내역 and 개인 헌금, which are still
+     * administrator menus for everyone else in the church.
+     *
+     * Deriving this from the grant counts instead (a role holding one
+     * or two models is a specialist) would need no editing at all, but
+     * it fails silently in the wrong direction: a future two-model role
+     * over 성도 and 셀 would keep the administrator badge on the
+     * congregation's personal details while a non-administrator read
+     * them. Forgetting to list a role here only drops a badge, which is
+     * visible on the very screen that is wrong, and a new role already
+     * touches RoleSeeder, RolePermissionSeeder and a migration - one
+     * more line in the same change is cheap.
+     *
+     * @var list<string>
+     */
+    protected const NON_WIDENING_ROLES = ['super_admin', 'finance_officer'];
 
     public function panel(Panel $panel): Panel
     {
@@ -449,6 +475,17 @@ class AdminPanelProvider extends PanelProvider
      * role shows the count alone, because the pseudo-element resolves
      * to content:none without --role-badge.
      *
+     * The tag itself is drawn in Korean, through the same RoleLabel map
+     * the user table and the member form read: it names a role, and the
+     * rest of the sidebar is Korean. Only the display text is
+     * translated - roleBadge() keeps returning the internal key, so the
+     * PAGE_BADGES map and the tests still compare against 'admin' and
+     * 'developer'. The label is a CSS string, so it stays inside the
+     * single quotes the custom property already carried; Korean needs
+     * no further escaping in a UTF-8 document, and the labels are a
+     * constant map holding no quote or semicolon that could close the
+     * declaration early.
+     *
      * @return array<NavigationItem>
      */
     public static function accessibleItems(string $component): array
@@ -465,10 +502,11 @@ class AdminPanelProvider extends PanelProvider
 
         if ($badge = static::roleBadge($component)) {
             $hue = $badge === 'developer' ? 'success' : 'warning';
+            $label = RoleLabel::label($badge);
 
             foreach ($items as $item) {
                 $item->extraAttributes([
-                    'style' => "--role-badge:'{$badge}';--role-badge-color:var(--{$hue}-600);--role-badge-color-dark:var(--{$hue}-400)",
+                    'style' => "--role-badge:'{$label}';--role-badge-color:var(--{$hue}-600);--role-badge-color-dark:var(--{$hue}-400)",
                 ], merge: true);
             }
         }
@@ -483,10 +521,14 @@ class AdminPanelProvider extends PanelProvider
      * other role reaches it too.
      *
      * The answer comes from the granted ViewAny permissions rather than
-     * a hardcoded list, so it follows RolePermissionSeeder. Resources
-     * whose permission was never generated (the activity log, whose
-     * policy checks the developer role directly) fall through to the
-     * developer badge, which is what an empty grant set means.
+     * a hardcoded list, so it follows RolePermissionSeeder, minus the
+     * roles in NON_WIDENING_ROLES. Resources whose permission was never
+     * generated (the activity log, whose policy checks the developer
+     * role directly) fall through to the developer badge, which is what
+     * an empty grant set means.
+     *
+     * The returned value is the internal role key; the sidebar shows its
+     * Korean label. Callers compare against the key.
      */
     public static function roleBadge(string $component): ?string
     {
@@ -500,7 +542,7 @@ class AdminPanelProvider extends PanelProvider
 
         $viewers = array_diff(
             static::viewAnyGrants()[class_basename($component::getModel())] ?? [],
-            ['super_admin'],
+            static::NON_WIDENING_ROLES,
         );
 
         return match (true) {

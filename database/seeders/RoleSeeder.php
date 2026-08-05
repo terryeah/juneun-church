@@ -7,7 +7,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 /**
- * Seeds the four staff roles the church actually fills. The
+ * Seeds the five staff roles the church actually fills. The
  * permissionless 'member' role that approved 가입 신청 receive is
  * created by its own migration rather than here.
  *
@@ -28,6 +28,7 @@ class RoleSeeder extends Seeder
             'developer',
             'admin',
             'content_editor',
+            'finance_officer',
         ])->each(fn (string $name) => Role::findOrCreate($name, 'web'));
     }
 }

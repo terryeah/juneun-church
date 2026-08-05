@@ -29,6 +29,7 @@ use Database\Seeders\RoleSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 /**
@@ -134,7 +135,51 @@ class SidebarRoleBadgeTest extends TestCase
         [$item] = AdminPanelProvider::accessibleItems(MembershipRequestResource::class);
 
         $this->assertSame('1', $item->getBadge());
-        $this->assertStringContainsString("--role-badge:'admin'", $item->getExtraAttributeBag()->get('style'));
+        $this->assertStringContainsString("--role-badge:'관리자'", $item->getExtraAttributeBag()->get('style'));
+    }
+
+    /**
+     * The tag reads in Korean while the value roleBadge() returns stays
+     * the internal key: 관리자 in the sidebar, 'admin' in the matrix.
+     */
+    public function test_the_tag_is_drawn_in_korean(): void
+    {
+        Filament::setCurrentPanel('admin');
+
+        /** The activity log answers to the developer role rather than to a permission. */
+        $this->actingAs(tap($this->superAdmin())->assignRole('developer'));
+
+        [$activity] = AdminPanelProvider::accessibleItems(ActivityResource::class);
+
+        $this->assertSame('developer', AdminPanelProvider::roleBadge(ActivityResource::class));
+        $this->assertStringContainsString("--role-badge:'개발자'", $activity->getExtraAttributeBag()->get('style'));
+
+        [$offerings] = AdminPanelProvider::accessibleItems(OfferingResource::class);
+
+        $this->assertStringContainsString("--role-badge:'관리자'", $offerings->getExtraAttributeBag()->get('style'));
+        $this->assertStringNotContainsString('admin', $offerings->getExtraAttributeBag()->get('style'));
+    }
+
+    /**
+     * 재정 담당 reaches the two offering resources and nothing else, and
+     * that single-purpose grant must not talk 헌금 내역 and 개인 헌금
+     * out of their administrator tag: they stay administrator menus for
+     * everyone in the church but the one specialist.
+     */
+    public function test_the_finance_role_does_not_widen_the_offering_badges(): void
+    {
+        $finance = Role::findByName('finance_officer', 'web');
+
+        $this->assertEqualsCanonicalizing(
+            ['Offering', 'PersonalOffering'],
+            $finance->permissions->map(fn (Permission $permission): string => str($permission->name)->afterLast(':')->value())
+                ->unique()
+                ->values()
+                ->all(),
+        );
+
+        $this->assertSame('admin', AdminPanelProvider::roleBadge(OfferingResource::class));
+        $this->assertSame('admin', AdminPanelProvider::roleBadge(PersonalOfferingResource::class));
     }
 
     /**
@@ -150,7 +195,7 @@ class SidebarRoleBadgeTest extends TestCase
         [$users] = AdminPanelProvider::accessibleItems(UserResource::class);
 
         $this->assertNull($users->getBadge());
-        $this->assertStringContainsString("--role-badge:'admin'", $users->getExtraAttributeBag()->get('style'));
+        $this->assertStringContainsString("--role-badge:'관리자'", $users->getExtraAttributeBag()->get('style'));
 
         [$announcements] = AdminPanelProvider::accessibleItems(AnnouncementResource::class);
 

@@ -2,8 +2,18 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\Dashboard;
+use App\Filament\Resources\Cells\CellResource;
+use App\Filament\Resources\Members\MemberResource;
+use App\Filament\Resources\MembershipRequests\MembershipRequestResource;
+use App\Filament\Resources\Offerings\OfferingResource;
+use App\Filament\Resources\PersonalOfferings\PersonalOfferingResource;
+use App\Filament\Resources\Positions\PositionResource;
+use App\Filament\Resources\SiteSettings\SiteSettingResource;
+use App\Filament\Resources\StaffMembers\StaffMemberResource;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Tables\UsersTable;
+use App\Filament\Resources\Users\UserResource;
 use App\Filament\Widgets\ContentStatsWidget;
 use App\Http\Middleware\ExemptMembersFromMultiFactorAuthentication;
 use App\Models\MembershipRequest;
@@ -94,6 +104,37 @@ class AdminAccessTest extends TestCase
 
         $this->actingAs($this->userWithRoles(['admin']));
         $this->assertTrue(ContentStatsWidget::canView());
+    }
+
+    /**
+     * 재정 담당 signs in like any other staff account: the middleware
+     * only diverts member-only accounts, and the dashboard is closed
+     * only to those, so a finance officer lands on 대시보드 with the
+     * account card alone - the same bare dashboard a content editor
+     * already gets - and finds 헌금 내역 and 개인 헌금 in the sidebar.
+     * Nothing holding the congregation's personal details opens.
+     */
+    public function test_a_finance_officer_reaches_the_offerings_and_nothing_else(): void
+    {
+        $this->actingAs($this->administrator(['finance_officer']));
+
+        $this->get('/admin')->assertOk();
+        $this->assertTrue(Dashboard::canAccess());
+
+        $this->assertTrue(OfferingResource::canAccess());
+        $this->assertTrue(PersonalOfferingResource::canAccess());
+
+        foreach ([
+            MemberResource::class,
+            CellResource::class,
+            UserResource::class,
+            StaffMemberResource::class,
+            MembershipRequestResource::class,
+            SiteSettingResource::class,
+            PositionResource::class,
+        ] as $resource) {
+            $this->assertFalse($resource::canAccess(), $resource.' opened to a finance officer.');
+        }
     }
 
     /**
