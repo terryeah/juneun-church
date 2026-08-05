@@ -14,12 +14,18 @@
             <p class="mt-3 text-body-sm text-navy-400">{{ $announcement->published_at?->translatedFormat('Y년 n월 j일') }}</p>
 
             {{-- No forced ratio: a portrait poster shows in full rather than
-                 being cropped to a letterbox. --}}
+                 being cropped to a letterbox. The measured width and height
+                 give the browser the poster's own ratio, so the box is
+                 reserved at its true shape and the article below never
+                 jumps once the image arrives. --}}
             @if ($announcement->featured_image)
+                @php $featuredSize = $announcement->featuredImageDimensions(); @endphp
                 <img
+                    @if ($featuredSize) width="{{ $featuredSize['width'] }}" height="{{ $featuredSize['height'] }}" @endif
                     src="{{ Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($announcement->featured_image) }}"
                     alt="{{ $announcement->title }}"
                     class="mt-8 h-auto w-full rounded-media"
+                    fetchpriority="high"
                 >
             @endif
 

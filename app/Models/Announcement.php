@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -118,6 +120,44 @@ class Announcement extends Model
             ->squish()
             ->limit($limit)
             ->value();
+    }
+
+    /**
+     * Intrinsic pixel dimensions of the 대표 이미지, or null when there is
+     * no image or it cannot be read.
+     *
+     * The column stores a bare path, so unlike a gallery photo there is
+     * no width and height to read from the database. Measuring the file
+     * lets the article template publish width and height attributes, and
+     * with them the browser reserves the exact box a portrait poster
+     * needs before a single byte of it has arrived - the difference
+     * between a clean load and the whole article jumping down the page.
+     * The measurement is cached against the stored path, which is a
+     * fresh UUID on every upload, so a replaced image measures itself
+     * once and every later request is a cache read.
+     *
+     * @return array{width: int, height: int}|null
+     */
+    public function featuredImageDimensions(): ?array
+    {
+        if (blank($this->featured_image)) {
+            return null;
+        }
+
+        return Cache::rememberForever(
+            'announcement-image-size:'.$this->featured_image,
+            function (): ?array {
+                $binary = Storage::disk(config('filesystems.media'))->get($this->featured_image);
+
+                if ($binary === null) {
+                    return null;
+                }
+
+                $size = @getimagesizefromstring($binary);
+
+                return $size === false ? null : ['width' => $size[0], 'height' => $size[1]];
+            },
+        );
     }
 
     /**
