@@ -109,6 +109,20 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     }
 
     /**
+     * Whether mandatory two-factor authentication is waived.
+     *
+     * Ordinary 성도 are waived because an authenticator app is too much
+     * to ask of someone reading their own giving records. The per-role
+     * test accounts are waived so each role's view of the panel can be
+     * checked without registering six authenticators; they exist only
+     * to be looked through, and carry generated passwords.
+     */
+    public function isExemptFromMultiFactorAuthentication(): bool
+    {
+        return $this->isMemberOnly() || $this->is_test_account;
+    }
+
+    /**
      * Whether this account runs the site: the pastor's office, the
      * developer, or a super admin. Used wherever something is meant for
      * the people who administer the church rather than help with it.
@@ -127,6 +141,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_test_account' => 'boolean',
             'password' => 'hashed',
             'app_authentication_secret' => 'encrypted',
             'app_authentication_recovery_codes' => 'encrypted:array',

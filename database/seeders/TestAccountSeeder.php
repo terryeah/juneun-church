@@ -45,6 +45,9 @@ class TestAccountSeeder extends Seeder
                 ],
             );
 
+            /** Deliberately not mass-assignable: it waives two-factor authentication. */
+            $user->forceFill(['is_test_account' => true])->save();
+
             $user->syncRoles([$role]);
 
             /** Every login belongs to a roster record, so give each one an unpublished member. */

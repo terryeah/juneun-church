@@ -8,7 +8,8 @@ use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 
 /**
- * Mandatory two-factor authentication, minus the ordinary 성도.
+ * Mandatory two-factor authentication, minus the ordinary 성도 and the
+ * per-role test accounts.
  *
  * A member signs in only to read their own giving records, and
  * demanding an authenticator app for that turns most of them away.
@@ -27,7 +28,7 @@ class ExemptMembersFromMultiFactorAuthentication extends EnsureMultiFactorAuthen
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        if (Filament::auth()->user()?->isMemberOnly()) {
+        if (Filament::auth()->user()?->isExemptFromMultiFactorAuthentication()) {
             return $next($request);
         }
 

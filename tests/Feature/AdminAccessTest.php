@@ -63,6 +63,12 @@ class AdminAccessTest extends TestCase
         /** A member who also holds a staff role is staff again. */
         $this->actingAs($this->userWithRoles(['member', 'content_editor']));
         $this->assertTrue($middleware->handle(Request::create('/admin'), $next)->isRedirect());
+
+        /** The per-role test accounts are waived whatever role they carry. */
+        $tester = $this->userWithRoles(['admin']);
+        $tester->forceFill(['is_test_account' => true])->save();
+        $this->actingAs($tester);
+        $this->assertSame('reached', $middleware->handle(Request::create('/admin'), $next)->getContent());
     }
 
     /**
