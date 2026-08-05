@@ -21,12 +21,12 @@ class HomeController extends Controller
      */
     public function __invoke(): View
     {
-        /** Latest three announcements with pinned items first */
+        /** Latest four announcements with pinned items first */
         $announcements = Announcement::query()
             ->published()
             ->orderByDesc('is_pinned')
             ->orderByDesc('published_at')
-            ->limit(3)
+            ->limit(4)
             ->get();
 
         /** Most recent worship recording */

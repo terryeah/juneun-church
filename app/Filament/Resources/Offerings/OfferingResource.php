@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Offerings;
 use App\Filament\Resources\Offerings\Pages\CreateOffering;
 use App\Filament\Resources\Offerings\Pages\EditOffering;
 use App\Filament\Resources\Offerings\Pages\ListOfferings;
+use App\Filament\Resources\Offerings\RelationManagers\PersonalOfferingsRelationManager;
 use App\Filament\Resources\Offerings\Schemas\OfferingForm;
 use App\Filament\Resources\Offerings\Tables\OfferingsTable;
 use App\Models\Offering;
@@ -39,6 +40,13 @@ class OfferingResource extends Resource
     public static function table(Table $table): Table
     {
         return OfferingsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            PersonalOfferingsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

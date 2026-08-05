@@ -73,14 +73,14 @@
         <section class="section-giving-records container-site pb-12 lg:pb-16" data-giving-weeks>
             <div class="flex flex-wrap items-center gap-3">
                 <x-ui.kicker>헌금 소식 · Records</x-ui.kicker>
-                <span class="rounded-md border border-success bg-navy/90 px-2 py-0.5 font-kr text-caption font-bold text-success">로그인 유저 전용</span>
+                <span class="rounded-md border border-success bg-navy/90 px-2 py-0.5 font-kr text-caption font-medium text-success">로그인 유저 전용</span>
             </div>
             <h2 class="mt-3 font-kr text-display-sm font-medium">{{ $offering->sunday_date->translatedFormat('Y년 n월 j일') }} 주일 헌금 내역</h2>
             <p class="mt-2 font-kr text-body-sm text-navy-400">주보에 실리는 내용과 동일합니다. 함께 드린 손길에 감사드립니다.</p>
 
             <div class="mt-6 grid gap-8 md:grid-cols-2">
                 @foreach ($offering->groupedItems() as $category => $items)
-                    <div>
+                    <div data-giving-category>
                         <h3 class="border-b-2 border-navy pb-2 font-kr text-body font-bold">{{ $category }}</h3>
                         <ul class="mt-1">
                             @foreach ($items as $item)
@@ -120,5 +120,21 @@
         </section>
     @endif
     @endauth
+
+    {{-- Guests are told why the records are missing and how to gain access,
+         rather than being left with a page that simply ends early. --}}
+    @guest
+        <section class="section-giving-signup container-site pb-12 lg:pb-16">
+            <div class="max-w-xl rounded-frame border-2 border-navy p-8">
+                <x-ui.kicker>헌금 소식 · Records</x-ui.kicker>
+                <h2 class="mt-3 font-kr text-display-sm font-medium">헌금 내역은 로그인 후 보실 수 있습니다</h2>
+                <p class="mt-4 font-kr text-body leading-relaxed text-navy-400">주보에 실리는 주일 헌금 내역은 교우에게만 공개됩니다. 계정이 없으시면 가입을 신청해 주세요. 관리자가 교적부와 대조해 확인한 뒤 승인해 드립니다.</p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <x-ui.button href="{{ route('signup') }}">가입 신청</x-ui.button>
+                    <x-ui.button href="{{ url('/admin/login') }}" variant="secondary">로그인</x-ui.button>
+                </div>
+            </div>
+        </section>
+    @endguest
 
 </x-layout.app>

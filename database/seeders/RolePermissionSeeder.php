@@ -34,8 +34,8 @@ class RolePermissionSeeder extends Seeder
         Role::findOrCreate('developer', 'web')->syncPermissions($all->all());
 
         Role::findOrCreate('admin', 'web')->syncPermissions($forModels([
-            'Announcement', 'Event', 'Position', 'Member', 'Offering', 'ServiceType',
-            'Sermon', 'Album', 'Photo', 'Bulletin', 'SiteSetting', 'User',
+            'Announcement', 'Event', 'Position', 'Member', 'Offering', 'PersonalOffering',
+            'ServiceType', 'Sermon', 'Album', 'Photo', 'Bulletin', 'SiteSetting', 'User',
         ]));
 
         Role::findOrCreate('content_editor', 'web')->syncPermissions($forModels([

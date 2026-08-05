@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\MembershipRequestController;
 use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
@@ -24,3 +25,9 @@ Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index
 Route::get('/gallery/{album}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::get('/giving', GivingController::class)->name('giving');
 Route::get('/location', LocationController::class)->name('location');
+
+/** Public sign-up: throttled because anyone on the internet can post to it. */
+Route::get('/signup', [MembershipRequestController::class, 'create'])->name('signup');
+Route::post('/signup', [MembershipRequestController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('signup.store');

@@ -56,7 +56,6 @@ class OfferingCreateTest extends TestCase
                 'items' => [
                     [
                         'category' => '감사헌금',
-                        'name' => '홍길동',
                         'amount' => '150.50',
                     ],
                 ],
@@ -74,7 +73,6 @@ class OfferingCreateTest extends TestCase
         $this->assertSame([
             [
                 'category' => '감사헌금',
-                'name' => '홍길동',
                 'amount' => 150.5,
             ],
         ], $offering->items);

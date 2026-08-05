@@ -45,7 +45,13 @@
     </section>
 
     <section class="section-location-pickup container-site pb-12 lg:pb-16">
-        <div class="grid gap-8 md:grid-cols-[1fr_minmax(0,320px)] md:items-center lg:gap-11">
+        {{-- Poster leads on the left; on mobile the grid stacks it above the copy. --}}
+        <div class="grid gap-8 md:items-start lg:gap-11 {{ ($pickupPhoto ?? null) ? 'md:grid-cols-[minmax(0,320px)_1fr]' : '' }}">
+            @if ($pickupPhoto ?? null)
+                <div class="overflow-hidden rounded-media">
+                    <img src="{{ $pickupPhoto->thumbnailUrl() }}" alt="청년부 차량 픽업 안내" class="w-full object-cover" loading="lazy">
+                </div>
+            @endif
             <div>
                 <x-ui.kicker>차량 픽업 · Pick-up</x-ui.kicker>
                 <h2 class="mt-3 font-kr text-display-sm font-medium leading-snug">청년들을 위해<br>차량을 운행합니다</h2>
@@ -54,15 +60,10 @@
                     인원 파악 후 차량을 운행하니, 이용을 원하시면 담임목사 연락처 또는
                     인스타그램 DM으로 미리 연락해 주세요.
                 </p>
-                <p class="mt-4 text-body-sm text-navy-400">
+                <p class="mt-6 text-body-sm text-navy-400">
                     Garden City Westfield · 주일 1:00-1:10 PM
                 </p>
             </div>
-            @if ($pickupPhoto ?? null)
-                <div class="overflow-hidden rounded-media">
-                    <img src="{{ $pickupPhoto->thumbnailUrl() }}" alt="청년부 차량 픽업 안내" class="w-full object-cover" loading="lazy">
-                </div>
-            @endif
         </div>
     </section>
 

@@ -35,15 +35,13 @@ class OfferingForm
                 Repeater::make('items')
                     ->label('내역')
                     ->addActionLabel('내역 추가')
-                    ->columns(3)
+                    ->columns(2)
                     ->schema([
                         Select::make('category')
                             ->label('구분')
                             ->options(Offering::CATEGORIES)
                             ->default('십일조')
                             ->required(),
-                        TextInput::make('name')
-                            ->label('성함'),
                         TextInput::make('amount')
                             ->label('금액')
                             ->numeric()

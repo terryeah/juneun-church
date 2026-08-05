@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\MembershipRequest;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\View\View;
+
+/**
+ * Public membership sign-up (가입 신청).
+ *
+ * A submission only queues a request for an administrator to review:
+ * no account is created and nobody is signed in here.
+ */
+class MembershipRequestController extends Controller
+{
+    /**
+     * Show the sign-up form, or the confirmation screen once a request
+     * has just been submitted.
+     */
+    public function create(): View
+    {
+        return view('auth.signup', ['submitted' => (bool) session('signup_submitted')]);
+    }
+
+    /**
+     * Record a sign-up request.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate(
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'birth_date' => ['required', 'date', 'before:today'],
+                'phone' => ['required', 'string', 'max:10'],
+                'email' => ['required', 'string', 'email', 'max:255'],
+                'password' => ['required', 'confirmed', Password::defaults()],
+                'note' => ['nullable', 'string', 'max:1000'],
+            ],
+            [
+                'required' => ':attribute 항목을 입력해 주세요.',
+                'string' => ':attribute 항목을 다시 확인해 주세요.',
+                'date' => '올바른 날짜를 입력해 주세요.',
+                'before' => '생년월일은 오늘보다 이전이어야 합니다.',
+                'email' => '올바른 이메일 주소를 입력해 주세요.',
+                'max' => ':attribute 항목이 너무 깁니다.',
+                'confirmed' => '비밀번호 확인이 일치하지 않습니다.',
+                'password.min' => '비밀번호는 최소 :min자 이상이어야 합니다.',
+            ],
+            [
+                'name' => '이름',
+                'birth_date' => '생년월일',
+                'phone' => '전화번호',
+                'email' => '이메일',
+                'password' => '비밀번호',
+                'note' => '남기실 말씀',
+            ],
+        );
+
+        /**
+         * A duplicate is dropped silently rather than rejected with a
+         * validation error: telling a visitor that an address is
+         * already taken would confirm who belongs to the church. A
+         * previously rejected request may be submitted again.
+         */
+        if (! $this->alreadyPending($data['email'])) {
+            MembershipRequest::create($data);
+        }
+
+        return redirect()->route('signup')->with('signup_submitted', true);
+    }
+
+    /**
+     * Whether the address already has a login or a request awaiting
+     * review.
+     */
+    private function alreadyPending(string $email): bool
+    {
+        return User::query()->where('email', $email)->exists()
+            || MembershipRequest::query()->where('email', $email)->where('status', '대기')->exists();
+    }
+}

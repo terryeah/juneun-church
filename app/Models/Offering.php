@@ -6,10 +6,12 @@ use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * A Sunday's offering record (헌금 내역): the same list the bulletin
- * prints - category, giver and amount - published on the giving page.
+ * A Sunday's offering record (헌금 내역): the category totals the
+ * bulletin prints, published on the giving page. Individual givers are
+ * recorded separately as personal offerings (개인 헌금).
  */
 #[Fillable(['sunday_date', 'items', 'note', 'created_by'])]
 class Offering extends Model
@@ -47,11 +49,19 @@ class Offering extends Model
     /**
      * Items grouped by category, preserving the form order.
      *
-     * @return array<string, array<int, array{category: string, name: ?string, amount: ?string}>>
+     * @return array<string, array<int, array{category: string, name?: ?string, amount: ?string}>>
      */
     public function groupedItems(): array
     {
         return collect($this->items ?? [])->groupBy('category')->toArray();
+    }
+
+    /**
+     * The individual giving records (개인 헌금) of this Sunday.
+     */
+    public function personalOfferings(): HasMany
+    {
+        return $this->hasMany(PersonalOffering::class);
     }
 
     /**

@@ -19,15 +19,9 @@ class OfferingsTable
                     ->label('주일')
                     ->date('Y-m-d')
                     ->sortable(),
-                TextColumn::make('items')
-                    ->label('건수')
-                    ->formatStateUsing(fn (Offering $record): string => count($record->items ?? []).'건'),
                 TextColumn::make('total')
                     ->label('합계')
                     ->state(fn (Offering $record): string => '$'.number_format($record->total(), 2)),
-                TextColumn::make('note')
-                    ->label('비고')
-                    ->placeholder('-'),
             ])
             ->defaultSort('sunday_date', 'desc')
             ->recordActions([

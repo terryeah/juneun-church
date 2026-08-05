@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Analytics;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\DatabaseGraph;
 use App\Filament\Pages\DepartmentOverview;
 use App\Filament\Resources\Activities\ActivityResource;
 use App\Filament\Resources\Albums\AlbumResource;
@@ -12,8 +13,10 @@ use App\Filament\Resources\Bulletins\BulletinResource;
 use App\Filament\Resources\Cells\CellResource;
 use App\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Members\MemberResource;
+use App\Filament\Resources\MembershipRequests\MembershipRequestResource;
 use App\Filament\Resources\Ministries\MinistryResource;
 use App\Filament\Resources\Offerings\OfferingResource;
+use App\Filament\Resources\PersonalOfferings\PersonalOfferingResource;
 use App\Filament\Resources\Photos\PhotoResource;
 use App\Filament\Resources\Positions\PositionResource;
 use App\Filament\Resources\Roles\RoleResource;
@@ -42,6 +45,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -63,7 +67,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => static::buildNavigation($builder))
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/staff-members"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/cells"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/department-overview"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/users"]{margin-inline-start:0.875rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}.fi-one-time-code-input-ctn{width:100%;justify-content:center}.fi-one-time-code-input-ctn .fi-one-time-code-input-digit{flex:1 1 0;min-width:0;max-width:3.75rem;height:3.5rem;font-size:1.25rem;text-align:center}@media (max-width:39.9375rem){.fi-header{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between}.fi-header>div:first-child{min-width:0}.fi-header .fi-header-actions-ctn{margin-inline-start:auto;flex-wrap:wrap;justify-content:flex-end}.fi-ta-header{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between}.fi-ta-header .fi-ta-actions{margin-inline-start:auto;justify-content:flex-end}.fi-ta-ctn .fi-ta-header-toolbar{row-gap:.75rem}.fi-ta-ctn .fi-ta-header-toolbar>*{min-height:0}.fi-ta-ctn .fi-ta-header-toolbar>.fi-ta-actions:not(:has(>:not([x-cloak]):not([style*="display: none"]))){display:none}.fi-ta-ctn .fi-ta-header-toolbar>:nth-child(2){flex:1 1 auto;min-width:0;margin-inline-start:0}.fi-ta-ctn .fi-ta-header-toolbar .fi-ta-search-field{flex:1 1 auto;min-width:0}.fi-ta-ctn .fi-ta-header-toolbar .fi-ta-search-field .fi-input-wrp{width:100%}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody{display:block;padding:.75rem .75rem 0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr:where(:not(.fi-ta-group-header-row):not(.fi-ta-summary-row):not(.fi-ta-row-not-reorderable)){border:1px solid color-mix(in srgb,currentColor 14%,transparent);border-radius:.75rem;background-color:color-mix(in srgb,currentColor 3%,transparent);padding-block:.9rem;margin-block-end:.75rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr.fi-selected{border-color:var(--primary-600)}.dark .fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr.fi-selected{border-color:var(--primary-500)}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr.fi-selected:before{content:none}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-selection-cell{top:1.05rem;inset-inline-end:1rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell){padding-block:.3rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):first-child{padding-inline-start:1rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):last-child{padding-inline-end:1rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-selection-cell+.fi-ta-cell{padding-inline-end:2.5rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell)>.fi-ta-cell-label{padding-top:0;font-size:.7rem;line-height:1.2;letter-spacing:.03em;text-transform:uppercase;opacity:.75}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell)>.fi-ta-cell-content{line-height:1.45;min-height:1.3rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):has(>.fi-ta-actions){margin-top:.35rem;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);padding-top:.6rem;padding-bottom:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):has(>.fi-ta-actions)>.fi-ta-actions{justify-content:flex-end}}@media (min-width:24rem) and (max-width:39.9375rem){.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr:where(:not(.fi-ta-group-header-row):not(.fi-ta-summary-row):not(.fi-ta-row-not-reorderable)){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.25rem;row-gap:.55rem;align-items:start;padding-inline:1rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell){padding-block:0;padding-inline:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):first-child{padding-inline-start:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):last-child{padding-inline-end:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-selection-cell+.fi-ta-cell{padding-inline-end:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-selection-cell+.fi-ta-cell+.fi-ta-cell{padding-inline-end:2.25rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell.stacked-span-full,.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):has(>.fi-ta-actions){grid-column:1/-1}}</style>'),
+                fn (): HtmlString => new HtmlString('<style>.fi-sidebar-nav a[href$="/admin/photos"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/personal-offerings"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/staff-members"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/cells"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/department-overview"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/users"]{margin-inline-start:0.875rem}.fi-sidebar-nav a[href$="/admin/membership-requests"]{margin-inline-start:0.875rem}.fi-fo-file-upload .filepond--root{min-height:13rem}.fi-fo-file-upload .filepond--drop-label{min-height:13rem}.fi-fo-rich-editor-content{min-height:7.7rem}.fi-one-time-code-input-ctn{width:100%;justify-content:center}.fi-one-time-code-input-ctn .fi-one-time-code-input-digit{flex:1 1 0;min-width:0;max-width:3.75rem;height:3.5rem;font-size:1.25rem;text-align:center}@media (max-width:39.9375rem){.fi-header{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between}.fi-header>div:first-child{min-width:0}.fi-header .fi-header-actions-ctn{margin-inline-start:auto;flex-wrap:wrap;justify-content:flex-end}.fi-ta-header{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between}.fi-ta-header .fi-ta-actions{margin-inline-start:auto;justify-content:flex-end}.fi-ta-ctn .fi-ta-header-toolbar{row-gap:.75rem}.fi-ta-ctn .fi-ta-header-toolbar>*{min-height:0}.fi-ta-ctn .fi-ta-header-toolbar>.fi-ta-actions:not(:has(>:not([x-cloak]):not([style*="display: none"]))){display:none}.fi-ta-ctn .fi-ta-header-toolbar>:nth-child(2){flex:1 1 auto;min-width:0;margin-inline-start:0}.fi-ta-ctn .fi-ta-header-toolbar .fi-ta-search-field{flex:1 1 auto;min-width:0}.fi-ta-ctn .fi-ta-header-toolbar .fi-ta-search-field .fi-input-wrp{width:100%}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody{display:block;padding:.75rem .75rem 0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr:where(:not(.fi-ta-group-header-row):not(.fi-ta-summary-row):not(.fi-ta-row-not-reorderable)){border:1px solid color-mix(in srgb,currentColor 14%,transparent);border-radius:.75rem;background-color:color-mix(in srgb,currentColor 3%,transparent);padding-block:.9rem;margin-block-end:.75rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr.fi-selected{border-color:var(--primary-600)}.dark .fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr.fi-selected{border-color:var(--primary-500)}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr.fi-selected:before{content:none}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-selection-cell{top:1.05rem;inset-inline-end:1rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell){padding-block:.3rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):first-child{padding-inline-start:1rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):last-child{padding-inline-end:1rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-selection-cell+.fi-ta-cell{padding-inline-end:2.5rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell)>.fi-ta-cell-label{padding-top:0;font-size:.7rem;line-height:1.2;letter-spacing:.03em;text-transform:uppercase;opacity:.75}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell)>.fi-ta-cell-content{line-height:1.45;min-height:1.3rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):has(>.fi-ta-actions){margin-top:.35rem;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);padding-top:.6rem;padding-bottom:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):has(>.fi-ta-actions)>.fi-ta-actions{justify-content:flex-end}}@media (min-width:24rem) and (max-width:39.9375rem){.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr:where(:not(.fi-ta-group-header-row):not(.fi-ta-summary-row):not(.fi-ta-row-not-reorderable)){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.25rem;row-gap:.55rem;align-items:start;padding-inline:1rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell){padding-block:0;padding-inline:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):first-child{padding-inline-start:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):last-child{padding-inline-end:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-selection-cell+.fi-ta-cell{padding-inline-end:0}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-selection-cell+.fi-ta-cell+.fi-ta-cell{padding-inline-end:2.25rem}.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell.stacked-span-full,.fi-ta-table.fi-ta-table-stacked-on-mobile>tbody>tr>.fi-ta-cell:not(.fi-ta-selection-cell):has(>.fi-ta-actions){grid-column:1/-1}}</style>'),
             )
             ->renderHook(
                 PanelsRenderHook::BODY_END,
@@ -118,6 +122,7 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(EventResource::class),
                 ...static::accessibleItems(SermonResource::class),
                 ...static::accessibleItems(OfferingResource::class),
+                ...static::accessibleItems(PersonalOfferingResource::class),
             ]),
             NavigationGroup::make('미디어')->items([
                 ...static::accessibleItems(AlbumResource::class),
@@ -129,6 +134,7 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(CellResource::class),
                 ...static::accessibleItems(DepartmentOverview::class),
                 ...static::accessibleItems(UserResource::class),
+                ...static::accessibleItems(MembershipRequestResource::class),
                 ...static::accessibleItems(StaffMemberResource::class),
             ]),
             NavigationGroup::make('기준 정보')->items([
@@ -140,6 +146,7 @@ class AdminPanelProvider extends PanelProvider
             NavigationGroup::make('모니터링')->items([
                 ...static::accessibleItems(Analytics::class),
                 ...static::accessibleItems(ActivityResource::class),
+                ...static::accessibleItems(DatabaseGraph::class),
             ]),
             NavigationGroup::make('Filament Shield')->items([
                 ...static::accessibleItems(RoleResource::class),
@@ -409,6 +416,63 @@ class AdminPanelProvider extends PanelProvider
             return [];
         }
 
-        return $component::getNavigationItems();
+        $items = $component::getNavigationItems();
+
+        if ($badge = static::roleBadge($component)) {
+            foreach ($items as $item) {
+                $item->badge($badge, color: $badge === 'developer' ? 'success' : 'warning');
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * The role a resource is restricted to, shown as a badge beside its
+     * sidebar label: 'developer' when nobody below a developer may view
+     * it, 'admin' when only admins and above may, and null when any
+     * other role reaches it too.
+     *
+     * The answer comes from the granted ViewAny permissions rather than
+     * a hardcoded list, so it follows RolePermissionSeeder. Resources
+     * whose permission was never generated (the activity log, whose
+     * policy checks the developer role directly) fall through to the
+     * developer badge, which is what an empty grant set means.
+     */
+    public static function roleBadge(string $component): ?string
+    {
+        if (! method_exists($component, 'getModel')) {
+            return null;
+        }
+
+        $viewers = array_diff(
+            static::viewAnyGrants()[class_basename($component::getModel())] ?? [],
+            ['super_admin'],
+        );
+
+        return match (true) {
+            empty(array_diff($viewers, ['developer'])) => 'developer',
+            empty(array_diff($viewers, ['developer', 'admin'])) => 'admin',
+            default => null,
+        };
+    }
+
+    /**
+     * Role names holding each model's ViewAny permission, keyed by
+     * model name. Resolved with one query and memoised for the rest of
+     * the request, since the sidebar asks for every item in turn.
+     *
+     * @return array<string, list<string>>
+     */
+    protected static function viewAnyGrants(): array
+    {
+        return once(fn (): array => DB::table('permissions')
+            ->join('role_has_permissions', 'role_has_permissions.permission_id', '=', 'permissions.id')
+            ->join('roles', 'roles.id', '=', 'role_has_permissions.role_id')
+            ->where('permissions.name', 'like', 'ViewAny:%')
+            ->get(['permissions.name as permission', 'roles.name as role'])
+            ->groupBy(fn (object $grant): string => str($grant->permission)->after('ViewAny:')->value())
+            ->map(fn ($grants): array => $grants->pluck('role')->all())
+            ->all());
     }
 }

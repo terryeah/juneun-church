@@ -1,13 +1,31 @@
 /**
+ * The GSAP namespace, resolved lazily so the library stays out of the
+ * main bundle exactly as the Animations chunk does.
+ */
+type Gsap = typeof import('gsap')['gsap'];
+
+/**
  * Giving Weeks Component
  *
  * Swaps only the weekly offering records section when a week chip is
  * clicked, leaving the identical bank details above it untouched. The
  * chips remain ordinary links, so without JavaScript each one is a
  * normal full page navigation.
+ *
+ * The swap is cross-faded with GSAP: the outgoing section lifts away
+ * while the replacement is fetched, then the incoming section - chips
+ * and active state included, since they live inside it - fades up with
+ * its category columns staggering in behind it.
  */
 export class GivingWeeks {
     private section: HTMLElement;
+
+    /**
+     * Identifies the most recent swap. Every awaited step re-checks it,
+     * so a rapid second click abandons the first swap before it can
+     * touch the DOM rather than leaving a half-animated section.
+     */
+    private latestSwap = 0;
 
     /**
      * Creates a new GivingWeeks instance.
@@ -46,16 +64,44 @@ export class GivingWeeks {
     }
 
     /**
+     * Loads GSAP on demand, or nothing at all when the visitor prefers
+     * reduced motion - in which case the swap stays instant.
+     *
+     * @returns The GSAP namespace, or null when motion is unwanted
+     */
+    private async motion(): Promise<Gsap | null> {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return null;
+        }
+
+        const { gsap } = await import('gsap');
+
+        return gsap;
+    }
+
+    /**
      * Fetches a week's page and replaces the records section with it.
      *
      * @param url - The week URL to render
      * @param push - Whether to add a history entry for the new week
      */
     private async swap(url: string, push: boolean): Promise<void> {
+        const swapId = ++this.latestSwap;
+
         try {
-            const response = await fetch(url, {
+            /** The request runs alongside the exit animation, not after it. */
+            const request = fetch(url, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
             });
+
+            const gsap = await this.motion();
+
+            if (gsap) {
+                gsap.killTweensOf(this.section);
+                await gsap.to(this.section, { opacity: 0, y: -12, duration: 0.25, ease: 'power2.in' });
+            }
+
+            const response = await request;
 
             if (! response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -68,12 +114,25 @@ export class GivingWeeks {
                 throw new Error('Missing records section');
             }
 
+            if (swapId !== this.latestSwap) {
+                return;
+            }
+
             this.section.replaceWith(incoming);
             this.section = incoming;
 
             if (push) {
                 window.history.pushState({}, '', url);
             }
+
+            gsap?.timeline()
+                .fromTo(incoming, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', clearProps: 'opacity,transform' })
+                .fromTo(
+                    incoming.querySelectorAll('[data-giving-category]'),
+                    { opacity: 0, y: 12 },
+                    { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', stagger: 0.08, clearProps: 'opacity,transform' },
+                    '-=0.3',
+                );
         } catch {
             /**
              * Anything unexpected falls back to the plain navigation the
