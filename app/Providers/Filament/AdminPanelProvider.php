@@ -179,9 +179,52 @@ class AdminPanelProvider extends PanelProvider
              * typing session into one billable autocomplete request.
              */
             (function () {
+                /**
+                 * Filament navigates between pages with Livewire's SPA
+                 * mode, which re-executes body scripts. Loading the Maps
+                 * bootstrap twice makes Google skip the callback, so the
+                 * whole setup runs once per document and later visits
+                 * only rescan for new inputs.
+                 */
+                if (window.__juneunPlaces) {
+                    window.__juneunPlaces.rescan();
+
+                    return;
+                }
+
                 var boundInputs = new WeakSet();
                 var debounceTimer = null;
                 var sessionToken = null;
+                var placesLibrary = null;
+                var trace = [];
+                var newline = String.fromCharCode(10);
+
+                /**
+                 * Temporary on-page diagnostic. Mobile browsers give no
+                 * easy console access, so each stage is reported in a
+                 * fixed corner panel until autocomplete is confirmed
+                 * working, then this helper goes away.
+                 */
+                function stage(message) {
+                    trace.push(message);
+
+                    var panel = document.getElementById('juneun-places-trace');
+
+                    if (!panel) {
+                        panel = document.createElement('div');
+                        panel.id = 'juneun-places-trace';
+                        panel.style.cssText = 'position:fixed;inset-block-end:0.5rem;inset-inline-start:0.5rem;z-index:9999;max-width:22rem;padding:0.5rem 0.625rem;border-radius:0.5rem;background:rgba(17,24,39,0.92);color:#f9fafb;font:0.6875rem/1.4 monospace;white-space:pre-wrap;pointer-events:none';
+                        document.body.appendChild(panel);
+                    }
+
+                    panel.textContent = 'PLACES 진단' + newline + trace.join(newline);
+                }
+
+                window.addEventListener('error', function (event) {
+                    stage('window error: ' + (event.message || 'unknown'));
+                });
+
+                stage('1. 스크립트 실행됨');
 
                 function makeDropdown(input) {
                     var list = document.createElement('ul');
@@ -255,6 +298,7 @@ class AdminPanelProvider extends PanelProvider
                         }
 
                         debounceTimer = window.setTimeout(function () {
+                            stage('6. 검색 요청: ' + value);
                             notice(list, '검색 중…', false);
                             sessionToken = sessionToken || new places.AutocompleteSessionToken();
 
@@ -264,9 +308,10 @@ class AdminPanelProvider extends PanelProvider
                                 includedRegionCodes: ['au'],
                                 language: 'en-AU',
                             }).then(function (result) {
+                                stage('7. 응답 수신: ' + ((result.suggestions || []).length) + '건');
                                 render(input, list, result.suggestions || []);
                             }).catch(function (error) {
-                                console.error('places autocomplete failed', error);
+                                stage('7. 요청 실패: ' + (error && error.message ? error.message : String(error)));
                                 notice(list, '자동완성 오류: ' + (error && error.message ? error.message : String(error)), true);
                             });
                         }, 250);
@@ -286,18 +331,42 @@ class AdminPanelProvider extends PanelProvider
                 }
 
                 function attach(places) {
-                    document.querySelectorAll('input[data-google-places]').forEach(function (input) {
+                    var found = document.querySelectorAll('input[data-google-places]');
+                    var bound = 0;
+
+                    found.forEach(function (input) {
                         if (boundInputs.has(input)) {
                             return;
                         }
 
                         boundInputs.add(input);
                         bind(input, places);
+                        bound = bound + 1;
                     });
+
+                    if (bound > 0) {
+                        stage('5. 주소 필드 ' + bound + '개 연결됨 (총 ' + found.length + ')');
+                    }
                 }
 
+                window.__juneunPlaces = {
+                    rescan: function () {
+                        if (placesLibrary) {
+                            attach(placesLibrary);
+                        }
+                    },
+                };
+
+                document.addEventListener('livewire:navigated', function () {
+                    window.__juneunPlaces.rescan();
+                });
+
                 window.__juneunInitGooglePlaces = function () {
+                    stage('3. 구글 로더 콜백 도착');
+
                     google.maps.importLibrary('places').then(function (places) {
+                        placesLibrary = places;
+                        stage('4. places 라이브러리 로드됨, AutocompleteSuggestion=' + (places && places.AutocompleteSuggestion ? 'O' : 'X'));
                         attach(places);
 
                         new MutationObserver(function () {
@@ -307,15 +376,18 @@ class AdminPanelProvider extends PanelProvider
                             subtree: true,
                         });
                     }).catch(function (error) {
-                        console.error('places library import failed', error);
+                        stage('4. 라이브러리 로드 실패: ' + (error && error.message ? error.message : String(error)));
                     });
                 };
 
                 var loader = document.createElement('script');
                 loader.src = '{$src}';
                 loader.async = true;
+                loader.onload = function () {
+                    stage('2. 로더 스크립트 다운로드 완료');
+                };
                 loader.onerror = function () {
-                    console.error('google maps loader blocked or unreachable');
+                    stage('2. 로더 차단됨 (네트워크/확장프로그램)');
                 };
                 document.head.appendChild(loader);
             })();
