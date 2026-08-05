@@ -3,6 +3,7 @@ import { YouTubeLazy } from './components/YouTubeLazy';
 import { Lightbox } from './components/Lightbox';
 import { InfiniteScroll } from './components/InfiniteScroll';
 import { PhotoSlider } from './components/PhotoSlider';
+import { GivingWeeks } from './components/GivingWeeks';
 
 /**
  * Main entry point.
@@ -34,6 +35,11 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const slider = document.querySelector<HTMLElement>('[data-photo-slider]');
     if (slider) {
         new PhotoSlider(slider);
+    }
+
+    const givingWeeks = document.querySelector<HTMLElement>('[data-giving-weeks]');
+    if (givingWeeks) {
+        new GivingWeeks(givingWeeks);
     }
 
     void import('./components/Animations').then(({ Animations }) => new Animations());

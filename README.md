@@ -34,7 +34,7 @@ without JavaScript.
 - **주보** — weekly bulletin PDFs
 - **갤러리** — photo albums with lightbox and infinite scroll
 - **섬기는 사람들** — staff and serving members by position
-- **온라인 헌금** — bank transfer details
+- **헌금** — bank transfer details
 - **오시는 길** — service times and embedded maps for both venues
 
 The whole site runs in Australia/Brisbane time and keeps Korean-first

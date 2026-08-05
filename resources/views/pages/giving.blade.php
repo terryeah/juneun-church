@@ -2,9 +2,9 @@
     use App\Models\SiteSetting;
 @endphp
 
-<x-layout.app title="온라인 헌금" description="브리즈번 주는교회 온라인 헌금 계좌 안내입니다.">
+<x-layout.app title="헌금" description="브리즈번 주는교회 헌금 계좌 안내입니다.">
 
-    <x-ui.page-header kicker="은혜를 흘려보내는 · Giving" title="온라인 헌금">
+    <x-ui.page-header kicker="은혜를 흘려보내는 · Giving" title="헌금">
         받은 은혜에 감사하며 드리는 헌금은 교회의 사역과 이웃 나눔에 소중히 사용됩니다.
     </x-ui.page-header>
 
@@ -55,19 +55,30 @@
             @endif
         </div>
 
-        <p class="mt-6 font-kr text-body-sm leading-relaxed text-navy-400">
-            이체 시 참조란에 이름과 헌금 종류를 약자로 함께 적어 주세요 -
-            주일헌금 O · 십일조 T · 감사헌금 TH · 선교헌금 M · 기타헌금 E
-        </p>
+        <div class="mt-6 font-kr text-body-sm leading-relaxed text-navy-400">
+            <p>이체 시 참조란에 이름과 헌금 종류를 약자로 함께 적어 주세요.</p>
+            <ul class="mt-2 space-y-1 md:mt-1 md:flex md:flex-wrap md:gap-x-5 md:space-y-0">
+                <li>주일헌금 <span class="font-bold">O</span></li>
+                <li>십일조 <span class="font-bold">T</span></li>
+                <li>감사헌금 <span class="font-bold">TH</span></li>
+                <li>선교헌금 <span class="font-bold">M</span></li>
+                <li>기타헌금 <span class="font-bold">E</span></li>
+            </ul>
+        </div>
     </section>
 
+    {{-- The bulletin only reaches people who attend, so the records stay behind a login. --}}
+    @auth
     @if ($offering)
-        <section class="section-giving-records container-site pb-12 lg:pb-16">
-            <x-ui.kicker>헌금 소식 · Records</x-ui.kicker>
+        <section class="section-giving-records container-site pb-12 lg:pb-16" data-giving-weeks>
+            <div class="flex flex-wrap items-center gap-3">
+                <x-ui.kicker>헌금 소식 · Records</x-ui.kicker>
+                <span class="rounded-md border border-success bg-navy/90 px-2 py-0.5 font-kr text-caption font-bold text-success">로그인 유저 전용</span>
+            </div>
             <h2 class="mt-3 font-kr text-display-sm font-medium">{{ $offering->sunday_date->translatedFormat('Y년 n월 j일') }} 주일 헌금 내역</h2>
             <p class="mt-2 font-kr text-body-sm text-navy-400">주보에 실리는 내용과 동일합니다. 함께 드린 손길에 감사드립니다.</p>
 
-            <div class="mt-6 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div class="mt-6 grid gap-8 md:grid-cols-2">
                 @foreach ($offering->groupedItems() as $category => $items)
                     <div>
                         <h3 class="border-b-2 border-navy pb-2 font-kr text-body font-bold">{{ $category }}</h3>
@@ -98,7 +109,8 @@
                     <div class="mt-3 flex flex-wrap gap-2">
                         @foreach ($weeks as $week)
                             <a href="{{ route('giving', ['week' => $week->sunday_date->toDateString()]) }}"
-                               class="rounded-nav px-3 py-1.5 font-kr text-body-sm transition-colors {{ $week->is($offering) ? 'bg-navy text-cream' : 'bg-navy/5 text-navy hover:bg-navy/10' }}">
+                               class="rounded-nav px-3 py-1.5 font-kr text-body-sm transition-colors {{ $week->is($offering) ? 'bg-navy text-cream' : 'bg-navy/5 text-navy hover:bg-navy/10' }}"
+                               data-giving-week>
                                 {{ $week->sunday_date->translatedFormat('n월 j일') }}
                             </a>
                         @endforeach
@@ -107,5 +119,6 @@
             @endif
         </section>
     @endif
+    @endauth
 
 </x-layout.app>

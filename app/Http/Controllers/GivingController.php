@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * Handles the online giving page (온라인 헌금), including the weekly
- * offering records the bulletin publishes.
+ * Handles the giving page (헌금), including the weekly offering records
+ * the bulletin publishes.
  */
 class GivingController extends Controller
 {
@@ -19,8 +19,16 @@ class GivingController extends Controller
     {
         $weeks = Offering::query()->orderByDesc('sunday_date')->limit(12)->get();
 
-        $selected = $weeks->firstWhere('sunday_date', $request->query('week'))
-            ?? $weeks->first();
+        /**
+         * The sunday_date attribute is cast to a Carbon instance, so the
+         * requested YYYY-MM-DD string is compared against its formatted
+         * value. An unknown week falls back to the most recent one.
+         */
+        $requested = $request->query('week');
+
+        $selected = $weeks->first(
+            fn (Offering $offering): bool => $offering->sunday_date->toDateString() === $requested
+        ) ?? $weeks->first();
 
         return view('pages.giving', [
             'weeks' => $weeks,
