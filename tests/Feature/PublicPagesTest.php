@@ -46,6 +46,26 @@ class PublicPagesTest extends TestCase
     }
 
     /**
+     * The worship page lists every service on the current timetable.
+     */
+    public function test_worship_page_lists_every_service(): void
+    {
+        $response = $this->get('/worship')->assertStatus(200);
+
+        $services = [
+            '주일 1부 예배 (사역자 예배)',
+            '주일 2부 예배 (청장년부)',
+            '수요기도회',
+            '유초등부',
+            '청소년부',
+        ];
+
+        foreach ($services as $service) {
+            $response->assertSee($service);
+        }
+    }
+
+    /**
      * Unpublished announcements are hidden from the public site.
      */
     public function test_unpublished_announcements_are_not_visible(): void

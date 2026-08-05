@@ -10,7 +10,7 @@
         [
             'label' => SiteSetting::get('address_education_label', '교육관'),
             'address' => SiteSetting::get('address_education'),
-            'note' => SiteSetting::get('kids_service_name').' · '.SiteSetting::get('kids_service_time'),
+            'note' => SiteSetting::get('sunday_first_service_name').' · '.SiteSetting::get('sunday_first_service_time'),
         ],
     ];
 @endphp

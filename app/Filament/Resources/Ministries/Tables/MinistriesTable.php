@@ -18,6 +18,10 @@ class MinistriesTable
                     ->label('이름')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('members_count')
+                    ->label('인원')
+                    ->counts('members')
+                    ->sortable(),
                 TextColumn::make('description')
                     ->label('설명')
                     ->searchable()
