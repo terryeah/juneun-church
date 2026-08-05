@@ -24,18 +24,18 @@ Server-rendered Blade pages, no JavaScript framework. TypeScript
 components progressively enhance the experience and every page works
 without JavaScript.
 
-- **홈** — hero, service times, church identity, latest news, latest
+- **홈**: hero, service times, church identity, latest news, latest
   sermon, meal-sharing ministry and an auto-playing photo slider with
   dot pagination
-- **예배 안내** — service information and a six-video worship archive
+- **예배 안내**: service information and a six-video worship archive
   with click-to-load YouTube embeds
-- **교회 소식** — announcements with pinned posts and rich content
-- **교회 행사** — events grouped into monthly tables
-- **주보** — weekly bulletin PDFs
-- **갤러리** — photo albums with lightbox and infinite scroll
-- **섬기는 사람들** — staff and serving members by position
-- **헌금** — bank transfer details
-- **오시는 길** — service times and embedded maps for both venues
+- **교회 소식**: announcements with pinned posts and rich content
+- **교회 행사**: events grouped into monthly tables
+- **주보**: weekly bulletin PDFs
+- **갤러리**: photo albums with lightbox and infinite scroll
+- **섬기는 사람들**: staff and serving members by position
+- **헌금**: bank transfer details
+- **오시는 길**: service times and embedded maps for both venues
 
 The whole site runs in Australia/Brisbane time and keeps Korean-first
 labelling throughout.
@@ -115,3 +115,12 @@ The production server runs Nginx + PHP-FPM behind Cloudflare with
 media on R2. Deploys are a single script that pulls the default
 branch, installs dependencies, builds assets, migrates and recycles
 caches. See `CLAUDE.md` for the full architectural context.
+
+## Licence
+
+The source code is released under the [MIT Licence](LICENSE), so another
+church is free to take it, adapt it and run its own site.
+
+The church's name and logo, its photographs, bulletins, announcements and
+the personal details of its congregation are not covered and remain the
+property of Brisbane Juneun Church.
