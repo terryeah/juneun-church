@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Album;
 use App\Models\Announcement;
+use App\Models\Photo;
 use Database\Seeders\PositionSeeder;
 use Database\Seeders\ServiceTypeSeeder;
 use Database\Seeders\SiteSettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
@@ -86,5 +89,26 @@ class PublicPagesTest extends TestCase
         $this->get('/news/'.$announcement->slug)
             ->assertStatus(200)
             ->assertSee($announcement->title);
+    }
+
+    /**
+     * The moments band ships four fetchable photos and defers the rest.
+     *
+     * Every slide the initial HTML resolves is a photograph the browser
+     * downloads before the hero image is done, so the count is the whole
+     * point: four fill the widest first view, and the remainder must sit
+     * inside the inert template where nothing requests them.
+     */
+    public function test_home_moments_band_defers_all_but_the_first_four_photos(): void
+    {
+        Photo::factory()->count(10)->for(Album::factory()->create())->create();
+
+        $home = (string) $this->get('/')->assertStatus(200)->getContent();
+
+        $track = Str::before(Str::after($home, 'data-slider-track'), '</div>');
+        $deferred = Str::before(Str::after($home, 'data-slider-deferred'), '</template>');
+
+        $this->assertSame(4, substr_count($track, '<img src="'));
+        $this->assertSame(6, substr_count($deferred, '<img src="'));
     }
 }

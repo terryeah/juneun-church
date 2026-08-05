@@ -143,14 +143,37 @@
         </div>
 
         @if ($recentPhotos->isNotEmpty())
+            @php
+                /**
+                 * Only the cards a first view can show ship with a resolvable
+                 * src. The widest breakpoint puts 4.2 of them on screen (see
+                 * --slides on .moments-track), so four cover it. The rest ride
+                 * along inside an inert <template>: the browser parses that
+                 * markup but never fetches its photographs, which keeps 580 KiB
+                 * of below-the-fold images off the connection while the hero
+                 * loads. PhotoSlider moves them into the track once the page
+                 * has finished loading. Without JavaScript the band is those
+                 * four photos, each still linking through to its album.
+                 */
+                $deferredPhotos = $recentPhotos->slice(4);
+            @endphp
             <div data-photo-slider>
                 <div class="moments-track flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pe-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-slider-track tabindex="0" aria-label="교회 사진 모음">
-                    @foreach ($recentPhotos as $photo)
+                    @foreach ($recentPhotos->take(4) as $photo)
                         <a href="{{ route('gallery.show', $photo->album) }}" class="block overflow-hidden rounded-[1.35rem]">
                             <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
                         </a>
                     @endforeach
                 </div>
+                @if ($deferredPhotos->isNotEmpty())
+                    <template data-slider-deferred>
+                        @foreach ($deferredPhotos as $photo)
+                            <a href="{{ route('gallery.show', $photo->album) }}" class="block overflow-hidden rounded-[1.35rem]">
+                                <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
+                            </a>
+                        @endforeach
+                    </template>
+                @endif
                 <div class="container-site mt-6 flex items-center justify-end gap-3">
                     <button type="button" data-slider-prev aria-label="이전 사진" class="flex h-9 w-9 items-center justify-center rounded-full bg-cream/10 text-cream transition-colors hover:bg-cream/20 disabled:pointer-events-none disabled:opacity-30">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
