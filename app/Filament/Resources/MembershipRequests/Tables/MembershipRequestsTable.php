@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MembershipRequests\Tables;
 
+use App\Models\MembershipRequest;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -48,6 +49,10 @@ class MembershipRequestsTable
                     ->label('상태')
                     ->badge()
                     ->color(fn (string $state): string => self::statusColour($state)),
+                TextColumn::make('verification_method')
+                    ->label('확인 방법')
+                    ->placeholder('-')
+                    ->tooltip(fn (MembershipRequest $record): ?string => $record->verification_note),
                 TextColumn::make('created_at')
                     ->label('신청일')
                     ->placeholder('-')

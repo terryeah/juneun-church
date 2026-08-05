@@ -58,7 +58,7 @@ class MemberSiteAccountTest extends TestCase
     {
         $member = Member::factory()->create(['name' => '김철수', 'birth_date' => '1980-03-02']);
         $request = MembershipRequest::create($this->signupPayload());
-        $user = $request->approve($member, $this->admin);
+        $user = $request->approve($member, $this->admin, '전화 통화로 확인');
 
         $this->assertSame($user->id, $member->fresh()->user_id);
 

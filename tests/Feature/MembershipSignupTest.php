@@ -15,6 +15,7 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
@@ -151,7 +152,7 @@ class MembershipSignupTest extends TestCase
         $member = Member::factory()->create(['name' => '김철수', 'birth_date' => '1980-03-02']);
         $request = MembershipRequest::create($this->payload());
 
-        $request->approve($member, $this->reviewer());
+        $request->approve($member, $this->reviewer(), '전화 통화로 확인', '8월 6일 셀장 확인');
 
         $user = $member->fresh()->user;
 
@@ -162,6 +163,8 @@ class MembershipSignupTest extends TestCase
         $this->assertSame('승인', $request->fresh()->status);
         $this->assertSame($member->id, $request->fresh()->matched_member_id);
         $this->assertNotNull($request->fresh()->reviewed_at);
+        $this->assertSame('전화 통화로 확인', $request->fresh()->verification_method);
+        $this->assertSame('8월 6일 셀장 확인', $request->fresh()->verification_note);
 
         $this->assertTrue(Auth::attempt(['email' => 'kim@example.com', 'password' => 'correct-horse-battery']));
         $this->assertTrue($user->canAccessPanel(Filament::getPanel('admin')));
@@ -174,13 +177,121 @@ class MembershipSignupTest extends TestCase
     {
         $request = MembershipRequest::create($this->payload());
 
-        $request->approve(null, $this->reviewer());
+        $request->approve(null, $this->reviewer(), '직접 만나 확인');
 
         $member = Member::query()->where('name', '김철수')->sole();
 
         $this->assertFalse($member->is_published);
         $this->assertSame('0411222333', $member->phone);
         $this->assertNotNull($member->user_id);
+    }
+
+    /**
+     * The comparison says exactly where each submitted value came from:
+     * a phone number the church recorded itself corroborates, a value
+     * the roster does not hold is only the applicant's own word, and a
+     * value the roster contradicts is a warning.
+     */
+    public function test_the_comparison_reports_each_field_against_the_roster_record(): void
+    {
+        $request = MembershipRequest::create($this->payload());
+
+        $onFile = Member::factory()->create([
+            'name' => '김철수',
+            'birth_date' => '1980-03-02',
+            'phone' => '0411222333',
+        ]);
+
+        $verdicts = collect($request->comparison($onFile))->pluck('verdict', 'field');
+
+        $this->assertSame('일치', $verdicts['이름']);
+        $this->assertSame('일치', $verdicts['생년월일']);
+        $this->assertSame('일치', $verdicts['전화번호']);
+        $this->assertSame('자기 신고', $verdicts['이메일']);
+        $this->assertSame('교회 기록 전화번호 일치', $request->corroboration($onFile));
+
+        /** A roster record holding a different number contradicts the applicant. */
+        $conflicting = Member::factory()->create(['name' => '김철수', 'phone' => '0400999888']);
+
+        $this->assertSame('불일치', collect($request->comparison($conflicting))->pluck('verdict', 'field')['전화번호']);
+        $this->assertSame('불일치 항목 있음', $request->corroboration($conflicting));
+
+        /** With nothing on file, a name and birth date agreeing prove nothing. */
+        $bare = Member::factory()->create(['name' => '김철수', 'birth_date' => '1980-03-02']);
+
+        $this->assertSame(
+            ['일치', '일치', '자기 신고', '자기 신고'],
+            collect($request->comparison($bare))->pluck('verdict')->all(),
+        );
+        $this->assertSame('신고 내용만 일치 (본인 확인 아님)', $request->corroboration($bare));
+    }
+
+    /**
+     * 승인 cannot go through on a hunch: the administrator has to say
+     * how they confirmed the applicant is the person they name.
+     */
+    public function test_approval_is_refused_without_a_verification_method(): void
+    {
+        $member = Member::factory()->create(['name' => '김철수', 'birth_date' => '1980-03-02']);
+        $request = MembershipRequest::create($this->payload());
+
+        Livewire::actingAs($this->reviewer())
+            ->test(ViewMembershipRequest::class, ['record' => $request->getKey()])
+            ->callAction('approve', ['member_id' => $member->getKey()])
+            ->assertHasActionErrors(['verification_method' => 'required']);
+
+        $this->assertSame('대기', $request->fresh()->status);
+        $this->assertSame(0, User::query()->where('email', 'kim@example.com')->count());
+
+        /** 기타 says nothing on its own, so it has to be written out. */
+        Livewire::actingAs($this->reviewer())
+            ->test(ViewMembershipRequest::class, ['record' => $request->getKey()])
+            ->callAction('approve', ['verification_method' => '기타'])
+            ->assertHasActionErrors(['verification_note' => 'required']);
+
+        $this->assertSame('대기', $request->fresh()->status);
+    }
+
+    /**
+     * A completed 승인 stores how identity was confirmed, on the new
+     * member path as much as the linking one, and the activity log
+     * keeps the decision without ever touching the password.
+     */
+    public function test_the_approval_action_records_how_identity_was_confirmed(): void
+    {
+        $request = MembershipRequest::create($this->payload());
+
+        Livewire::actingAs($this->reviewer())
+            ->test(ViewMembershipRequest::class, ['record' => $request->getKey()])
+            ->callAction('approve', [
+                'verification_method' => '가족 또는 셀장·교역자가 확인',
+                'verification_note' => '셀장 박영수가 8월 6일 확인함.',
+            ])
+            ->assertHasNoActionErrors();
+
+        $request->refresh();
+
+        $this->assertSame('승인', $request->status);
+        $this->assertSame('가족 또는 셀장·교역자가 확인', $request->verification_method);
+        $this->assertSame('셀장 박영수가 8월 6일 확인함.', $request->verification_note);
+
+        /** The columns are review-only: a public submission can never set them. */
+        $this->assertSame([], array_intersect(
+            ['verification_method', 'verification_note'],
+            $request->getFillable(),
+        ));
+
+        $logged = Activity::query()
+            ->where('subject_type', MembershipRequest::class)
+            ->where('event', 'updated')
+            ->latest('id')
+            ->first()
+            ->attribute_changes['attributes'];
+
+        $this->assertSame('가족 또는 셀장·교역자가 확인', $logged['verification_method']);
+        $this->assertSame($request->matched_member_id, $logged['matched_member_id']);
+        $this->assertNotNull($logged['reviewed_by']);
+        $this->assertArrayNotHasKey('password', $logged);
     }
 
     /**
@@ -221,7 +332,7 @@ class MembershipSignupTest extends TestCase
     public function test_an_approved_member_reaches_only_their_profile(): void
     {
         $request = MembershipRequest::create($this->payload());
-        $user = $request->approve(null, $this->reviewer());
+        $user = $request->approve(null, $this->reviewer(), '직접 만나 확인');
         $profileUrl = Filament::getPanel('admin')->getProfileUrl();
 
         $this->actingAs($user);
@@ -234,17 +345,20 @@ class MembershipSignupTest extends TestCase
     }
 
     /**
-     * The review page renders with its candidate list and the two
-     * review actions available to an authorised administrator.
+     * The review page renders the comparison table, which labels every
+     * submitted field, and both review actions.
      */
     public function test_the_review_page_renders_with_its_actions(): void
     {
-        Member::factory()->create(['name' => '김철수', 'birth_date' => '1980-03-02']);
+        Member::factory()->create(['name' => '김철수', 'birth_date' => '1980-03-02', 'phone' => '0411222333']);
         $request = MembershipRequest::create($this->payload());
 
         Livewire::actingAs($this->reviewer())
             ->test(ViewMembershipRequest::class, ['record' => $request->getKey()])
             ->assertSuccessful()
+            ->assertSee('교적부 대조')
+            ->assertSee('자기 신고')
+            ->assertSee('일치')
             ->assertActionVisible('approve')
             ->assertActionVisible('reject');
     }

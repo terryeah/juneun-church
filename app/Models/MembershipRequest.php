@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * A public sign-up request (가입 신청) awaiting administrator review.
@@ -38,7 +40,8 @@ class MembershipRequest extends Model
 
     /**
      * Why a roster record was offered as a candidate, strongest match
-     * first. The order is the ranking.
+     * first. The order is the ranking, not a statement about identity:
+     * name and birth date are whatever the applicant typed.
      *
      * @var list<string>
      */
@@ -47,6 +50,57 @@ class MembershipRequest extends Model
         '이름 일치',
         '전화번호 일치',
     ];
+
+    /**
+     * How a submitted field stands against the roster record it is
+     * compared with.
+     */
+    public const VERDICT_SELF_DECLARED = '자기 신고';
+
+    public const VERDICT_MATCH = '일치';
+
+    public const VERDICT_CONFLICT = '불일치';
+
+    /**
+     * Fields the church may hold independently of the applicant, and so
+     * the only ones whose agreement corroborates anything.
+     *
+     * @var list<string>
+     */
+    public const CORROBORATING_FIELDS = ['전화번호', '이메일'];
+
+    /**
+     * Ways an administrator may confirm that the applicant is the
+     * person they claim to be, recorded on approval.
+     *
+     * @var array<string, string>
+     */
+    public const VERIFICATION_METHODS = [
+        '전화 통화로 확인' => '전화 통화로 확인',
+        '직접 만나 확인' => '직접 만나 확인',
+        '가족 또는 셀장·교역자가 확인' => '가족 또는 셀장·교역자가 확인',
+        '교회가 보관 중인 연락처와 일치' => '교회가 보관 중인 연락처와 일치',
+        '기타' => '기타',
+    ];
+
+    /**
+     * Record the review decision - who approved the request, which
+     * roster record it was linked to and how the applicant's identity
+     * was confirmed - so an approval can be audited afterwards.
+     *
+     * The columns are listed explicitly rather than relying on the
+     * trait's logFillable() plus logExcept('password'): the submitted
+     * password is a fillable attribute, and naming what is logged keeps
+     * it out by construction. The free-text 확인 메모 stays on the
+     * request only, as it may name other people.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'status', 'matched_member_id', 'reviewed_by', 'verification_method'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
 
     /**
      * The roster record the request was linked to on approval.
@@ -95,15 +149,81 @@ class MembershipRequest extends Model
     }
 
     /**
+     * Compare what the applicant submitted against what the church
+     * already holds on a roster record, field by field.
+     *
+     * A candidate proves nothing on its own: name and birth date are
+     * both supplied by the applicant, and member names are published on
+     * the public 섬기는 사람들 page, so agreement there only means the
+     * applicant's own claims are internally consistent. Only a field
+     * the church recorded independently - a phone number or an email
+     * address already on the roster - can corroborate anything, and a
+     * 불일치 is a reason to stop.
+     *
+     * @return list<array{field: string, submitted: ?string, held: ?string, verdict: string}>
+     */
+    public function comparison(Member $member): array
+    {
+        $fields = [
+            '이름' => [$this->name, $member->name],
+            '생년월일' => [$this->birth_date?->format('Y-m-d'), $member->birth_date?->format('Y-m-d')],
+            '전화번호' => [$this->phone, $member->phone],
+            '이메일' => [$this->email, $member->email],
+        ];
+
+        /** Only capitalisation is forgiven, so a formatting difference shows up as 불일치 rather than passing quietly. */
+        $compare = fn (?string $value): string => Str::lower(trim((string) $value));
+
+        return collect($fields)
+            ->map(fn (array $values, string $field): array => [
+                'field' => $field,
+                'submitted' => filled($values[0]) ? $values[0] : null,
+                'held' => filled($values[1]) ? $values[1] : null,
+                'verdict' => match (true) {
+                    blank($values[1]) => self::VERDICT_SELF_DECLARED,
+                    $compare($values[0]) === $compare($values[1]) => self::VERDICT_MATCH,
+                    default => self::VERDICT_CONFLICT,
+                },
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * One honest line about what a roster record corroborates, for the
+     * candidate list and the approval modal.
+     */
+    public function corroboration(Member $member): string
+    {
+        $comparison = collect($this->comparison($member));
+
+        $corroborated = $comparison
+            ->where('verdict', self::VERDICT_MATCH)
+            ->whereIn('field', self::CORROBORATING_FIELDS)
+            ->pluck('field');
+
+        return match (true) {
+            $comparison->contains('verdict', self::VERDICT_CONFLICT) => '불일치 항목 있음',
+            $corroborated->isNotEmpty() => '교회 기록 '.$corroborated->implode('·').' 일치',
+            default => '신고 내용만 일치 (본인 확인 아님)',
+        };
+    }
+
+    /**
      * Approve the request: create the login with the password the
      * applicant chose, link it to the chosen roster record (or to a
-     * freshly registered one) and stamp the review.
+     * freshly registered one) and stamp the review together with how
+     * the administrator confirmed the applicant's identity.
+     *
+     * The verification method is required on both paths, because
+     * registering a fresh 성도 for an unverified stranger hands out the
+     * same access as linking one.
      *
      * Field handling mirrors the 사이트 계정 section of the member form.
      */
-    public function approve(?Member $member, User $reviewer): User
+    public function approve(?Member $member, User $reviewer, string $verificationMethod, ?string $verificationNote = null): User
     {
-        return DB::transaction(function () use ($member, $reviewer): User {
+        return DB::transaction(function () use ($member, $reviewer, $verificationMethod, $verificationNote): User {
             $user = new User;
             $user->name = $this->name;
             $user->email = $this->email;
@@ -129,6 +249,8 @@ class MembershipRequest extends Model
                 'matched_member_id' => $member->getKey(),
                 'reviewed_by' => $reviewer->getKey(),
                 'reviewed_at' => now(),
+                'verification_method' => $verificationMethod,
+                'verification_note' => $verificationNote,
             ])->save();
 
             return $user;

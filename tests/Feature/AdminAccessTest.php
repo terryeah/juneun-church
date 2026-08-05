@@ -153,7 +153,7 @@ class AdminAccessTest extends TestCase
             'phone' => '0411222333',
             'email' => 'kim@example.com',
             'password' => 'correct-horse-battery',
-        ])->approve(null, $reviewer);
+        ])->approve(null, $reviewer, '전화 통화로 확인');
 
         $this->assertNotNull($signedUp->membershipRequest);
         $this->assertNull($reviewer->membershipRequest);
