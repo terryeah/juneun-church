@@ -196,53 +196,45 @@ class AdminPanelProvider extends PanelProvider
                 var debounceTimer = null;
                 var sessionToken = null;
                 var placesLibrary = null;
-                var trace = [];
-                var newline = String.fromCharCode(10);
 
                 /**
-                 * Temporary on-page diagnostic. Mobile browsers give no
-                 * easy console access, so each stage is reported in a
-                 * fixed corner panel until autocomplete is confirmed
-                 * working, then this helper goes away.
+                 * The suggestion list lives directly on the body and is
+                 * positioned over the input, rather than nested inside
+                 * the field. Filament's form sections clip and stack
+                 * their children, and Livewire re-morphs the field
+                 * markup, both of which swallow a nested dropdown.
                  */
-                function stage(message) {
-                    trace.push(message);
-
-                    var panel = document.getElementById('juneun-places-trace');
-
-                    if (!panel) {
-                        panel = document.createElement('div');
-                        panel.id = 'juneun-places-trace';
-                        panel.style.cssText = 'position:fixed;inset-block-end:0.5rem;inset-inline-start:0.5rem;z-index:9999;max-width:22rem;padding:0.5rem 0.625rem;border-radius:0.5rem;background:rgba(17,24,39,0.92);color:#f9fafb;font:0.6875rem/1.4 monospace;white-space:pre-wrap;pointer-events:none';
-                        document.body.appendChild(panel);
-                    }
-
-                    panel.textContent = 'PLACES 진단' + newline + trace.join(newline);
-                }
-
-                window.addEventListener('error', function (event) {
-                    stage('window error: ' + (event.message || 'unknown'));
-                });
-
-                stage('1. 스크립트 실행됨');
-
                 function makeDropdown(input) {
+                    var dark = document.documentElement.classList.contains('dark');
                     var list = document.createElement('ul');
-                    list.style.cssText = 'position:absolute;inset-inline:0;top:calc(100% + 0.25rem);z-index:50;margin:0;padding:0.25rem;list-style:none;background:Canvas;color:CanvasText;border:1px solid color-mix(in srgb, currentColor 20%, transparent);border-radius:0.5rem;box-shadow:0 0.5rem 1.5rem rgba(0,0,0,0.25);display:none;max-height:16rem;overflow-y:auto';
-                    list.style.colorScheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-                    var wrapper = input.closest('.fi-input-wrp') || input.parentElement;
-                    wrapper.style.position = 'relative';
-                    wrapper.appendChild(list);
+                    list.style.cssText = 'position:fixed;z-index:2147483000;margin:0;padding:0.25rem;list-style:none;border-radius:0.5rem;box-shadow:0 0.5rem 1.5rem rgba(0,0,0,0.35);display:none;max-height:16rem;overflow-y:auto;'
+                        + (dark
+                            ? 'background:#1f2937;color:#f9fafb;border:1px solid rgba(255,255,255,0.14);'
+                            : 'background:#ffffff;color:#111827;border:1px solid rgba(17,24,39,0.12);');
+                    document.body.appendChild(list);
+
                     return list;
                 }
 
-                function notice(list, message, isError) {
+                function place(input, list) {
+                    var box = input.getBoundingClientRect();
+                    list.style.insetInlineStart = box.left + 'px';
+                    list.style.width = box.width + 'px';
+                    list.style.top = (box.bottom + 4) + 'px';
+                }
+
+                function show(input, list) {
+                    place(input, list);
+                    list.style.display = 'block';
+                }
+
+                function notice(input, list, message, isError) {
                     list.textContent = '';
                     var item = document.createElement('li');
                     item.textContent = message;
-                    item.style.cssText = 'padding:0.5rem 0.625rem;font-size:0.75rem;line-height:1.4;' + (isError ? 'color:#ef4444' : 'opacity:0.6');
+                    item.style.cssText = 'padding:0.5rem 0.625rem;font-size:0.75rem;line-height:1.4;' + (isError ? 'color:#f87171' : 'opacity:0.6');
                     list.appendChild(item);
-                    list.style.display = 'block';
+                    show(input, list);
                 }
 
                 function choose(input, list, text) {
@@ -268,11 +260,11 @@ class AdminPanelProvider extends PanelProvider
 
                         var item = document.createElement('li');
                         item.textContent = text;
-                        item.style.cssText = 'padding:0.5rem 0.625rem;border-radius:0.375rem;cursor:pointer;font-size:0.875rem;line-height:1.35';
-                        item.addEventListener('mouseenter', function () {
-                            item.style.background = 'color-mix(in srgb, currentColor 8%, transparent)';
+                        item.style.cssText = 'padding:0.625rem;border-radius:0.375rem;cursor:pointer;font-size:0.875rem;line-height:1.35';
+                        item.addEventListener('pointerenter', function () {
+                            item.style.background = 'rgba(128,138,160,0.18)';
                         });
-                        item.addEventListener('mouseleave', function () {
+                        item.addEventListener('pointerleave', function () {
                             item.style.background = 'transparent';
                         });
                         item.addEventListener('pointerdown', function (event) {
@@ -282,7 +274,11 @@ class AdminPanelProvider extends PanelProvider
                         list.appendChild(item);
                     });
 
-                    list.style.display = list.childElementCount ? 'block' : 'none';
+                    if (list.childElementCount) {
+                        show(input, list);
+                    } else {
+                        list.style.display = 'none';
+                    }
                 }
 
                 function bind(input, places) {
@@ -298,8 +294,7 @@ class AdminPanelProvider extends PanelProvider
                         }
 
                         debounceTimer = window.setTimeout(function () {
-                            stage('6. 검색 요청: ' + value);
-                            notice(list, '검색 중…', false);
+                            notice(input, list, '검색 중…', false);
                             sessionToken = sessionToken || new places.AutocompleteSessionToken();
 
                             places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
@@ -308,11 +303,9 @@ class AdminPanelProvider extends PanelProvider
                                 includedRegionCodes: ['au'],
                                 language: 'en-AU',
                             }).then(function (result) {
-                                stage('7. 응답 수신: ' + ((result.suggestions || []).length) + '건');
                                 render(input, list, result.suggestions || []);
                             }).catch(function (error) {
-                                stage('7. 요청 실패: ' + (error && error.message ? error.message : String(error)));
-                                notice(list, '자동완성 오류: ' + (error && error.message ? error.message : String(error)), true);
+                                notice(input, list, '자동완성 오류: ' + (error && error.message ? error.message : String(error)), true);
                             });
                         }, 250);
                     });
@@ -328,25 +321,33 @@ class AdminPanelProvider extends PanelProvider
                             list.style.display = 'none';
                         }
                     });
+
+                    /**
+                     * A body-level dropdown does not travel with the
+                     * field, so it follows scrolling while it is open.
+                     */
+                    window.addEventListener('scroll', function () {
+                        if (list.style.display !== 'none') {
+                            place(input, list);
+                        }
+                    }, true);
+
+                    window.addEventListener('resize', function () {
+                        if (list.style.display !== 'none') {
+                            place(input, list);
+                        }
+                    });
                 }
 
                 function attach(places) {
-                    var found = document.querySelectorAll('input[data-google-places]');
-                    var bound = 0;
-
-                    found.forEach(function (input) {
+                    document.querySelectorAll('input[data-google-places]').forEach(function (input) {
                         if (boundInputs.has(input)) {
                             return;
                         }
 
                         boundInputs.add(input);
                         bind(input, places);
-                        bound = bound + 1;
                     });
-
-                    if (bound > 0) {
-                        stage('5. 주소 필드 ' + bound + '개 연결됨 (총 ' + found.length + ')');
-                    }
                 }
 
                 window.__juneunPlaces = {
@@ -362,11 +363,8 @@ class AdminPanelProvider extends PanelProvider
                 });
 
                 window.__juneunInitGooglePlaces = function () {
-                    stage('3. 구글 로더 콜백 도착');
-
                     google.maps.importLibrary('places').then(function (places) {
                         placesLibrary = places;
-                        stage('4. places 라이브러리 로드됨, AutocompleteSuggestion=' + (places && places.AutocompleteSuggestion ? 'O' : 'X'));
                         attach(places);
 
                         new MutationObserver(function () {
@@ -376,18 +374,15 @@ class AdminPanelProvider extends PanelProvider
                             subtree: true,
                         });
                     }).catch(function (error) {
-                        stage('4. 라이브러리 로드 실패: ' + (error && error.message ? error.message : String(error)));
+                        console.error('places library import failed', error);
                     });
                 };
 
                 var loader = document.createElement('script');
                 loader.src = '{$src}';
                 loader.async = true;
-                loader.onload = function () {
-                    stage('2. 로더 스크립트 다운로드 완료');
-                };
                 loader.onerror = function () {
-                    stage('2. 로더 차단됨 (네트워크/확장프로그램)');
+                    console.error('google maps loader blocked or unreachable');
                 };
                 document.head.appendChild(loader);
             })();
