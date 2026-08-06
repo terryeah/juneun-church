@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\LogsModelActivity;
+use App\Models\Concerns\PurgesCdnCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\Storage;
 #[Fillable(['title', 'file_path', 'published_at', 'created_by'])]
 class Bulletin extends Model
 {
+    use HasFactory, LogsModelActivity, PurgesCdnCache;
+
     /**
      * Remove the stored file alongside the record.
      */
@@ -25,7 +28,15 @@ class Bulletin extends Model
         });
     }
 
-    use HasFactory, LogsModelActivity;
+    /**
+     * The PDF is served from the CDN.
+     *
+     * @return list<string>
+     */
+    public function cdnMediaColumns(): array
+    {
+        return ['file_path'];
+    }
 
     /**
      * Get the attributes that should be cast.

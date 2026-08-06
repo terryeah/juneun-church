@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\LogsModelActivity;
+use App\Models\Concerns\PurgesCdnCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,7 +29,17 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class Photo extends Model
 {
-    use HasFactory, LogsModelActivity;
+    use HasFactory, LogsModelActivity, PurgesCdnCache;
+
+    /**
+     * The image and its thumbnail are both served from the CDN.
+     *
+     * @return list<string>
+     */
+    public function cdnMediaColumns(): array
+    {
+        return ['path', 'thumbnail_path'];
+    }
 
     /**
      * Remove the stored image and thumbnail alongside the record.

@@ -23,6 +23,12 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
+        <!-- Media stays on the local disk, and no real Cloudflare credentials
+             reach the suite: a developer's own .env points both at production,
+             and a delete in a test would then purge the live zone's cache. -->
+        <env name="MEDIA_DISK" value="public"/>
+        <env name="CLOUDFLARE_API_TOKEN" value=""/>
+        <env name="CLOUDFLARE_ZONE_ID" value=""/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="DB_URL" value=""/>

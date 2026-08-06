@@ -114,4 +114,23 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Timebox Duration
+    |--------------------------------------------------------------------------
+    |
+    | The floor, in microseconds, that Laravel pads a password reset request
+    | and a failed sign-in up to, so that neither discloses whether the
+    | address belongs to anybody by how long the answer takes.
+    |
+    | Laravel's own default is 200,000 - below the cost of a single bcrypt
+    | at the 12 rounds this site uses, which leaves the padding unable to
+    | hide the work an existing address pays for hashing its reset token.
+    | The value below sits clear of that on the 1 GB production host, and
+    | is only ever waited out on a request that failed or found nobody.
+    |
+    */
+
+    'timebox_duration' => (int) env('AUTH_TIMEBOX_DURATION', 750000),
+
 ];

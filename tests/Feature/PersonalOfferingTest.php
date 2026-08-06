@@ -11,6 +11,7 @@ use App\Models\PersonalOffering;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Database\Seeders\RoleSeeder;
+use Filament\Forms\Components\Select;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
@@ -94,5 +95,53 @@ class PersonalOfferingTest extends TestCase
         $this->assertSame($member->id, $giving->member_id);
         $this->assertSame('홍길동', $giving->name);
         $this->assertSame('150.50', $giving->amount);
+    }
+
+    /**
+     * The 성도 picker looks names up on the server instead of listing
+     * the roster into the page.
+     *
+     * 재정부 reaches this form and nothing else about the congregation,
+     * so eager options handed a finance volunteer every member's name
+     * and id in one request - including 별세 records and anyone kept
+     * off the public page.
+     */
+    public function test_the_member_picker_does_not_ship_the_roster_into_the_page(): void
+    {
+        Member::create(['name' => '홍길동']);
+        Member::create(['name' => '별세하신분', 'status' => '별세', 'is_published' => false]);
+
+        $finance = User::factory()->create();
+        $finance->assignRole('finance_officer');
+
+        $this->actingAs($finance)
+            ->get(PersonalOfferingResource::getUrl('create'))
+            ->assertOk()
+            ->assertDontSee('홍길동')
+            ->assertDontSee('별세하신분');
+    }
+
+    /**
+     * Searching still finds a member, a saved value still renders its
+     * name, and picking one still fills 성함.
+     */
+    public function test_the_member_picker_still_searches_and_fills_the_name(): void
+    {
+        $member = Member::create(['name' => '홍길동']);
+        Member::create(['name' => '김철수']);
+
+        $page = Livewire::test(CreatePersonalOffering::class);
+
+        /** The live picker on the page, re-resolved after every update. */
+        $picker = fn (): Select => $page->instance()->form->getComponent(
+            fn ($component): bool => $component->getStatePath() === 'data.member_id',
+        );
+
+        $this->assertSame([$member->id => '홍길동'], $picker()->getSearchResults('홍길'));
+        $this->assertSame([], $picker()->getSearchResults('아무도아닌'));
+
+        $page->set('data.member_id', $member->id)->assertFormSet(['name' => '홍길동']);
+
+        $this->assertSame('홍길동', $picker()->getOptionLabel());
     }
 }

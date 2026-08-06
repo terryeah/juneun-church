@@ -94,15 +94,19 @@ class MemberForm
                     ->label('새가족 수료')
                     ->native(false)
                     ->displayFormat('Y-m-d'),
+                /** Searched on the server so the page never carries the whole roster. */
                 Select::make('head_id')
                     ->label('가족 대표')
-                    ->options(fn (?Member $record): array => Member::query()
+                    ->searchable()
+                    ->getSearchResultsUsing(fn (string $search, ?Member $record): array => Member::query()
                         ->whereNull('head_id')
                         ->whereKeyNot($record?->getKey())
+                        ->whereLike('name', "%{$search}%")
                         ->orderBy('name')
+                        ->limit(50)
                         ->pluck('name', 'id')
                         ->all())
-                    ->searchable()
+                    ->getOptionLabelUsing(fn (?string $value): ?string => Member::query()->whereKey($value)->value('name'))
                     ->helperText('본인이 가족 대표이면 비워두세요.')
                     ->rule(fn (?Member $record): \Closure => function (string $attribute, mixed $value, \Closure $fail) use ($record): void {
                         if ($value && $record && $record->family()->exists()) {

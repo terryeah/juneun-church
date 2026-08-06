@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Filament\Support\SaveUploadsAsWebp;
 use App\Models\Concerns\GeneratesReadableSlug;
 use App\Models\Concerns\LogsModelActivity;
+use App\Models\Concerns\PurgesCdnCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,7 +29,18 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class Album extends Model
 {
-    use GeneratesReadableSlug, HasFactory, LogsModelActivity;
+    use GeneratesReadableSlug, HasFactory, LogsModelActivity, PurgesCdnCache;
+
+    /**
+     * The cover image and its thumbnail are served from the CDN. The
+     * album's photographs purge themselves as they cascade.
+     *
+     * @return list<string>
+     */
+    public function cdnMediaColumns(): array
+    {
+        return ['cover_photo_path', 'cover_thumbnail_path'];
+    }
 
     /**
      * Get the attributes that should be cast.

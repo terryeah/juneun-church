@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\LogsModelActivity;
+use App\Models\Concerns\PurgesCdnCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,7 +46,7 @@ use Spatie\Activitylog\Support\LogOptions;
 ])]
 class Member extends Model
 {
-    use HasFactory, LogsModelActivity;
+    use HasFactory, LogsModelActivity, PurgesCdnCache;
 
     /**
      * Position names that never count as serving on the public people
@@ -54,6 +55,31 @@ class Member extends Model
      * @var list<string>
      */
     public const NON_SERVING_POSITIONS = ['성도', '집사', '권사', '장로'];
+
+    /**
+     * The roster photograph is served from the CDN.
+     *
+     * @return list<string>
+     */
+    public function cdnMediaColumns(): array
+    {
+        return ['photo'];
+    }
+
+    /**
+     * Remove the stored photograph alongside the record, the way a
+     * photo and a bulletin already do. Without this the image outlives
+     * the roster entry on a public bucket, and purging the edge copy
+     * would achieve nothing because the origin would still serve it.
+     */
+    protected static function booted(): void
+    {
+        static::deleted(function (Member $member): void {
+            if ($member->photo) {
+                Storage::disk(config('filesystems.media'))->delete($member->photo);
+            }
+        });
+    }
 
     /**
      * Personal details stay out of the activity log; only roster

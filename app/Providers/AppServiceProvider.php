@@ -7,6 +7,7 @@ use App\Filament\Analytics\TrafficStatsWidget;
 use App\Filament\Support\SaveUploadsAsWebp;
 use App\Policies\ActivityPolicy;
 use Filament\Actions\CreateAction;
+use Filament\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Table;
 use Illuminate\Auth\Events\Failed;
@@ -26,7 +27,29 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        /**
+         * Send the panel's password reset mail after the response has
+         * been flushed, rather than on the request thread.
+         *
+         * Filament resolves this notification from the container, so
+         * rebinding it is the only place its queue connection can be
+         * pinned. It already implements ShouldQueue, but the server
+         * runs no queue worker: on the default 'database' connection
+         * the job would sit in the table for ever and the mail would
+         * never arrive, and on 'sync' the request would block on SMTP
+         * for as long as the mail host takes - which is what turned
+         * the public reset form into a membership oracle, because only
+         * an address that exists pays that wait.
+         *
+         * The 'deferred' connection runs the send in this same process
+         * once the response is on its way, so no worker is needed and
+         * the two answers cost the same.
+         */
+        $this->app->bind(
+            ResetPasswordNotification::class,
+            fn ($app, array $parameters): ResetPasswordNotification => (new ResetPasswordNotification($parameters['token']))
+                ->onConnection('deferred'),
+        );
     }
 
     /**

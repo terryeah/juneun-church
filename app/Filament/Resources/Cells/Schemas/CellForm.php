@@ -23,10 +23,17 @@ class CellForm
     {
         return $schema
             ->components([
+                /** Searched on the server so the page never carries the whole roster. */
                 Select::make('leader_id')
                     ->label('셀장')
-                    ->options(fn (): array => Member::query()->orderBy('name')->pluck('name', 'id')->all())
                     ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Member::query()
+                        ->whereLike('name', "%{$search}%")
+                        ->orderBy('name')
+                        ->limit(50)
+                        ->pluck('name', 'id')
+                        ->all())
+                    ->getOptionLabelUsing(fn (?string $value): ?string => Member::query()->whereKey($value)->value('name'))
                     ->required(),
                 TextInput::make('description')
                     ->label('설명')

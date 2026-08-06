@@ -72,12 +72,32 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     }
 
     /**
-     * Record 2FA lifecycle changes in the activity log. Only the event
-     * is logged - secrets and recovery codes never leave the model.
+     * Record 2FA lifecycle changes and password resets by somebody
+     * else in the activity log. Only the event is logged - no secret,
+     * recovery code, password or hash ever leaves the model.
      */
     protected static function booted(): void
     {
         static::updated(function (User $user): void {
+            /**
+             * An administrator may legitimately set a new password on a
+             * staff account through the 성도 form's 사이트 계정 section,
+             * and the same happens when somebody completes a reset with
+             * an emailed link. Neither left any trace: LogsModelActivity
+             * excludes the password column, and a save that changed only
+             * the password is then an empty change set that
+             * dontLogEmptyChanges() drops altogether. A password being
+             * set on an account by anyone other than its owner is worth
+             * seeing, so it is recorded here instead.
+             */
+            if ($user->wasChanged('password') && auth()->id() !== $user->getKey()) {
+                activity()
+                    ->performedOn($user)
+                    ->causedBy(auth()->user())
+                    ->event('password_changed')
+                    ->log('다른 사용자가 비밀번호 변경');
+            }
+
             if ($user->wasChanged('app_authentication_secret')) {
                 activity()
                     ->performedOn($user)

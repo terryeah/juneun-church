@@ -38,10 +38,24 @@ class PersonalOfferingForm
         return $schema
             ->components([
                 ...$offering,
+                /**
+                 * The roster is searched on the server, one query per
+                 * keystroke, rather than listed into the page. Eager
+                 * options would serialise every 성도 - 별세 and
+                 * 장기결석 records included - into the source of a form
+                 * 재정부 volunteers open every week, when their work
+                 * needs the handful of names who gave that Sunday.
+                 */
                 Select::make('member_id')
                     ->label('성도')
-                    ->options(fn (): array => Member::query()->orderBy('name')->pluck('name', 'id')->all())
                     ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Member::query()
+                        ->whereLike('name', "%{$search}%")
+                        ->orderBy('name')
+                        ->limit(50)
+                        ->pluck('name', 'id')
+                        ->all())
+                    ->getOptionLabelUsing(fn (?string $value): ?string => Member::query()->whereKey($value)->value('name'))
                     ->live()
                     ->helperText('명단에 없는 분은 비워두고 성함만 적어 주세요.')
                     ->afterStateUpdated(fn (Set $set, ?string $state) => filled($state)

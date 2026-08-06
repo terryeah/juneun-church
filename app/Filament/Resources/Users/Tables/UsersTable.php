@@ -20,6 +20,23 @@ use Illuminate\Support\Facades\Password;
  */
 class UsersTable
 {
+    /**
+     * The roles no reset link may ever be minted for.
+     *
+     * A reset link is a working key to the account it names, so minting
+     * one for a super admin or a fellow developer hands over every
+     * permission in the system - and 2FA is the only thing left in the
+     * way, which an account that has not enrolled yet does not have.
+     * The people holding those two roles are also the ones who can
+     * always recover themselves through the panel's own reset page, so
+     * refusing them costs nothing and removes the one target worth
+     * taking. Everybody else - 성도 and the specialist staff roles -
+     * is what the action was written for.
+     *
+     * @var list<string>
+     */
+    private const PROTECTED_ROLES = ['super_admin', 'developer'];
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -73,7 +90,8 @@ class UsersTable
                     ->label('비밀번호 재설정 링크')
                     ->icon(Heroicon::OutlinedKey)
                     ->color('gray')
-                    ->visible(fn (): bool => auth()->user()?->hasRole('developer') ?? false)
+                    ->visible(fn (User $record): bool => (auth()->user()?->hasRole('developer') ?? false)
+                        && static::mayMintLinkFor($record))
                     ->modalHeading('비밀번호 재설정 링크')
                     ->modalDescription('한 시간 동안만 유효하며, 본인에게 직접 전달하세요. 새 링크를 만들면 이전 링크는 무효가 됩니다.')
                     ->modalSubmitAction(false)
@@ -90,17 +108,41 @@ class UsersTable
     }
 
     /**
+     * Whether a reset link may be minted for the given account.
+     */
+    public static function mayMintLinkFor(User $user): bool
+    {
+        return ! $user->hasAnyRole(self::PROTECTED_ROLES);
+    }
+
+    /**
      * A signed, single-use password reset link for the given account.
      *
      * The token is Laravel's own, stored hashed in password_reset_tokens
      * and expiring after the hour configured in config/auth.php, so
      * nothing recoverable about the existing password is exposed.
+     *
+     * Minting one is recorded in the activity log naming the developer
+     * who asked and the account it opens - never the token itself,
+     * which would make the log a takeover primitive of its own. The
+     * restriction is re-checked here rather than trusted from the
+     * action's visibility, because this is where the token is made.
      */
     public static function passwordResetUrl(User $user): string
     {
-        return Filament::getPanel('admin')->getResetPasswordUrl(
+        abort_unless(static::mayMintLinkFor($user), 403);
+
+        $url = Filament::getPanel('admin')->getResetPasswordUrl(
             Password::broker()->createToken($user),
             $user,
         );
+
+        activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->event('password_reset_link')
+            ->log('비밀번호 재설정 링크 생성');
+
+        return $url;
     }
 }
