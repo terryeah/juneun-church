@@ -7,7 +7,6 @@ use App\Filament\Widgets\QuickActionsWidget;
 use App\Filament\Widgets\RecentActivityWidget;
 use App\Filament\Widgets\UpcomingEventsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
-use Filament\Widgets\AccountWidget;
 
 /**
  * Panel dashboard: headline numbers, the week ahead and, for the
@@ -44,7 +43,6 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            AccountWidget::class,
             QuickActionsWidget::class,
             ContentStatsWidget::class,
             UpcomingEventsWidget::class,
