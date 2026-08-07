@@ -44,8 +44,8 @@ class LoginController extends Controller
                 'password' => ['required', 'string'],
             ],
             [
-                'required' => ':attribute 항목을 입력해 주세요.',
-                'email' => '올바른 이메일 주소를 입력해 주세요.',
+                'required' => ':attribute 항목을 입력해주세요.',
+                'email' => '올바른 이메일 주소를 입력해주세요.',
                 'max' => ':attribute 항목이 너무 깁니다.',
             ],
             [

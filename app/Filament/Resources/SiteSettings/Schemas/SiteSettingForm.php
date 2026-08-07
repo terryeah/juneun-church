@@ -121,7 +121,7 @@ class SiteSettingForm
                 TextInput::make('contact_email')
                     ->label('대표 이메일')
                     ->email()
-                    ->helperText('누르면 메일 쓰기가 열려요. 비워 두면 그 줄이 사라져요.')
+                    ->helperText('누르면 메일 쓰기가 열려요. 비워두면 그 줄이 사라져요.')
                     ->placeholder('juneunchurch@gmail.com'),
             ]);
     }
@@ -163,7 +163,7 @@ class SiteSettingForm
                     ->required(),
                 TextInput::make($prefix.'_time')
                     ->label('예배 시간')
-                    ->helperText('요일과 시간을 함께 적어 주세요.')
+                    ->helperText('요일과 시간을 함께 적어주세요.')
                     ->placeholder('주일 오후 1:30')
                     ->required(),
                 TextInput::make($prefix.'_venue')
@@ -189,7 +189,7 @@ class SiteSettingForm
                 Callout::make()
                     ->color('warning')
                     ->icon(Heroicon::OutlinedExclamationTriangle)
-                    ->heading('저장하기 전에 통장이나 은행 앱과 한 자리씩 맞춰 보세요.')
+                    ->heading('저장하기 전에 통장이나 은행 앱과 한 자리씩 맞춰보세요.')
                     ->description('성도들이 실제로 이체하는 계좌예요. 숫자 하나만 틀려도 헌금이 다른 사람에게 가요.')
                     ->columnSpanFull(),
                 TextInput::make('giving_bank')
@@ -211,11 +211,11 @@ class SiteSettingForm
                     ->validationMessages(['regex' => 'BSB는 숫자 6자리여야 합니다.']),
                 TextInput::make('giving_account_number')
                     ->label('계좌번호 (Account Number)')
-                    ->helperText('숫자만 적어 주세요.')
+                    ->helperText('숫자만 적어주세요.')
                     ->placeholder('615113')
                     ->required()
                     ->rule('regex:/^[\d\- ]{5,}$/')
-                    ->validationMessages(['regex' => '계좌번호는 숫자로만 적어 주세요.']),
+                    ->validationMessages(['regex' => '계좌번호는 숫자로만 적어주세요.']),
             ]);
     }
 
@@ -235,7 +235,7 @@ class SiteSettingForm
                     ->color('warning')
                     ->icon(Heroicon::OutlinedExclamationTriangle)
                     ->heading('한국 계좌도 실제 송금에 쓰여요.')
-                    ->description('저장하기 전에 계좌번호를 한 자리씩 맞춰 보세요.')
+                    ->description('저장하기 전에 계좌번호를 한 자리씩 맞춰보세요.')
                     ->columnSpanFull(),
                 TextInput::make('giving_kr_bank')
                     ->label('은행')
@@ -243,7 +243,7 @@ class SiteSettingForm
                     ->placeholder('카카오뱅크'),
                 TextInput::make('giving_kr_account_name')
                     ->label('예금주')
-                    ->helperText('비워 두면 예금주 줄만 사라져요.'),
+                    ->helperText('비워두면 예금주 줄만 사라져요.'),
                 TextInput::make('giving_kr_account_number')
                     ->label('계좌번호')
                     ->helperText('이 칸을 비우면 한국 계좌 카드가 통째로 숨겨져요.')
@@ -286,7 +286,7 @@ class SiteSettingForm
             ->schema([
                 TextInput::make('home_hero_photo')
                     ->label('대표 사진 파일 이름')
-                    ->helperText('갤러리에 올린 사진의 파일 이름을 그대로 적어요. 사진 화면에서 복사해 오시면 돼요. 비워 두거나 이름이 맞지 않으면 사진 없이 나와요.')
+                    ->helperText('갤러리에 올린 사진의 파일 이름을 그대로 적어요. 사진 화면에서 복사해오시면 돼요. 비워두거나 이름이 맞지 않으면 사진 없이 나와요.')
                     ->placeholder('f632f799-3dee-4760-a3ae-f271ec8be9bf.webp'),
             ]);
     }

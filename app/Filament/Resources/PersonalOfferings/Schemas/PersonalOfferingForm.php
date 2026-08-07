@@ -57,7 +57,7 @@ class PersonalOfferingForm
                         ->all())
                     ->getOptionLabelUsing(fn (?string $value): ?string => Member::query()->whereKey($value)->value('name'))
                     ->live()
-                    ->helperText('명단에 없는 분은 비워두고 성함만 적어 주세요.')
+                    ->helperText('명단에 없는 분은 비워두고 성함만 적어주세요.')
                     ->afterStateUpdated(fn (Set $set, ?string $state) => filled($state)
                         ? $set('name', Member::query()->whereKey($state)->value('name'))
                         : null),

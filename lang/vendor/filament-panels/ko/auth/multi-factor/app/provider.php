@@ -28,7 +28,7 @@ return [
 
         'code' => [
 
-            'label' => '인증 앱에 표시된 6자리 코드를 입력해 주세요',
+            'label' => '인증 앱에 표시된 6자리 코드를 입력해주세요',
 
             'validation_attribute' => '인증 코드',
 

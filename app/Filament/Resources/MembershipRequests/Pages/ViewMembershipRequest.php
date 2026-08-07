@@ -56,11 +56,11 @@ class ViewMembershipRequest extends ViewRecord
                         ->options(MembershipRequest::VERIFICATION_METHODS)
                         ->required()
                         ->live()
-                        ->helperText('본인이 맞는지 어떻게 확인했는지 남겨 주세요. 새 성도로 등록할 때도 확인이 필요합니다.'),
+                        ->helperText('본인이 맞는지 어떻게 확인했는지 남겨주세요. 새 성도로 등록할 때도 확인이 필요합니다.'),
                     Textarea::make('verification_note')
                         ->label('확인 메모')
                         ->rows(3)
-                        ->placeholder('누가 언제 어떻게 확인했는지 적어 두면 나중에 확인할 수 있습니다.')
+                        ->placeholder('누가 언제 어떻게 확인했는지 적어두면 나중에 확인할 수 있습니다.')
                         ->required(fn (Get $get): bool => $get('verification_method') === '기타'),
                 ])
                 ->action(function (MembershipRequest $record, array $data): void {

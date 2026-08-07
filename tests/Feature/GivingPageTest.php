@@ -84,7 +84,7 @@ class GivingPageTest extends TestCase
     {
         $this->get('/giving')
             ->assertOk()
-            ->assertSee('이체 시 참조란에 이름과 헌금 종류를 약자로 함께 적어 주세요.', false)
+            ->assertSee('이체 시 참조란에 이름과 헌금 종류를 약자로 함께 적어주세요.', false)
             ->assertDontSee('section-giving-records')
             ->assertDontSee('지난 주일 보기')
             ->assertDontSee('이영희');

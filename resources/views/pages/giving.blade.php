@@ -56,7 +56,7 @@
         </div>
 
         <div class="mt-6 font-kr text-body-sm leading-relaxed text-navy-400">
-            <p>이체 시 참조란에 이름과 헌금 종류를 약자로 함께 적어 주세요.</p>
+            <p>이체 시 참조란에 이름과 헌금 종류를 약자로 함께 적어주세요.</p>
             <ul class="mt-2 space-y-1 md:mt-1 md:flex md:flex-wrap md:gap-x-5 md:space-y-0">
                 <li>주일헌금 <span class="font-bold">O</span></li>
                 <li>십일조 <span class="font-bold">T</span></li>

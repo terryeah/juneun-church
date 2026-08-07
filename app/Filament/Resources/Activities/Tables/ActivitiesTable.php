@@ -21,9 +21,17 @@ class ActivitiesTable
     {
         return $table
             ->columns([
+                /**
+                 * Pinned so the column keeps the same width from page
+                 * to page. Left to size itself, an auto-laid-out table
+                 * hands it whatever slack the other columns leave, and
+                 * that slack changes with the content of each page.
+                 */
                 TextColumn::make('created_at')
                     ->label('일시')
                     ->dateTime()
+                    ->width('1%')
+                    ->extraCellAttributes(['class' => 'whitespace-nowrap'])
                     ->sortable(),
                 TextColumn::make('causer.name')
                     ->label('사용자')

@@ -77,7 +77,7 @@
                     <div>
                         <label for="note" class="{{ $labelClass }}">남기실 말씀 <span class="font-medium text-navy-400">(선택)</span></label>
                         <textarea id="note" name="note" rows="4" maxlength="1000"
-                                  placeholder="함께 등록한 가족, 출석하시는 예배 등 확인에 도움이 되는 내용을 적어 주세요."
+                                  placeholder="함께 등록한 가족, 출석하시는 예배 등 확인에 도움이 되는 내용을 적어주세요."
                                   class="{{ $inputClass }}">{{ old('note') }}</textarea>
                         @error('note')<p class="{{ $errorClass }}">{{ $message }}</p>@enderror
                     </div>
