@@ -38,6 +38,22 @@ class Cell extends Model
     }
 
     /**
+     * The name to show, built from the leader as it stands now.
+     *
+     * The stored name is only refreshed when the cell itself is saved,
+     * so renaming the 셀장 on their own roster record would leave it
+     * behind. Reading it from the relation keeps every list and select
+     * current; the stored value remains as the fallback for a cell
+     * whose leader has been deleted.
+     */
+    public function displayName(): string
+    {
+        return $this->leader?->name
+            ? $this->leader->name.' 셀'
+            : (string) $this->name;
+    }
+
+    /**
      * The member leading this cell (셀장).
      */
     public function leader(): BelongsTo

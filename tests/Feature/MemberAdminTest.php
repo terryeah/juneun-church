@@ -64,9 +64,19 @@ class MemberAdminTest extends TestCase
 
         $this->assertSame('김한별 셀', $cell->name);
 
+        /**
+         * Renaming the leader on their own record does not touch the
+         * stored name, so the shown name is read from the relation.
+         */
+        $newLeader->update(['name' => '김한결']);
+
+        $this->assertSame('김한별 셀', $cell->fresh()->name);
+        $this->assertSame('김한결 셀', $cell->fresh()->displayName());
+
         $newLeader->delete();
 
         $this->assertSame('김한별 셀', $cell->fresh()->name);
+        $this->assertSame('김한별 셀', $cell->fresh()->displayName());
     }
 
     /**

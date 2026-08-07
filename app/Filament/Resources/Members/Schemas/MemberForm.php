@@ -67,7 +67,12 @@ class MemberForm
                     ->options(fn (): array => Ministry::query()->orderBy('sort_order')->pluck('name', 'name')->all()),
                 Select::make('cell_id')
                     ->label('셀')
-                    ->options(fn (): array => Cell::query()->orderBy('sort_order')->pluck('name', 'id')->all()),
+                    ->options(fn (): array => Cell::query()
+                        ->with('leader:id,name')
+                        ->orderBy('sort_order')
+                        ->get()
+                        ->mapWithKeys(fn (Cell $cell): array => [$cell->id => $cell->displayName()])
+                        ->all()),
                 Select::make('baptism_type')
                     ->label('세례 여부')
                     ->options([

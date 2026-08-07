@@ -9,7 +9,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 /**
- * Listing of cell small groups with their leader and member count.
+ * Listing of cell small groups by leader and size.
+ *
+ * The stored name is not shown: it is derived from the leader, so the
+ * two columns would repeat each other. Leaving it out also pairs 셀장
+ * with 셀원 수 on one line in the stacked mobile layout, which lays
+ * cells out two to a row in DOM order.
  */
 class CellsTable
 {
@@ -17,12 +22,10 @@ class CellsTable
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->label('셀 이름')
-                    ->searchable()
-                    ->sortable(),
                 TextColumn::make('leader.name')
                     ->label('셀장')
+                    ->searchable()
+                    ->sortable()
                     ->placeholder('-'),
                 TextColumn::make('members_count')
                     ->label('셀원 수')
