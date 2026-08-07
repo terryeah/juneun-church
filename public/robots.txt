@@ -1,5 +1,16 @@
+# Content signals (contentsignals.org) state how this church would like
+# its pages used. They are a preference, not a block: search indexing is
+# welcomed, answering someone's question about the church is welcomed,
+# and using the site as training data is not.
+#
+#   search=yes    list these pages in search results
+#   ai-input=yes  read a page to answer a question someone has asked
+#   ai-train=no   do not keep the content as model training data
+
 User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=no
 Disallow: /admin
 Disallow: /livewire
+Allow: /
 
 Sitemap: https://www.juneun.com/sitemap.xml
