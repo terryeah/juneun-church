@@ -2,18 +2,21 @@
 
 namespace App\Filament\Resources\SiteSettings;
 
-use App\Filament\Resources\SiteSettings\Pages\CreateSiteSetting;
-use App\Filament\Resources\SiteSettings\Pages\EditSiteSetting;
-use App\Filament\Resources\SiteSettings\Pages\ListSiteSettings;
+use App\Filament\Resources\SiteSettings\Pages\ManageSiteSettings;
 use App\Filament\Resources\SiteSettings\Schemas\SiteSettingForm;
-use App\Filament\Resources\SiteSettings\Tables\SiteSettingsTable;
 use App\Models\SiteSetting;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Table;
 
+/**
+ * 사이트 설정: the fixed set of values the public site reads by key.
+ *
+ * The resource keeps its model, its policy and its sidebar position,
+ * but registers a single page instead of a list with create, edit and
+ * delete actions - see {@see ManageSiteSettings} for why.
+ */
 class SiteSettingResource extends Resource
 {
     protected static ?string $model = SiteSetting::class;
@@ -36,11 +39,6 @@ class SiteSettingResource extends Resource
         return SiteSettingForm::configure($schema);
     }
 
-    public static function table(Table $table): Table
-    {
-        return SiteSettingsTable::configure($table);
-    }
-
     public static function getRelations(): array
     {
         return [
@@ -51,9 +49,7 @@ class SiteSettingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListSiteSettings::route('/'),
-            'create' => CreateSiteSetting::route('/create'),
-            'edit' => EditSiteSetting::route('/{record}/edit'),
+            'index' => ManageSiteSettings::route('/'),
         ];
     }
 }
