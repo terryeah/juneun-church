@@ -67,13 +67,22 @@ class Member extends Model
     }
 
     /**
-     * Remove the stored photograph alongside the record, the way a
-     * photo and a bulletin already do. Without this the image outlives
-     * the roster entry on a public bucket, and purging the edge copy
-     * would achieve nothing because the origin would still serve it.
+     * Clean up what the roster record leaves behind when it is deleted.
+     *
+     * The photograph goes because a public bucket would otherwise keep
+     * serving it, and purging the edge copy would achieve nothing while
+     * the origin still had it. The login goes because members.user_id
+     * is nullOnDelete, so the account would outlive the person it
+     * belonged to: still able to sign in, still holding their email,
+     * and unreachable from 사이트 유저, which is read-only and lists
+     * accounts through their member.
      */
     protected static function booted(): void
     {
+        static::deleting(function (Member $member): void {
+            $member->user?->delete();
+        });
+
         static::deleted(function (Member $member): void {
             if ($member->photo) {
                 Storage::disk(config('filesystems.media'))->delete($member->photo);

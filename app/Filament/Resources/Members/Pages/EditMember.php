@@ -32,7 +32,10 @@ class EditMember extends EditRecord
     {
         return [
             ...parent::getFormActions(),
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->modalDescription(fn (): string => $this->record->user
+                    ? '이 성도의 사이트 로그인 계정도 함께 삭제됩니다. 계정만 없애려면 삭제하지 말고 사이트 계정을 꺼 주세요.'
+                    : '삭제한 성도는 되돌릴 수 없습니다.'),
         ];
     }
 }
