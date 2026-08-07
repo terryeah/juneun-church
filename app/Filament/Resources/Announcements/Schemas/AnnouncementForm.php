@@ -62,7 +62,6 @@ class AnnouncementForm
                         ->grow(false),
                     Toggle::make('is_highlighted')
                         ->label('하이라이트')
-                        ->helperText('홈 화면 하이라이트 영역에 이 소식을 싣습니다. 상단 고정과는 별개이며, 하이라이트는 한 번에 하나만 지정할 수 있습니다.')
                         ->grow(false),
                 ])
                     ->columnSpanFull(),

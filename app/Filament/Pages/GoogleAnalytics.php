@@ -43,6 +43,16 @@ class GoogleAnalytics extends Page
      */
     public static function canAccess(): bool
     {
+        /**
+         * Parked until the church registers the domain with Google.
+         * That needs the pastor's agreement rather than a code change,
+         * so the page stays built and tested but out of the panel;
+         * dropping the property id check here brings it back.
+         */
+        if (blank(config('analytics.property_id'))) {
+            return false;
+        }
+
         return auth()->user()?->hasRole('developer') ?? false;
     }
 

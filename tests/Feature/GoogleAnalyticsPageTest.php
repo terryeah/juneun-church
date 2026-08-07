@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\GoogleAnalytics;
 use App\Models\User;
 use App\Services\GoogleAnalyticsService;
 use Database\Seeders\RoleSeeder;
@@ -33,11 +34,30 @@ class GoogleAnalyticsPageTest extends TestCase
     }
 
     /**
-     * With no property id and no credentials file, the page still renders
-     * and explains what is missing rather than throwing.
+     * Without a property id the page is parked: the church has not
+     * registered the domain with Google yet, so it stays out of the
+     * panel rather than offering a screen nobody can use.
      */
-    public function test_developers_see_the_setup_instructions_when_nothing_is_configured(): void
+    public function test_the_page_is_hidden_until_a_property_is_configured(): void
     {
+        $developer = User::factory()->create();
+        $developer->assignRole('developer');
+
+        $this->assertFalse(GoogleAnalytics::canAccess());
+
+        $this->actingAs($developer)
+            ->get('/admin/google-analytics')
+            ->assertForbidden();
+    }
+
+    /**
+     * Once a property id exists but the credentials file does not, the
+     * page renders and explains what is missing rather than throwing.
+     */
+    public function test_developers_see_the_setup_instructions_when_credentials_are_missing(): void
+    {
+        config(['analytics.property_id' => '123456789']);
+
         $developer = User::factory()->create();
         $developer->assignRole('developer');
 
