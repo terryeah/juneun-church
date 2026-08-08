@@ -18,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Spatie\Permission\Models\Role;
 
@@ -175,24 +176,13 @@ class MemberForm
                     ->multiple()
                     ->dehydrated(false)
                     ->afterStateHydrated(fn (Select $component, ?Member $record) => $component->state($record?->user?->roles->pluck('id')->all() ?? []))
-                    ->options(function (): array {
-                        $user = auth()->user();
-
-                        return Role::query()
-                            ->when(! $user?->hasRole('super_admin'), fn ($query) => $query->where('name', '!=', 'super_admin'))
-                            ->when(! $user?->hasRole('developer'), fn ($query) => $query->where('name', '!=', 'developer'))
-                            ->get()
-                            ->mapWithKeys(fn ($role) => [$role->id => RoleLabel::label($role->name)])
-                            ->all();
-                    })
+                    ->options(fn (): array => static::assignableRoles()
+                        ->mapWithKeys(fn (Role $role): array => [$role->id => RoleLabel::label($role->name)])
+                        ->all())
                     ->visible(fn (Get $get): bool => (bool) $get('site_account'))
                     ->requiredIf('site_account', true)
                     ->rule(fn (): \Closure => function (string $attribute, mixed $value, \Closure $fail): void {
-                        $user = auth()->user();
-                        $allowed = Role::query()
-                            ->when(! $user?->hasRole('super_admin'), fn ($query) => $query->where('name', '!=', 'super_admin'))
-                            ->when(! $user?->hasRole('developer'), fn ($query) => $query->where('name', '!=', 'developer'))
-                            ->pluck('id');
+                        $allowed = static::assignableRoles()->pluck('id');
 
                         foreach ((array) $value as $roleId) {
                             if (! $allowed->contains((int) $roleId)) {
@@ -215,5 +205,28 @@ class MemberForm
                         : new HtmlString('<span class="fi-badge fi-size-md fi-color fi-color-gray"><span class="fi-badge-label-ctn"><span class="fi-badge-label">미설정</span></span></span>'))
                     ->visible(fn (?Member $record): bool => $record?->user_id !== null),
             ]);
+    }
+
+    /**
+     * Roles that may be granted from this form.
+     *
+     * developer is never offered here: it reaches the activity log, the
+     * schema explorer and the password-reset links, so it is granted by
+     * hand rather than by anyone editing a roster record. super_admin
+     * stays hidden from everyone below it, so nobody can lift an account
+     * above their own.
+     *
+     * @return Collection<int, Role>
+     */
+    public static function assignableRoles(): Collection
+    {
+        return Role::query()
+            ->where('name', '!=', 'developer')
+            ->when(
+                ! auth()->user()?->hasRole('super_admin'),
+                fn ($query) => $query->where('name', '!=', 'super_admin'),
+            )
+            ->orderBy('id')
+            ->get();
     }
 }
