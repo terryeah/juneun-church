@@ -10,7 +10,7 @@
     <article class="section-news-article container-site py-12 lg:py-16">
         <div class="mx-auto max-w-3xl">
             <x-ui.kicker>교회 소식 · News</x-ui.kicker>
-            <h1 class="mt-3 font-kr text-display-md font-medium">{{ $announcement->title }}@if ($announcement->is_members_only)<span class="ml-2 inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 font-kr text-xs font-medium text-success">성도 전용</span>@endif</h1>
+            <h1 class="mt-3 font-kr text-display-md font-medium">{{ $announcement->title }}@if ($announcement->is_members_only)<span class="ml-2 inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 align-middle font-kr text-xs font-medium text-success">성도 전용</span>@endif</h1>
             <p class="mt-3 text-body-sm text-navy-400">{{ $announcement->published_at?->translatedFormat('Y년 n월 j일') }}</p>
 
             {{-- No forced ratio: a portrait poster shows in full rather than

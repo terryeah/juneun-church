@@ -19,7 +19,7 @@
     <div class="container-site py-12 lg:py-16">
         <div class="grid gap-10 md:grid-cols-[minmax(0,1fr)_auto_auto] md:gap-x-10 lg:gap-x-[5.5rem]">
             <div>
-                <a href="{{ route('home') }}" class="flex items-center gap-3 text-navy">
+                <a href="{{ route('home') }}" class="flex items-start gap-3 text-navy">
                     <span class="h-[2.125rem]"><x-ui.logo /></span>
                     <span>
                         <span class="block font-kr text-[1.125rem] font-medium leading-tight">{{ SiteSetting::get('church_name', '브리즈번 주는교회') }}</span>

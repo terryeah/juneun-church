@@ -131,7 +131,7 @@ class MembersOnlyAnnouncementTest extends TestCase
      */
     public function test_a_signed_in_member_sees_the_notice_with_the_badge(): void
     {
-        $badge = 'inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 font-kr text-xs font-medium text-success';
+        $badge = 'inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 align-middle font-kr text-xs font-medium text-success';
 
         $this->actingAs(User::factory()->create())
             ->get('/news')

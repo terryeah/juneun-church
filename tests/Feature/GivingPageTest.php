@@ -99,6 +99,6 @@ class GivingPageTest extends TestCase
             ->get('/giving')
             ->assertOk()
             ->assertSee('section-giving-records')
-            ->assertSee('로그인 유저 전용');
+            ->assertSee('성도 전용');
     }
 }

@@ -191,7 +191,7 @@ class MemberForm
                         }
                     }),
                 /**
-                 * The enabled pill mirrors the 로그인 유저 전용 badge on the
+                 * The enabled pill mirrors the 성도 전용 badge on the
                  * public 헌금 page. Site utility classes are absent inside the
                  * admin panel, so the pill is styled inline with the same
                  * --color-success green on navy, which reads on both the

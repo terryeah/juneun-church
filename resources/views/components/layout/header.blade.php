@@ -15,7 +15,7 @@
 
 <header class="border-b-2 border-navy bg-paper">
     <div class="container-site flex items-center justify-between py-4">
-        <a href="{{ route('home') }}" class="flex items-center gap-3 text-navy">
+        <a href="{{ route('home') }}" class="flex items-start gap-3 text-navy">
             <span class="h-[2.125rem]"><x-ui.logo /></span>
             <span>
                 <span class="block font-kr text-[1.125rem] font-medium leading-tight">{{ SiteSetting::get('church_name', '브리즈번 주는교회') }}</span>

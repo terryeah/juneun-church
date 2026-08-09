@@ -16,7 +16,7 @@
 
         <section class="intro-band intro-reveal">
             <p class="intro-kicker">홈페이지 · Home</p>
-            <h2 class="intro-h2">아홉 개의 화면</h2>
+            <h2 class="intro-h2">9개의 화면</h2>
             <p class="intro-lede">처음 오시는 분이나 교인들이 알아야 할 것과 자주 찾는 걸 나눠 담았습니다.</p>
 
             <div class="intro-rows">
@@ -277,7 +277,7 @@
         }
         .intro-h3 { margin: 0 0 0.25rem; font-size: 1rem; font-weight: 700; }
         .intro-lede { margin: 0; color: var(--intro-muted); max-width: 42rem; }
-        .intro-hero-lede { margin: 0; color: rgba(244, 241, 234, 0.78); max-width: 34rem; font-size: 1.0625rem; }
+        .intro-hero-lede { margin: 0; color: rgba(244, 241, 234, 0.78); font-size: 1.0625rem; }
 
         .intro-url {
             display: inline-flex;
