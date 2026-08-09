@@ -26,7 +26,7 @@ class OfferingResource extends Resource
     /**
      * Position of this item in the sidebar navigation.
      */
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $modelLabel = '헌금 내역';
 

@@ -13,6 +13,7 @@ use App\Filament\Resources\Albums\AlbumResource;
 use App\Filament\Resources\Announcements\AnnouncementResource;
 use App\Filament\Resources\Bulletins\BulletinResource;
 use App\Filament\Resources\Cells\CellResource;
+use App\Filament\Resources\Documents\DocumentResource;
 use App\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Members\MemberResource;
 use App\Filament\Resources\MembershipRequests\MembershipRequestResource;
@@ -163,6 +164,17 @@ class AdminPanelProvider extends PanelProvider
      * items are all hidden from the current user disappears entirely.
      * 사진 sits directly below 앨범 and is indented via a small style
      * override registered in the AppServiceProvider render hook.
+     *
+     * The order here is the order on screen: this builder replaces
+     * Filament's own sorting, so a resource's navigationSort has no
+     * say. Groups run in the order the office works through them -
+     * what is published each week, then the pictures that go with it,
+     * then the offering, then the register, then the reference data
+     * nobody touches twice a year, and finally the read-only views.
+     *
+     * 재정 is a group of its own rather than part of 콘텐츠 because the
+     * offering is a department's work, not a publication, and the
+     * finance_officer role sees this group and nothing else.
      */
     protected static function buildNavigation(NavigationBuilder $builder): NavigationBuilder
     {
@@ -175,20 +187,23 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(AnnouncementResource::class),
                 ...static::accessibleItems(EventResource::class),
                 ...static::accessibleItems(SermonResource::class),
-                ...static::accessibleItems(OfferingResource::class),
-                ...static::accessibleItems(PersonalOfferingResource::class),
+                ...static::accessibleItems(BulletinResource::class),
+                ...static::accessibleItems(DocumentResource::class),
             ]),
             NavigationGroup::make('미디어')->items([
                 ...static::accessibleItems(AlbumResource::class),
                 ...static::accessibleItems(PhotoResource::class),
-                ...static::accessibleItems(BulletinResource::class),
+            ]),
+            NavigationGroup::make('재정')->items([
+                ...static::accessibleItems(OfferingResource::class),
+                ...static::accessibleItems(PersonalOfferingResource::class),
             ]),
             NavigationGroup::make('공동체')->items([
                 ...static::accessibleItems(MemberResource::class),
                 ...static::accessibleItems(CellResource::class),
-                ...static::accessibleItems(UserResource::class),
-                ...static::accessibleItems(MembershipRequestResource::class),
                 ...static::accessibleItems(StaffMemberResource::class),
+                ...static::accessibleItems(MembershipRequestResource::class),
+                ...static::accessibleItems(UserResource::class),
             ]),
             NavigationGroup::make('기준 정보')->items([
                 ...static::accessibleItems(SiteSettingResource::class),

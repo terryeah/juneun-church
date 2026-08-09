@@ -22,10 +22,10 @@ class MembershipRequestResource extends Resource
     protected static ?string $navigationLabel = '가입 신청';
 
     /**
-     * Position of this item in the sidebar navigation, directly below
+     * Position of this item in the sidebar navigation, directly above
      * 사이트 유저 in the 공동체 group.
      */
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 15;
 
     protected static ?string $modelLabel = '가입 신청';
 

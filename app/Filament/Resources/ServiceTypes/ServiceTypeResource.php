@@ -25,7 +25,7 @@ class ServiceTypeResource extends Resource
     /**
      * Position of this item in the sidebar navigation.
      */
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 18;
 
     protected static ?string $modelLabel = '예배 종류';
 

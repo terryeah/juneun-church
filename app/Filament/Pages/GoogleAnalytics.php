@@ -35,7 +35,7 @@ class GoogleAnalytics extends Page
 
     protected static ?string $title = '구글 애널리틱스';
 
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 22;
 
     /**
      * Restricted to the developer role while the integration is being

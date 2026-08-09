@@ -25,7 +25,7 @@ class BulletinResource extends Resource
     /**
      * Position of this item in the sidebar navigation.
      */
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $modelLabel = '주보';
 

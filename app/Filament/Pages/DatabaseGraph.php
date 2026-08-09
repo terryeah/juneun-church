@@ -33,7 +33,7 @@ class DatabaseGraph extends Page
 
     protected static ?string $title = '데이터베이스';
 
-    protected static ?int $navigationSort = 14;
+    protected static ?int $navigationSort = 24;
 
     /**
      * Restricted to the developer role, matching the activity log. A

@@ -29,7 +29,7 @@ class ActivityResource extends Resource
 
     protected static ?string $slug = 'activity-log';
 
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 23;
 
     public static function table(Table $table): Table
     {

@@ -30,7 +30,7 @@ class StaffMemberResource extends Resource
     /**
      * Position of this item in the sidebar navigation.
      */
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 14;
 
     protected static ?string $modelLabel = '섬김이';
 

@@ -28,7 +28,7 @@ class SiteIntroduction extends Page
     /**
      * Directly below 대시보드 in the sidebar.
      */
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected string $view = 'filament.pages.site-introduction';
 

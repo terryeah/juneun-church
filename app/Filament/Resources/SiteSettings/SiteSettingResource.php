@@ -28,7 +28,7 @@ class SiteSettingResource extends Resource
     /**
      * Position of this item in the sidebar navigation.
      */
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 17;
 
     protected static ?string $modelLabel = '설정';
 

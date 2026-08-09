@@ -25,7 +25,7 @@ class DocumentResource extends Resource
     /**
      * Position of this item in the sidebar navigation, directly after 주보.
      */
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $modelLabel = '문서';
 

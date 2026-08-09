@@ -21,7 +21,7 @@ class UserResource extends Resource
     /**
      * Position of this item in the sidebar navigation.
      */
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 16;
 
     protected static ?string $modelLabel = '사이트 유저';
 

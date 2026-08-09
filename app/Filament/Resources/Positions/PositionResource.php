@@ -25,7 +25,7 @@ class PositionResource extends Resource
     /**
      * Position of this item in the sidebar navigation.
      */
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $modelLabel = '직분';
 

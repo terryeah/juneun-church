@@ -33,7 +33,7 @@ class Analytics extends Page
 
     protected static ?string $title = '방문자 통계';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 21;
 
     /**
      * Administrators and developers may access this page.

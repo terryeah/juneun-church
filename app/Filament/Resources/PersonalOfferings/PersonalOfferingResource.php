@@ -29,7 +29,7 @@ class PersonalOfferingResource extends Resource
     /**
      * Position of this item in the sidebar navigation.
      */
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 11;
 
     protected static ?string $modelLabel = '개인 헌금';
 

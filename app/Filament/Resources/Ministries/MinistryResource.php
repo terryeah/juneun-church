@@ -25,7 +25,7 @@ class MinistryResource extends Resource
     /**
      * Position of this item in the sidebar navigation.
      */
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 19;
 
     protected static ?string $modelLabel = '부서';
 

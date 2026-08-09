@@ -22,6 +22,11 @@ class PhotoResource extends Resource
 
     protected static ?string $navigationLabel = '사진';
 
+    /**
+     * Position of this item in the sidebar navigation.
+     */
+    protected static ?int $navigationSort = 9;
+
     protected static ?string $modelLabel = '사진';
 
     protected static ?string $pluralModelLabel = '사진';
