@@ -23,10 +23,22 @@
             </span>
         </a>
 
-        <nav class="hidden items-center gap-1 lg:flex" aria-label="주 메뉴">
+        <nav class="hidden items-center gap-0.5 lg:flex" aria-label="주 메뉴">
             @foreach ($navItems as $item)
                 <x-layout.nav-link :href="$item['href']" :active="$item['active']">{{ $item['label'] }}</x-layout.nav-link>
             @endforeach
+
+            {{-- The account item is an action rather than a page, so it sits behind a rule. --}}
+            <span class="ml-1.5 flex items-center border-l border-line pl-1.5">
+                @auth
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="rounded-nav px-3 py-[0.5625rem] font-kr text-body-sm font-medium text-navy hover:bg-accent-100">로그아웃</button>
+                    </form>
+                @else
+                    <x-layout.nav-link :href="route('login')" :active="request()->routeIs('login')">로그인</x-layout.nav-link>
+                @endauth
+            </span>
         </nav>
 
         <button
@@ -54,6 +66,17 @@
             @foreach ($navItems as $item)
                 <div class="py-1.5"><x-layout.nav-link :href="$item['href']" :active="$item['active']" :mobile="true">{{ $item['label'] }}</x-layout.nav-link></div>
             @endforeach
+
+            <div class="py-1.5">
+                @auth
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="block w-full rounded-nav px-4 py-3.5 text-left font-kr text-body font-medium text-navy hover:bg-accent-100">로그아웃</button>
+                    </form>
+                @else
+                    <x-layout.nav-link :href="route('login')" :active="request()->routeIs('login')" :mobile="true">로그인</x-layout.nav-link>
+                @endauth
+            </div>
         </div>
     </nav>
 </header>

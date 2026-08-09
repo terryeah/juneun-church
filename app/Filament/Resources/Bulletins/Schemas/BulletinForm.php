@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Bulletins\Schemas;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -47,6 +48,10 @@ class BulletinForm
 
                         return $path;
                     }),
+                Toggle::make('is_members_only')
+                    ->label('성도 전용')
+                    ->default(true)
+                    ->helperText('주보에는 셀 편성, 섬김이 명단, 헌금 내역 등 성도의 정보가 들어갑니다. 끄면 로그인하지 않은 방문자도 PDF를 내려받을 수 있으니, 공개해도 괜찮은 주보에만 꺼 주세요.'),
             ]);
     }
 }

@@ -42,3 +42,8 @@ Route::get('/login', [LoginController::class, 'create'])->name('login');
 Route::post('/login', [LoginController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('login.store');
+
+/** Signing out from the public site, which now carries 성도 전용 pages. */
+Route::post('/logout', [LoginController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');

@@ -81,4 +81,20 @@ class LoginController extends Controller
 
         return redirect()->intended(route('giving'));
     }
+
+    /**
+     * End the session and return to the home page.
+     *
+     * The public site holds 성도 전용 pages now, so someone reading the
+     * 주보 on a shared phone needs a way out that is not the admin panel.
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('home');
+    }
 }

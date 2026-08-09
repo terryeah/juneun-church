@@ -16,6 +16,7 @@ class BulletinController extends Controller
     public function __invoke(): View
     {
         $bulletins = Bulletin::query()
+            ->visible()
             ->orderByDesc('published_at')
             ->paginate(20);
 

@@ -5,15 +5,17 @@ namespace App\Models;
 use App\Models\Concerns\LogsModelActivity;
 use App\Models\Concerns\PurgesCdnCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 /**
  * A weekly bulletin (주보) uploaded as a PDF.
  */
-#[Fillable(['title', 'file_path', 'published_at', 'created_by'])]
+#[Fillable(['title', 'file_path', 'published_at', 'is_members_only', 'created_by'])]
 class Bulletin extends Model
 {
     use HasFactory, LogsModelActivity, PurgesCdnCache;
@@ -47,7 +49,25 @@ class Bulletin extends Model
     {
         return [
             'published_at' => 'date',
+            'is_members_only' => 'boolean',
         ];
+    }
+
+    /**
+     * Scope to the bulletins the current visitor may see.
+     *
+     * A restricted bulletin is dropped from the query rather than hidden
+     * in the markup, so neither its title nor the URL of its PDF ever
+     * reaches a guest's response.
+     *
+     * @param  Builder<Bulletin>  $query
+     */
+    public function scopeVisible(Builder $query): void
+    {
+        $query->unless(
+            Auth::check(),
+            fn (Builder $q) => $q->where('is_members_only', false),
+        );
     }
 
     /**
