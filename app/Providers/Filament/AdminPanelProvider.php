@@ -7,6 +7,7 @@ use App\Filament\Pages\Analytics;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\DatabaseGraph;
 use App\Filament\Pages\GoogleAnalytics;
+use App\Filament\Pages\SiteIntroduction;
 use App\Filament\Resources\Activities\ActivityResource;
 use App\Filament\Resources\Albums\AlbumResource;
 use App\Filament\Resources\Announcements\AnnouncementResource;
@@ -167,6 +168,7 @@ class AdminPanelProvider extends PanelProvider
         return $builder->groups([
             NavigationGroup::make()->items([
                 ...static::accessibleItems(Dashboard::class),
+                ...static::accessibleItems(SiteIntroduction::class),
             ]),
             NavigationGroup::make('콘텐츠')->items([
                 ...static::accessibleItems(AnnouncementResource::class),

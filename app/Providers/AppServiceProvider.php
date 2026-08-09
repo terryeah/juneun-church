@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Filament\Analytics\TrafficChartWidget;
 use App\Filament\Analytics\TrafficStatsWidget;
 use App\Filament\Support\SaveUploadsAsWebp;
+use App\Models\User;
 use App\Policies\ActivityPolicy;
 use Filament\Actions\CreateAction;
 use Filament\Auth\Notifications\ResetPassword as ResetPasswordNotification;
@@ -58,6 +59,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Activity::class, ActivityPolicy::class);
+
+        /** The leadership walkthrough names decisions only administrators make. */
+        Gate::define('viewSiteIntroduction', fn (User $user): bool => $user->isAdministrator());
+
         Paginator::defaultView('pagination.juneun');
 
         Table::configureUsing(fn (Table $table) => $table
