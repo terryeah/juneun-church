@@ -43,6 +43,12 @@ class OfferingCreateTest extends TestCase
     }
 
     /**
+     * A Sunday no bulletin seed migration records, so the unique rule
+     * on sunday_date only ever sees this test's own offering.
+     */
+    private const SUNDAY = '2026-09-13';
+
+    /**
      * Submitting the create form stores the offering with its items.
      */
     public function test_super_admin_can_create_an_offering(): void
@@ -51,7 +57,7 @@ class OfferingCreateTest extends TestCase
 
         Livewire::test(CreateOffering::class)
             ->fillForm([
-                'sunday_date' => '2026-08-02',
+                'sunday_date' => self::SUNDAY,
                 'note' => '광고 후 집계',
                 'items' => [
                     [
@@ -65,9 +71,9 @@ class OfferingCreateTest extends TestCase
 
         $undoRepeaterFake();
 
-        $offering = Offering::whereDate('sunday_date', '2026-08-02')->sole();
+        $offering = Offering::whereDate('sunday_date', self::SUNDAY)->sole();
 
-        $this->assertSame('2026-08-02', $offering->sunday_date->toDateString());
+        $this->assertSame(self::SUNDAY, $offering->sunday_date->toDateString());
         $this->assertSame('광고 후 집계', $offering->note);
         $this->assertSame(auth()->id(), $offering->created_by);
         $this->assertSame([
