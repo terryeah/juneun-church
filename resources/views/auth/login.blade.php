@@ -15,14 +15,6 @@
         <form method="POST" action="{{ route('login.store') }}" class="mx-auto max-w-3xl rounded-frame border-2 border-navy bg-paper p-8">
             @csrf
 
-            @error('two_factor')
-                <div class="mb-6 rounded-btn border-2 border-line bg-cream p-5">
-                    <x-ui.kicker>추가 확인 · Two-step</x-ui.kicker>
-                    <p class="mt-3 font-kr text-body-sm leading-relaxed text-navy-700">{{ $message }}</p>
-                    <x-ui.button :href="\Filament\Facades\Filament::getPanel('admin')->getLoginUrl()" variant="secondary" class="mt-4">관리자 로그인으로 이동</x-ui.button>
-                </div>
-            @enderror
-
             <div class="space-y-5">
                 <div>
                     <label for="email" class="{{ $labelClass }}">이메일</label>

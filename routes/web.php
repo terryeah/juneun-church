@@ -46,6 +46,10 @@ Route::post('/login', [LoginController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('login.store');
 
+/** The second step for accounts with an authenticator app; it throttles per account itself. */
+Route::get('/login/challenge', [LoginController::class, 'challenge'])->name('login.challenge');
+Route::post('/login/challenge', [LoginController::class, 'challengeStore'])->name('login.challenge.store');
+
 /** Signing out from the public site, which now carries 성도 전용 pages. */
 Route::post('/logout', [LoginController::class, 'destroy'])
     ->middleware('auth')

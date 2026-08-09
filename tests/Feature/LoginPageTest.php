@@ -91,24 +91,13 @@ class LoginPageTest extends TestCase
 
     /**
      * An account with an authenticator app registered is never signed
-     * in here; it is sent to the panel login, which runs the second
-     * factor, with the address kept for the next attempt.
+     * in by the password alone; it is sent on to the code step, which
+     * PublicTwoFactorLoginTest covers in full.
      */
-    public function test_a_two_factor_account_is_diverted_rather_than_signed_in(): void
+    public function test_a_two_factor_account_is_sent_to_the_code_step_rather_than_signed_in(): void
     {
         $user = User::factory()->create(['email' => 'admin@example.com', 'password' => 'correct-horse-battery']);
         $user->saveAppAuthenticationSecret('JBSWY3DPEHPK3PXP');
-
-        $this->from(route('login'))
-            ->post(route('login.store'), [
-                'email' => 'admin@example.com',
-                'password' => 'correct-horse-battery',
-            ])
-            ->assertRedirect(route('login'))
-            ->assertSessionHasErrors('two_factor')
-            ->assertSessionHasInput('email', 'admin@example.com');
-
-        $this->assertGuest();
 
         $this->followingRedirects()
             ->from(route('login'))
@@ -117,7 +106,8 @@ class LoginPageTest extends TestCase
                 'password' => 'correct-horse-battery',
             ])
             ->assertOk()
-            ->assertSee('2단계 인증이 등록되어 있습니다', false)
-            ->assertSee('/admin/login', false);
+            ->assertSee('인증 코드 여섯 자리');
+
+        $this->assertGuest();
     }
 }
