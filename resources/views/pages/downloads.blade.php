@@ -1,17 +1,17 @@
 <x-layout.app title="자료실" description="브리즈번 주는교회 주보와 교회 문서를 내려받을 수 있습니다.">
 
-    <x-ui.page-header kicker="교회 자료 · Downloads" title="자료실">주보와 교회 서식을 한곳에 모았습니다.</x-ui.page-header>
+    <x-ui.page-header kicker="교회 자료 · Downloads" title="자료실">
+        {{-- Matches the green 사용 중 badge in 관리자 페이지: slate pill, 1px success border, success label. --}}
+        <x-slot:badge>
+            <span class="inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 font-kr text-xs font-medium text-success">성도 전용</span>
+        </x-slot:badge>
+        주일 주보와 교회에서 쓰는 서식을 내려받는 곳입니다.
+    </x-ui.page-header>
 
     {{-- The whole section is replaced on a tab click, so the chips and
          their active state live inside it and need no rebinding. --}}
     <section class="section-downloads container-site pb-12 lg:pb-16" data-downloads>
-        <div class="flex flex-wrap items-center gap-3">
-            <x-ui.kicker>교회 자료 · Downloads</x-ui.kicker>
-            {{-- Matches the green 사용 중 badge in 관리자 페이지: slate pill, 1px success border, success label. --}}
-            <span class="inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 font-kr text-xs font-medium text-success">성도 전용</span>
-        </div>
-
-        <div class="mt-4 flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2">
             @foreach ($tabs as $key => $label)
                 <a href="{{ route('downloads', ['type' => $key]) }}"
                    class="rounded-nav px-4 py-2 font-kr text-body-sm transition-colors {{ $key === $tab ? 'bg-navy text-cream' : 'bg-navy/5 text-navy hover:bg-navy/10' }}"

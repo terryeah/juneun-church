@@ -53,18 +53,20 @@ export class MobileNav {
     private setOpen(open: boolean): void {
         this.toggle.setAttribute('aria-expanded', String(open));
         this.toggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-        this.menu?.classList.toggle('hidden', !open);
         document.body.classList.toggle('overflow-hidden', open);
+
+        if (open) {
+            this.menu?.classList.remove('hidden');
+            document.dispatchEvent(new CustomEvent('mobilenav:opened'));
+        } else {
+            void this.hideWhenFinished();
+        }
 
         /**
          * The open menu overlays the page, so everything outside it is
          * made inert for keyboard and screen reader users. The header
          * stays live because it contains the toggle button itself.
          */
-        if (open) {
-            document.dispatchEvent(new CustomEvent('mobilenav:opened'));
-        }
-
         requestAnimationFrame(() => {
             document.querySelectorAll<HTMLElement>('main, footer').forEach((region) => {
                 region.toggleAttribute('inert', open);
@@ -76,5 +78,27 @@ export class MobileNav {
                 this.toggle.focus({ preventScroll: true });
             }
         });
+    }
+
+    /**
+     * Hides the menu once anything animating it has finished.
+     *
+     * Listeners push a promise onto the event's `animations` array to
+     * hold the menu open long enough to play an exit; with nobody
+     * listening - JavaScript for the animations not loaded yet, or a
+     * visitor who prefers reduced motion - the array stays empty and
+     * the menu closes at once, exactly as it used to.
+     */
+    private async hideWhenFinished(): Promise<void> {
+        const animations: Promise<unknown>[] = [];
+
+        document.dispatchEvent(new CustomEvent('mobilenav:closing', { detail: { animations } }));
+
+        await Promise.all(animations);
+
+        /** Reopening mid-exit wins: only hide if it is still closed. */
+        if (! this.isOpen()) {
+            this.menu?.classList.add('hidden');
+        }
     }
 }

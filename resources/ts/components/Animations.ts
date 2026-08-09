@@ -73,8 +73,10 @@ export class Animations {
      * alone left 로그아웃 sitting still while everything above it moved.
      */
     private bindMobileMenu(): void {
+        const items = '[data-mobile-nav-menu] a, [data-mobile-nav-menu] button';
+
         document.addEventListener('mobilenav:opened', () => {
-            gsap.from('[data-mobile-nav-menu] a, [data-mobile-nav-menu] button', {
+            gsap.from(items, {
                 x: 32,
                 opacity: 0,
                 duration: 0.4,
@@ -82,6 +84,29 @@ export class Animations {
                 stagger: 0.05,
                 clearProps: 'all',
             });
+        });
+
+        /**
+         * Closing unwinds the same movement from the bottom up, and the
+         * menu is held open until it finishes by handing a promise back
+         * to MobileNav. The inline styles are cleared afterwards, or the
+         * next open would start from a transparent menu and animate
+         * nowhere.
+         */
+        document.addEventListener('mobilenav:closing', (event) => {
+            const { animations } = (event as CustomEvent<{ animations: Promise<unknown>[] }>).detail;
+
+            const exit = gsap.to(items, {
+                x: 32,
+                opacity: 0,
+                duration: 0.25,
+                ease: 'power2.in',
+                stagger: { each: 0.03, from: 'end' },
+            });
+
+            animations.push(exit.then(() => {
+                gsap.set(items, { clearProps: 'all' });
+            }));
         });
     }
 }
