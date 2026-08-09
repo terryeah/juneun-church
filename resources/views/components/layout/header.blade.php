@@ -5,7 +5,7 @@
         ['label' => '예배 안내', 'href' => route('worship'), 'active' => request()->routeIs('worship')],
         ['label' => '교회 행사', 'href' => route('events'), 'active' => request()->routeIs('events')],
         ['label' => '교회 소식', 'href' => route('news.index'), 'active' => request()->routeIs('news.*')],
-        ['label' => '주보', 'href' => route('bulletins'), 'active' => request()->routeIs('bulletins')],
+        ['label' => '자료실', 'href' => route('downloads'), 'active' => request()->routeIs('downloads')],
         ['label' => '헌금', 'href' => route('giving'), 'active' => request()->routeIs('giving')],
         ['label' => '갤러리', 'href' => route('gallery.index'), 'active' => request()->routeIs('gallery.*')],
         ['label' => '섬기는 사람들', 'href' => route('people'), 'active' => request()->routeIs('people')],

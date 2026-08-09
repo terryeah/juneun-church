@@ -3,7 +3,7 @@ import { YouTubeLazy } from './components/YouTubeLazy';
 import { Lightbox } from './components/Lightbox';
 import { InfiniteScroll } from './components/InfiniteScroll';
 import { PhotoSlider } from './components/PhotoSlider';
-import { GivingWeeks } from './components/GivingWeeks';
+import { SectionSwap } from './components/SectionSwap';
 import { DateFieldFormat } from './components/DateFieldFormat';
 
 /**
@@ -40,7 +40,20 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     const givingWeeks = document.querySelector<HTMLElement>('[data-giving-weeks]');
     if (givingWeeks) {
-        new GivingWeeks(givingWeeks);
+        new SectionSwap(givingWeeks, {
+            root: '[data-giving-weeks]',
+            chip: '[data-giving-week]',
+            stagger: '[data-giving-category]',
+        });
+    }
+
+    const downloads = document.querySelector<HTMLElement>('[data-downloads]');
+    if (downloads) {
+        new SectionSwap(downloads, {
+            root: '[data-downloads]',
+            chip: '[data-download-tab]',
+            stagger: '[data-download-item]',
+        });
     }
 
     document

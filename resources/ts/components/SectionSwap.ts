@@ -5,20 +5,37 @@
 type Gsap = typeof import('gsap')['gsap'];
 
 /**
- * Giving Weeks Component
+ * Which attributes a swapping section is built from.
+ */
+export interface SectionSwapOptions {
+    /** Attribute selector identifying the section in both documents. */
+    root: string;
+    /** Attribute selector for the chips that trigger a swap. */
+    chip: string;
+    /** Attribute selector for the children that stagger in behind it. */
+    stagger: string;
+}
+
+/**
+ * Section Swap Component
  *
- * Swaps only the weekly offering records section when a week chip is
- * clicked, leaving the identical bank details above it untouched. The
- * chips remain ordinary links, so without JavaScript each one is a
- * normal full page navigation.
+ * Replaces one section of a page when a chip inside it is clicked,
+ * leaving the rest of the page untouched. The chips remain ordinary
+ * links, so without JavaScript each one is a normal full page
+ * navigation.
  *
  * The swap is cross-faded with GSAP: the outgoing section lifts away
  * while the replacement is fetched, then the incoming section - chips
  * and active state included, since they live inside it - fades up with
- * its category columns staggering in behind it.
+ * its rows staggering in behind it.
+ *
+ * Used by the 헌금 week picker and the 자료실 tabs, which differ only in
+ * the attributes they are built from.
  */
-export class GivingWeeks {
+export class SectionSwap {
     private section: HTMLElement;
+
+    private options: SectionSwapOptions;
 
     /**
      * Identifies the most recent swap. Every awaited step re-checks it,
@@ -28,12 +45,14 @@ export class GivingWeeks {
     private latestSwap = 0;
 
     /**
-     * Creates a new GivingWeeks instance.
+     * Creates a new SectionSwap instance.
      *
-     * @param section - Element carrying the data-giving-weeks attribute
+     * @param section - The element carrying the root attribute
+     * @param options - The attributes this section is built from
      */
-    constructor(section: HTMLElement) {
+    constructor(section: HTMLElement, options: SectionSwapOptions) {
         this.section = section;
+        this.options = options;
 
         /**
          * Clicks are handled on the document rather than on each chip so
@@ -44,7 +63,7 @@ export class GivingWeeks {
     }
 
     /**
-     * Intercepts a plain left click on a week chip inside the section.
+     * Intercepts a plain left click on a chip inside the section.
      *
      * @param event - The originating click event
      */
@@ -53,7 +72,7 @@ export class GivingWeeks {
             return;
         }
 
-        const chip = (event.target as Element | null)?.closest<HTMLAnchorElement>('[data-giving-week]');
+        const chip = (event.target as Element | null)?.closest<HTMLAnchorElement>(this.options.chip);
 
         if (! chip || ! this.section.contains(chip)) {
             return;
@@ -80,10 +99,10 @@ export class GivingWeeks {
     }
 
     /**
-     * Fetches a week's page and replaces the records section with it.
+     * Fetches a URL and replaces the section with the one it carries.
      *
-     * @param url - The week URL to render
-     * @param push - Whether to add a history entry for the new week
+     * @param url - The URL to render
+     * @param push - Whether to add a history entry for it
      */
     private async swap(url: string, push: boolean): Promise<void> {
         const swapId = ++this.latestSwap;
@@ -108,10 +127,10 @@ export class GivingWeeks {
             }
 
             const parsed = new DOMParser().parseFromString(await response.text(), 'text/html');
-            const incoming = parsed.querySelector<HTMLElement>('[data-giving-weeks]');
+            const incoming = parsed.querySelector<HTMLElement>(this.options.root);
 
             if (! incoming) {
-                throw new Error('Missing records section');
+                throw new Error('Missing section');
             }
 
             if (swapId !== this.latestSwap) {
@@ -128,7 +147,7 @@ export class GivingWeeks {
             gsap?.timeline()
                 .fromTo(incoming, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', clearProps: 'opacity,transform' })
                 .fromTo(
-                    incoming.querySelectorAll('[data-giving-category]'),
+                    incoming.querySelectorAll(this.options.stagger),
                     { opacity: 0, y: 12 },
                     { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', stagger: 0.08, clearProps: 'opacity,transform' },
                     '-=0.3',

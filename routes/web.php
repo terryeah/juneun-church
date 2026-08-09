@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\MembershipRequestController;
-use App\Http\Controllers\BulletinController;
+use App\Http\Controllers\DownloadsController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GivingController;
@@ -22,7 +22,10 @@ Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{announcement}', [NewsController::class, 'show'])->name('news.show');
 Route::get('/events', EventController::class)->name('events');
 Route::get('/people', StaffController::class)->name('people');
-Route::get('/bulletins', BulletinController::class)->name('bulletins');
+Route::get('/downloads', DownloadsController::class)->name('downloads');
+
+/** 주보 moved into 자료실; the old address is kept for anything linking to it. */
+Route::permanentRedirect('/bulletins', '/downloads')->name('bulletins');
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/gallery/{album}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::get('/giving', GivingController::class)->name('giving');

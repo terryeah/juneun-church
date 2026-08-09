@@ -26,7 +26,7 @@ class SitemapController extends Controller
             ['loc' => route('worship'), 'priority' => '0.8'],
             ['loc' => route('events'), 'priority' => '0.8'],
             ['loc' => route('news.index'), 'priority' => '0.8'],
-            ['loc' => route('bulletins'), 'priority' => '0.6'],
+            ['loc' => route('downloads'), 'priority' => '0.6'],
             ['loc' => route('gallery.index'), 'priority' => '0.6'],
             ['loc' => route('people'), 'priority' => '0.5'],
             ['loc' => route('giving'), 'priority' => '0.5'],
