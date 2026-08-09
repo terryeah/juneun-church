@@ -8,8 +8,11 @@
         주일 주보와 교회에서 쓰는 서식을 내려받는 곳입니다.
     </x-ui.page-header>
 
-    {{-- The whole section is replaced on a tab click, so the chips and
-         their active state live inside it and need no rebinding. --}}
+    {{-- Nothing to show a guest when it is all held back: the tabs and
+         an empty rule would only frame an absence. The whole section is
+         replaced on a tab click, so the chips and their active state
+         live inside it and need no rebinding. --}}
+    @if ($files->isNotEmpty() || ! $hasRestricted)
     <section class="section-downloads container-site pb-12 lg:pb-16" data-downloads>
         <div class="flex flex-wrap gap-2">
             @foreach ($tabs as $key => $label)
@@ -42,19 +45,16 @@
                     <span class="shrink-0 text-caption font-bold text-accent group-hover:text-accent-700">PDF 보기 →</span>
                 </a>
             @empty
-                {{-- A guest is not told the list is empty when it is not:
-                     the card below explains what is being held back. --}}
-                @unless ($hasRestricted)
-                    <p class="py-8 text-body-sm text-navy-400">등록된 자료가 없습니다.</p>
-                @endunless
+                <p class="py-8 text-body-sm text-navy-400">등록된 자료가 없습니다.</p>
             @endforelse
         </div>
     </section>
+    @endif
 
     @if ($hasRestricted)
         <x-ui.sign-in-required
             class="section-downloads-signup"
-            kicker="교회 자료 · Downloads"
+            kicker="성도 전용 · Members only"
             title="자료실은 로그인 후 보실 수 있습니다"
             body="주보와 교회 서식에는 셀 편성과 섬김이 명단처럼 성도의 정보가 담겨 있어 성도에게만 공개됩니다. 계정이 없으시면 가입을 신청해 주세요. 관리자가 교적부와 대조해 확인한 뒤 승인해 드립니다."
         />
