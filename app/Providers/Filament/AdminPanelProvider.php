@@ -20,6 +20,7 @@ use App\Filament\Resources\MembershipRequests\MembershipRequestResource;
 use App\Filament\Resources\Ministries\MinistryResource;
 use App\Filament\Resources\Offerings\OfferingResource;
 use App\Filament\Resources\PersonalOfferings\PersonalOfferingResource;
+use App\Filament\Resources\Photos\Pages\EditPhoto;
 use App\Filament\Resources\Photos\PhotoResource;
 use App\Filament\Resources\Positions\PositionResource;
 use App\Filament\Resources\Roles\RoleResource;
@@ -123,6 +124,11 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::BODY_END,
                 fn (): HtmlString => new HtmlString(static::googlePlacesScript()),
             )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): HtmlString => new HtmlString(static::copyPhotoFilenameScript()),
+                scopes: EditPhoto::class,
+            )
             /** The light / dark / system trio, centred under the login card. */
             ->renderHook(
                 PanelsRenderHook::SIMPLE_PAGE_END,
@@ -221,6 +227,49 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(RoleResource::class),
             ]),
         ]);
+    }
+
+    /**
+     * Tapping the photograph on its edit screen copies its filename.
+     *
+     * 사이트 설정 picks the home page hero by filename, and on a phone
+     * that name cannot be selected out of a read-only field, so the
+     * picture itself is made the control. The capture phase stops
+     * FilePond opening its file browser on the same tap, while its own
+     * action buttons - remove, and the like - are left alone.
+     */
+    protected static function copyPhotoFilenameScript(): string
+    {
+        return <<<'HTML'
+            <script>
+            document.addEventListener('click', (event) => {
+                if (event.target.closest('.filepond--file-action-button')) {
+                    return;
+                }
+
+                const preview = event.target.closest('.filepond--image-preview-wrapper, .filepond--image-preview, .filepond--file-info');
+
+                if (! preview) {
+                    return;
+                }
+
+                const field = preview.closest('form')?.querySelector('input[id$="filename"]');
+
+                if (! field?.value) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const notify = (title, style) => new window.FilamentNotification().title(title)[style]().send();
+
+                navigator.clipboard.writeText(field.value)
+                    .then(() => notify('파일 이름을 복사했어요', 'success'))
+                    .catch(() => notify('복사하지 못했어요. 아래 칸의 복사 버튼을 눌러주세요', 'danger'));
+            }, true);
+            </script>
+            HTML;
     }
 
     /**

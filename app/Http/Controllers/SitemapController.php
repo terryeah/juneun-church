@@ -10,9 +10,9 @@ use Illuminate\Http\Response;
  * Serves the XML sitemap for search engines.
  *
  * Lists every public page plus published announcements and albums so
- * crawlers discover new content without a plugin. 성도 전용 notices are
- * left out whoever is signed in, so the URL of a private notice is
- * never handed to a crawler or cached into the CDN's copy.
+ * crawlers discover new content without a plugin. 성도 전용 notices and
+ * albums are left out whoever is signed in, so the URL of a private
+ * one is never handed to a crawler or cached into the CDN's copy.
  */
 class SitemapController extends Controller
 {
@@ -40,7 +40,7 @@ class SitemapController extends Controller
                     'lastmod' => $a->updated_at?->toDateString(),
                     'priority' => '0.6',
                 ]))
-            ->merge(Album::query()->where('is_published', true)->latest('event_date')->limit(200)->get()
+            ->merge(Album::query()->published()->where('is_members_only', false)->latest('event_date')->limit(200)->get()
                 ->map(fn (Album $album) => [
                     'loc' => route('gallery.show', $album),
                     'lastmod' => $album->updated_at?->toDateString(),

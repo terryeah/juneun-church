@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Storage;
     'cover_photo_path',
     'cover_thumbnail_path',
     'is_published',
+    'is_members_only',
     'created_by',
 ])]
 class Album extends Model
@@ -52,6 +54,7 @@ class Album extends Model
         return [
             'event_date' => 'date',
             'is_published' => 'boolean',
+            'is_members_only' => 'boolean',
         ];
     }
 
@@ -103,6 +106,36 @@ class Album extends Model
     public function scopePublished(Builder $query): void
     {
         $query->where('is_published', true);
+    }
+
+    /**
+     * Scope to the albums the current visitor may see.
+     *
+     * A 성도 전용 album is dropped from the query rather than hidden in
+     * the markup, so neither its title nor the URL of any of its
+     * photographs ever reaches a guest's response.
+     *
+     * @param  Builder<Album>  $query
+     */
+    public function scopeVisible(Builder $query): void
+    {
+        $query->published()->unless(
+            Auth::check(),
+            fn (Builder $q) => $q->where('is_members_only', false),
+        );
+    }
+
+    /**
+     * Whether the current visitor may open this album.
+     *
+     * The home slider shows a photograph whatever its album's state, so
+     * a tile has to know whether linking through would land the visitor
+     * on a 404, and whether naming the album would give away a 성도
+     * 전용 title the rest of the page withholds.
+     */
+    public function isOpenableByCurrentVisitor(): bool
+    {
+        return $this->is_published && (! $this->is_members_only || Auth::check());
     }
 
     /**

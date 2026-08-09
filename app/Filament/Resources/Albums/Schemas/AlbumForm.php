@@ -8,6 +8,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 /**
@@ -48,6 +49,12 @@ class AlbumForm
                 Toggle::make('is_published')
                     ->label('활성화')
                     ->default(true)
+                    ->live()
+                    ->columnSpanFull(),
+                Toggle::make('is_members_only')
+                    ->label('성도 전용')
+                    ->helperText('켜면 앨범은 갤러리 목록에 성도 전용 표시와 함께 남고, 로그인한 성도만 열어서 사진을 볼 수 있습니다. 로그인하지 않은 방문자에게는 앨범 자체가 보이지 않습니다.')
+                    ->visible(fn (Get $get): bool => (bool) $get('is_published'))
                     ->columnSpanFull(),
             ]);
     }

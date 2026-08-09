@@ -11,7 +11,10 @@
                     @else
                         <x-ui.photo-placeholder :label="$album->title" class="aspect-[4/3] w-full" />
                     @endif
-                    <h2 class="mt-3 font-kr text-body font-medium group-hover:text-accent">{{ $album->title }}</h2>
+                    {{-- Same badge as the 교회 소식 list, sat inline after the title so it
+                         follows the last word and a title that wraps on a phone leaves
+                         the card layout alone. Only signed-in 성도 ever reach this. --}}
+                    <h2 class="mt-3 font-kr text-body font-medium group-hover:text-accent">{{ $album->title }}@if ($album->is_members_only)<span class="ml-2 inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 align-middle font-kr text-xs font-medium text-success">성도 전용</span>@endif</h2>
                     <p class="mt-1 text-body-sm text-navy-400">
                         @if ($album->event_date){{ $album->event_date->translatedFormat('Y년 n월 j일') }} · @endif사진 {{ $album->photos_count }}장
                     </p>

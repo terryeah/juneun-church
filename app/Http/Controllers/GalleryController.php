@@ -16,7 +16,7 @@ class GalleryController extends Controller
     public function index(): View
     {
         $albums = Album::query()
-            ->published()
+            ->visible()
             ->withCount('photos')
             ->orderByDesc('event_date')
             ->paginate(12);
@@ -26,10 +26,14 @@ class GalleryController extends Controller
 
     /**
      * Display a single album with its photo grid.
+     *
+     * A 성도 전용 album 404s for a guest rather than 403s: a 403 would
+     * confirm that an album lives at that slug, and the slug carries the
+     * title, so the URL alone would leak what is meant to be private.
      */
     public function show(Album $album): View
     {
-        abort_unless($album->is_published, 404);
+        abort_unless(Album::query()->visible()->whereKey($album->getKey())->exists(), 404);
 
         $photos = $album->photos()->paginate(24);
 

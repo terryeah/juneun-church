@@ -45,6 +45,8 @@ class AlbumsTable
                     ->placeholder('-'),
                 ToggleColumn::make('is_published')
                     ->label('활성화'),
+                ToggleColumn::make('is_members_only')
+                    ->label('성도 전용'),
                 TextColumn::make('author.name')
                     ->label('작성자')
                     ->default('시스템')
