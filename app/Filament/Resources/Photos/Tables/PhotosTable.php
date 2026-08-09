@@ -36,9 +36,10 @@ class PhotosTable
                 IconColumn::make('featured_in_slider')
                     ->label('홈 슬라이더')
                     ->boolean(),
-                TextColumn::make('path')
-                    ->label('경로')
-                    ->searchable(),
+                TextColumn::make('updated_at')
+                    ->label('수정일')
+                    ->dateTime('Y-m-d H:i')
+                    ->sortable(),
                 TextColumn::make('uploader.name')
                     ->label('업로더')
                     ->default('시스템')
@@ -48,10 +49,9 @@ class PhotosTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->label('수정일')
-                    ->dateTime()
-                    ->sortable()
+                TextColumn::make('path')
+                    ->label('경로')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('sort_order')
