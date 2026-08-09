@@ -28,6 +28,9 @@ class AnnouncementsTable
                 IconColumn::make('is_pinned')
                     ->label('상단 고정')
                     ->boolean(),
+                IconColumn::make('is_members_only')
+                    ->label('성도 전용')
+                    ->boolean(),
                 TextColumn::make('published_at')
                     ->label('게시 일시')
                     ->dateTime()

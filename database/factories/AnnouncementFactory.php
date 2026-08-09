@@ -41,6 +41,14 @@ class AnnouncementFactory extends Factory
     }
 
     /**
+     * Restrict the announcement to signed-in 성도.
+     */
+    public function membersOnly(): static
+    {
+        return $this->state(['is_members_only' => true]);
+    }
+
+    /**
      * Mark the announcement as unpublished.
      */
     public function draft(): static

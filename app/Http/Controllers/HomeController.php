@@ -23,7 +23,7 @@ class HomeController extends Controller
     {
         /** Latest four announcements with pinned items first */
         $announcements = Announcement::query()
-            ->published()
+            ->visible()
             ->orderByDesc('is_pinned')
             ->orderByDesc('published_at')
             ->limit(4)
@@ -47,9 +47,15 @@ class HomeController extends Controller
         /** Photos for the sliding gallery preview band */
         $recentPhotos = $this->sliderPhotos();
 
-        /** The 하이라이트 section is whichever 교회 소식 carries the flag */
+        /**
+         * The 하이라이트 section is whichever 교회 소식 carries the flag.
+         * A 성도 전용 notice may hold it, in which case a guest gets no
+         * highlight at all and the section hides itself exactly as it
+         * does when nothing is flagged - no teaser, since a "로그인하세요"
+         * panel would itself announce that a private notice exists.
+         */
         $highlight = Announcement::query()
-            ->published()
+            ->visible()
             ->where('is_highlighted', true)
             ->first();
 
