@@ -87,6 +87,39 @@ class SiteSettingsAdminTest extends TestCase
     }
 
     /**
+     * The phone field accepts the form its own placeholder shows.
+     *
+     * The footer splits this value into a dialable number and a trailing
+     * label, and the field asks for exactly that, but the stock tel
+     * pattern allowed digits and spacing alone - so the example the
+     * placeholder offered was refused, and with it every other change
+     * on the page.
+     */
+    public function test_the_phone_accepts_a_number_with_a_trailing_label(): void
+    {
+        Livewire::actingAs($this->settingsAdministrator())
+            ->test(ManageSiteSettings::class)
+            ->set('data.contact_phone', '0415 346 455 (담임목사)')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertSame('0415 346 455 (담임목사)', SiteSetting::get('contact_phone'));
+    }
+
+    /**
+     * Something that is not a number at all is still refused, so the
+     * footer never renders a tel: link built from prose.
+     */
+    public function test_the_phone_refuses_a_value_that_is_not_a_number(): void
+    {
+        Livewire::actingAs($this->settingsAdministrator())
+            ->test(ManageSiteSettings::class)
+            ->set('data.contact_phone', '담임목사에게 문의')
+            ->call('save')
+            ->assertHasErrors('data.contact_phone');
+    }
+
+    /**
      * The giving fields refuse a BSB that is not six digits, so a typo
      * in the one value that moves money never reaches /giving.
      */

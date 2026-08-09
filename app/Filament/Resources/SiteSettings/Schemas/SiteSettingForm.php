@@ -116,6 +116,17 @@ class SiteSettingForm
                 TextInput::make('contact_phone')
                     ->label('대표 전화번호')
                     ->tel()
+                    /**
+                     * Filament's stock tel pattern allows digits and
+                     * spacing only, which rejected the very example this
+                     * field asks for. The footer already splits the
+                     * value into a dialable number and a trailing label,
+                     * so the rule now matches that same shape.
+                     */
+                    ->telRegex('/^[0-9+][0-9+\- ]*[0-9](\s+.+)?$/u')
+                    ->validationMessages([
+                        'regex' => '숫자로 시작해 숫자로 끝나야 해요. 뒤에 담당자를 덧붙이는 건 괜찮아요. 예) 0415 346 455 (담임목사)',
+                    ])
                     ->helperText('앞쪽 숫자만 전화 걸기에 쓰여요. 뒤에 담당자를 괄호로 덧붙여도 괜찮아요.')
                     ->placeholder('0415 346 455 (담임목사)'),
                 TextInput::make('contact_email')
