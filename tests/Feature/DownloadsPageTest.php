@@ -62,7 +62,7 @@ class DownloadsPageTest extends TestCase
             ->assertOk()
             ->assertDontSee('bulletin-2026-08-09.pdf')
             ->assertDontSee('new-family.pdf')
-            ->assertSee('자료실은 로그인 후 보실 수 있습니다')
+            ->assertSee('성도에게만 공개됩니다')
             ->assertDontSee('등록된 자료가 없습니다.');
 
         $this->get('/downloads?type=documents')
@@ -120,7 +120,7 @@ class DownloadsPageTest extends TestCase
         $this->get('/downloads?type=documents')
             ->assertOk()
             ->assertSee('새가족 등록 카드')
-            ->assertDontSee('자료실은 로그인 후 보실 수 있습니다');
+            ->assertDontSee('성도에게만 공개됩니다');
     }
 
     /**

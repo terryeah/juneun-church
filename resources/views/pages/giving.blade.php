@@ -127,9 +127,7 @@
     @guest
         <x-ui.sign-in-required
             class="section-giving-signup"
-            kicker="헌금 소식 · Records"
-            title="헌금 내역은 로그인 후 보실 수 있습니다"
-            body="주보에 실리는 주일 헌금 내역은 성도에게만 공개됩니다. 계정이 없으시면 가입을 신청해 주세요. 관리자가 교적부와 대조해 확인한 뒤 승인해 드립니다."
+            body="주보에 실리는 주일 헌금 내역은 성도에게만 공개됩니다."
         />
     @endguest
 

@@ -54,9 +54,7 @@
     @if ($hasRestricted)
         <x-ui.sign-in-required
             class="section-downloads-signup"
-            kicker="성도 전용 · Members only"
-            title="자료실은 로그인 후 보실 수 있습니다"
-            body="주보와 교회 서식에는 셀 편성과 섬김이 명단처럼 성도의 정보가 담겨 있어 성도에게만 공개됩니다. 계정이 없으시면 가입을 신청해 주세요. 관리자가 교적부와 대조해 확인한 뒤 승인해 드립니다."
+            body="주보와 교회 서식에는 셀 편성과 섬김이 명단처럼 성도의 정보가 담겨 있어 성도에게만 공개됩니다."
         />
     @endif
 

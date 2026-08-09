@@ -1,19 +1,11 @@
 @props([
-    'kicker',
-    'title',
     'body',
 ])
 
-{{-- Tells a guest why a page is holding something back, and offers the
-     two ways in. Shared by 헌금 and 주보 so the two read as one site. --}}
+{{-- Tells a guest, in one line, why a page is holding something back.
+     Shared by 헌금 and 자료실 so the two read as one site. The login
+     screen carries the 가입 신청 link, so someone without an account is
+     one step away rather than at a dead end. --}}
 <section {{ $attributes->merge(['class' => 'container-site pb-12 lg:pb-16']) }}>
-    <div class="max-w-xl rounded-frame border-2 border-navy p-8">
-        <x-ui.kicker>{{ $kicker }}</x-ui.kicker>
-        <h2 class="mt-3 font-kr text-display-sm font-medium">{{ $title }}</h2>
-        <p class="mt-4 font-kr text-body leading-relaxed text-navy-400">{{ $body }}</p>
-        <div class="mt-6 flex flex-wrap gap-3">
-            <x-ui.button href="{{ route('signup') }}">가입 신청</x-ui.button>
-            <x-ui.button href="{{ route('login') }}" variant="secondary">로그인</x-ui.button>
-        </div>
-    </div>
+    <p class="max-w-xl font-kr text-body-sm leading-relaxed text-navy-400">{{ $body }} <a href="{{ route('login') }}" class="font-medium text-accent underline underline-offset-4 hover:text-accent-700">로그인</a> 후 확인해 주세요.</p>
 </section>

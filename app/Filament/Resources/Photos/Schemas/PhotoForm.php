@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Photos\Schemas;
 use App\Models\Album;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -29,6 +30,12 @@ class PhotoForm
                     ->relationship('album', 'title')
                     ->live()
                     ->required(),
+                TextInput::make('filename')
+                    ->label('파일 이름')
+                    ->readOnly()
+                    ->copyable(copyMessage: '파일 이름을 복사했어요')
+                    ->helperText('홈 화면 대표 사진으로 쓰려면 오른쪽 버튼으로 복사해서 사이트 설정에 붙여넣으세요.')
+                    ->visibleOn('edit'),
                 FileUpload::make('path')
                     ->label('사진')
                     ->image()

@@ -286,7 +286,7 @@ class SiteSettingForm
             ->schema([
                 TextInput::make('home_hero_photo')
                     ->label('대표 사진 파일 이름')
-                    ->helperText('갤러리에 올린 사진의 파일 이름을 그대로 적어요. 사진 화면에서 복사해오시면 돼요. 비워두거나 이름이 맞지 않으면 사진 없이 나와요.')
+                    ->helperText('미디어 > 사진에서 쓰고 싶은 사진을 열면 맨 위 "파일 이름" 칸에 복사 버튼이 있어요. 눌러서 복사한 뒤 여기에 붙여넣으세요. 비워두거나 이름이 맞지 않으면 사진 없이 나와요.')
                     ->placeholder('f632f799-3dee-4760-a3ae-f271ec8be9bf.webp'),
             ]);
     }
