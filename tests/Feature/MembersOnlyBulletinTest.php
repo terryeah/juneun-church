@@ -63,32 +63,35 @@ class MembersOnlyBulletinTest extends TestCase
         $this->get('/bulletins')
             ->assertOk()
             ->assertDontSee('bulletin-2026-08-09.pdf')
-            ->assertSee('주보는 성도에게만 공개됩니다.');
+            ->assertSee('주보는 로그인 후 보실 수 있습니다')
+            ->assertDontSee('등록된 주보가 없습니다.');
     }
 
     /**
-     * A signed-in 성도 sees it, carrying the 성도 전용 badge.
+     * A signed-in 성도 sees it.
      */
-    public function test_a_signed_in_member_sees_the_bulletin_with_the_badge(): void
+    public function test_a_signed_in_member_sees_the_bulletin(): void
     {
         $this->actingAs(User::factory()->create())
             ->get('/bulletins')
             ->assertOk()
             ->assertSee('주일 예배 주보')
-            ->assertSee('성도 전용')
-            ->assertSee('bulletin-2026-08-09.pdf');
+            ->assertSee('bulletin-2026-08-09.pdf')
+            ->assertDontSee('주보는 로그인 후 보실 수 있습니다');
     }
 
     /**
-     * A bulletin the church opens deliberately still reaches a guest.
+     * A bulletin the church opens deliberately reaches a guest, and
+     * with nothing held back the sign-in offer stays away rather than
+     * inviting them to log in for something they can already read.
      */
-    public function test_an_open_bulletin_reaches_a_guest(): void
+    public function test_an_open_bulletin_reaches_a_guest_without_the_prompt(): void
     {
         $this->restricted->update(['is_members_only' => false]);
 
         $this->get('/bulletins')
             ->assertOk()
             ->assertSee('주일 예배 주보')
-            ->assertDontSee('성도 전용');
+            ->assertDontSee('주보는 로그인 후 보실 수 있습니다');
     }
 }
