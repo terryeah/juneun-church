@@ -11,17 +11,19 @@ use Filament\Support\Icons\Heroicon;
  *
  * It explains what the public site holds, who may change what, and what
  * the church still needs to decide - the things a pastor asks about
- * rather than the things a developer does. The page itself lives in its
- * own document and is framed here, so its styling cannot collide with
- * the panel's.
+ * rather than the things a developer does. Every class in its view is
+ * prefixed and every rule scoped to .intro, so it renders as part of
+ * the page rather than inside a frame of its own.
  */
 class SiteIntroduction extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartBar;
 
-    protected static ?string $navigationLabel = '홈페이지 소개';
+    protected static ?string $navigationLabel = '인트로';
 
-    protected static ?string $title = '홈페이지 소개';
+    protected static ?string $title = '인트로';
+
+    protected static ?string $slug = 'intro';
 
     /**
      * Directly below 대시보드 in the sidebar.

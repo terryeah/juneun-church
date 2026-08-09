@@ -28,15 +28,6 @@ Route::get('/gallery/{album}', [GalleryController::class, 'show'])->name('galler
 Route::get('/giving', GivingController::class)->name('giving');
 Route::get('/location', LocationController::class)->name('location');
 
-/**
- * The leadership walkthrough, framed by the Filament page of the same
- * name. Administrators only - it is a document about the church's own
- * decisions, not a public page.
- */
-Route::view('/site-introduction', 'presentation')
-    ->middleware(['auth', 'can:viewSiteIntroduction'])
-    ->name('site-introduction');
-
 /** The short address handed to 성도 for their account page. */
 Route::get('/profile', fn () => redirect(Filament::getPanel('admin')->getProfileUrl()))->name('profile');
 

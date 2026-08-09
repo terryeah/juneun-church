@@ -30,27 +30,39 @@ class SiteIntroductionTest extends TestCase
 
         $this->assertTrue(SiteIntroduction::canAccess());
 
-        $this->get(route('site-introduction'))
+        $this->get(SiteIntroduction::getUrl())
             ->assertOk()
             ->assertSee('Brisbane Juneun Church', false)
             ->assertSee('교회의 결정이 필요한 것', false);
+
+        $this->assertStringEndsWith('/admin/intro', SiteIntroduction::getUrl());
     }
 
     /**
-     * Everyone else is refused, including a signed-in 성도 and a guest.
+     * Everyone else is kept out: a guest, a 성도, a content editor.
      */
     public function test_others_are_refused(): void
     {
         $this->seed(RoleSeeder::class);
 
-        $this->get(route('site-introduction'))->assertRedirect();
+        $this->get('/admin/intro')->assertRedirect();
 
+        /** A 성도 is diverted to their profile before any page is reached. */
         $member = User::factory()->create();
         $member->assignRole('member');
 
         $this->actingAs($member);
 
-        $this->get(route('site-introduction'))->assertForbidden();
         $this->assertFalse(SiteIntroduction::canAccess());
+        $this->get('/admin/intro')->assertRedirect();
+
+        /** A content editor stays in the panel and is refused outright. */
+        $editor = User::factory()->create();
+        $editor->assignRole('content_editor');
+
+        $this->actingAs($editor);
+
+        $this->assertFalse(SiteIntroduction::canAccess());
+        $this->get('/admin/intro')->assertForbidden();
     }
 }
