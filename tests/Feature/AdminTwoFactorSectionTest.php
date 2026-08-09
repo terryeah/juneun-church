@@ -2,10 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Auth\EditProfile;
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Filament\Actions\Testing\TestAction;
-use Filament\Auth\Pages\EditProfile;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -98,6 +99,45 @@ class AdminTwoFactorSectionTest extends TestCase
             /** 설명 above the actions rather than below them. */
             ->assertSee('#content\.app .fi-sc-actions>.fi-sc{order:2', escape: false)
             ->assertSee('#content\.app .fi-ac{order:4', escape: false);
+    }
+
+    /**
+     * The card sits between the profile fields and the buttons that
+     * save them, so the page ends on 저장 rather than stranding it in
+     * the middle. Filament's own order is the other way around, and the
+     * CSS that restyles the card is anchored on the id its position in
+     * the schema decides, so both are pinned here - along with the save
+     * the card is now nested inside, which is the thing the move could
+     * plausibly have broken.
+     */
+    public function test_the_card_comes_before_the_form_actions(): void
+    {
+        $this->signIn(withTwoFactor: true);
+
+        $page = $this->get('/admin/profile')->assertOk();
+
+        $markup = $page->getContent();
+
+        $card = strpos($markup, 'id="content.app"');
+        $actions = strpos($markup, 'id="content.form-actions"');
+
+        $this->assertIsInt($card, 'the 2단계 인증 card lost its #content\.app anchor');
+        $this->assertIsInt($actions);
+        $this->assertLessThan($actions, $card);
+
+        /** And the buttons still belong to the form they submit. */
+        $this->assertLessThan($card, strpos($markup, '<form id="form"'));
+
+        $page->assertSee('저장')
+            ->assertDontSee('변경 사항 저장');
+
+        Livewire::test(EditProfile::class)
+            ->fillForm(['name' => '새 이름'])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified();
+
+        $this->assertSame('새 이름', Filament::auth()->user()->fresh()->name);
     }
 
     /**
