@@ -126,19 +126,6 @@ class Album extends Model
     }
 
     /**
-     * Whether the current visitor may open this album.
-     *
-     * The home slider shows a photograph whatever its album's state, so
-     * a tile has to know whether linking through would land the visitor
-     * on a 404, and whether naming the album would give away a 성도
-     * 전용 title the rest of the page withholds.
-     */
-    public function isOpenableByCurrentVisitor(): bool
-    {
-        return $this->is_published && (! $this->is_members_only || Auth::check());
-    }
-
-    /**
      * Public URL of the album cover, falling back to the first photo.
      */
     public function coverUrl(): ?string

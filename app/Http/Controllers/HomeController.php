@@ -68,18 +68,24 @@ class HomeController extends Controller
     /**
      * The ten photos shown in the home slider.
      *
+     * Only albums that are both published and open to everyone are
+     * drawn from. A 성도 전용 album is left out entirely, hand-picked
+     * photographs included: the front page is the one screen a stranger
+     * always sees, and a picture the church decided to keep for its own
+     * members does not belong on it, however good the picture is.
+     *
      * Hand-picked photos (홈 슬라이더에 표시) come first. Any remaining
-     * slots are filled round-robin across the published albums - the
-     * newest photo of each album, then each album's next-newest, and
-     * so on - so the band always shows ten photos from a spread of
-     * events rather than one album's dump.
+     * slots are filled round-robin across those albums - the newest
+     * photo of each, then each album's next-newest, and so on - so the
+     * band shows ten photos from a spread of events rather than one
+     * album's dump.
      *
      * @return Collection<int, Photo>
      */
     private function sliderPhotos(): Collection
     {
         $picked = Photo::query()
-            ->whereHas('album', fn ($query) => $query->where('is_published', true))
+            ->whereHas('album', fn ($query) => $query->where('is_published', true)->where('is_members_only', false))
             ->where('featured_in_slider', true)
             ->latest()
             ->limit(10)
@@ -91,6 +97,7 @@ class HomeController extends Controller
 
         $queues = Album::query()
             ->where('is_published', true)
+            ->where('is_members_only', false)
             ->orderByDesc('event_date')
             ->with(['photos' => fn ($query) => $query->latest()])
             ->get()

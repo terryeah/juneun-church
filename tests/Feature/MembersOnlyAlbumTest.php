@@ -129,13 +129,11 @@ class MembersOnlyAlbumTest extends TestCase
     }
 
     /**
-     * The home slider is deliberately unaffected by the restriction: a
-     * photograph hand-picked with 홈 슬라이더에 표시 keeps its place in the
-     * band for a guest even when its album is 성도 전용. The flag is the
-     * photographer saying this single image is fit for the front page,
-     * which is a decision about the photograph, not about the album.
+     * The home slider never draws on a 성도 전용 album, and picking a
+     * photograph by hand does not override that. The front page is the
+     * one screen a stranger always sees.
      */
-    public function test_a_slider_photo_in_a_restricted_album_still_reaches_a_guest(): void
+    public function test_the_slider_leaves_a_restricted_album_alone(): void
     {
         $photo = Photo::factory()->for($this->restricted)->create([
             'featured_in_slider' => true,
@@ -143,35 +141,43 @@ class MembersOnlyAlbumTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee($photo->thumbnailUrl(), false);
-    }
-
-    /**
-     * The tile still has to behave: showing the photograph is one thing,
-     * but linking a guest to an album they cannot open would land them
-     * on a 404, and naming it in the alt text would give away a title
-     * the rest of the page withholds.
-     */
-    public function test_a_slider_tile_does_not_lead_a_guest_to_a_restricted_album(): void
-    {
-        Photo::factory()->for($this->restricted)->create(['featured_in_slider' => true]);
-
-        $this->get('/')
-            ->assertOk()
+            ->assertDontSee($photo->thumbnailUrl(), false)
             ->assertDontSee(route('gallery.show', $this->restricted))
             ->assertDontSee($this->restricted->title);
     }
 
     /**
-     * Signed in, the same tile links through to the album itself.
+     * Signing in does not change it either. The band is the same for
+     * everyone, so a 성도 전용 photograph cannot reach it by any route.
      */
-    public function test_a_slider_tile_leads_a_member_to_the_album(): void
+    public function test_the_slider_leaves_it_alone_for_a_member_too(): void
     {
-        Photo::factory()->for($this->restricted)->create(['featured_in_slider' => true]);
+        $photo = Photo::factory()->for($this->restricted)->create([
+            'featured_in_slider' => true,
+        ]);
 
         $this->actingAs(User::factory()->create())
             ->get('/')
             ->assertOk()
-            ->assertSee(route('gallery.show', $this->restricted));
+            ->assertDontSee($photo->thumbnailUrl(), false);
+    }
+
+    /**
+     * An open album still fills the band as it always did.
+     */
+    public function test_the_slider_still_draws_on_an_open_album(): void
+    {
+        $open = Album::factory()->create([
+            'title' => '전교인 나들이',
+            'slug' => 'album-outing',
+            'is_members_only' => false,
+        ]);
+
+        $photo = Photo::factory()->for($open)->create(['featured_in_slider' => true]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee($photo->thumbnailUrl(), false)
+            ->assertSee(route('gallery.show', $open));
     }
 }
