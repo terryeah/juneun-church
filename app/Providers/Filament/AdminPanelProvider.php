@@ -7,8 +7,8 @@ use App\Filament\Pages\Analytics;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\DatabaseGraph;
 use App\Filament\Pages\GoogleAnalytics;
-use App\Filament\Pages\SiteIntroduction;
 use App\Filament\Pages\Videos;
+use App\Filament\Pages\Wiki;
 use App\Filament\Resources\Activities\ActivityResource;
 use App\Filament\Resources\Albums\AlbumResource;
 use App\Filament\Resources\Announcements\AnnouncementResource;
@@ -70,7 +70,7 @@ class AdminPanelProvider extends PanelProvider
      */
     protected const PAGE_BADGES = [
         Analytics::class => 'admin',
-        SiteIntroduction::class => 'admin',
+        Wiki::class => 'admin',
         DatabaseGraph::class => 'developer',
         GoogleAnalytics::class => 'developer',
     ];
@@ -188,7 +188,7 @@ class AdminPanelProvider extends PanelProvider
         return $builder->groups([
             NavigationGroup::make()->items([
                 ...static::accessibleItems(Dashboard::class),
-                ...static::accessibleItems(SiteIntroduction::class),
+                ...static::accessibleItems(Wiki::class),
             ]),
             NavigationGroup::make('콘텐츠')->items([
                 ...static::accessibleItems(AnnouncementResource::class),
