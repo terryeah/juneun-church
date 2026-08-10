@@ -71,7 +71,6 @@ class AdminPanelProvider extends PanelProvider
     protected const PAGE_BADGES = [
         Analytics::class => 'admin',
         SiteIntroduction::class => 'admin',
-        Videos::class => 'admin',
         DatabaseGraph::class => 'developer',
         GoogleAnalytics::class => 'developer',
     ];
