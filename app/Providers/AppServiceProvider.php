@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Filament\Analytics\TrafficChartWidget;
 use App\Filament\Analytics\TrafficStatsWidget;
 use App\Filament\Support\SaveUploadsAsWebp;
+use App\Models\User;
 use App\Policies\ActivityPolicy;
 use Filament\Actions\CreateAction;
 use Filament\Auth\Notifications\ResetPassword as ResetPasswordNotification;
@@ -13,12 +14,15 @@ use Filament\Tables\Table;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Support\CauserResolver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -80,6 +84,7 @@ class AppServiceProvider extends ServiceProvider
         CreateAction::configureUsing(fn (CreateAction $action) => $action->createAnother(false));
 
         $this->registerAnalyticsWidgets();
+        $this->anonymiseExemptCausers();
         $this->logAuthenticationActivity();
     }
 
@@ -97,11 +102,35 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
+     * Strip the causer from anything an exempt account does.
+     *
+     * The rows themselves are still written - what changed on the site
+     * is worth keeping whoever made the change - but they carry no
+     * name, so the log shows them as 시스템 rather than as a person.
+     *
+     * This covers every write, both the ones that name their causer and
+     * the model events that let the package find it, so an exempt
+     * account cannot be attributed by some path that was overlooked.
+     */
+    private function anonymiseExemptCausers(): void
+    {
+        app(CauserResolver::class)->resolveUsing(function (Model|int|string|null $subject): ?Model {
+            $causer = $subject instanceof Model ? $subject : Auth::user();
+
+            return $causer instanceof User && $causer->is_audit_exempt ? null : $causer;
+        });
+    }
+
+    /**
      * Record sign-in, sign-out and failed attempts in the activity log.
      */
     private function logAuthenticationActivity(): void
     {
         Event::listen(function (Login $event): void {
+            if ($event->user instanceof User && $event->user->is_audit_exempt) {
+                return;
+            }
+
             activity('auth')
                 ->causedBy($event->user)
                 ->event('login')
@@ -110,7 +139,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Event::listen(function (Logout $event): void {
-            if ($event->user) {
+            if ($event->user && ! ($event->user instanceof User && $event->user->is_audit_exempt)) {
                 activity('auth')
                     ->causedBy($event->user)
                     ->event('logout')

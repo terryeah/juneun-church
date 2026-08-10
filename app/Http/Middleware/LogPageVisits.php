@@ -74,6 +74,11 @@ class LogPageVisits
             return false;
         }
 
+        /** The account that maintains the site is not congregation activity. */
+        if (Auth::user()->is_audit_exempt) {
+            return false;
+        }
+
         /** Livewire's polling and every other background call. */
         if ($request->ajax() || $request->expectsJson() || $request->hasHeader('X-Livewire')) {
             return false;
