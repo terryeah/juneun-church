@@ -39,11 +39,12 @@ class DownloadsController extends Controller
             : Document::query()->visible()->orderByDesc('published_at')->get();
 
         /**
-         * A guest is told whether anything is being held back, so the
-         * page only offers to sign them in when there is something
-         * behind the login rather than on every visit.
+         * Anyone who is not on the 교적 is told whether something is
+         * being held back, so the page only offers to sign them in when
+         * there is something behind it rather than on every visit. A
+         * signed-in 일반회원 is in the same position as a guest here.
          */
-        $hasRestricted = Auth::guest() && (
+        $hasRestricted = ! Auth::user()?->isChurchMember() && (
             Bulletin::query()->where('is_members_only', true)->exists()
             || Document::query()->where('is_members_only', true)->exists()
         );

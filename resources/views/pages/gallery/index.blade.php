@@ -6,7 +6,9 @@
          chips and their active state live inside it and need no
          rebinding, exactly as the 헌금 week picker works. --}}
     <section class="section-gallery-albums container-site pb-12 lg:pb-16" data-gallery-filter>
-        @auth
+        {{-- Only a 성도 sees both kinds of album, so only a 성도 has
+             anything to filter between. --}}
+        @if (auth()->user()?->isChurchMember())
             <div class="mb-8 flex flex-wrap gap-2">
                 @foreach ($filters as $key => $label)
                     <a href="{{ route('gallery.index', $key === 'all' ? [] : ['visibility' => $key]) }}"
@@ -17,7 +19,7 @@
                     </a>
                 @endforeach
             </div>
-        @endauth
+        @endif
 
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($albums as $album)

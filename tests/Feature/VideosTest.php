@@ -48,7 +48,7 @@ class VideosTest extends TestCase
 
         /** A 성도 is diverted to their profile before any page is reached. */
         $member = User::factory()->create();
-        $member->assignRole('member');
+        $member->assignRole('general_member');
 
         $this->actingAs($member);
 

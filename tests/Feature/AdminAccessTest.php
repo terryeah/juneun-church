@@ -61,7 +61,7 @@ class AdminAccessTest extends TestCase
         $middleware = new ExemptMembersFromMultiFactorAuthentication;
         $next = fn (): Response => new Response('reached');
 
-        $this->actingAs($this->userWithRoles(['member']));
+        $this->actingAs($this->userWithRoles(['general_member']));
         $this->assertSame('reached', $middleware->handle(Request::create('/admin/profile'), $next)->getContent());
 
         $this->actingAs($this->userWithRoles(['admin']));
@@ -71,7 +71,7 @@ class AdminAccessTest extends TestCase
         $this->assertStringContainsString('/admin/2fa-set-up', $response->getTargetUrl());
 
         /** A member who also holds a staff role is staff again. */
-        $this->actingAs($this->userWithRoles(['member', 'content_editor']));
+        $this->actingAs($this->userWithRoles(['general_member', 'content_editor']));
         $this->assertTrue($middleware->handle(Request::create('/admin'), $next)->isRedirect());
 
         /** The per-role test accounts are waived whatever role they carry. */
@@ -94,7 +94,7 @@ class AdminAccessTest extends TestCase
 
         $this->assertNotEmpty($widgets);
 
-        foreach ([['member'], ['content_editor']] as $roles) {
+        foreach ([['general_member'], ['content_editor']] as $roles) {
             $this->actingAs($this->userWithRoles($roles));
 
             foreach ($widgets as $widget) {
@@ -168,7 +168,7 @@ class AdminAccessTest extends TestCase
      */
     public function test_the_password_reset_link_action_is_developer_only(): void
     {
-        $target = $this->userWithRoles(['member']);
+        $target = $this->userWithRoles(['general_member']);
 
         Livewire::actingAs($this->administrator(['super_admin']))
             ->test(ListUsers::class)
@@ -206,7 +206,7 @@ class AdminAccessTest extends TestCase
      */
     public function test_the_generated_password_reset_link_validates(): void
     {
-        $user = $this->userWithRoles(['member']);
+        $user = $this->userWithRoles(['general_member']);
 
         $url = UsersTable::passwordResetUrl($user);
         parse_str(parse_url($url, PHP_URL_QUERY), $query);

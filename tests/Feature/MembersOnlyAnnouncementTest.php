@@ -119,7 +119,7 @@ class MembersOnlyAnnouncementTest extends TestCase
      */
     public function test_the_sitemap_omits_a_restricted_notice_even_for_a_member(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/sitemap.xml')
             ->assertOk()
             ->assertDontSee(route('news.show', $this->restricted));
@@ -133,14 +133,14 @@ class MembersOnlyAnnouncementTest extends TestCase
     {
         $badge = 'inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 align-middle font-kr text-xs font-medium text-success';
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/news')
             ->assertOk()
             ->assertSee('7월 새가족 소개')
             ->assertSee($badge, false)
             ->assertSee('성도 전용');
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/news/news-new-families')
             ->assertOk()
             ->assertSee('김철수 집사님 가정이 등록하셨습니다.')
@@ -162,7 +162,7 @@ class MembersOnlyAnnouncementTest extends TestCase
             ->assertDontSee('section-highlight')
             ->assertDontSee('7월 새가족 소개');
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/')
             ->assertOk()
             ->assertSee('section-highlight')

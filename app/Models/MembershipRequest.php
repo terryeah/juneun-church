@@ -211,42 +211,52 @@ class MembershipRequest extends Model
 
     /**
      * Approve the request: create the login with the password the
-     * applicant chose, link it to the chosen roster record (or to a
-     * freshly registered one) and stamp the review together with how
-     * the administrator confirmed the applicant's identity.
+     * applicant chose, put the applicant on the 교적 or deliberately
+     * leave them off it, and stamp the review together with how the
+     * administrator confirmed the applicant's identity.
      *
-     * The verification method is required on both paths, because
-     * registering a fresh 성도 for an unverified stranger hands out the
-     * same access as linking one.
+     * There are three outcomes, and the difference between them is the
+     * 교적 record, because that is what 성도 전용 content answers to:
+     * linking an existing 성도, registering a new one, or approving the
+     * account alone for somebody who attends but the church has not
+     * registered. The last one is why the request form can be answered
+     * with something other than yes or no.
+     *
+     * The verification method is required on every path. It costs one
+     * field, it is the same question in each case - is this person who
+     * they say they are - and an account approved today may be put on
+     * the 교적 tomorrow.
      *
      * Field handling mirrors the 사이트 계정 section of the member form.
      */
-    public function approve(?Member $member, User $reviewer, string $verificationMethod, ?string $verificationNote = null): User
+    public function approve(?Member $member, User $reviewer, string $verificationMethod, ?string $verificationNote = null, bool $registerOnRoster = true): User
     {
-        return DB::transaction(function () use ($member, $reviewer, $verificationMethod, $verificationNote): User {
+        return DB::transaction(function () use ($member, $reviewer, $verificationMethod, $verificationNote, $registerOnRoster): User {
             $user = new User;
             $user->name = $this->name;
             $user->email = $this->email;
             $user->password = $this->password;
             $user->created_by = $reviewer->getKey();
             $user->save();
-            $user->syncRoles(['member']);
+            $user->syncRoles(['general_member']);
 
             /** A new roster record stays unpublished until an administrator fills it in. */
-            $member ??= Member::create([
-                'name' => $this->name,
-                'birth_date' => $this->birth_date,
-                'phone' => $this->phone,
-                'email' => $this->email,
-                'position_id' => Position::query()->where('name', '성도')->value('id'),
-                'is_published' => false,
-            ]);
+            if ($member === null && $registerOnRoster) {
+                $member = Member::create([
+                    'name' => $this->name,
+                    'birth_date' => $this->birth_date,
+                    'phone' => $this->phone,
+                    'email' => $this->email,
+                    'position_id' => Position::query()->where('name', '성도')->value('id'),
+                    'is_published' => false,
+                ]);
+            }
 
-            $member->forceFill(['user_id' => $user->getKey()])->saveQuietly();
+            $member?->forceFill(['user_id' => $user->getKey()])->saveQuietly();
 
             $this->forceFill([
                 'status' => '승인',
-                'matched_member_id' => $member->getKey(),
+                'matched_member_id' => $member?->getKey(),
                 'reviewed_by' => $reviewer->getKey(),
                 'reviewed_at' => now(),
                 'verification_method' => $verificationMethod,

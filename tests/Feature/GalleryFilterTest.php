@@ -59,7 +59,7 @@ class GalleryFilterTest extends TestCase
      */
     public function test_a_member_sees_the_filter_and_every_album(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/gallery')
             ->assertOk()
             ->assertSee('data-gallery-chip', false)
@@ -72,7 +72,7 @@ class GalleryFilterTest extends TestCase
      */
     public function test_the_members_filter_narrows_the_grid(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/gallery?visibility=members')
             ->assertOk()
             ->assertSee('성도 수련회')
@@ -84,7 +84,7 @@ class GalleryFilterTest extends TestCase
      */
     public function test_the_public_filter_narrows_the_grid(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/gallery?visibility=public')
             ->assertOk()
             ->assertSee('성탄 감사예배')
@@ -109,7 +109,7 @@ class GalleryFilterTest extends TestCase
      */
     public function test_an_unknown_filter_falls_back_to_everything(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/gallery?visibility=nonsense')
             ->assertOk()
             ->assertSee('성도 수련회')

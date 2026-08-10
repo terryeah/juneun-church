@@ -106,7 +106,7 @@ class PrivilegedActionAuditTest extends TestCase
         $developer->assignRole('developer');
 
         $target = User::factory()->create();
-        $target->assignRole('member');
+        $target->assignRole('general_member');
 
         $this->actingAs($developer);
 
@@ -158,7 +158,7 @@ class PrivilegedActionAuditTest extends TestCase
      */
     public function test_a_link_may_still_be_minted_for_ordinary_staff_and_members(): void
     {
-        foreach (['member', 'content_editor', 'finance_officer', 'admin'] as $role) {
+        foreach (['general_member', 'content_editor', 'finance_officer', 'admin'] as $role) {
             $target = User::factory()->create();
             $target->assignRole($role);
 

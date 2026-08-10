@@ -33,7 +33,7 @@ class RedirectMembersToProfile
 
         if (blank($profileUrl)
             || $request->routeIs($panel->generateRouteName('auth.*'))
-            || ! Filament::auth()->user()?->isMemberOnly()) {
+            || ! Filament::auth()->user()?->isGeneralMember()) {
             return $next($request);
         }
 

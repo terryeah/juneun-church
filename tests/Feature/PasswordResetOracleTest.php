@@ -41,7 +41,7 @@ class PasswordResetOracleTest extends TestCase
 
         $this->seed(RoleSeeder::class);
 
-        User::factory()->create(['email' => 'exists@example.test'])->assignRole('member');
+        User::factory()->create(['email' => 'exists@example.test'])->assignRole('general_member');
 
         Filament::setCurrentPanel('admin');
     }

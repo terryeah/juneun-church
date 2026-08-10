@@ -65,7 +65,7 @@ class Bulletin extends Model
     public function scopeVisible(Builder $query): void
     {
         $query->unless(
-            Auth::check(),
+            (bool) Auth::user()?->isChurchMember(),
             fn (Builder $q) => $q->where('is_members_only', false),
         );
     }

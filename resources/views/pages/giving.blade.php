@@ -67,8 +67,9 @@
         </div>
     </section>
 
-    {{-- The bulletin only reaches people who attend, so the records stay behind a login. --}}
-    @auth
+    {{-- The bulletin only reaches the congregation, so the records stay
+         with the 성도 on the 교적 rather than with anyone who signed up. --}}
+    @if (auth()->user()?->isChurchMember())
     @if ($offering)
         <section class="section-giving-records container-site pb-12 lg:pb-16" data-giving-weeks>
             <div class="flex flex-wrap items-center gap-3">
@@ -120,15 +121,16 @@
             @endif
         </section>
     @endif
-    @endauth
+    @endif
 
-    {{-- Guests are told why the records are missing and how to gain access,
-         rather than being left with a page that simply ends early. --}}
-    @guest
+    {{-- Anyone who cannot see the records is told why, rather than being
+         left with a page that simply ends early. That now includes a
+         signed-in 일반회원, who is not on the 교적. --}}
+    @unless (auth()->user()?->isChurchMember())
         <x-ui.sign-in-required
             class="section-giving-signup"
             body="주보에 실리는 주일 헌금 내역은 성도에게만 공개됩니다."
         />
-    @endguest
+    @endunless
 
 </x-layout.app>

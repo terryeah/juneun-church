@@ -44,7 +44,7 @@ class GivingPageTest extends TestCase
      */
     public function test_the_latest_week_is_shown_by_default(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/giving')
             ->assertOk()
             ->assertSee('이영희')
@@ -56,7 +56,7 @@ class GivingPageTest extends TestCase
      */
     public function test_a_requested_week_is_shown_instead_of_the_latest(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/giving?week=2026-07-19')
             ->assertOk()
             ->assertSee('2026년 7월 19일 주일 헌금 내역')
@@ -71,7 +71,7 @@ class GivingPageTest extends TestCase
      */
     public function test_an_unknown_week_falls_back_to_the_latest(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/giving?week=1999-01-03')
             ->assertOk()
             ->assertSee('이영희');
@@ -95,7 +95,7 @@ class GivingPageTest extends TestCase
      */
     public function test_members_receive_the_records_section(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/giving')
             ->assertOk()
             ->assertSee('section-giving-records')

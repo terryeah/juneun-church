@@ -158,7 +158,7 @@ class MembershipSignupTest extends TestCase
 
         $this->assertNotNull($user);
         $this->assertSame('kim@example.com', $user->email);
-        $this->assertTrue($user->hasRole('member'));
+        $this->assertTrue($user->hasRole('general_member'));
         $this->assertTrue(Hash::check('correct-horse-battery', $user->password));
         $this->assertSame('승인', $request->fresh()->status);
         $this->assertSame($member->id, $request->fresh()->matched_member_id);
@@ -323,7 +323,7 @@ class MembershipSignupTest extends TestCase
     }
 
     /**
-     * An approved 성도 holds the permissionless 'member' role: the
+     * An approved 성도 holds the permissionless 'general_member' role: the
      * panel still lets them in, but only as far as their own profile.
      * The dashboard and every resource - which the role could never
      * open anyway - now redirect there instead of refusing outright,

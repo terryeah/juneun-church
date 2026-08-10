@@ -76,7 +76,7 @@ class DownloadsPageTest extends TestCase
      */
     public function test_a_member_sees_the_bulletins_tab_first(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/downloads')
             ->assertOk()
             ->assertSee('주일 예배 주보')
@@ -89,7 +89,7 @@ class DownloadsPageTest extends TestCase
      */
     public function test_the_documents_tab_shows_documents(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/downloads?type=documents')
             ->assertOk()
             ->assertSee('새가족 등록 카드')
@@ -102,7 +102,7 @@ class DownloadsPageTest extends TestCase
      */
     public function test_an_unknown_tab_falls_back(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/downloads?type=nonsense')
             ->assertOk()
             ->assertSee('주일 예배 주보');

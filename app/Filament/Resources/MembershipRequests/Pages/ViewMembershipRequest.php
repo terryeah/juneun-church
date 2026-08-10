@@ -7,6 +7,7 @@ use App\Filament\Resources\MembershipRequests\Schemas\MembershipRequestInfolist;
 use App\Models\Member;
 use App\Models\MembershipRequest;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
@@ -18,16 +19,29 @@ class ViewMembershipRequest extends ViewRecord
 {
     protected static string $resource = MembershipRequestResource::class;
 
+    /** Link the applicant to a 성도 already on the 교적. */
+    private const OUTCOME_LINK = 'link';
+
+    /** Register the applicant on the 교적 as a new 성도. */
+    private const OUTCOME_REGISTER = 'register';
+
+    /** Give the applicant a login and leave them off the 교적. */
+    private const OUTCOME_ACCOUNT_ONLY = 'account_only';
+
     /**
-     * 승인 creates the login and links it to a roster record; 거절
-     * closes the request without creating anything. Both are gated by
-     * MembershipRequestPolicy and only offered while the request is
-     * still 대기.
+     * 승인 creates the login and decides whether the applicant goes on
+     * the 교적; 거절 closes the request without creating anything. Both
+     * are gated by MembershipRequestPolicy and only offered while the
+     * request is still 대기.
      *
-     * 승인 also demands a 확인 방법 on both paths - linking an existing
-     * 성도 and registering a new one - because the candidate list only
-     * shows that the applicant's own claims are self-consistent, never
-     * that the applicant is the person named.
+     * The 교적 question is asked outright rather than inferred from a
+     * blank field, because it is the question that matters: anyone may
+     * send a 가입 신청, and it is the 교적 record - not the approval -
+     * that opens 성도 전용 content and 헌금 내역.
+     *
+     * 승인 also demands a 확인 방법 on every path, because the candidate
+     * list only shows that the applicant's own claims are
+     * self-consistent, never that the applicant is the person named.
      *
      * @return array<Action>
      */
@@ -40,17 +54,39 @@ class ViewMembershipRequest extends ViewRecord
                 ->color('success')
                 ->authorize('approve')
                 ->visible(fn (MembershipRequest $record): bool => $record->status === '대기')
-                ->modalDescription('승인하면 로그인이 만들어지고, 그 계정은 헌금 내역까지 볼 수 있습니다. 신청자가 본인이 맞는지 확인한 뒤 진행하세요.')
+                ->modalDescription('신청자가 본인이 맞는지 확인한 뒤 진행하세요. 교적에 올리면 그 계정은 헌금 내역과 성도 전용 자료까지 볼 수 있습니다.')
                 ->schema([
+                    /**
+                     * Connecting to an existing 성도 is only offered
+                     * when there is one to connect to, and is the
+                     * default when there is, because that is the
+                     * ordinary case: somebody the church already knows.
+                     */
+                    Radio::make('outcome')
+                        ->label('교적 처리')
+                        ->options(fn (MembershipRequest $record): array => array_filter([
+                            self::OUTCOME_LINK => $record->candidates()->isNotEmpty() ? '교적에 있는 성도와 연결' : null,
+                            self::OUTCOME_REGISTER => '새 성도로 교적에 등록',
+                            self::OUTCOME_ACCOUNT_ONLY => '교적에 올리지 않고 계정만 (일반회원)',
+                        ]))
+                        ->descriptions([
+                            self::OUTCOME_ACCOUNT_ONLY => '우리 교회 성도가 아닌 분입니다. 로그인은 되지만 성도 전용 자료와 헌금 내역은 보이지 않습니다.',
+                        ])
+                        ->default(fn (MembershipRequest $record): string => $record->candidates()->isNotEmpty()
+                            ? self::OUTCOME_LINK
+                            : self::OUTCOME_REGISTER)
+                        ->required()
+                        ->live(),
                     Select::make('member_id')
-                        ->label('교적부 연결')
+                        ->label('연결할 성도')
                         ->options(fn (MembershipRequest $record): array => $record->candidates()
                             ->mapWithKeys(fn (array $candidate): array => [
                                 $candidate['member']->getKey() => MembershipRequestInfolist::candidateLine($record, $candidate['member']),
                             ])
                             ->all())
-                        ->placeholder('새 성도로 등록')
-                        ->helperText('비워두면 신청 내용으로 새 성도를 등록합니다.'),
+                        ->visible(fn (Get $get): bool => $get('outcome') === self::OUTCOME_LINK)
+                        ->required(fn (Get $get): bool => $get('outcome') === self::OUTCOME_LINK)
+                        ->helperText('신청 내용과 겹치는 교적 기록만 나옵니다. 없으면 위에서 새로 등록하세요.'),
                     Select::make('verification_method')
                         ->label('확인 방법')
                         ->options(MembershipRequest::VERIFICATION_METHODS)
@@ -64,14 +100,23 @@ class ViewMembershipRequest extends ViewRecord
                         ->required(fn (Get $get): bool => $get('verification_method') === '기타'),
                 ])
                 ->action(function (MembershipRequest $record, array $data): void {
+                    $outcome = $data['outcome'] ?? self::OUTCOME_REGISTER;
+
                     $record->approve(
-                        filled($data['member_id'] ?? null) ? Member::query()->find($data['member_id']) : null,
+                        $outcome === self::OUTCOME_LINK ? Member::query()->find($data['member_id']) : null,
                         auth()->user(),
                         $data['verification_method'],
                         $data['verification_note'] ?? null,
+                        registerOnRoster: $outcome !== self::OUTCOME_ACCOUNT_ONLY,
                     );
 
-                    Notification::make()->success()->title('가입 신청을 승인했습니다.')->send();
+                    Notification::make()
+                        ->success()
+                        ->title('가입 신청을 승인했습니다.')
+                        ->body($outcome === self::OUTCOME_ACCOUNT_ONLY
+                            ? '교적에 올리지 않았으므로 성도 전용 자료는 보이지 않습니다.'
+                            : null)
+                        ->send();
                 }),
             Action::make('reject')
                 ->label('거절')

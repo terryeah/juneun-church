@@ -130,16 +130,45 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     }
 
     /**
-     * Whether this account is an ordinary 성도: the permissionless
-     * 'member' role granted through the 가입 신청 flow and nothing else.
+     * Answer of isChurchMember(), which a page may ask more than once -
+     * the 헌금 page asks twice, and each scopeVisible() asks again.
+     */
+    protected ?bool $isChurchMember = null;
+
+    /**
+     * Whether this account is one of the church's own 성도.
+     *
+     * The answer is the 교적 record the account is linked to, and only
+     * that. A role cannot say it: 가입 신청 is open to anyone, and an
+     * approved account is not proof that the office recognised the
+     * applicant - linking them to the 교적 is. So somebody who attends
+     * but was never registered signs in and reads the public site,
+     * while 성도 전용 stays with the roster.
+     *
+     * It follows that a staff account with no 교적 record does not see
+     * 성도 전용 content on the public site either. That is deliberate:
+     * one rule, no exemptions, and staff accounts are only ever handed
+     * to people who are already on the roster.
+     */
+    public function isChurchMember(): bool
+    {
+        return $this->isChurchMember ??= $this->member()->exists();
+    }
+
+    /**
+     * Whether this account is a 일반회원 and nothing more: the
+     * permissionless role every approved 가입 신청 receives.
      *
      * Such an account may sign in - it needs the panel for its own
      * profile - but reaches no dashboard, no resource and no mandatory
      * two-factor prompt. A single extra role makes it staff again.
+     *
+     * This says nothing about whether the person is a 성도; that is
+     * isChurchMember(), and most 일반회원 are both.
      */
-    public function isMemberOnly(): bool
+    public function isGeneralMember(): bool
     {
-        return $this->roles->count() === 1 && $this->hasRole('member');
+        return $this->roles->count() === 1 && $this->hasRole('general_member');
     }
 
     /**
@@ -153,7 +182,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
      */
     public function isExemptFromMultiFactorAuthentication(): bool
     {
-        return $this->isMemberOnly() || $this->is_test_account;
+        return $this->isGeneralMember() || $this->is_test_account;
     }
 
     /**

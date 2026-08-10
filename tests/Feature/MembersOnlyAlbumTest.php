@@ -78,14 +78,14 @@ class MembersOnlyAlbumTest extends TestCase
     {
         $badge = 'inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 align-middle font-kr text-xs font-medium text-success';
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/gallery')
             ->assertOk()
             ->assertSee('2026 성도 수련회')
             ->assertSee($badge, false)
             ->assertSee('성도 전용');
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/gallery/album-members-retreat')
             ->assertOk()
             ->assertSee('2026 성도 수련회');
@@ -122,7 +122,7 @@ class MembersOnlyAlbumTest extends TestCase
             ->assertOk()
             ->assertDontSee(route('gallery.show', $this->restricted));
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/sitemap.xml')
             ->assertOk()
             ->assertDontSee(route('gallery.show', $this->restricted));
@@ -156,7 +156,7 @@ class MembersOnlyAlbumTest extends TestCase
             'featured_in_slider' => true,
         ]);
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/')
             ->assertOk()
             ->assertDontSee($photo->thumbnailUrl(), false);

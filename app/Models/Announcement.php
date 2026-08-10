@@ -129,7 +129,7 @@ class Announcement extends Model
     public function scopeVisible(Builder $query, ?bool $isMember = null): void
     {
         $query->published()->unless(
-            $isMember ?? Auth::check(),
+            $isMember ?? (bool) Auth::user()?->isChurchMember(),
             fn (Builder $q) => $q->where('is_members_only', false),
         );
     }

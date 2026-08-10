@@ -32,7 +32,7 @@ class Dashboard extends BaseDashboard
      */
     public static function canAccess(): bool
     {
-        return ! (auth()->user()?->isMemberOnly() ?? false);
+        return ! (auth()->user()?->isGeneralMember() ?? false);
     }
 
     /**

@@ -27,8 +27,8 @@ class GalleryController extends Controller
      * Display the album grid.
      *
      * The filter narrows what is already visible rather than widening
-     * it - scopeVisible still runs first, so asking for 성도 전용 as a
-     * guest returns nothing rather than everything.
+     * it - scopeVisible still runs first, so asking for 성도 전용
+     * without being one returns nothing rather than everything.
      */
     public function index(Request $request): View
     {
