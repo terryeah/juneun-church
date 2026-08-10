@@ -171,7 +171,6 @@
                     <div class="wiki-row"><b>콘텐츠 편집자</b><span>소식·행사·예배 영상·주보·문서·앨범·사진. <b>교적부와 헌금, 사이트 설정은 열리지 않습니다</b></span></div>
                     <div class="wiki-row"><b>재정 담당</b><span>헌금 내역과 개인 헌금만. 다른 메뉴는 아예 보이지 않습니다</span></div>
                     <div class="wiki-row"><b>성도</b><span>관리자 화면은 못 씁니다. 홈페이지에서 주보와 헌금 내역을 볼 수 있습니다</span></div>
-                    <div class="wiki-row"><b>개발자</b><span>전부. 활동 기록과 데이터베이스는 이 역할만</span></div>
                 </div>
 
                 <p class="wiki-note">주보와 소식만 올려주실 분에게는 <b>콘텐츠 편집자</b>가 맞습니다. 성도들의 인적사항과 헌금이 열리지 않기 때문입니다.</p>
