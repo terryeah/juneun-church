@@ -73,12 +73,19 @@ class ActivitiesTable
                         'login' => 'login',
                         'logout' => 'logout',
                         'failed_login' => 'failed_login',
+                        'visited' => 'visited',
                     ]),
+                /**
+                 * Page visits outnumber everything else by a wide
+                 * margin, so this filter is how a developer gets back
+                 * to the record of what people actually changed.
+                 */
                 SelectFilter::make('log_name')
                     ->label('로그 종류')
                     ->options([
                         'default' => 'content',
                         'auth' => 'auth',
+                        'page' => 'page',
                     ]),
             ])
             ->recordActions([

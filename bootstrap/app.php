@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\LogPageVisits;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -37,6 +38,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 | Request::HEADER_X_FORWARDED_PORT,
         );
         $middleware->append(SecurityHeaders::class);
+
+        /**
+         * The audit trail of who opened which page. It runs on the web
+         * group so it covers the public site and the panel alike, and
+         * it only follows accounts that are signed in.
+         */
+        $middleware->web(append: LogPageVisits::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
