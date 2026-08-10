@@ -7,6 +7,7 @@ use App\Models\Ministry;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -15,11 +16,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Roster listing. Column order matters: the mobile stylesheet lays the
- * cells out in a two-column grid following DOM order, pairing 이름/상태,
- * 성별/생년월일 and 직분/전화번호. 사이트 유저 comes last, on a row of
- * its own, so those three pairs stay together - a lone badge reads
- * fine full width, whereas slotting it in mid-list would break every
- * pair after it.
+ * cells out in a two-column grid following DOM order, so a phone gets
+ * two clean rows - 이름/상태 and 직분/전화번호 - which is everything
+ * needed to pick a person out of the list. 성별, 생년월일 and 사이트
+ * 유저 are answers to questions asked about a member already found, not
+ * cues for finding one, so they wait for a laptop; keeping them in DOM
+ * order there leaves the desktop table exactly as it was.
  */
 class MembersTable
 {
@@ -30,7 +32,8 @@ class MembersTable
                 TextColumn::make('name')
                     ->label('이름')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight(FontWeight::SemiBold),
                 TextColumn::make('status')
                     ->label('상태')
                     ->badge()
@@ -42,12 +45,14 @@ class MembersTable
                     }),
                 TextColumn::make('gender')
                     ->label('성별')
-                    ->placeholder('-'),
+                    ->placeholder('-')
+                    ->visibleFrom('lg'),
                 TextColumn::make('birth_date')
                     ->label('생년월일')
                     ->placeholder('-')
                     ->date('Y-m-d')
-                    ->sortable(),
+                    ->sortable()
+                    ->visibleFrom('lg'),
                 TextColumn::make('position.name')
                     ->label('직분')
                     ->placeholder('-'),
@@ -60,7 +65,8 @@ class MembersTable
                     ->state(fn (Member $record): string => $record->user_id === null ? '없음' : '있음')
                     ->badge()
                     ->color(fn (string $state): string => $state === '있음' ? 'success' : 'gray')
-                    ->sortable(),
+                    ->sortable()
+                    ->visibleFrom('lg'),
             ])
             ->filters([
                 SelectFilter::make('position_id')

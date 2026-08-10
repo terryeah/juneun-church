@@ -8,6 +8,7 @@ use App\Support\RoleLabel;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -17,6 +18,13 @@ use Illuminate\Support\Facades\Password;
  * Read-only listing of site accounts. Accounts are created and edited
  * from the linked roster record (성도), not here; each row links
  * through to that roster record instead.
+ *
+ * A phone shows who the account belongs to, their 직분, what they can
+ * do and whether they have enrolled in 2FA - the four things anybody
+ * opens this list to check. How the account came to exist and when it
+ * was opened are audit questions rather than scanning cues, so they
+ * appear once there is a laptop's width, on top of the administrator
+ * check they already carry.
  */
 class UsersTable
 {
@@ -44,7 +52,8 @@ class UsersTable
                 TextColumn::make('name')
                     ->label('이름')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight(FontWeight::SemiBold),
                 TextColumn::make('member.position.name')
                     ->label('직분')
                     ->placeholder('-'),
@@ -63,7 +72,8 @@ class UsersTable
                     ->color('info')
                     ->formatStateUsing(fn (): string => '가입 신청')
                     ->placeholder('관리자 등록')
-                    ->visible(fn (): bool => auth()->user()?->isAdministrator() ?? false),
+                    ->visible(fn (): bool => auth()->user()?->isAdministrator() ?? false)
+                    ->visibleFrom('lg'),
                 TextColumn::make('app_authentication_secret')
                     ->label('2단계 인증')
                     ->badge()
@@ -74,7 +84,8 @@ class UsersTable
                     ->label('가입일')
                     ->dateTime('Y-m-d H:i')
                     ->sortable()
-                    ->visible(fn (): bool => auth()->user()?->isAdministrator() ?? false),
+                    ->visible(fn (): bool => auth()->user()?->isAdministrator() ?? false)
+                    ->visibleFrom('lg'),
             ])
             ->recordUrl(fn (User $record): ?string => $record->member
                 ? MemberResource::getUrl('edit', ['record' => $record->member])

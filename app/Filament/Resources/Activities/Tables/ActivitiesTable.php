@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Activities\Tables;
 
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -11,6 +12,11 @@ use Spatie\Activitylog\Models\Activity;
 
 /**
  * Table configuration for the activity log browser.
+ *
+ * A log row answers who did what to which record and when, so those
+ * four stay on the phone. The IP address is only ever consulted after
+ * the fact, and the view modal prints it in full alongside the rest of
+ * the stored properties, so it waits for a laptop.
  */
 class ActivitiesTable
 {
@@ -36,6 +42,7 @@ class ActivitiesTable
                 TextColumn::make('causer.name')
                     ->label('사용자')
                     ->placeholder('시스템')
+                    ->weight(FontWeight::SemiBold)
                     ->searchable(),
                 TextColumn::make('event')
                     ->label('동작')
@@ -53,7 +60,8 @@ class ActivitiesTable
                         : '-'),
                 TextColumn::make('properties.ip')
                     ->label('IP 주소')
-                    ->placeholder('-'),
+                    ->placeholder('-')
+                    ->visibleFrom('lg'),
             ])
             ->filters([
                 SelectFilter::make('event')

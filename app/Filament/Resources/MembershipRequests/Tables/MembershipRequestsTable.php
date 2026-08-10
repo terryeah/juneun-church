@@ -4,11 +4,19 @@ namespace App\Filament\Resources\MembershipRequests\Tables;
 
 use App\Models\MembershipRequest;
 use Filament\Actions\ViewAction;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 /**
  * Sign-up request listing, newest first.
+ *
+ * The office works this list by deciding which requests are still
+ * waiting and ringing the people behind them, so a phone gets the name,
+ * the phone number, the status and the day it came in - two tidy pairs
+ * in the stacked layout. Everything used to verify a request against
+ * the roster is opened through the view action anyway, so 생년월일,
+ * 이메일 and 확인 방법 wait for a laptop.
  */
 class MembershipRequestsTable
 {
@@ -31,12 +39,14 @@ class MembershipRequestsTable
                 TextColumn::make('name')
                     ->label('이름')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight(FontWeight::SemiBold),
                 TextColumn::make('birth_date')
                     ->label('생년월일')
                     ->placeholder('-')
                     ->date('Y-m-d')
-                    ->sortable(),
+                    ->sortable()
+                    ->visibleFrom('lg'),
                 TextColumn::make('phone')
                     ->label('전화번호')
                     ->placeholder('-')
@@ -44,7 +54,8 @@ class MembershipRequestsTable
                 TextColumn::make('email')
                     ->label('이메일')
                     ->placeholder('-')
-                    ->searchable(),
+                    ->searchable()
+                    ->visibleFrom('lg'),
                 TextColumn::make('status')
                     ->label('상태')
                     ->badge()
@@ -52,7 +63,8 @@ class MembershipRequestsTable
                 TextColumn::make('verification_method')
                     ->label('확인 방법')
                     ->placeholder('-')
-                    ->tooltip(fn (MembershipRequest $record): ?string => $record->verification_note),
+                    ->tooltip(fn (MembershipRequest $record): ?string => $record->verification_note)
+                    ->visibleFrom('lg'),
                 TextColumn::make('created_at')
                     ->label('신청일')
                     ->placeholder('-')
