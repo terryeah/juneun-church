@@ -63,7 +63,7 @@ class AppServiceProvider extends ServiceProvider
 
         Table::configureUsing(fn (Table $table) => $table
             ->stackedOnMobile()
-            ->defaultPaginationPageOption(10)
+            ->defaultPaginationPageOption(25)
             ->defaultSort('created_at', 'desc')
             ->defaultDateDisplayFormat('Y-m-d')
             ->defaultDateTimeDisplayFormat('Y-m-d, H:i:s')

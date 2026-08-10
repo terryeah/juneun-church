@@ -59,15 +59,15 @@ class SidebarRoleBadgeTest extends TestCase
 
     /**
      * The activity log and the role editor are developer-only, the
-     * offering resources are admin-only, and announcements reach
-     * content editors as well.
+     * offering resources are named for the department that owns them,
+     * and announcements reach content editors as well.
      */
     public function test_badges_follow_the_seeded_view_any_grants(): void
     {
         $this->assertSame('developer', AdminPanelProvider::roleBadge(ActivityResource::class));
         $this->assertSame('developer', AdminPanelProvider::roleBadge(RoleResource::class));
-        $this->assertSame('admin', AdminPanelProvider::roleBadge(OfferingResource::class));
-        $this->assertSame('admin', AdminPanelProvider::roleBadge(PersonalOfferingResource::class));
+        $this->assertSame('finance_officer', AdminPanelProvider::roleBadge(OfferingResource::class));
+        $this->assertSame('finance_officer', AdminPanelProvider::roleBadge(PersonalOfferingResource::class));
         $this->assertNull(AdminPanelProvider::roleBadge(AnnouncementResource::class));
     }
 
@@ -87,9 +87,9 @@ class SidebarRoleBadgeTest extends TestCase
     /**
      * Personal details, logins and money stay with administrators.
      *
-     * The whole 공동체 group stays here because a 성도 record holds a
-     * birth date, a phone number, an address and an email address, and
-     * 셀 groups those people. 사이트 설정 holds the giving account
+     * The whole of 교적 and 계정 stays here because a 성도 record holds
+     * a birth date, a phone number, an address and an email address,
+     * and 셀 groups those people. 사이트 설정 holds the giving account
      * numbers and 직분 the church's order of office, so a mistake in
      * either reaches the congregation rather than the website.
      */
@@ -103,8 +103,6 @@ class SidebarRoleBadgeTest extends TestCase
             SiteSettingResource::class,
             PositionResource::class,
             MembershipRequestResource::class,
-            OfferingResource::class,
-            PersonalOfferingResource::class,
         ] as $resource) {
             $this->assertSame('admin', AdminPanelProvider::roleBadge($resource), $resource.' changed audience.');
         }
@@ -156,17 +154,49 @@ class SidebarRoleBadgeTest extends TestCase
 
         [$offerings] = AdminPanelProvider::accessibleItems(OfferingResource::class);
 
-        $this->assertStringContainsString("--role-badge:'관리자'", $offerings->getExtraAttributeBag()->get('style'));
-        $this->assertStringNotContainsString('admin', $offerings->getExtraAttributeBag()->get('style'));
+        /** The tag names the department, not the one person's role. */
+        $this->assertStringContainsString("--role-badge:'재정부'", $offerings->getExtraAttributeBag()->get('style'));
+        $this->assertStringNotContainsString('finance_officer', $offerings->getExtraAttributeBag()->get('style'));
     }
 
     /**
-     * 재정 담당 reaches the two offering resources and nothing else, and
-     * that single-purpose grant must not talk 헌금 내역 and 개인 헌금
-     * out of their administrator tag: they stay administrator menus for
-     * everyone in the church but the one specialist.
+     * Each tag keeps its own colour: amber for an administrator menu,
+     * green for 재정, blue for the developer screens. The three have to
+     * stay apart, or the tag stops carrying anything the label does not
+     * already say.
      */
-    public function test_the_finance_role_does_not_widen_the_offering_badges(): void
+    public function test_each_tag_carries_its_own_colour(): void
+    {
+        Filament::setCurrentPanel('admin');
+        $this->actingAs(tap($this->superAdmin())->assignRole('developer'));
+
+        $hues = [
+            MemberResource::class => 'warning',
+            OfferingResource::class => 'success',
+            ActivityResource::class => 'info',
+        ];
+
+        foreach ($hues as $resource => $hue) {
+            [$item] = AdminPanelProvider::accessibleItems($resource);
+
+            $this->assertStringContainsString(
+                "--role-badge-color:var(--{$hue}-600)",
+                $item->getExtraAttributeBag()->get('style'),
+                $resource.' lost its colour.',
+            );
+        }
+    }
+
+    /**
+     * 재정 담당 reaches the two offering resources and nothing else.
+     *
+     * That grant is deliberately not counted when a badge is worked
+     * out, or those two menus would lose their tag entirely - so the
+     * 재정부 tag they wear is stated rather than derived, and this
+     * checks both halves: the grant stays narrow, and the tag is the
+     * one the override names.
+     */
+    public function test_the_finance_role_owns_only_the_offering_resources(): void
     {
         $finance = Role::findByName('finance_officer', 'web');
 
@@ -178,8 +208,8 @@ class SidebarRoleBadgeTest extends TestCase
                 ->all(),
         );
 
-        $this->assertSame('admin', AdminPanelProvider::roleBadge(OfferingResource::class));
-        $this->assertSame('admin', AdminPanelProvider::roleBadge(PersonalOfferingResource::class));
+        $this->assertSame('finance_officer', AdminPanelProvider::roleBadge(OfferingResource::class));
+        $this->assertSame('finance_officer', AdminPanelProvider::roleBadge(PersonalOfferingResource::class));
     }
 
     /**

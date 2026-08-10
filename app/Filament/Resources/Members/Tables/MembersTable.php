@@ -61,7 +61,7 @@ class MembersTable
                     ->placeholder('-')
                     ->searchable(),
                 TextColumn::make('user_id')
-                    ->label('사이트 유저')
+                    ->label('사이트 계정')
                     ->state(fn (Member $record): string => $record->user_id === null ? '없음' : '있음')
                     ->badge()
                     ->color(fn (string $state): string => $state === '있음' ? 'success' : 'gray')
@@ -79,7 +79,7 @@ class MembersTable
                     ->label('성별')
                     ->options(['남' => '남', '여' => '여']),
                 TernaryFilter::make('user_id')
-                    ->label('사이트 유저')
+                    ->label('사이트 계정')
                     ->placeholder('전체')
                     ->trueLabel('있음')
                     ->falseLabel('없음')

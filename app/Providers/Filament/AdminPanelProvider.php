@@ -62,17 +62,57 @@ use Illuminate\View\View;
 class AdminPanelProvider extends PanelProvider
 {
     /**
-     * Sidebar badges for pages, which hold no model and so cannot be
-     * read from the granted permissions the way a resource can. Their
-     * audience lives in each page's own canAccess() instead.
+     * Sidebar tags that are stated rather than worked out.
+     *
+     * Pages hold no model, so there are no granted permissions to read
+     * their audience from; their access lives in each page's own
+     * canAccess() instead. A resource appears here only when the
+     * grants would answer correctly but unhelpfully.
      *
      * @var array<class-string, string>
      */
-    protected const PAGE_BADGES = [
+    protected const BADGE_OVERRIDES = [
         Analytics::class => 'admin',
         Wiki::class => 'admin',
         DatabaseGraph::class => 'developer',
         GoogleAnalytics::class => 'developer',
+
+        /**
+         * 재정 is read off the grants as an administrator menu, because
+         * the finance role is excluded from that sum for every other
+         * item's sake. Naming the department it actually belongs to is
+         * more use to the person reading the sidebar.
+         */
+        OfferingResource::class => 'finance_officer',
+        PersonalOfferingResource::class => 'finance_officer',
+    ];
+
+    /**
+     * The colour each role tag is drawn in.
+     *
+     * Amber for an administrator menu, which is most of them; green for
+     * 재정, a department of its own; blue for the developer screens,
+     * which are about the machinery rather than the church.
+     *
+     * @var array<string, string>
+     */
+    protected const BADGE_HUES = [
+        'admin' => 'warning',
+        'finance_officer' => 'success',
+        'developer' => 'info',
+    ];
+
+    /**
+     * Tags whose wording differs from the role's own name.
+     *
+     * A tag says who a menu belongs to, which for finance is a
+     * department rather than a person: 재정부 owns those two screens,
+     * while 재정 담당 is what one member of it is called.
+     *
+     * @var array<string, string>
+     */
+    protected const BADGE_LABELS = [
+        'finance_officer' => '재정부',
     ];
 
     /**
@@ -555,7 +595,7 @@ class AdminPanelProvider extends PanelProvider
      * the user table and the member form read: it names a role, and the
      * rest of the sidebar is Korean. Only the display text is
      * translated - roleBadge() keeps returning the internal key, so the
-     * PAGE_BADGES map and the tests still compare against 'admin' and
+     * BADGE_OVERRIDES map and the tests still compare against 'admin' and
      * 'developer'. The label is a CSS string, so it stays inside the
      * single quotes the custom property already carried; Korean needs
      * no further escaping in a UTF-8 document, and the labels are a
@@ -577,8 +617,8 @@ class AdminPanelProvider extends PanelProvider
         $items = $component::getNavigationItems();
 
         if ($badge = static::roleBadge($component)) {
-            $hue = $badge === 'developer' ? 'success' : 'warning';
-            $label = RoleLabel::label($badge);
+            $hue = static::BADGE_HUES[$badge] ?? 'warning';
+            $label = static::BADGE_LABELS[$badge] ?? RoleLabel::label($badge);
 
             foreach ($items as $item) {
                 $item->extraAttributes([
@@ -608,8 +648,8 @@ class AdminPanelProvider extends PanelProvider
      */
     public static function roleBadge(string $component): ?string
     {
-        if (array_key_exists($component, static::PAGE_BADGES)) {
-            return static::PAGE_BADGES[$component];
+        if (array_key_exists($component, static::BADGE_OVERRIDES)) {
+            return static::BADGE_OVERRIDES[$component];
         }
 
         if (! method_exists($component, 'getModel')) {
