@@ -25,17 +25,44 @@ use Symfony\Component\HttpFoundation\Response;
 class LogPageVisits
 {
     /**
+     * The query string keys worth keeping.
+     *
+     * These four say which part of a page was open: the week of 헌금
+     * 내역, the tab of 자료실, the filter on 갤러리, and how far down a
+     * list someone had paged.
+     *
+     * Everything else is dropped, and the list is a whitelist rather
+     * than a list of exclusions on purpose. Filament keeps a table's
+     * search box and filters in the query string, so a 성도's phone
+     * number typed into 교적 would otherwise be copied into the audit
+     * trail - where it would outlive the 교적 record itself, sit in
+     * every nightly backup, and go well beyond the "which pages did
+     * someone open" the church is announcing. A whitelist cannot start
+     * doing that when a new screen is added; a blacklist can.
+     */
+    private const KEPT_QUERY = ['week', 'type', 'visibility', 'page'];
+
+    /**
      * Handle an incoming request.
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $response = $next($request);
+        return $next($request);
+    }
 
+    /**
+     * Write the visit once the page is already on its way.
+     *
+     * Laravel calls this after the response has been sent, so the row
+     * costs the reader nothing. Writing it in handle() instead would
+     * hold the page back for the round trip - and on this server that
+     * is a third database write on a request that already makes two.
+     */
+    public function terminate(Request $request, Response $response): void
+    {
         if ($this->shouldRecord($request, $response)) {
             $this->record($request);
         }
-
-        return $response;
     }
 
     /**
@@ -70,10 +97,12 @@ class LogPageVisits
      */
     private function record(Request $request): void
     {
+        $kept = array_intersect_key($request->query(), array_flip(self::KEPT_QUERY));
+
         activity('page')
             ->causedBy(Auth::user())
             ->withProperties([
-                'url' => $request->fullUrl(),
+                'url' => $request->url().($kept === [] ? '' : '?'.http_build_query($kept)),
                 'ip' => $request->ip(),
             ])
             ->event('visited')

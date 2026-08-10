@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\Activities\Pages\ListActivities;
 use App\Models\Announcement;
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Spatie\Activitylog\Models\Activity;
 use Tests\TestCase;
 
@@ -115,5 +117,32 @@ class ActivityLogTest extends TestCase
             ->get('/admin/analytics')
             ->assertOk()
             ->assertSee('활동 기록');
+    }
+
+    /**
+     * Closing someone's 사이트 계정 must not turn their history into
+     * the site's own.
+     *
+     * The account is deleted outright and the log holds no link back to
+     * it, so those rows would otherwise read '시스템' - which is what a
+     * failed sign-in reads, and would say the site did what a person
+     * did. The id survives in the column, so it stands in.
+     */
+    public function test_a_deleted_account_is_still_named(): void
+    {
+        $developer = User::factory()->create();
+        $developer->assignRole('developer');
+
+        $departed = User::factory()->create();
+        activity('auth')->causedBy($departed)->event('login')->log('로그인');
+        activity('auth')->event('failed_login')->log('로그인 실패');
+
+        $id = $departed->getKey();
+        $departed->delete();
+
+        Livewire::actingAs($developer)
+            ->test(ListActivities::class)
+            ->assertSee('삭제된 계정 #'.$id)
+            ->assertSee('시스템');
     }
 }

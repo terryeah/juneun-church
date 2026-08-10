@@ -40,9 +40,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(SecurityHeaders::class);
 
         /**
-         * The audit trail of who opened which page. It runs on the web
-         * group so it covers the public site and the panel alike, and
-         * it only follows accounts that are signed in.
+         * The audit trail of who opened which page, for the public
+         * site. The admin panel does not join this group - it lists its
+         * own middleware - so AdminPanelProvider registers the same
+         * class again for the panel's routes.
          */
         $middleware->web(append: LogPageVisits::class);
     })

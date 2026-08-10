@@ -31,6 +31,7 @@ use App\Filament\Resources\SiteSettings\SiteSettingResource;
 use App\Filament\Resources\StaffMembers\StaffMemberResource;
 use App\Filament\Resources\Users\UserResource;
 use App\Http\Middleware\ExemptMembersFromMultiFactorAuthentication;
+use App\Http\Middleware\LogPageVisits;
 use App\Http\Middleware\RedirectMembersToProfile;
 use App\Support\RoleLabel;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -196,6 +197,19 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                /**
+                 * A panel lists its middleware rather than joining the
+                 * 'web' group, so appending to that group covers the
+                 * public site and leaves the panel out - which would
+                 * have left every screen holding a birth date, a phone
+                 * number or a giving record outside the audit trail.
+                 *
+                 * Left non-persistent on purpose: Filament runs these
+                 * on the page load only, not on the Livewire calls a
+                 * screen makes afterwards, which is exactly the line
+                 * between opening a page and using it.
+                 */
+                LogPageVisits::class,
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),

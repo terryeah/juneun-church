@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\SiteSettingSeeder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -125,6 +127,40 @@ class PageVisitLogTest extends TestCase
     }
 
     /**
+     * The admin panel is followed too, and it is the half that matters:
+     * 성도 records, 헌금 내역 and the log itself all live there.
+     *
+     * A Filament panel lists its own middleware instead of joining the
+     * 'web' group, so this is the guard on the panel registering the
+     * middleware separately. Appending to the web group alone recorded
+     * the public site and silently skipped every screen worth auditing.
+     */
+    public function test_an_admin_panel_page_is_recorded(): void
+    {
+        $this->seed(RoleSeeder::class);
+        $this->seed(RolePermissionSeeder::class);
+
+        $user = User::factory()->create();
+        $user->syncRoles(['super_admin']);
+
+        $this->actingAs($user)->get('/admin')->assertOk();
+
+        $this->assertSame('/admin', $this->visits()->first()?->description);
+    }
+
+    /**
+     * The sign-in screen is not a visit: nobody has said who they are
+     * yet, and the account that lands there next is recorded from its
+     * first page onwards.
+     */
+    public function test_the_panel_sign_in_screen_is_not_recorded(): void
+    {
+        $this->get('/admin/login')->assertOk();
+
+        $this->assertCount(0, $this->visits());
+    }
+
+    /**
      * The query string is kept, because on this site it carries which
      * week of 헌금 내역 or which tab of 자료실 was opened.
      */
@@ -138,5 +174,27 @@ class PageVisitLogTest extends TestCase
             'type=documents',
             $this->visits()->first()->properties['url'] ?? '',
         );
+    }
+
+    /**
+     * Nothing else in the query string is kept.
+     *
+     * Filament holds a table's search box in the address bar, so
+     * reloading 교적 after searching for a phone number is an ordinary
+     * page opening carrying a 성도's number - which would then sit in
+     * the log for 180 days and in every backup, outliving the 교적
+     * record it came from.
+     */
+    public function test_a_search_term_is_not_kept(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get('/downloads?type=documents&search=0400+000+000')
+            ->assertOk();
+
+        $url = $this->visits()->first()->properties['url'] ?? '';
+
+        $this->assertStringContainsString('type=documents', $url);
+        $this->assertStringNotContainsString('0400', $url);
+        $this->assertStringNotContainsString('search', $url);
     }
 }

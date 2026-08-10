@@ -41,6 +41,7 @@ class ActivitiesTable
                     ->sortable(),
                 TextColumn::make('causer.name')
                     ->label('사용자')
+                    ->state(fn (Activity $record): ?string => self::causer($record))
                     ->placeholder('시스템')
                     ->weight(FontWeight::SemiBold)
                     ->searchable(),
@@ -96,6 +97,7 @@ class ActivitiesTable
                             ->dateTime(),
                         TextEntry::make('causer.name')
                             ->label('사용자')
+                            ->state(fn (Activity $record): ?string => self::causer($record))
                             ->placeholder('시스템'),
                         TextEntry::make('description')
                             ->label('내용'),
@@ -113,5 +115,21 @@ class ActivitiesTable
             ])
             ->defaultSort('created_at', 'desc')
             ->poll(null);
+    }
+
+    /**
+     * Who a row belongs to, including accounts that no longer exist.
+     *
+     * Closing someone's 사이트 계정 deletes the account outright, and
+     * nothing ties the log to it, so every row that person left behind
+     * would fall back to the '시스템' placeholder - reading as though
+     * the site had done it rather than a person. The id is still in the
+     * column, so it is shown instead, and '시스템' goes back to meaning
+     * what it says: no one was signed in, as with a failed sign-in.
+     */
+    private static function causer(Activity $record): ?string
+    {
+        return $record->causer?->name
+            ?? ($record->causer_id ? '삭제된 계정 #'.$record->causer_id : null);
     }
 }
