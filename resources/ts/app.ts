@@ -56,6 +56,15 @@ document.addEventListener('DOMContentLoaded', (): void => {
         });
     }
 
+    const galleryFilter = document.querySelector<HTMLElement>('[data-gallery-filter]');
+    if (galleryFilter) {
+        new SectionSwap(galleryFilter, {
+            root: '[data-gallery-filter]',
+            chip: '[data-gallery-chip]',
+            stagger: '[data-gallery-item]',
+        });
+    }
+
     document
         .querySelectorAll<HTMLInputElement>('input[data-date-field]')
         .forEach((field) => new DateFieldFormat(field));

@@ -102,6 +102,12 @@ class SaveUploadsAsWebp
 
     /**
      * Store the uploaded file, converting images to WebP when possible.
+     *
+     * The original never stays on the server. Livewire parks it in
+     * storage/app/private/livewire-tmp while the form is being filled
+     * in, and would sweep it up within a day on its own; it is deleted
+     * here instead, as soon as the copy on the media disk exists, so an
+     * untouched original is not sitting in a directory nobody looks at.
      */
     protected static function store(FileUpload $component, TemporaryUploadedFile $file): string
     {
@@ -118,6 +124,8 @@ class SaveUploadsAsWebp
             $path = $prefix.Str::uuid().'.webp';
             $disk->put($path, $converted, $options);
 
+            static::discard($file);
+
             return $path;
         }
 
@@ -125,6 +133,23 @@ class SaveUploadsAsWebp
         $path = $prefix.Str::uuid().'.'.$extension;
         $disk->put($path, $binary, $options);
 
+        static::discard($file);
+
         return $path;
+    }
+
+    /**
+     * Remove the uploaded original once it has been stored elsewhere.
+     *
+     * A failure here is not worth losing the save over - Livewire's own
+     * sweep still catches the file within the day - so it is swallowed.
+     */
+    protected static function discard(TemporaryUploadedFile $file): void
+    {
+        try {
+            $file->delete();
+        } catch (Throwable) {
+            /** Left for Livewire's scheduled cleanup. */
+        }
     }
 }

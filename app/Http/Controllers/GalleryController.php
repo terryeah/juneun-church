@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Album;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
@@ -11,17 +12,44 @@ use Illuminate\View\View;
 class GalleryController extends Controller
 {
     /**
-     * Display the album grid.
+     * The audience filters offered to a signed-in 성도.
+     *
+     * A guest is never shown these: everything they can reach is open
+     * already, so every chip would say the same thing.
      */
-    public function index(): View
+    private const FILTERS = [
+        'all' => '전체',
+        'members' => '성도 전용',
+        'public' => '모두 공개',
+    ];
+
+    /**
+     * Display the album grid.
+     *
+     * The filter narrows what is already visible rather than widening
+     * it - scopeVisible still runs first, so asking for 성도 전용 as a
+     * guest returns nothing rather than everything.
+     */
+    public function index(Request $request): View
     {
+        $filter = array_key_exists((string) $request->query('visibility'), self::FILTERS)
+            ? (string) $request->query('visibility')
+            : 'all';
+
         $albums = Album::query()
             ->visible()
+            ->when($filter === 'members', fn ($query) => $query->where('is_members_only', true))
+            ->when($filter === 'public', fn ($query) => $query->where('is_members_only', false))
             ->withCount('photos')
             ->orderByDesc('event_date')
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
 
-        return view('pages.gallery.index', compact('albums'));
+        return view('pages.gallery.index', [
+            'albums' => $albums,
+            'filters' => self::FILTERS,
+            'filter' => $filter,
+        ]);
     }
 
     /**

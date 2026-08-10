@@ -39,7 +39,26 @@ class PhotoForm
                 FileUpload::make('path')
                     ->label('사진')
                     ->image()
-                    ->maxSize(15360)
+                    /**
+                     * Camera RAW is accepted as well as the web formats.
+                     * Most RAW files are TIFF underneath and so already
+                     * satisfy image/*, but a browser that names the
+                     * maker's own type instead is listed here too.
+                     */
+                    ->acceptedFileTypes([
+                        'image/*',
+                        'image/x-adobe-dng',
+                        'image/x-canon-cr2',
+                        'image/x-canon-cr3',
+                        'image/x-nikon-nef',
+                        'image/x-sony-arw',
+                        'image/x-fuji-raf',
+                        'image/x-panasonic-rw2',
+                        'image/x-olympus-orf',
+                    ])
+                    /** 64MB, which the server is configured to accept. */
+                    ->maxSize(65536)
+                    ->helperText('휴대폰 사진과 카메라 RAW 파일을 올릴 수 있어요. 올리면 자동으로 WebP로 바뀌고, 원본은 서버에 남지 않아요. 한 장에 64MB까지예요.')
                     ->disk(config('filesystems.media'))
                     ->directory(fn (Get $get): string => 'albums/'.(Album::query()->find($get('album_id'))?->slug ?? 'unsorted'))
                     ->visibility('public')
