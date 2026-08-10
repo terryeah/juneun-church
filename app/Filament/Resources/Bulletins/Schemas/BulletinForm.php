@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Bulletins\Schemas;
 
+use App\Filament\Support\SaveUploadsAsWebp;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -45,6 +46,9 @@ class BulletinForm
                         $path = 'bulletins/bulletin-'.now('Australia/Brisbane')->format('Y-m-d-His').'.pdf';
                         Storage::disk(config('filesystems.media'))
                             ->put($path, (string) file_get_contents($file->getRealPath()), ['visibility' => 'public']);
+
+                        /** The upload does not linger on the server once it is on the CDN. */
+                        SaveUploadsAsWebp::discard($file);
 
                         return $path;
                     }),
