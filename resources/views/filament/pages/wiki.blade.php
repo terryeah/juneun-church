@@ -233,7 +233,6 @@
                     <div class="wiki-row"><b>설교 영상</b><span>유튜브에 <b>주일설교</b>가 올라오면 예배 영상에 저절로 들어옵니다</span></div>
                     <div class="wiki-row"><b>인스타그램 사진</b><span>새 게시물이 올라오면 앨범이 하나 만들어집니다. 아무도 안 만든 앨범이 보이는 이유입니다</span></div>
                     <div class="wiki-row"><b>주소(슬러그)</b><span>비워두면 자동으로 만들어집니다. 한글 제목은 날짜로 만들어집니다. 제목을 나중에 고쳐도 주소는 그대로입니다</span></div>
-                    <div class="wiki-row"><b>기록</b><span>누가 언제 무엇을 고쳤는지 남습니다. 로그인 실패도 남습니다. 180일 뒤 지워집니다</span></div>
                 </div>
 
             </div>
