@@ -155,7 +155,6 @@
                 <h3 class="wiki-h3">모니터링</h3>
                 <div class="wiki-rows">
                     <div class="wiki-row"><b>방문자 통계</b><span>홈페이지에 몇 명이 다녀갔는지</span></div>
-                    <div class="wiki-row"><b>활동 기록 &middot; 데이터베이스</b><span>개발자만 볼 수 있습니다</span></div>
                 </div>
 
             </div>
