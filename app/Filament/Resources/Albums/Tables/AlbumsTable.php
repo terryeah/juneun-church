@@ -23,6 +23,13 @@ use Filament\Tables\Table;
  * and a badge cannot be flipped. 성도 전용 is the rarer of the two, so
  * it waits for a laptop along with the author, and the slug is
  * reference material behind the column menu.
+ *
+ * The cover leads the card on a phone rather than sitting in a grid
+ * cell at thumbnail size. Stacking every column into an equal labelled
+ * cell puts a 44px picture beside a line of text, which is exactly
+ * backwards for a screen whose whole subject is the picture; the three
+ * stacked- classes hand it the full width and drop the label it does
+ * not need. Above the breakpoint nothing changes.
  */
 class AlbumsTable
 {
@@ -42,7 +49,8 @@ class AlbumsTable
 
                         return $photo?->thumbnail_path ?? $record->cover_photo_path;
                     })
-                    ->imageHeight(44),
+                    ->imageHeight(44)
+                    ->extraCellAttributes(['class' => 'stacked-span-full stacked-hide-label stacked-media']),
                 TextColumn::make('title')
                     ->label('앨범명')
                     ->searchable()
