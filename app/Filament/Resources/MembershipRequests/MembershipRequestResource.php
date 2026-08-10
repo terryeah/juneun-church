@@ -23,7 +23,7 @@ class MembershipRequestResource extends Resource
 
     /**
      * Position of this item in the sidebar navigation, directly above
-     * 사이트 유저 in the 공동체 group.
+     * 사이트 유저 in the 계정 group.
      */
     protected static ?int $navigationSort = 15;
 

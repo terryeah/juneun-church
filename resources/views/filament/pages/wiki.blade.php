@@ -61,7 +61,7 @@
                 <article class="wiki-task">
                     <h3 class="wiki-task-title">가입 신청 승인하기</h3>
                     <ol class="wiki-steps">
-                        <li><b>공동체 &rsaquo; 가입 신청</b>. 메뉴 옆 숫자가 기다리는 신청 수입니다.</li>
+                        <li><b>계정 &rsaquo; 가입 신청</b>. 메뉴 옆 숫자가 기다리는 신청 수입니다.</li>
                         <li>신청을 열면 <b>교적부 대조</b>표가 나옵니다. 신청서에 적은 내용과 교회가 가진 기록을 나란히 보여줍니다.</li>
                         <li>확인이 되면 <b>확인 방법</b>을 고르고 승인합니다.</li>
                     </ol>
@@ -137,14 +137,19 @@
                     <div class="wiki-row"><b>개인 헌금</b><span>성도별 헌금 기록</span></div>
                 </div>
 
-                <h3 class="wiki-h3">공동체</h3>
+                <h3 class="wiki-h3">교적</h3>
                 <div class="wiki-rows">
                     <div class="wiki-row"><b>성도</b><span>교적부. 인적사항, 직분, 셀, 그리고 <b>홈페이지 계정</b>도 여기서 만듭니다</span></div>
                     <div class="wiki-row"><b>셀</b><span>셀 편성</span></div>
                     <div class="wiki-row"><b>섬김이</b><span><b>읽기 전용.</b> 직분이나 부서가 있는 분이 자동으로 모입니다. 고치려면 성도에서</span></div>
+                </div>
+
+                <h3 class="wiki-h3">계정</h3>
+                <div class="wiki-rows">
                     <div class="wiki-row"><b>가입 신청</b><span>홈페이지에서 들어온 계정 신청. 옆 숫자가 대기 건수</span></div>
                     <div class="wiki-row"><b>사이트 유저</b><span><b>읽기 전용.</b> 계정 목록만 봅니다. 계정은 성도 화면에서 만들고 없앱니다</span></div>
                 </div>
+                <p class="wiki-note">교적과 계정은 다릅니다. 교적부에 계신 분이 홈페이지 계정은 없을 수 있고, 그 반대도 됩니다. 계정은 언제나 <b>성도</b> 화면에서 만들고 없앱니다.</p>
 
                 <h3 class="wiki-h3">기준 정보</h3>
                 <div class="wiki-rows">
@@ -210,7 +215,7 @@
             <div class="wiki-body">
 
                 <h3 class="wiki-h3">성도가 계정을 갖는 두 가지 길</h3>
-                <p>성도가 홈페이지에서 <b>가입 신청</b>을 하면 관리자가 승인합니다. 또는 관리자가 <b>공동체 &rsaquo; 성도</b>에서 그분의 기록을 열고 <b>사이트 계정</b>을 켜서 직접 만들어 줄 수도 있습니다.</p>
+                <p>성도가 홈페이지에서 <b>가입 신청</b>을 하면 관리자가 승인합니다. 또는 관리자가 <b>교적 &rsaquo; 성도</b>에서 그분의 기록을 열고 <b>사이트 계정</b>을 켜서 직접 만들어 줄 수도 있습니다.</p>
                 <p class="wiki-warn"><b>사이트 계정을 끄면 그 계정이 삭제됩니다.</b> 연결만 끊는 것이 아닙니다. 2단계 인증 등록도, 그분이 올린 글의 작성자 표시도 함께 사라집니다. 끄기 전에 안내 문구를 꼭 읽어주세요.</p>
 
                 <h3 class="wiki-h3">2단계 인증</h3>
@@ -279,7 +284,7 @@
 
                 <div class="wiki-qa">
                     <p class="wiki-q">가입 신청을 했다는데 목록에 없어요</p>
-                    <p class="wiki-a">이미 계정이 있거나, 지난번 신청이 아직 기다리고 있는 경우입니다. 그럴 때는 신청이 새로 쌓이지 않습니다. 공동체 &rsaquo; 사이트 유저에서 그분 이메일을 찾아보세요.</p>
+                    <p class="wiki-a">이미 계정이 있거나, 지난번 신청이 아직 기다리고 있는 경우입니다. 그럴 때는 신청이 새로 쌓이지 않습니다. 계정 &rsaquo; 사이트 유저에서 그분 이메일을 찾아보세요.</p>
                 </div>
 
             </div>
