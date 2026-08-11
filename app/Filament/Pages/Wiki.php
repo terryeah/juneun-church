@@ -34,10 +34,16 @@ class Wiki extends Page
     protected string $view = 'filament.pages.wiki';
 
     /**
-     * Administrators only: it names what the church still has to decide.
+     * Anybody who can work in the panel at all.
+     *
+     * It is the instructions for using this site, so the person most
+     * likely to need it is the one with the fewest menus - an editor
+     * putting up a 주보 for the first time. Nothing in it is privileged:
+     * it explains screens that each reader is separately allowed, or
+     * not allowed, to open.
      */
     public static function canAccess(): bool
     {
-        return auth()->user()?->isAdministrator() ?? false;
+        return ! (auth()->user()?->isGeneralMember() ?? true);
     }
 }

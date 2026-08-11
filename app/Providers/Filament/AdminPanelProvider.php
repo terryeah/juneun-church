@@ -75,9 +75,17 @@ class AdminPanelProvider extends PanelProvider
      */
     protected const BADGE_OVERRIDES = [
         Analytics::class => 'admin',
-        Wiki::class => 'admin',
         DatabaseGraph::class => 'developer',
         GoogleAnalytics::class => 'developer',
+
+        /**
+         * The two screens everybody in the panel shares. A tag answers
+         * "who is this menu for", and for these the answer is everyone
+         * who can sign in at all - which is no answer worth the room it
+         * takes beside the label.
+         */
+        Dashboard::class => null,
+        Wiki::class => null,
 
         /**
          * 재정 is read off the grants as an administrator menu, because
@@ -102,6 +110,14 @@ class AdminPanelProvider extends PanelProvider
         'admin' => 'warning',
         'finance_officer' => 'success',
         'developer' => 'info',
+
+        /**
+         * Grey, because this tag sits on more menus than the other
+         * three put together. The elevated ones only stand out if the
+         * ordinary one recedes; in colour it is the quiet default that
+         * makes amber, green and blue read as "this one is different".
+         */
+        'content_editor' => 'gray',
     ];
 
     /**
@@ -651,10 +667,17 @@ class AdminPanelProvider extends PanelProvider
     }
 
     /**
-     * The role a resource is restricted to, shown as a badge beside its
+     * The lowest role that reaches a menu, shown as a tag beside its
      * sidebar label: 'developer' when nobody below a developer may view
-     * it, 'admin' when only admins and above may, and null when any
-     * other role reaches it too.
+     * it, 'admin' when only admins and above may, and 'content_editor'
+     * when an editor reaches it too.
+     *
+     * Every menu carries one, so the sidebar answers "who is this for"
+     * on every line rather than on some of them - an untagged line read
+     * as an oversight, and left the reader working out from the tagged
+     * ones what its absence was supposed to mean. Null is now reserved
+     * for the handful of screens everybody shares, and is stated in
+     * BADGE_OVERRIDES rather than falling out of the sum.
      *
      * The answer comes from the granted ViewAny permissions rather than
      * a hardcoded list, so it follows RolePermissionSeeder, minus the
@@ -672,8 +695,9 @@ class AdminPanelProvider extends PanelProvider
             return static::BADGE_OVERRIDES[$component];
         }
 
+        /** A page holds no model, so no grant can speak for it. */
         if (! method_exists($component, 'getModel')) {
-            return null;
+            return 'content_editor';
         }
 
         $viewers = array_diff(
@@ -684,7 +708,7 @@ class AdminPanelProvider extends PanelProvider
         return match (true) {
             empty(array_diff($viewers, ['developer'])) => 'developer',
             empty(array_diff($viewers, ['developer', 'admin'])) => 'admin',
-            default => null,
+            default => 'content_editor',
         };
     }
 

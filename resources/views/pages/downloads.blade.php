@@ -1,10 +1,20 @@
 <x-layout.app title="자료실" description="브리즈번 주는교회 주보와 교회 문서를 내려받을 수 있습니다.">
 
     <x-ui.page-header kicker="교회 자료 · Downloads" title="자료실">
-        {{-- Matches the green 사용 중 badge in 관리자 페이지: slate pill, 1px success border, success label. --}}
-        <x-slot:badge>
-            <span class="inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 font-kr text-xs font-medium text-success">성도 전용</span>
-        </x-slot:badge>
+        {{-- The tag describes what is on the page, so it is only drawn
+             for the people the restricted files are actually on the page
+             for. To anybody else it named something they cannot see and
+             advertised that the church keeps files back - which is the
+             one thing 성도 전용 is meant not to do, since a restricted
+             file is dropped from the response rather than hidden in it.
+
+             Matches the green 사용 중 badge in 관리자 페이지: slate pill,
+             1px success border, success label. --}}
+        @if (auth()->user()?->isChurchMember())
+            <x-slot:badge>
+                <span class="inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 font-kr text-xs font-medium text-success">성도 전용</span>
+            </x-slot:badge>
+        @endif
         주일 주보와 교회에서 쓰는 서식을 내려받는 곳입니다.
     </x-ui.page-header>
 

@@ -90,6 +90,42 @@ class ChurchMemberAccessTest extends TestCase
     }
 
     /**
+     * The 성도 전용 tag never reaches somebody who is not one.
+     *
+     * A restricted item is dropped from the response rather than hidden
+     * in it, so most of these tags cannot be reached anyway - they ride
+     * on the notice or album they mark. 자료실 was the exception: its
+     * tag sits beside the page title and so was drawn for everybody,
+     * naming files the reader could not see and advertising that the
+     * church holds some back.
+     */
+    public function test_the_tag_is_never_shown_to_somebody_who_is_not_a_member(): void
+    {
+        foreach (['/', '/news', '/downloads', '/gallery', '/giving'] as $page) {
+            $this->get($page)->assertOk()->assertDontSee('성도 전용', escape: false);
+        }
+
+        /** Nor to a signed-in 일반회원, who sees the same pages a guest does. */
+        $this->actingAs(User::factory()->create());
+
+        foreach (['/', '/news', '/downloads', '/gallery', '/giving'] as $page) {
+            $this->get($page)->assertOk()->assertDontSee('성도 전용', escape: false);
+        }
+    }
+
+    /**
+     * A 성도 is still told which pages hold restricted material.
+     */
+    public function test_the_tag_is_shown_to_a_member(): void
+    {
+        $this->actingAs(User::factory()->onTheRoster()->create());
+
+        $this->get('/downloads')->assertOk()->assertSee('성도 전용');
+        $this->get('/news')->assertOk()->assertSee('성도 전용');
+        $this->get('/gallery')->assertOk()->assertSee('성도 전용');
+    }
+
+    /**
      * The giving records follow the same rule, and a 일반회원 is shown
      * the same notice a guest is rather than an empty page.
      */

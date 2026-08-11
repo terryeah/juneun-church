@@ -40,7 +40,29 @@ class WikiTest extends TestCase
     }
 
     /**
-     * Everyone else is kept out: a guest, a 성도, a content editor.
+     * An editor reads it too, and is the likeliest to need it.
+     *
+     * It is the instructions for the panel, and the person with the
+     * fewest menus is the one putting up their first 주보. Nothing in
+     * it is privileged: it describes screens each reader is separately
+     * allowed, or not allowed, to open.
+     */
+    public function test_an_editor_may_read_it(): void
+    {
+        $this->seed(RoleSeeder::class);
+
+        $editor = User::factory()->create();
+        $editor->assignRole('content_editor');
+
+        $this->actingAs($editor);
+
+        $this->assertTrue(Wiki::canAccess());
+        $this->get('/admin/wiki')->assertOk()->assertSee('자주 하는 일', false);
+    }
+
+    /**
+     * Only somebody with no part in running the site is kept out: a
+     * guest, and a 일반회원 who reaches no panel screen at all.
      */
     public function test_others_are_refused(): void
     {
@@ -48,7 +70,7 @@ class WikiTest extends TestCase
 
         $this->get('/admin/wiki')->assertRedirect();
 
-        /** A 성도 is diverted to their profile before any page is reached. */
+        /** A 일반회원 is diverted to their profile before any page is reached. */
         $member = User::factory()->create();
         $member->assignRole('general_member');
 
@@ -56,14 +78,5 @@ class WikiTest extends TestCase
 
         $this->assertFalse(Wiki::canAccess());
         $this->get('/admin/wiki')->assertRedirect();
-
-        /** A content editor stays in the panel and is refused outright. */
-        $editor = User::factory()->create();
-        $editor->assignRole('content_editor');
-
-        $this->actingAs($editor);
-
-        $this->assertFalse(Wiki::canAccess());
-        $this->get('/admin/wiki')->assertForbidden();
     }
 }

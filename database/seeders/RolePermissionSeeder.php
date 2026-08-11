@@ -37,7 +37,7 @@ class RolePermissionSeeder extends Seeder
         Role::findOrCreate('admin', 'web')->syncPermissions($forModels([
             'Announcement', 'Event', 'Position', 'Member', 'Cell', 'MembershipRequest',
             'Offering', 'PersonalOffering', 'ServiceType', 'Sermon', 'Album', 'Photo',
-            'Bulletin', 'SiteSetting', 'User',
+            'Bulletin', 'Document', 'SiteSetting', 'User',
         ]));
 
         /**
@@ -54,8 +54,8 @@ class RolePermissionSeeder extends Seeder
          * either reaches the congregation rather than the website.
          */
         Role::findOrCreate('content_editor', 'web')->syncPermissions($forModels([
-            'Announcement', 'Event', 'Sermon', 'Bulletin', 'ServiceType', 'Ministry',
-            'Album', 'Photo',
+            'Announcement', 'Event', 'Sermon', 'Bulletin', 'Document', 'ServiceType',
+            'Ministry', 'Album', 'Photo',
         ]));
 
         /**

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Filament\Pages\Analytics;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\DatabaseGraph;
+use App\Filament\Pages\Wiki;
 use App\Filament\Resources\Activities\ActivityResource;
 use App\Filament\Resources\Albums\AlbumResource;
 use App\Filament\Resources\Announcements\AnnouncementResource;
@@ -68,20 +69,28 @@ class SidebarRoleBadgeTest extends TestCase
         $this->assertSame('developer', AdminPanelProvider::roleBadge(RoleResource::class));
         $this->assertSame('finance_officer', AdminPanelProvider::roleBadge(OfferingResource::class));
         $this->assertSame('finance_officer', AdminPanelProvider::roleBadge(PersonalOfferingResource::class));
-        $this->assertNull(AdminPanelProvider::roleBadge(AnnouncementResource::class));
+        $this->assertSame('content_editor', AdminPanelProvider::roleBadge(AnnouncementResource::class));
     }
 
     /**
-     * What a content editor needs to publish carries no badge: the
+     * What a content editor needs to publish is tagged for them: the
      * gallery, and the service types and ministries that a sermon or
      * an announcement has to be filed under.
+     *
+     * These carried no tag at all until the sidebar started answering
+     * "who is this for" on every line. An untagged line read as an
+     * oversight rather than as an answer.
      */
     public function test_publishing_work_reaches_content_editors(): void
     {
-        $this->assertNull(AdminPanelProvider::roleBadge(ServiceTypeResource::class));
-        $this->assertNull(AdminPanelProvider::roleBadge(MinistryResource::class));
-        $this->assertNull(AdminPanelProvider::roleBadge(AlbumResource::class));
-        $this->assertNull(AdminPanelProvider::roleBadge(PhotoResource::class));
+        foreach ([
+            ServiceTypeResource::class,
+            MinistryResource::class,
+            AlbumResource::class,
+            PhotoResource::class,
+        ] as $resource) {
+            $this->assertSame('content_editor', AdminPanelProvider::roleBadge($resource), $resource.' changed audience.');
+        }
     }
 
     /**
@@ -161,9 +170,13 @@ class SidebarRoleBadgeTest extends TestCase
 
     /**
      * Each tag keeps its own colour: amber for an administrator menu,
-     * green for 재정, blue for the developer screens. The three have to
-     * stay apart, or the tag stops carrying anything the label does not
-     * already say.
+     * green for 재정, blue for the developer screens, grey for the
+     * editing work. The four have to stay apart, or the tag stops
+     * carrying anything the label does not already say.
+     *
+     * Grey belongs to the editor because that tag sits on more menus
+     * than the other three together: the elevated ones only read as
+     * elevated while the ordinary one recedes.
      */
     public function test_each_tag_carries_its_own_colour(): void
     {
@@ -174,6 +187,7 @@ class SidebarRoleBadgeTest extends TestCase
             MemberResource::class => 'warning',
             OfferingResource::class => 'success',
             ActivityResource::class => 'info',
+            AnnouncementResource::class => 'gray',
         ];
 
         foreach ($hues as $resource => $hue) {
@@ -214,8 +228,12 @@ class SidebarRoleBadgeTest extends TestCase
 
     /**
      * Either half stands on its own: a resource with a role but nothing
-     * to count shows the tag alone, and a resource with neither is left
-     * completely bare.
+     * to count shows the tag alone, and the two screens everybody
+     * shares show neither.
+     *
+     * 대시보드 and 위키 are the only bare lines left, and deliberately
+     * so: a tag answers "who is this menu for", and for those two the
+     * answer is everybody who can sign in, which is worth no room.
      */
     public function test_each_half_of_the_badge_degrades_on_its_own(): void
     {
@@ -227,10 +245,12 @@ class SidebarRoleBadgeTest extends TestCase
         $this->assertNull($users->getBadge());
         $this->assertStringContainsString("--role-badge:'관리자'", $users->getExtraAttributeBag()->get('style'));
 
-        [$announcements] = AdminPanelProvider::accessibleItems(AnnouncementResource::class);
+        foreach ([Dashboard::class, Wiki::class] as $shared) {
+            [$item] = AdminPanelProvider::accessibleItems($shared);
 
-        $this->assertNull($announcements->getBadge());
-        $this->assertNull($announcements->getExtraAttributeBag()->get('style'));
+            $this->assertNull(AdminPanelProvider::roleBadge($shared), $shared.' grew a tag.');
+            $this->assertNull($item->getExtraAttributeBag()->get('style'));
+        }
     }
 
     /**
