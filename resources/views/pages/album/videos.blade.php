@@ -24,19 +24,18 @@
                     data-video-embed="{{ $video->embedUrl() }}"
                     data-video-title="{{ $video->title }}"
                 >
-                    <span class="relative block overflow-hidden rounded-media">
+                    {{-- Same frame and same play control as 최근 예배 on
+                         the home page: 16:9 over navy, the poster
+                         cropped to fill it, one shared overlay. --}}
+                    <span class="relative block aspect-video overflow-hidden rounded-media bg-navy-900">
                         <img
                             src="{{ $video->thumbnailUrl() }}"
-                            alt=""
-                            class="aspect-video w-full object-cover"
+                            alt="{{ $video->title }}"
+                            class="absolute inset-0 h-full w-full object-cover"
                             loading="lazy"
                             referrerpolicy="no-referrer"
                         >
-                        <span class="absolute inset-0 flex items-center justify-center bg-navy-900/25 transition-colors group-hover:bg-navy-900/40" aria-hidden="true">
-                            <span class="flex h-14 w-14 items-center justify-center rounded-full bg-paper/90">
-                                <svg class="ml-1 h-6 w-6 text-navy" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
-                            </span>
-                        </span>
+                        <x-ui.play-overlay />
                     </span>
                     <span class="mt-3 block font-kr text-body font-medium group-hover:text-accent">{{ $video->title }}</span>
                     @if ($video->description)

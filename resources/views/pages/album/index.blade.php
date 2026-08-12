@@ -52,16 +52,28 @@
                 @php $cover = $album->coverUrl(); @endphp
                 <a href="{{ route('album.show', $album) }}" class="group block" data-gallery-item>
                     @if ($cover)
-                        <div class="relative overflow-hidden rounded-media">
-                            <img src="{{ $cover }}" alt="{{ $album->title }}" class="aspect-[4/3] w-full object-cover" loading="lazy" referrerpolicy="no-referrer">
-                            {{-- A still frame is indistinguishable from a photograph,
-                                 so a video album says so before it is opened. --}}
+                        {{-- A video album wears the same frame and the same
+                             play control as 최근 예배 on the home page: 16:9
+                             over navy rather than the 4:3 a photo album uses,
+                             because a still frame is otherwise
+                             indistinguishable from a photograph. --}}
+                        <div @class([
+                            'relative overflow-hidden rounded-media',
+                            'aspect-video bg-navy-900' => $album->holdsVideos(),
+                        ])>
+                            <img
+                                src="{{ $cover }}"
+                                alt="{{ $album->title }}"
+                                @class([
+                                    'object-cover',
+                                    'absolute inset-0 h-full w-full' => $album->holdsVideos(),
+                                    'aspect-[4/3] w-full' => ! $album->holdsVideos(),
+                                ])
+                                loading="lazy"
+                                referrerpolicy="no-referrer"
+                            >
                             @if ($album->holdsVideos())
-                                <span class="absolute inset-0 flex items-center justify-center bg-navy-900/25 transition-colors group-hover:bg-navy-900/40" aria-hidden="true">
-                                    <span class="flex h-14 w-14 items-center justify-center rounded-full bg-paper/90">
-                                        <svg class="ml-1 h-6 w-6 text-navy" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
-                                    </span>
-                                </span>
+                                <x-ui.play-overlay />
                             @endif
                         </div>
                     @else
