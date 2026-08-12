@@ -9,6 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Form schema for individual gallery photographs.
@@ -25,9 +26,19 @@ class PhotoForm
     {
         return $schema
             ->components([
+                /**
+                 * Photo albums only. A photograph put into a video
+                 * album is invisible - that album's page lists videos -
+                 * and it also locks the album's 종류, because the album
+                 * form refuses to change kind once anything is inside.
+                 */
                 Select::make('album_id')
                     ->label('앨범')
-                    ->relationship('album', 'title')
+                    ->relationship(
+                        'album',
+                        'title',
+                        fn (Builder $query): Builder => $query->ofType(Album::TYPE_PHOTO),
+                    )
                     ->live()
                     ->required(),
                 TextInput::make('filename')

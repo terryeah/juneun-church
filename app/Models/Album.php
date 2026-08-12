@@ -173,16 +173,22 @@ class Album extends Model
      */
     public function coverUrl(): ?string
     {
+        /**
+         * Asked first, not last. An album switched to 동영상 keeps
+         * whatever cover it was uploaded with - the form hides that
+         * field rather than clearing it - and would otherwise go on
+         * showing a photograph from its previous life.
+         */
+        if ($this->holdsVideos()) {
+            return $this->videos()->first()?->thumbnailUrl();
+        }
+
         if ($this->cover_thumbnail_path) {
             return Storage::disk(config('filesystems.media'))->url($this->cover_thumbnail_path);
         }
 
         if ($this->cover_photo_path) {
             return Storage::disk(config('filesystems.media'))->url($this->cover_photo_path);
-        }
-
-        if ($this->holdsVideos()) {
-            return $this->videos()->first()?->thumbnailUrl();
         }
 
         return $this->photos()->first()?->thumbnailUrl();

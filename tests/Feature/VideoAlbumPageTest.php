@@ -151,12 +151,43 @@ class VideoAlbumPageTest extends TestCase
             'is_members_only' => false,
         ]);
 
-        $this->get('/album')->assertOk()->assertDontSee('>동영상<', false);
+        /** Asserted on the chip's own address, not on the word - '동영상'
+            appears in the empty message and in the page title too. */
+        $this->get('/album')->assertOk()->assertDontSee('kind=video');
 
         $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/album')
             ->assertOk()
-            ->assertSee('동영상');
+            ->assertSee('kind=video');
+    }
+
+    /**
+     * Asking for a kind with nothing in it lands on one that has
+     * something, rather than on an empty page with a dead chip.
+     */
+    public function test_asking_for_an_empty_kind_falls_back(): void
+    {
+        Album::factory()->create([
+            'title' => '공개 사진첩',
+            'slug' => 'album-open-two',
+            'type' => Album::TYPE_PHOTO,
+            'is_published' => true,
+            'is_members_only' => false,
+        ]);
+
+        $this->get('/album?kind=video')
+            ->assertOk()
+            ->assertSee('공개 사진첩')
+            ->assertDontSee('kind=video');
+    }
+
+    /**
+     * An array in the query string is nonsense, not a 500.
+     */
+    public function test_an_array_parameter_does_not_break_the_page(): void
+    {
+        $this->get('/album?kind[]=video')->assertOk();
+        $this->get('/album?visibility[]=members')->assertOk();
     }
 
     /**

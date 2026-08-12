@@ -37,6 +37,22 @@ class AlbumController extends Controller
     ];
 
     /**
+     * One of a fixed set of choices, or the fallback.
+     *
+     * The type check comes first and is the point of this: ?kind[]=x
+     * arrives as an array, and casting an array to a string in PHP is
+     * an error rather than a value - which the framework turns into an
+     * unauthenticated 500 on a public page. Request::string() does not
+     * help, because it performs that same cast internally.
+     *
+     * @param  array<string, string>  $options
+     */
+    private static function chosen(mixed $value, array $options, string $fallback): string
+    {
+        return is_string($value) && array_key_exists($value, $options) ? $value : $fallback;
+    }
+
+    /**
      * Display the album grid for one kind.
      *
      * The filter narrows what is already visible rather than widening
@@ -45,20 +61,24 @@ class AlbumController extends Controller
      */
     public function index(Request $request): View
     {
-        /**
-         * Read as a string rather than cast to one: ?kind[]=video
-         * arrives as an array, and casting an array to string is a
-         * PHP error rather than a value - an unauthenticated 500 on a
-         * public page. string() gives an empty string instead, which
-         * falls through to the default like any other nonsense.
-         */
-        $kind = array_key_exists($request->string('kind')->value(), self::KINDS)
-            ? $request->string('kind')->value()
-            : Album::TYPE_PHOTO;
+        $filter = static::chosen($request->query('visibility'), self::FILTERS, 'all');
 
-        $filter = array_key_exists($request->string('visibility')->value(), self::FILTERS)
-            ? $request->string('visibility')->value()
-            : 'all';
+        /**
+         * Only offer a kind the reader can actually open, and do not
+         * open one for them either. Every video album is 성도 전용
+         * today, so a guest asking for 동영상 - from a shared link or
+         * their own history - was being given a chip and an empty grid.
+         */
+        $available = array_intersect_key(
+            self::KINDS,
+            array_flip(Album::query()->visible()->distinct()->pluck('type')->all()),
+        );
+
+        $kind = static::chosen(
+            $request->query('kind'),
+            $available,
+            array_key_first($available) ?? Album::TYPE_PHOTO,
+        );
 
         $albums = Album::query()
             ->visible()
@@ -76,20 +96,16 @@ class AlbumController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        /**
-         * Only offer a kind the reader can actually open. Every video
-         * album is 성도 전용 today, so a guest was being handed a 동영상
-         * chip that led to an empty page - a door painted on a wall.
-         */
-        $available = Album::query()->visible()->distinct()->pluck('type')->all();
-
         return view('pages.album.index', [
             'albums' => $albums,
-            'kinds' => array_intersect_key(
-                self::KINDS,
-                array_flip([...$available, $kind]),
-            ),
+            /**
+             * The chips list what can be opened, which may be nothing
+             * at all on a site with no albums yet; the label is passed
+             * separately so the page can still name itself.
+             */
+            'kinds' => $available,
             'kind' => $kind,
+            'kindLabel' => self::KINDS[$kind],
             'filters' => self::FILTERS,
             'filter' => $filter,
         ]);

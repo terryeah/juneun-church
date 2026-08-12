@@ -54,11 +54,24 @@ class Video extends Model
             return null;
         }
 
-        if (preg_match('#[?&]v=([A-Za-z0-9_-]{11})#', $input, $matches)) {
+        /**
+         * The trailing lookahead matters. Without a boundary a longer
+         * run of identifier characters - a mistyped paste, or a longer
+         * identifier if YouTube ever issues one - is silently cut to
+         * its first eleven, which is a different video that probably
+         * exists. Refusing is the only safe answer to that.
+         *
+         * 'si=' is admitted as a boundary because that is the exact
+         * damage a copy-paste through a chat app does: it eats the ?
+         * and leaves the tracking tail welded to the identifier. Any
+         * other letter following eleven characters is a mistake, and
+         * is refused rather than guessed at.
+         */
+        if (preg_match('#[?&]v=([A-Za-z0-9_-]{11})(?=si=|[^A-Za-z0-9_-]|$)#', $input, $matches)) {
             return $matches[1];
         }
 
-        if (preg_match('#(?:youtu\.be|/embed|/shorts|/live)/?([A-Za-z0-9_-]{11})#', $input, $matches)) {
+        if (preg_match('#(?:youtu\.be|/embed|/shorts|/live)/?([A-Za-z0-9_-]{11})(?=si=|[^A-Za-z0-9_-]|$)#', $input, $matches)) {
             return $matches[1];
         }
 

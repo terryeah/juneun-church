@@ -90,8 +90,8 @@ class VideoForm
                 TextInput::make('sort_order')
                     ->label('순서')
                     ->numeric()
-                    ->default(0)
-                    ->helperText('작은 숫자가 앞에 옵니다.'),
+                    ->placeholder('맨 뒤')
+                    ->helperText('작은 숫자가 앞에 옵니다. 비워두면 맨 뒤에 붙습니다.'),
             ]);
     }
 

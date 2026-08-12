@@ -16,7 +16,7 @@
              video writes one frame into the page and nothing about
              YouTube is loaded until then. --}}
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-video-gallery>
-            @foreach ($videos as $video)
+            @forelse ($videos as $video)
                 <button
                     type="button"
                     class="group block w-full text-left"
@@ -43,7 +43,12 @@
                         <span class="mt-1 block font-kr text-body-sm text-navy-400">{{ $video->description }}</span>
                     @endif
                 </button>
-            @endforeach
+            @empty
+                {{-- An album is usually made before its videos are put
+                     in, and it is published from the moment it is made,
+                     so this is an ordinary state rather than a fault. --}}
+                <p class="col-span-full font-kr text-body-sm text-navy-400">아직 올라온 영상이 없습니다.</p>
+            @endforelse
         </div>
 
         @if ($videos->hasPages())

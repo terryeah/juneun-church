@@ -58,10 +58,10 @@ export class VideoModal {
         this.heading.className = 'mb-3 pr-24 font-kr text-body text-cream';
         this.stage.appendChild(this.heading);
 
-        const close = this.overlayButton('✕', 'absolute right-4 top-4', '닫기');
+        const close = this.overlayButton('✕', 'absolute right-0 -top-12', '닫기');
         close.addEventListener('click', () => this.close());
 
-        const expand = this.overlayButton('⛶', 'absolute right-16 top-4', '전체 화면');
+        const expand = this.overlayButton('⛶', 'absolute right-12 -top-12', '전체 화면');
         expand.addEventListener('click', () => void this.toggleFullscreen());
 
         /**
@@ -90,7 +90,14 @@ export class VideoModal {
         button.textContent = label;
         button.setAttribute('aria-label', title);
         button.className = `${position} rounded-nav px-3 py-2 text-2xl text-cream hover:bg-navy-700`;
-        this.overlay?.appendChild(button);
+
+        /**
+         * Appended to the stage, not the overlay, because the stage is
+         * what goes fullscreen: a button on the overlay is outside that
+         * subtree and vanishes the moment fullscreen starts, leaving
+         * Escape as the only way back out.
+         */
+        this.stage?.appendChild(button);
 
         return button;
     }
@@ -116,8 +123,50 @@ export class VideoModal {
 
             if (event.key === 'Escape' && !document.fullscreenElement) {
                 this.close();
+
+                return;
+            }
+
+            /**
+             * Keep Tab inside the dialog. Without this it walks off the
+             * last button into the page behind, which aria-modal has
+             * already told a screen reader is not there.
+             */
+            if (event.key === 'Tab') {
+                this.trapTab(event);
             }
         });
+    }
+
+    /**
+     * Cycles focus between the dialog's own controls.
+     *
+     * @param event - The Tab keypress
+     */
+    private trapTab(event: KeyboardEvent): void {
+        const focusable = Array.from(
+            this.stage?.querySelectorAll<HTMLElement>('button, iframe') ?? [],
+        );
+
+        if (focusable.length === 0) {
+            return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement;
+
+        if (event.shiftKey && (active === first || active === this.overlay)) {
+            event.preventDefault();
+            last.focus();
+
+            return;
+        }
+
+        if (!event.shiftKey && active === last) {
+            event.preventDefault();
+            first.focus();
+        }
     }
 
     /**
@@ -136,6 +185,9 @@ export class VideoModal {
         if (this.heading) {
             this.heading.textContent = card.dataset.videoTitle ?? '';
         }
+
+        /** Never two players. A leftover frame would keep playing under the new one. */
+        this.frame?.remove();
 
         this.frame = document.createElement('iframe');
         this.frame.src = embed;
@@ -178,14 +230,26 @@ export class VideoModal {
 
         this.overlay.style.opacity = '0';
 
+        /**
+         * The player, the scroll lock and the focus go back at once.
+         * Only the fade waits: an overlay at zero opacity is still
+         * there for a click, so leaving it until the animation ended
+         * swallowed the next tap for 280ms and kept the page locked.
+         */
+        this.overlay.style.pointerEvents = 'none';
+        this.frame?.remove();
+        this.frame = null;
+        document.body.style.overflow = '';
+        this.opener?.focus();
+        this.opener = null;
+
         const finish = (): void => {
             this.overlay?.classList.add('hidden');
             this.overlay?.classList.remove('flex');
-            this.frame?.remove();
-            this.frame = null;
-            document.body.style.overflow = '';
-            this.opener?.focus();
-            this.opener = null;
+
+            if (this.overlay) {
+                this.overlay.style.pointerEvents = '';
+            }
         };
 
         if (this.reducedMotion) {

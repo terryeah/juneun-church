@@ -1,8 +1,8 @@
 {{-- The page is called 앨범 now, but 갤러리 is what people search for and
      what the address used to say, so the description keeps the word. --}}
 <x-layout.app
-    :title="'앨범 · '.$kinds[$kind]"
-    :description="'브리즈번 주는교회의 '.$kinds[$kind].' 갤러리입니다. 예배와 교회 행사의 '.$kinds[$kind].' 앨범을 모았습니다.'"
+    :title="'앨범 · '.$kindLabel"
+    :description="'브리즈번 주는교회의 '.$kindLabel.' 갤러리입니다. 예배와 교회 행사의 '.$kindLabel.' 앨범을 모았습니다.'"
 >
 
     <x-ui.page-header kicker="주는교회의 순간들 · Moments" title="앨범" />
@@ -17,7 +17,9 @@
              narrow whichever half is open. --}}
         <div class="flex flex-wrap gap-2">
             @foreach ($kinds as $key => $label)
-                <a href="{{ route('album.index', $key === \App\Models\Album::TYPE_PHOTO ? [] : ['kind' => $key]) }}"
+                {{-- The audience filter survives a change of kind, the
+                     same way the kind survives a change of filter. --}}
+                <a href="{{ route('album.index', array_filter(['kind' => $key === \App\Models\Album::TYPE_PHOTO ? null : $key, 'visibility' => $filter === 'all' ? null : $filter])) }}"
                    class="rounded-nav px-4 py-2 font-kr text-body-sm transition-colors {{ $key === $kind ? 'bg-navy text-cream' : 'bg-navy/5 text-navy hover:bg-navy/10' }}"
                    @if ($key === $kind) aria-current="page" @endif
                    data-gallery-chip>
@@ -70,13 +72,13 @@
                          the card layout alone. Only signed-in 성도 ever reach this. --}}
                     <h2 class="mt-3 font-kr text-body font-medium group-hover:text-accent">{{ $album->title }}@if ($album->is_members_only)<span class="ml-2 inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 align-middle font-kr text-xs font-medium text-success">성도 전용</span>@endif</h2>
                     <p class="mt-1 text-body-sm text-navy-400">
-                        @if ($album->event_date){{ $album->event_date->translatedFormat('Y년 n월 j일') }} · @endif{{ $kinds[$kind] }} {{ $album->itemCount() }}{{ $album->holdsVideos() ? '편' : '장' }}
+                        @if ($album->event_date){{ $album->event_date->translatedFormat('Y년 n월 j일') }} · @endif{{ $kindLabel }} {{ $album->itemCount() }}{{ $album->holdsVideos() ? '편' : '장' }}
                     </p>
                 </a>
             @empty
                 {{-- With a chip active the grid is empty because of the
                      filter, not because the album shelf is. --}}
-                <p class="text-body-sm text-navy-400">{{ $filter === 'all' ? '등록된 앨범이 없습니다.' : '해당하는 앨범이 없습니다.' }}</p>
+                <p class="text-body-sm text-navy-400">{{ $filter === 'all' ? '등록된 '.$kindLabel.' 앨범이 없습니다.' : '해당하는 앨범이 없습니다.' }}</p>
             @endforelse
         </div>
         <div class="mt-8">
