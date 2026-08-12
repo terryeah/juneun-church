@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\BrandThePanelTitle;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 /**
@@ -59,13 +62,62 @@ class PanelBrandingTest extends TestCase
      * A page whose title is only the church's name is left alone rather
      * than doubled up.
      */
+    /**
+     * A title that is already just the church's name is left alone.
+     *
+     * Exercised against the middleware rather than a page, because no
+     * screen in the panel currently has an empty title - which is why
+     * the earlier version of this test proved nothing: it opened 성도,
+     * whose title is '성도', so the branch under test was never
+     * entered and the assertion held with or without the guard.
+     */
     public function test_the_church_name_is_not_repeated(): void
     {
         $church = (string) config('app.name');
 
-        $this->actingAs($this->staff())
-            ->get('/admin/members')
-            ->assertDontSee('<title>'.e($church.' · '.$church).'</title>', escape: false);
+        $this->assertSame(
+            '<title>'.$church.'</title>',
+            $this->rewrite('<title>'.$church.'</title>'),
+        );
+    }
+
+    /**
+     * And the ordinary case still turns round.
+     */
+    public function test_the_two_halves_are_swapped(): void
+    {
+        $church = (string) config('app.name');
+
+        $this->assertSame(
+            '<title>'.$church.' · 성도 수정</title>',
+            $this->rewrite('<title>성도 수정 - '.$church.'</title>'),
+        );
+    }
+
+    /**
+     * A title in some shape the middleware does not recognise is passed
+     * through untouched rather than mangled.
+     */
+    public function test_an_unfamiliar_title_is_left_as_written(): void
+    {
+        $this->assertSame('<title>무언가 다른 것</title>', $this->rewrite('<title>무언가 다른 것</title>'));
+    }
+
+    /**
+     * Runs one HTML document through the panel's title middleware.
+     */
+    private function rewrite(string $title): string
+    {
+        $response = app(BrandThePanelTitle::class)->handle(
+            Request::create('/admin'),
+            fn (): Response => new Response('<html><head>'.$title.'</head><body></body></html>', 200, [
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ]),
+        );
+
+        preg_match('#<title>.*?</title>#s', (string) $response->getContent(), $matches);
+
+        return $matches[0] ?? '';
     }
 
     /**

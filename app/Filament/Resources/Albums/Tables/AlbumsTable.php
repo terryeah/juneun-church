@@ -38,24 +38,16 @@ class AlbumsTable
             ->columns([
                 ImageColumn::make('cover_photo_path')
                     ->label('커버 사진')
-                    ->disk(config('filesystems.media'))
                     /**
-                     * The media disk is R2, so Filament would ask it
-                     * whether each file exists - one HTTPS round trip
-                     * per row, 25 of them in a row - and then hand back
-                     * a presigned URL, which bypasses the CDN and
-                     * expires every half hour. The bucket is public and
-                     * served from media.juneun.com.
+                     * Handed a finished URL rather than a disk and a
+                     * path. Given a path, Filament resolves the media
+                     * disk to build the address - and resolving R2
+                     * constructs an S3 client, 17 MB of AWS SDK, on
+                     * every render of this table including every search
+                     * keystroke and every toggle. Given a URL it returns
+                     * it untouched. 동영상 already worked this way.
                      */
-                    ->checkFileExistence(false)
-                    ->visibility('public')
-                    /**
-                     * Read off the album row. This used to look the
-                     * cover up in `photos` by path, which carries no
-                     * index - a full scan of 3,199 rows per album, 25
-                     * times a page, and again on every toggle.
-                     */
-                    ->state(fn (Album $record): ?string => $record->cover_thumbnail_path ?? $record->cover_photo_path)
+                    ->state(fn (Album $record): ?string => $record->coverUrl())
                     ->imageHeight(44)
                     ->extraCellAttributes(['class' => 'stacked-span-full stacked-hide-label stacked-media']),
                 TextColumn::make('title')

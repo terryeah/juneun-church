@@ -37,6 +37,9 @@ class RolePermissionSeeder extends Seeder
         Role::findOrCreate('admin', 'web')->syncPermissions($forModels([
             'Announcement', 'Event', 'Position', 'Member', 'Cell', 'MembershipRequest',
             'Offering', 'PersonalOffering', 'ServiceType', 'Sermon', 'Album', 'Photo', 'Video',
+            /** 부서 was missing here while production granted it, so an
+                administrator could not manage what an editor could. */
+            'Ministry',
             'Bulletin', 'Document', 'SiteSetting', 'User',
         ]));
 

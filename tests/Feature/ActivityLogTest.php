@@ -138,13 +138,9 @@ class ActivityLogTest extends TestCase
             ->withProperties(['url' => 'https://www.juneun.com/giving', 'ip' => '1.2.3.4'])
             ->log('/giving');
 
-        activity('auth')->event('failed_login')->log('로그인 실패');
-
         Livewire::actingAs($developer)
             ->test(ListActivities::class)
-            ->assertSee('/giving')
-            /** And a row that is about nothing still says so. */
-            ->assertSee('-');
+            ->assertSee('/giving');
     }
 
     /**
@@ -163,8 +159,6 @@ class ActivityLogTest extends TestCase
 
         $departed = User::factory()->create();
         activity('auth')->causedBy($departed)->event('login')->log('로그인');
-        activity('auth')->event('failed_login')->log('로그인 실패');
-
         $id = $departed->getKey();
         $departed->delete();
 

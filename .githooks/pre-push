@@ -1,0 +1,20 @@
+#!/bin/sh
+# Refuses to push a red suite.
+#
+# The failure this exists for: the suite reported a real regression three
+# runs in a row and the commit went out regardless, taking a sign-up
+# timing oracle to production with it. CI catches it after the fact; this
+# catches it before the push.
+#
+# Enable once per clone:  git config core.hooksPath .githooks
+# Skip deliberately:      git push --no-verify
+
+set -e
+
+echo "pre-push: running the test suite..."
+php artisan test
+
+echo "pre-push: typechecking..."
+npm run typecheck --silent
+
+echo "pre-push: ok"

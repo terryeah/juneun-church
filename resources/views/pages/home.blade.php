@@ -126,7 +126,7 @@
                 @if ($highlight->featured_image)
                     <div class="order-2 flex items-center lg:order-1">
                         <a href="{{ $highlightLink }}" class="block w-full overflow-hidden rounded-media">
-                            <img src="{{ Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($highlight->featured_image) }}" alt="{{ $highlight->title }}" class="aspect-video w-full object-cover" loading="lazy">
+                            <img src="{{ $highlight->imageUrl() }}" alt="{{ $highlight->title }}" class="w-full rounded-media object-contain" loading="lazy">
                         </a>
                     </div>
                 @endif

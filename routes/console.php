@@ -11,18 +11,23 @@ Artisan::command('inspire', function () {
 /** Cloudflare's figure is a daily aggregate, so asking hourly
  * fetched the same number twenty-four times and rewrote the same
  * rows with it. */
-Schedule::command('analytics:snapshot')->daily()->withoutOverlapping();
-Schedule::command('activitylog:clean', ['--force'])->dailyAt('03:15')->withoutOverlapping();
+Schedule::command('analytics:snapshot')->daily()->withoutOverlapping(60);
+Schedule::command('activitylog:clean', ['--force'])->dailyAt('03:15')->withoutOverlapping(60);
 /**
  * A settled 가입 신청 keeps its decision but loses the applicant's
  * details, which the church has no use for once it has decided.
  */
-Schedule::command('membership:redact')->dailyAt('03:20')->withoutOverlapping();
-Schedule::command('instagram:import')->dailyAt('03:30')->withoutOverlapping();
+Schedule::command('membership:redact')->dailyAt('03:20')->withoutOverlapping(60);
+Schedule::command('instagram:import')->dailyAt('03:30')->withoutOverlapping(60);
 /**
  * No timeout is set on the YouTube calls, so a slow morning could
  * leave a run going for half an hour. Without this the next hour's
  * run starts anyway, and each one costs about 67 MB on a box with
  * room for six workers.
+ *
+ * The lock expires in 55 minutes rather than the default 24 hours. A
+ * run killed by the kernel for memory cannot release its own lock, and
+ * a day-long lock would then silently skip the next twenty-four runs
+ * with nothing in any log to say why.
  */
-Schedule::command('youtube:import')->hourly()->withoutOverlapping();
+Schedule::command('youtube:import')->hourly()->withoutOverlapping(55);

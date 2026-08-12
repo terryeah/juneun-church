@@ -91,9 +91,20 @@
     --radius-play: 14px;
     --radius-frame: 18px;
 
+    /**
+     * All five in the same unit. sm and 2xl kept Tailwind's rem
+     * defaults while these three were given px, and Tailwind cannot
+     * order px against rem - so it emitted the rem ones last, and at
+     * any width above 640px `sm:grid-cols-2` won against
+     * `lg:grid-cols-3` on equal specificity. Every three-column grid on
+     * the site - 앨범, 동영상, 섬기는 사람들 - was stuck at two columns
+     * on a desktop, with half the row empty.
+     */
+    --breakpoint-sm: 640px;
     --breakpoint-md: 768px;
     --breakpoint-lg: 1024px;
     --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
 }
 
 /**

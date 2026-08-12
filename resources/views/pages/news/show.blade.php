@@ -1,7 +1,7 @@
 @php
     /** The featured image doubles as the KakaoTalk / search thumbnail. */
     $shareImage = $announcement->featured_image
-        ? Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($announcement->featured_image)
+        ? $announcement->imageUrl()
         : null;
 @endphp
 
@@ -22,7 +22,7 @@
                 @php $featuredSize = $announcement->featuredImageDimensions(); @endphp
                 <img
                     @if ($featuredSize) width="{{ $featuredSize['width'] }}" height="{{ $featuredSize['height'] }}" @endif
-                    src="{{ Illuminate\Support\Facades\Storage::disk(config('filesystems.media'))->url($announcement->featured_image) }}"
+                    src="{{ $announcement->imageUrl() }}"
                     alt="{{ $announcement->title }}"
                     class="mt-8 h-auto w-full rounded-media"
                     fetchpriority="high"

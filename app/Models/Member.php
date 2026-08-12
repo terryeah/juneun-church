@@ -144,7 +144,15 @@ class Member extends Model
      */
     public function scopeServing($query): void
     {
-        $query->where(fn ($inner) => $inner->whereNotNull('position_id')->orWhereNotNull('department'))
+        /**
+         * Published only. The page this feeds is public and the
+         * controller's own docblock said "published members", but
+         * nothing checked it - so a 성도 given a serving 직분 while
+         * their card was still being filled in appeared on 섬기는
+         * 사람들 the moment the 직분 was set, photograph and all.
+         */
+        $query->where('is_published', true)
+            ->where(fn ($inner) => $inner->whereNotNull('position_id')->orWhereNotNull('department'))
             ->withoutLayPositions();
     }
 

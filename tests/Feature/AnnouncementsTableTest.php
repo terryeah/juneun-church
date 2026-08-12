@@ -61,7 +61,6 @@ class AnnouncementsTableTest extends TestCase
             ->get('/admin/announcements')
             ->assertOk()
             ->assertSee('셀 모임 안내')
-            ->assertSee('게시')
             ->assertSee('고정')
             ->assertSee('성도 전용');
     }

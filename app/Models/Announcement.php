@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BuildsMediaUrls;
 use App\Models\Concerns\GeneratesReadableSlug;
 use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -38,7 +39,7 @@ use Illuminate\Support\Str;
 ])]
 class Announcement extends Model
 {
-    use GeneratesReadableSlug, HasFactory, LogsModelActivity;
+    use BuildsMediaUrls, GeneratesReadableSlug, HasFactory, LogsModelActivity;
 
     /**
      * Get the attributes that should be cast.
@@ -94,6 +95,20 @@ class Announcement extends Model
     /**
      * The user who created the announcement.
      */
+    /**
+     * Public URL of the 대표 이미지 on the media disk.
+     *
+     * The views used to build this themselves with Storage::disk(),
+     * which resolves the R2 driver and constructs an S3 client - 17 MB
+     * of AWS SDK, on a box with room for six workers, to join two
+     * strings. The home page pays it on every visit because the
+     * highlight card carries an image.
+     */
+    public function imageUrl(): ?string
+    {
+        return $this->featured_image ? static::mediaUrl($this->featured_image) : null;
+    }
+
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

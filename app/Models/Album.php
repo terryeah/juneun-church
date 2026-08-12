@@ -113,7 +113,13 @@ class Album extends Model
      */
     public function photos(): HasMany
     {
-        return $this->hasMany(Photo::class)->orderBy('sort_order')->orderBy('id');
+        /**
+         * chaperone() hands each photo back its album, so a view that
+         * links to the album a photo belongs to does not fetch it again
+         * one row at a time. The home band did exactly that: ten photos,
+         * ten extra queries, on the busiest page of the site.
+         */
+        return $this->hasMany(Photo::class)->chaperone()->orderBy('sort_order')->orderBy('id');
     }
 
     /**
