@@ -1,6 +1,7 @@
 import { MobileNav } from './components/MobileNav';
 import { YouTubeLazy } from './components/YouTubeLazy';
 import { Lightbox } from './components/Lightbox';
+import { VideoModal } from './components/VideoModal';
 import { InfiniteScroll } from './components/InfiniteScroll';
 import { PhotoSlider } from './components/PhotoSlider';
 import { SectionSwap } from './components/SectionSwap';
@@ -34,6 +35,11 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const gallery = document.querySelector<HTMLElement>('[data-lightbox-gallery]');
     if (gallery) {
         new Lightbox(gallery, scroller);
+    }
+
+    const videoGallery = document.querySelector<HTMLElement>('[data-video-gallery]');
+    if (videoGallery) {
+        new VideoModal(videoGallery);
     }
 
     const slider = document.querySelector<HTMLElement>('[data-photo-slider]');

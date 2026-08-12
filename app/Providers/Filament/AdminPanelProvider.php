@@ -7,7 +7,6 @@ use App\Filament\Pages\Analytics;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\DatabaseGraph;
 use App\Filament\Pages\GoogleAnalytics;
-use App\Filament\Pages\Videos;
 use App\Filament\Pages\Wiki;
 use App\Filament\Resources\Activities\ActivityResource;
 use App\Filament\Resources\Albums\AlbumResource;
@@ -30,6 +29,7 @@ use App\Filament\Resources\ServiceTypes\ServiceTypeResource;
 use App\Filament\Resources\SiteSettings\SiteSettingResource;
 use App\Filament\Resources\StaffMembers\StaffMemberResource;
 use App\Filament\Resources\Users\UserResource;
+use App\Filament\Resources\Videos\VideoResource;
 use App\Http\Middleware\BrandThePanelTitle;
 use App\Http\Middleware\ExemptMembersFromMultiFactorAuthentication;
 use App\Http\Middleware\LogPageVisits;
@@ -276,7 +276,7 @@ class AdminPanelProvider extends PanelProvider
             NavigationGroup::make('미디어')->items([
                 ...static::accessibleItems(AlbumResource::class),
                 ...static::accessibleItems(PhotoResource::class),
-                ...static::accessibleItems(Videos::class),
+                ...static::accessibleItems(VideoResource::class),
             ]),
             NavigationGroup::make('재정')->items([
                 ...static::accessibleItems(OfferingResource::class),

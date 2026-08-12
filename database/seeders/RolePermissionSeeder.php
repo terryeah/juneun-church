@@ -36,7 +36,7 @@ class RolePermissionSeeder extends Seeder
         /** 셀 and 가입 신청 arrived with their own migrations, which granted them to admin there. */
         Role::findOrCreate('admin', 'web')->syncPermissions($forModels([
             'Announcement', 'Event', 'Position', 'Member', 'Cell', 'MembershipRequest',
-            'Offering', 'PersonalOffering', 'ServiceType', 'Sermon', 'Album', 'Photo',
+            'Offering', 'PersonalOffering', 'ServiceType', 'Sermon', 'Album', 'Photo', 'Video',
             'Bulletin', 'Document', 'SiteSetting', 'User',
         ]));
 
@@ -55,7 +55,7 @@ class RolePermissionSeeder extends Seeder
          */
         Role::findOrCreate('content_editor', 'web')->syncPermissions($forModels([
             'Announcement', 'Event', 'Sermon', 'Bulletin', 'Document', 'ServiceType',
-            'Ministry', 'Album', 'Photo',
+            'Ministry', 'Album', 'Photo', 'Video',
         ]));
 
         /**

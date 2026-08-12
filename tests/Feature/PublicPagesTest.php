@@ -40,7 +40,7 @@ class PublicPagesTest extends TestCase
     {
         $routes = [
             '/', '/worship', '/news', '/events', '/people',
-            '/downloads', '/gallery', '/giving', '/location',
+            '/downloads', '/album', '/giving', '/location',
         ];
 
         foreach ($routes as $route) {

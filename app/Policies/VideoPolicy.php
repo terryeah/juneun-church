@@ -1,0 +1,78 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Policies;
+
+use App\Models\Video;
+use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User as AuthUser;
+
+/**
+ * Video permissions mirror 사진: whoever may put photographs up may put
+ * video up, because it is the same job with a different file.
+ */
+class VideoPolicy
+{
+    use HandlesAuthorization;
+
+    public function viewAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ViewAny:Video');
+    }
+
+    public function view(AuthUser $authUser, Video $video): bool
+    {
+        return $authUser->can('View:Video');
+    }
+
+    public function create(AuthUser $authUser): bool
+    {
+        return $authUser->can('Create:Video');
+    }
+
+    public function update(AuthUser $authUser, Video $video): bool
+    {
+        return $authUser->can('Update:Video');
+    }
+
+    public function delete(AuthUser $authUser, Video $video): bool
+    {
+        return $authUser->can('Delete:Video');
+    }
+
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:Video');
+    }
+
+    public function restore(AuthUser $authUser, Video $video): bool
+    {
+        return $authUser->can('Restore:Video');
+    }
+
+    public function forceDelete(AuthUser $authUser, Video $video): bool
+    {
+        return $authUser->can('ForceDelete:Video');
+    }
+
+    public function forceDeleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ForceDeleteAny:Video');
+    }
+
+    public function restoreAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('RestoreAny:Video');
+    }
+
+    public function replicate(AuthUser $authUser, Video $video): bool
+    {
+        return $authUser->can('Replicate:Video');
+    }
+
+    public function reorder(AuthUser $authUser): bool
+    {
+        return $authUser->can('Reorder:Video');
+    }
+}

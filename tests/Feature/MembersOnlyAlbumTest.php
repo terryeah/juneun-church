@@ -53,7 +53,7 @@ class MembersOnlyAlbumTest extends TestCase
      */
     public function test_a_guest_does_not_receive_a_restricted_album_on_the_gallery(): void
     {
-        $this->get('/gallery')
+        $this->get('/album')
             ->assertOk()
             ->assertDontSee('2026 성도 수련회')
             ->assertDontSee('album-members-retreat');
@@ -65,7 +65,7 @@ class MembersOnlyAlbumTest extends TestCase
      */
     public function test_a_guest_gets_a_404_on_the_detail_url(): void
     {
-        $this->get('/gallery/album-members-retreat')
+        $this->get('/album/album-members-retreat')
             ->assertNotFound()
             ->assertDontSee('2026 성도 수련회');
     }
@@ -79,14 +79,14 @@ class MembersOnlyAlbumTest extends TestCase
         $badge = 'inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 align-middle font-kr text-xs font-medium text-success';
 
         $this->actingAs(User::factory()->onTheRoster()->create())
-            ->get('/gallery')
+            ->get('/album')
             ->assertOk()
             ->assertSee('2026 성도 수련회')
             ->assertSee($badge, false)
             ->assertSee('성도 전용');
 
         $this->actingAs(User::factory()->onTheRoster()->create())
-            ->get('/gallery/album-members-retreat')
+            ->get('/album/album-members-retreat')
             ->assertOk()
             ->assertSee('2026 성도 수련회');
     }
@@ -101,12 +101,12 @@ class MembersOnlyAlbumTest extends TestCase
             'slug' => 'album-summer-school',
         ]);
 
-        $this->get('/gallery')
+        $this->get('/album')
             ->assertOk()
             ->assertSee('여름 성경학교')
             ->assertDontSee('성도 전용');
 
-        $this->get('/gallery/album-summer-school')
+        $this->get('/album/album-summer-school')
             ->assertOk()
             ->assertSee('여름 성경학교');
     }
@@ -120,12 +120,12 @@ class MembersOnlyAlbumTest extends TestCase
     {
         $this->get('/sitemap.xml')
             ->assertOk()
-            ->assertDontSee(route('gallery.show', $this->restricted));
+            ->assertDontSee(route('album.show', $this->restricted));
 
         $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/sitemap.xml')
             ->assertOk()
-            ->assertDontSee(route('gallery.show', $this->restricted));
+            ->assertDontSee(route('album.show', $this->restricted));
     }
 
     /**
@@ -142,7 +142,7 @@ class MembersOnlyAlbumTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertDontSee($photo->thumbnailUrl(), false)
-            ->assertDontSee(route('gallery.show', $this->restricted))
+            ->assertDontSee(route('album.show', $this->restricted))
             ->assertDontSee($this->restricted->title);
     }
 
@@ -178,7 +178,7 @@ class MembersOnlyAlbumTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee($photo->thumbnailUrl(), false)
-            ->assertSee(route('gallery.show', $open));
+            ->assertSee(route('album.show', $open));
     }
 
     /**
@@ -201,7 +201,7 @@ class MembersOnlyAlbumTest extends TestCase
 
         Photo::factory()->for($album)->count(30)->create();
 
-        $this->get(route('gallery.show', $album))
+        $this->get(route('album.show', $album))
             ->assertOk()
             ->assertSee('data-photo-total="30"', false);
     }

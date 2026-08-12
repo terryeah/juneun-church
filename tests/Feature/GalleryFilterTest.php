@@ -47,9 +47,14 @@ class GalleryFilterTest extends TestCase
      */
     public function test_a_guest_is_offered_no_filter(): void
     {
-        $this->get('/gallery')
+        /**
+         * The 사진/동영상 chips are for everybody - they divide the page
+         * rather than narrow it - so the audience chips are what a
+         * guest must not be offered.
+         */
+        $this->get('/album')
             ->assertOk()
-            ->assertDontSee('data-gallery-chip', false)
+            ->assertDontSee('모두 공개')
             ->assertSee('성탄 감사예배')
             ->assertDontSee('성도 수련회');
     }
@@ -60,7 +65,7 @@ class GalleryFilterTest extends TestCase
     public function test_a_member_sees_the_filter_and_every_album(): void
     {
         $this->actingAs(User::factory()->onTheRoster()->create())
-            ->get('/gallery')
+            ->get('/album')
             ->assertOk()
             ->assertSee('data-gallery-chip', false)
             ->assertSee('성도 수련회')
@@ -73,7 +78,7 @@ class GalleryFilterTest extends TestCase
     public function test_the_members_filter_narrows_the_grid(): void
     {
         $this->actingAs(User::factory()->onTheRoster()->create())
-            ->get('/gallery?visibility=members')
+            ->get('/album?visibility=members')
             ->assertOk()
             ->assertSee('성도 수련회')
             ->assertDontSee('성탄 감사예배');
@@ -85,7 +90,7 @@ class GalleryFilterTest extends TestCase
     public function test_the_public_filter_narrows_the_grid(): void
     {
         $this->actingAs(User::factory()->onTheRoster()->create())
-            ->get('/gallery?visibility=public')
+            ->get('/album?visibility=public')
             ->assertOk()
             ->assertSee('성탄 감사예배')
             ->assertDontSee('성도 수련회');
@@ -97,7 +102,7 @@ class GalleryFilterTest extends TestCase
      */
     public function test_the_filter_never_widens_what_a_guest_may_see(): void
     {
-        $this->get('/gallery?visibility=members')
+        $this->get('/album?visibility=members')
             ->assertOk()
             ->assertDontSee('성도 수련회')
             ->assertDontSee('album-retreat');
@@ -110,7 +115,7 @@ class GalleryFilterTest extends TestCase
     public function test_an_unknown_filter_falls_back_to_everything(): void
     {
         $this->actingAs(User::factory()->onTheRoster()->create())
-            ->get('/gallery?visibility=nonsense')
+            ->get('/album?visibility=nonsense')
             ->assertOk()
             ->assertSee('성도 수련회')
             ->assertSee('성탄 감사예배');

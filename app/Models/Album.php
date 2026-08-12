@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 #[Fillable([
     'title',
     'slug',
+    'type',
     'description',
     'event_date',
     'cover_photo_path',
@@ -32,6 +33,22 @@ use Illuminate\Support\Facades\Storage;
 class Album extends Model
 {
     use GeneratesReadableSlug, HasFactory, LogsModelActivity, PurgesCdnCache;
+
+    /** An album of photographs, stored on the church's own media host. */
+    public const TYPE_PHOTO = 'photo';
+
+    /** An album of videos, held on the church's YouTube channel. */
+    public const TYPE_VIDEO = 'video';
+
+    /**
+     * The kinds an album may be, labelled for the panel and the site.
+     *
+     * @var array<string, string>
+     */
+    public const TYPES = [
+        self::TYPE_PHOTO => '사진',
+        self::TYPE_VIDEO => '동영상',
+    ];
 
     /**
      * The cover image and its thumbnail are served from the CDN. The
@@ -91,6 +108,32 @@ class Album extends Model
     }
 
     /**
+     * The videos in this album, in display order.
+     */
+    public function videos(): HasMany
+    {
+        return $this->hasMany(Video::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    /**
+     * Whether this album holds videos rather than photographs.
+     */
+    public function holdsVideos(): bool
+    {
+        return $this->type === self::TYPE_VIDEO;
+    }
+
+    /**
+     * Scope to one kind of album.
+     *
+     * @param  Builder<Album>  $query
+     */
+    public function scopeOfType(Builder $query, string $type): void
+    {
+        $query->where('type', $type);
+    }
+
+    /**
      * The user who created the album.
      */
     public function author(): BelongsTo
@@ -138,7 +181,21 @@ class Album extends Model
             return Storage::disk(config('filesystems.media'))->url($this->cover_photo_path);
         }
 
+        if ($this->holdsVideos()) {
+            return $this->videos()->first()?->thumbnailUrl();
+        }
+
         return $this->photos()->first()?->thumbnailUrl();
+    }
+
+    /**
+     * How many items the album holds, whichever kind it holds.
+     */
+    public function itemCount(): int
+    {
+        return $this->holdsVideos()
+            ? ($this->videos_count ?? $this->videos()->count())
+            : ($this->photos_count ?? $this->photos()->count());
     }
 
     /**

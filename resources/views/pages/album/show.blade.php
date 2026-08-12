@@ -42,7 +42,7 @@
         </div>
 
         <div class="mt-10">
-            <a href="{{ route('gallery.index') }}" class="text-caption font-bold text-accent hover:text-accent-700">← 앨범 전체 보기</a>
+            <a href="{{ route('album.index') }}" class="text-caption font-bold text-accent hover:text-accent-700">← 앨범 전체 보기</a>
         </div>
     </section>
 

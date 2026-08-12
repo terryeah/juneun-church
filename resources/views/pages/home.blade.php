@@ -160,7 +160,7 @@
             <div data-photo-slider>
                 <div class="moments-track flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pe-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-slider-track tabindex="0" aria-label="교회 사진 모음">
                     @foreach ($recentPhotos->take(4) as $photo)
-                        <a href="{{ route('gallery.show', $photo->album) }}" class="block overflow-hidden rounded-[1.35rem]">
+                        <a href="{{ route('album.show', $photo->album) }}" class="block overflow-hidden rounded-[1.35rem]">
                             <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
                         </a>
                     @endforeach
@@ -168,7 +168,7 @@
                 @if ($deferredPhotos->isNotEmpty())
                     <template data-slider-deferred>
                         @foreach ($deferredPhotos as $photo)
-                            <a href="{{ route('gallery.show', $photo->album) }}" class="block overflow-hidden rounded-[1.35rem]">
+                            <a href="{{ route('album.show', $photo->album) }}" class="block overflow-hidden rounded-[1.35rem]">
                                 <img src="{{ $photo->thumbnailUrl() }}" alt="{{ $photo->caption ?? $photo->album->title }}" class="aspect-square w-full object-cover" loading="lazy">
                             </a>
                         @endforeach

@@ -64,7 +64,7 @@ class ChurchMemberAccessTest extends TestCase
 
         $this->get('/news')->assertOk()->assertSee('성도 전용 공지');
         $this->get('/downloads')->assertOk()->assertSee('8월 3일 주일 예배 주보');
-        $this->get('/gallery')->assertOk()->assertSee('성도 전용 앨범');
+        $this->get('/album')->assertOk()->assertSee('성도 전용 앨범');
     }
 
     /**
@@ -84,9 +84,9 @@ class ChurchMemberAccessTest extends TestCase
 
         $this->get('/news')->assertOk()->assertDontSee('성도 전용 공지');
         $this->get('/downloads')->assertOk()->assertDontSee('8월 3일 주일 예배 주보');
-        $this->get('/gallery')->assertOk()->assertDontSee('성도 전용 앨범');
+        $this->get('/album')->assertOk()->assertDontSee('성도 전용 앨범');
         $this->get('/news/members-only-notice')->assertNotFound();
-        $this->get('/gallery/members-only-album')->assertNotFound();
+        $this->get('/album/members-only-album')->assertNotFound();
     }
 
     /**
@@ -101,14 +101,14 @@ class ChurchMemberAccessTest extends TestCase
      */
     public function test_the_tag_is_never_shown_to_somebody_who_is_not_a_member(): void
     {
-        foreach (['/', '/news', '/downloads', '/gallery', '/giving'] as $page) {
+        foreach (['/', '/news', '/downloads', '/album', '/giving'] as $page) {
             $this->get($page)->assertOk()->assertDontSee('성도 전용', escape: false);
         }
 
         /** Nor to a signed-in 일반회원, who sees the same pages a guest does. */
         $this->actingAs(User::factory()->create());
 
-        foreach (['/', '/news', '/downloads', '/gallery', '/giving'] as $page) {
+        foreach (['/', '/news', '/downloads', '/album', '/giving'] as $page) {
             $this->get($page)->assertOk()->assertDontSee('성도 전용', escape: false);
         }
     }
@@ -122,7 +122,7 @@ class ChurchMemberAccessTest extends TestCase
 
         $this->get('/downloads')->assertOk()->assertSee('성도 전용');
         $this->get('/news')->assertOk()->assertSee('성도 전용');
-        $this->get('/gallery')->assertOk()->assertSee('성도 전용');
+        $this->get('/album')->assertOk()->assertSee('성도 전용');
     }
 
     /**

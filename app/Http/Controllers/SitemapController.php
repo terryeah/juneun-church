@@ -27,7 +27,7 @@ class SitemapController extends Controller
             ['loc' => route('events'), 'priority' => '0.8'],
             ['loc' => route('news.index'), 'priority' => '0.8'],
             ['loc' => route('downloads'), 'priority' => '0.6'],
-            ['loc' => route('gallery.index'), 'priority' => '0.6'],
+            ['loc' => route('album.index'), 'priority' => '0.6'],
             ['loc' => route('people'), 'priority' => '0.5'],
             ['loc' => route('giving'), 'priority' => '0.5'],
             ['loc' => route('location'), 'priority' => '0.8'],
@@ -42,7 +42,7 @@ class SitemapController extends Controller
                 ]))
             ->merge(Album::query()->published()->where('is_members_only', false)->latest('event_date')->limit(200)->get()
                 ->map(fn (Album $album) => [
-                    'loc' => route('gallery.show', $album),
+                    'loc' => route('album.show', $album),
                     'lastmod' => $album->updated_at?->toDateString(),
                     'priority' => '0.4',
                 ]));
