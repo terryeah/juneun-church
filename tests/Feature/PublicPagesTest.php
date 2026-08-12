@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Album;
 use App\Models\Announcement;
+use App\Models\Event;
 use App\Models\Photo;
 use Database\Seeders\PositionSeeder;
 use Database\Seeders\ServiceTypeSeeder;
@@ -110,5 +111,42 @@ class PublicPagesTest extends TestCase
 
         $this->assertSame(4, substr_count($track, '<img src="'));
         $this->assertSame(6, substr_count($deferred, '<img src="'));
+    }
+
+    /**
+     * A link shared in a chat carries the church's name and a picture.
+     *
+     * The card title used to be the page title alone, so 예배 안내
+     * arrived with nothing to say whose it was, and most pages passed
+     * no image at all - which is the card nobody looks at twice, on the
+     * route most people actually arrive by.
+     */
+    public function test_a_shared_link_names_the_church_and_carries_a_picture(): void
+    {
+        $this->get('/worship')
+            ->assertOk()
+            ->assertSee('<meta property="og:title" content="예배 안내 · '.config('app.name').'">', false)
+            ->assertSee('<meta property="og:image"', false);
+
+        /** The home page has no title of its own, so the name stands alone. */
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('<meta property="og:title" content="'.config('app.name').'">', false);
+    }
+
+    /**
+     * A page with nothing on it today still says what it is for.
+     *
+     * '예정된 행사가 없습니다' on its own is a dead end for a reader and
+     * an empty page to a search engine, and 교회 행사 sits in the main
+     * navigation.
+     */
+    public function test_an_empty_events_page_still_says_what_is_on(): void
+    {
+        Event::query()->delete();
+
+        $this->get('/events')
+            ->assertOk()
+            ->assertSee('매주 모이는 예배와 모임은 계속됩니다');
     }
 }

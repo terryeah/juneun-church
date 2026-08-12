@@ -66,6 +66,21 @@
             class="section-downloads-signup"
             body="주보와 교회 서식에는 셀 편성과 섬김이 명단처럼 성도의 정보가 담겨 있어 성도에게만 공개됩니다."
         />
+
+        {{-- With every file behind the login this page was a heading and
+             one line, which reads as broken rather than as restricted.
+             What the 자료실 holds is not itself a secret, so it is said
+             plainly to whoever cannot open it. --}}
+        <section class="container-site pb-12 lg:pb-16">
+            <div class="max-w-xl font-kr text-body-sm leading-relaxed text-navy-400">
+                <p>자료실에는 두 가지가 있습니다.</p>
+                <ul class="mt-3 space-y-2">
+                    <li><b class="text-navy-700">주보</b> - 주일마다 나오는 예배 순서와 교회 소식입니다.</li>
+                    <li><b class="text-navy-700">문서</b> - 등록과 재정에 쓰이는 교회 서식입니다.</li>
+                </ul>
+                <p class="mt-4">주는교회에 등록하신 분은 <a href="{{ route('signup') }}" class="font-medium text-accent underline underline-offset-4 hover:text-accent-700">가입 신청</a> 후 이용하실 수 있습니다.</p>
+            </div>
+        </section>
     @endif
 
 </x-layout.app>

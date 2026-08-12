@@ -57,12 +57,40 @@
         'hasMap' => $addressMain !== ''
             ? 'https://www.google.com/maps?q='.urlencode($addressMain)
             : null,
+        /**
+         * The coordinates of 본당. Google matches a local church on
+         * where it is far more readily than on a street string, and
+         * this site names two addresses, so the point removes the
+         * ambiguity about which one is the church.
+         */
+        'geo' => [
+            '@type' => 'GeoCoordinates',
+            'latitude' => -27.5308,
+            'longitude' => 153.0838,
+        ],
+        'image' => url('/favicon-512.png'),
         'sameAs' => $sameAs,
     ]);
 
-    /** Social previews fall back to the page title and site strapline. */
-    $shareTitle = $title ?? config('app.name');
+    /** One node, referenced rather than repeated, on every page. */
+    $structuredData['@'.'id'] = url('/').'#church';
+
+    /**
+     * Social previews carry the church's name, which the browser tab
+     * gets from the title but a shared card did not: a link to 예배
+     * 안내 arrived in a chat reading only '예배 안내', with nothing to
+     * say whose it was.
+     */
+    $shareTitle = $title ? $title.' · '.config('app.name') : config('app.name');
     $shareDescription = $description ?: '브리즈번 주는교회 - 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라가는 젊은 한인교회입니다.';
+
+    /**
+     * Every page shares with a picture. Most pages pass none, and a
+     * card with no image is the one nobody looks at twice - which
+     * matters here because a link posted in a 단톡방 is how most people
+     * arrive.
+     */
+    $shareImage = $image ?: asset('favicon-512.png');
 @endphp
 
 <!DOCTYPE html>
@@ -83,16 +111,12 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <meta property="og:locale" content="ko_KR">
-    @if ($image)
-        <meta property="og:image" content="{{ $image }}">
-        <meta property="og:image:alt" content="{{ $shareTitle }}">
-    @endif
+    <meta property="og:image" content="{{ $shareImage }}">
+    <meta property="og:image:alt" content="{{ $shareTitle }}">
     <meta name="twitter:card" content="{{ $image ? 'summary_large_image' : 'summary' }}">
     <meta name="twitter:title" content="{{ $shareTitle }}">
     <meta name="twitter:description" content="{{ $shareDescription }}">
-    @if ($image)
-        <meta name="twitter:image" content="{{ $image }}">
-    @endif
+    <meta name="twitter:image" content="{{ $shareImage }}">
     <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -101,10 +125,13 @@
     <link rel="preconnect" href="https://media.juneun.com">
     {{-- Video stills come from YouTube's image host. Without this the
          first one on an album page pays a fresh DNS, TCP and TLS
-         handshake from Brisbane before a single pixel arrives. --}}
-    <link rel="preconnect" href="https://i.ytimg.com" crossorigin>
+         handshake from Brisbane before a single pixel arrives.
+
+         No crossorigin: the stills are plain <img> tags, and a CORS
+         preconnect warms a connection pool they never use. --}}
+    <link rel="preconnect" href="https://i.ytimg.com">
     <link rel="preload" href="/fonts/GmarketSansMedium-modern.woff2" as="font" type="font/woff2" crossorigin>
-    <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+    <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
     @if (config('services.cloudflare.web_analytics_token'))
         <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "{{ config('services.cloudflare.web_analytics_token') }}"}'></script>

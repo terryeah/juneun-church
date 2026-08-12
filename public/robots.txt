@@ -11,6 +11,9 @@ User-agent: *
 Content-Signal: search=yes, ai-input=yes, ai-train=no
 Disallow: /admin
 Disallow: /livewire
+# The framework's health check. It answers 200 with a page of its own
+# and is linked from nowhere, so it is only ever found by a crawler.
+Disallow: /up
 Allow: /
 
 Sitemap: https://www.juneun.com/sitemap.xml

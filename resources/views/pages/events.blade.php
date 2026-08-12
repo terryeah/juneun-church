@@ -37,7 +37,14 @@
                 </div>
             </div>
         @empty
-            <p class="text-body-sm text-navy-400">예정된 행사가 없습니다.</p>
+            {{-- A page that says only '없습니다' is a dead end for the
+                 reader and an empty page to a search engine. The weekly
+                 services are always true, so the page says what is on
+                 even in a month with nothing special in it. --}}
+            <div class="max-w-xl">
+                <p class="font-kr text-body leading-relaxed text-navy-700">예정된 특별 행사가 없습니다. 매주 모이는 예배와 모임은 계속됩니다.</p>
+                <a href="{{ route('worship') }}" class="mt-6 inline-block text-caption font-bold text-accent hover:text-accent-700">예배 시간 보기 →</a>
+            </div>
         @endforelse
     </section>
 

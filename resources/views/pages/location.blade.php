@@ -15,7 +15,7 @@
     ];
 @endphp
 
-<x-layout.app title="오시는 길" description="브리즈번 주는교회 오시는 길과 예배 시간 안내입니다.">
+<x-layout.app title="오시는 길 · Mt Gravatt East" description="브리즈번 주는교회(브리즈번 한인교회) 오시는 길과 예배 시간 안내입니다. 본당은 Mt Gravatt East, 교육관은 Calamvale에 있습니다.">
 
     <x-ui.page-header kicker="브리즈번에서 만나요 · Visit" title="오시는 길" />
 

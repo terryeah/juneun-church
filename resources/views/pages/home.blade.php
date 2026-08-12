@@ -1,4 +1,4 @@
-<x-layout.app description="브리즈번 주는교회 - 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라가는 젊은 한인교회입니다." :image="$heroPhoto?->url()">
+<x-layout.app description="브리즈번 주는교회 - 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라가는 젊은 한인교회입니다." :image="$heroPhoto?->thumbnailUrl()">
 
     {{-- Hero --}}
     <section class="section-hero container-site py-8 md:py-10 lg:py-14">
@@ -6,7 +6,15 @@
             <div class="lg:flex-[1.05]">
                 <x-ui.kicker data-hero-item>Brisbane Juneun Church · Since 2024</x-ui.kicker>
                 <h1 class="mt-4 font-kr text-display-lg" data-hero-item>받은 은혜를<br>흘려보내는 교회</h1>
-                <p lang="en" class="mt-5 max-w-[25rem] text-body-lg leading-relaxed text-navy-700" data-hero-item>
+                {{-- The words a Korean family in Brisbane actually types.
+                     Until this line the phrase '브리즈번 한인교회' appeared
+                     nowhere a search engine reads - not in the title, not
+                     in a heading, not in the body - only in a meta
+                     description, which is not a ranking signal. --}}
+                <p class="mt-5 max-w-[26rem] font-kr text-body-lg leading-relaxed text-navy-700" data-hero-item>
+                    브리즈번 Mt Gravatt에 있는 한인교회입니다. 함께 예배하고, 넉넉히 나누며, 예수 그리스도를 따라갑니다.
+                </p>
+                <p lang="en" class="mt-3 max-w-[25rem] text-body leading-relaxed text-navy-400" data-hero-item>
                     A young Korean church in Brisbane - worshipping together, giving generously, and growing as followers of Jesus Christ.
                 </p>
                 <div class="mt-7 flex flex-wrap gap-3" data-hero-item>
