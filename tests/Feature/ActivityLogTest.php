@@ -120,6 +120,34 @@ class ActivityLogTest extends TestCase
     }
 
     /**
+     * A page opening says which page, on the table itself.
+     *
+     * The path is the only thing such a row carries, and it lives in
+     * the description, which this table does not show. Without this the
+     * 대상 column held a dash and the trail could only be read one row
+     * at a time through the view modal.
+     */
+    public function test_a_page_visit_names_the_page_on_the_table(): void
+    {
+        $developer = User::factory()->create();
+        $developer->assignRole('developer');
+
+        activity('page')
+            ->causedBy(User::factory()->create())
+            ->event('visited')
+            ->withProperties(['url' => 'https://www.juneun.com/giving', 'ip' => '1.2.3.4'])
+            ->log('/giving');
+
+        activity('auth')->event('failed_login')->log('로그인 실패');
+
+        Livewire::actingAs($developer)
+            ->test(ListActivities::class)
+            ->assertSee('/giving')
+            /** And a row that is about nothing still says so. */
+            ->assertSee('-');
+    }
+
+    /**
      * Closing someone's 사이트 계정 must not turn their history into
      * the site's own.
      *

@@ -54,11 +54,29 @@ class ActivitiesTable
                         'deleted', 'failed_login' => 'danger',
                         default => 'gray',
                     }),
+                /**
+                 * What the row is about: the record that was changed,
+                 * or - for a page opening, which has no record - the
+                 * page itself.
+                 *
+                 * A visit showed nothing here at all. The path lives in
+                 * the description, which this table does not carry, so
+                 * the one thing those rows exist to record could only
+                 * be read by opening them one at a time.
+                 *
+                 * Built with state() rather than formatStateUsing(),
+                 * because Filament skips the formatter when the column
+                 * is empty and draws the placeholder instead - which is
+                 * every row without a subject, and why the '-' this
+                 * column was written to show never appeared either.
+                 */
                 TextColumn::make('subject_type')
                     ->label('대상')
-                    ->formatStateUsing(fn (?string $state, Activity $record): string => $state
-                        ? class_basename($state).' #'.$record->subject_id
-                        : '-'),
+                    ->state(fn (Activity $record): string => match (true) {
+                        filled($record->subject_type) => class_basename($record->subject_type).' #'.$record->subject_id,
+                        $record->log_name === 'page' => (string) $record->description,
+                        default => '-',
+                    }),
                 TextColumn::make('properties.ip')
                     ->label('IP 주소')
                     ->placeholder('-')
