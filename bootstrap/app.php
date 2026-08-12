@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\LogPageVisits;
 use App\Http\Middleware\SecurityHeaders;
+use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -38,6 +39,16 @@ return Application::configure(basePath: dirname(__DIR__))
                 | Request::HEADER_X_FORWARDED_PORT,
         );
         $middleware->append(SecurityHeaders::class);
+
+        /**
+         * A session dies with the password it was opened under.
+         *
+         * The panel already did this; the public site did not, so
+         * resetting a 성도's password - the thing you do when a phone is
+         * lost - left whoever had the phone still reading 주보 and 헌금
+         * 내역. Sessions last thirty days, so that is a long time.
+         */
+        $middleware->web(append: AuthenticateSession::class);
 
         /**
          * The audit trail of who opened which page, for the public

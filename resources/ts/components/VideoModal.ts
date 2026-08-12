@@ -18,6 +18,7 @@ export class VideoModal {
     private heading: HTMLElement | null = null;
     private opener: HTMLElement | null = null;
     private reducedMotion: boolean = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    private closing: number | null = null;
 
     /**
      * Creates a new VideoModal instance.
@@ -180,6 +181,18 @@ export class VideoModal {
             return;
         }
 
+        /**
+         * Cancel a close still fading out. Its timer would otherwise
+         * hide the overlay a moment after this one opened, leaving a
+         * video playing inside an invisible modal with the page locked
+         * behind it and Escape doing nothing.
+         */
+        if (this.closing !== null) {
+            window.clearTimeout(this.closing);
+            this.closing = null;
+        }
+
+        this.overlay.style.pointerEvents = '';
         this.opener = card;
 
         if (this.heading) {
@@ -258,7 +271,10 @@ export class VideoModal {
             return;
         }
 
-        window.setTimeout(finish, 280);
+        this.closing = window.setTimeout(() => {
+            this.closing = null;
+            finish();
+        }, 280);
     }
 
     /**

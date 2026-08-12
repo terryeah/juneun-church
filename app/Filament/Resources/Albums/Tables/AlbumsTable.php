@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Albums\Tables;
 
 use App\Models\Album;
-use App\Models\Photo;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -40,15 +39,23 @@ class AlbumsTable
                 ImageColumn::make('cover_photo_path')
                     ->label('커버 사진')
                     ->disk(config('filesystems.media'))
-                    ->state(function (Album $record): ?string {
-                        if (! $record->cover_photo_path) {
-                            return null;
-                        }
-
-                        $photo = Photo::query()->where('path', $record->cover_photo_path)->first();
-
-                        return $photo?->thumbnail_path ?? $record->cover_photo_path;
-                    })
+                    /**
+                     * The media disk is R2, so Filament would ask it
+                     * whether each file exists - one HTTPS round trip
+                     * per row, 25 of them in a row - and then hand back
+                     * a presigned URL, which bypasses the CDN and
+                     * expires every half hour. The bucket is public and
+                     * served from media.juneun.com.
+                     */
+                    ->checkFileExistence(false)
+                    ->visibility('public')
+                    /**
+                     * Read off the album row. This used to look the
+                     * cover up in `photos` by path, which carries no
+                     * index - a full scan of 3,199 rows per album, 25
+                     * times a page, and again on every toggle.
+                     */
+                    ->state(fn (Album $record): ?string => $record->cover_thumbnail_path ?? $record->cover_photo_path)
                     ->imageHeight(44)
                     ->extraCellAttributes(['class' => 'stacked-span-full stacked-hide-label stacked-media']),
                 TextColumn::make('title')

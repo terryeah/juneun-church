@@ -133,7 +133,16 @@ class ImportInstagramPhotos extends Command
                 continue;
             }
 
-            $album->update(['cover_photo_path' => $album->photos()->first()?->path]);
+            /**
+             * The thumbnail too, or the album grid serves the 2560px
+             * original as its card image - the 800px version is made at
+             * upload and sitting on the photo row unused.
+             */
+            $cover = $album->photos()->first();
+            $album->update([
+                'cover_photo_path' => $cover?->path,
+                'cover_thumbnail_path' => $cover?->thumbnail_path,
+            ]);
             $imported++;
         }
 

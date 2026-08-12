@@ -15,6 +15,7 @@ use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Widgets\ContentStatsWidget;
+use App\Filament\Widgets\QuickActionsWidget;
 use App\Http\Middleware\ExemptMembersFromMultiFactorAuthentication;
 use App\Models\MembershipRequest;
 use App\Models\User;
@@ -82,8 +83,15 @@ class AdminAccessTest extends TestCase
     }
 
     /**
-     * Every dashboard widget of this application is hidden from anyone
-     * below an administrator, and the statistics still show for one.
+     * A 일반회원 sees no widget at all, and the widgets that summarise
+     * the church's own numbers stay with administrators.
+     *
+     * 바로가기 is the exception, and deliberately: it links to 소식,
+     * 주보 and 사진, which an editor holds. It used to be hidden from
+     * them on the stated grounds that only the office may submit those
+     * forms - which was never true, and left the one role whose whole
+     * job is those three screens as the only staff role without the
+     * shortcuts to them.
      */
     public function test_dashboard_widgets_are_hidden_below_an_administrator(): void
     {
@@ -94,12 +102,21 @@ class AdminAccessTest extends TestCase
 
         $this->assertNotEmpty($widgets);
 
-        foreach ([['general_member'], ['content_editor']] as $roles) {
-            $this->actingAs($this->userWithRoles($roles));
+        /** Nothing on the dashboard is for somebody who runs nothing. */
+        $this->actingAs($this->userWithRoles(['general_member']));
 
-            foreach ($widgets as $widget) {
-                $this->assertFalse($widget::canView(), "{$widget} is visible to a ".implode(', ', $roles).'.');
-            }
+        foreach ($widgets as $widget) {
+            $this->assertFalse($widget::canView(), "{$widget} is visible to a 일반회원.");
+        }
+
+        $this->actingAs($this->userWithRoles(['content_editor']));
+
+        foreach ($widgets as $widget) {
+            $this->assertSame(
+                $widget === QuickActionsWidget::class,
+                $widget::canView(),
+                "{$widget} answered wrongly for a content editor.",
+            );
         }
 
         $this->actingAs($this->userWithRoles(['admin']));

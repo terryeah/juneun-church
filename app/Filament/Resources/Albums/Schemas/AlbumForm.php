@@ -47,6 +47,8 @@ class AlbumForm
                             ? '이미 담긴 것이 있어 종류를 바꿀 수 없습니다. 비우면 바꿀 수 있습니다.'
                             : '사진 앨범에는 사진을, 동영상 앨범에는 유튜브 영상을 담습니다.'),
                 TextInput::make('slug')
+                    /** The column is unique, so a repeat is a message, not a 500. */
+                    ->unique(ignoreRecord: true)
                     ->label('슬러그')
                     ->helperText('비워두면 영문 제목 또는 album-YYYYMMDD 형식으로 자동 생성됩니다.')
                     ->maxLength(255),
@@ -86,6 +88,14 @@ class AlbumForm
                  */
                 Toggle::make('is_members_only')
                     ->label('성도 전용')
+                    /**
+                     * On by default for video, because the videos are
+                     * unlisted on YouTube and the switch being off is
+                     * the thing this very field warns is irreversible.
+                     * A new album should not start in the state its own
+                     * helper text tells you not to choose.
+                     */
+                    ->default(fn (Get $get): bool => $get('type') === Album::TYPE_VIDEO)
                     ->helperText(fn (Get $get): string => $get('type') === Album::TYPE_VIDEO
                         ? '이 앨범의 영상은 유튜브에서 목록에 안 뜨고 주소를 아는 사람만 볼 수 있는 영상입니다. 이 스위치를 끄면 영상 주소가 공개 페이지에 실리고, 그때부터는 주소를 아는 누구나 볼 수 있게 됩니다. 되돌릴 수 없습니다.'
                         : '켜면 앨범은 목록에 성도 전용 표시와 함께 남고, 로그인한 성도만 열어서 사진을 볼 수 있습니다. 로그인하지 않은 방문자에게는 앨범 자체가 보이지 않습니다.')

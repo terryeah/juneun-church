@@ -27,6 +27,8 @@ class AnnouncementForm
                     ->required()
                     ->maxLength(255),
                 TextInput::make('slug')
+                    /** The column is unique, so a repeat is a message, not a 500. */
+                    ->unique(ignoreRecord: true)
                     ->label('슬러그')
                     ->helperText('비워두면 영문 제목 또는 news-YYYYMMDD 형식으로 자동 생성됩니다.')
                     ->maxLength(255),

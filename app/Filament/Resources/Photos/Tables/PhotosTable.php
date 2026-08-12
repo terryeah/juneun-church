@@ -31,6 +31,16 @@ class PhotosTable
                 ImageColumn::make('thumbnail_path')
                     ->label('썸네일')
                     ->disk(config('filesystems.media'))
+                    /**
+                     * The media disk is R2, so Filament would ask it
+                     * whether each file exists - one HTTPS round trip
+                     * per row, 25 of them in a row - and then hand back
+                     * a presigned URL, which bypasses the CDN and
+                     * expires every half hour. The bucket is public and
+                     * served from media.juneun.com.
+                     */
+                    ->checkFileExistence(false)
+                    ->visibility('public')
                     ->state(fn (Photo $record): string => $record->thumbnail_path ?? $record->path)
                     ->imageHeight(44)
                     ->extraCellAttributes(['class' => 'stacked-span-full stacked-hide-label stacked-media']),

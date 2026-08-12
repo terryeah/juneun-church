@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BuildsMediaUrls;
 use App\Models\Concerns\LogsModelActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * A worship recording (예배) hosted on YouTube.
@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class Sermon extends Model
 {
-    use HasFactory, LogsModelActivity;
+    use BuildsMediaUrls, HasFactory, LogsModelActivity;
 
     /**
      * Get the attributes that should be cast.
@@ -86,7 +86,7 @@ class Sermon extends Model
     public function thumbnailUrl(): string
     {
         if ($this->thumbnail_path) {
-            return Storage::disk(config('filesystems.media'))->url($this->thumbnail_path);
+            return static::mediaUrl($this->thumbnail_path);
         }
 
         return 'https://i.ytimg.com/vi/'.$this->youtube_video_id.'/hqdefault.jpg';

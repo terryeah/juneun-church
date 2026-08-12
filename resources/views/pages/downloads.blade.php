@@ -22,7 +22,12 @@
          an empty rule would only frame an absence. The whole section is
          replaced on a tab click, so the chips and their active state
          live inside it and need no rebinding. --}}
-    @if ($files->isNotEmpty() || ! $hasRestricted)
+    {{-- The strip stays whenever there is another tab worth opening.
+         Bulletins are 성도 전용 by default, so a guest's first tab is
+         always empty - and hiding the whole section with it meant a
+         document the church had deliberately made public could not be
+         reached from the page at all, only by typing the address. --}}
+    @if ($files->isNotEmpty() || ! $hasRestricted || $hasOtherTab)
     <section class="section-downloads container-site pb-12 lg:pb-16" data-downloads>
         <div class="flex flex-wrap gap-2">
             @foreach ($tabs as $key => $label)

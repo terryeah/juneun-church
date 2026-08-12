@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Filament\Support\SaveUploadsAsWebp;
+use App\Models\Concerns\BuildsMediaUrls;
 use App\Models\Concerns\GeneratesReadableSlug;
 use App\Models\Concerns\LogsModelActivity;
 use App\Models\Concerns\PurgesCdnCache;
@@ -32,7 +33,7 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class Album extends Model
 {
-    use GeneratesReadableSlug, HasFactory, LogsModelActivity, PurgesCdnCache;
+    use BuildsMediaUrls, GeneratesReadableSlug, HasFactory, LogsModelActivity, PurgesCdnCache;
 
     /** An album of photographs, stored on the church's own media host. */
     public const TYPE_PHOTO = 'photo';
@@ -83,8 +84,16 @@ class Album extends Model
         static::deleting(function (Album $album): void {
             $album->photos()->get()->each->delete();
 
-            if ($album->cover_photo_path) {
-                Storage::disk(config('filesystems.media'))->delete($album->cover_photo_path);
+            /**
+             * Both, not just the original: the 800px thumbnail is what
+             * the grid actually served, and it was outliving the album
+             * it belonged to - still readable by anyone holding its
+             * address, including for a 성도 전용 album.
+             */
+            $covers = array_filter([$album->cover_photo_path, $album->cover_thumbnail_path]);
+
+            if ($covers !== []) {
+                Storage::disk(config('filesystems.media'))->delete($covers);
             }
         });
 
@@ -184,11 +193,11 @@ class Album extends Model
         }
 
         if ($this->cover_thumbnail_path) {
-            return Storage::disk(config('filesystems.media'))->url($this->cover_thumbnail_path);
+            return static::mediaUrl($this->cover_thumbnail_path);
         }
 
         if ($this->cover_photo_path) {
-            return Storage::disk(config('filesystems.media'))->url($this->cover_photo_path);
+            return static::mediaUrl($this->cover_photo_path);
         }
 
         return $this->photos()->first()?->thumbnailUrl();

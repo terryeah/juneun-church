@@ -38,7 +38,15 @@ class MembershipRequestController extends Controller
             [
                 'name' => ['required', 'string', 'max:255'],
                 'birth_date' => ['required', 'date', 'before:today'],
-                'phone' => ['required', 'string', 'max:10'],
+                /**
+                 * '0412 345 678' is eleven characters with its spaces,
+                 * and the form's own maxlength cut it at ten - so the
+                 * office was handed a number one digit short, with
+                 * nothing to say it had been truncated. The digits are
+                 * checked rather than the length, so a name typed into
+                 * the phone box is refused too.
+                 */
+                'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+][0-9 +()\-]{7,19}$/'],
                 'email' => ['required', 'string', 'email', 'max:255'],
                 'password' => ['required', 'confirmed', Password::defaults()],
                 'note' => ['nullable', 'string', 'max:1000'],

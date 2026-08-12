@@ -89,6 +89,13 @@ export class Lightbox {
         this.status.className = 'sr-only';
         this.overlay.appendChild(this.status);
         this.overlay.style.opacity = '0';
+
+        /**
+         * An overlay at zero opacity is still there for a click, so
+         * without this the first tap on the next thumbnail is eaten by
+         * the photo that was just closed.
+         */
+        this.overlay.style.pointerEvents = 'none';
         this.overlay.style.transition = this.reducedMotion ? 'none' : 'opacity 280ms ease';
 
         this.stage = document.createElement('div');
@@ -423,6 +430,10 @@ export class Lightbox {
 
         window.setTimeout(() => {
             this.overlay?.classList.add('hidden');
+
+            if (this.overlay) {
+                this.overlay.style.pointerEvents = '';
+            }
             this.overlay?.classList.remove('flex');
             this.opener?.focus();
             this.opener = null;

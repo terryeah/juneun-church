@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BuildsMediaUrls;
 use App\Models\Concerns\LogsModelActivity;
 use App\Models\Concerns\PurgesCdnCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -29,7 +30,7 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class Photo extends Model
 {
-    use HasFactory, LogsModelActivity, PurgesCdnCache;
+    use BuildsMediaUrls, HasFactory, LogsModelActivity, PurgesCdnCache;
 
     /**
      * The image and its thumbnail are both served from the CDN.
@@ -73,7 +74,7 @@ class Photo extends Model
      */
     public function url(): string
     {
-        return Storage::disk(config('filesystems.media'))->url($this->path);
+        return static::mediaUrl($this->path);
     }
 
     /**
@@ -81,6 +82,6 @@ class Photo extends Model
      */
     public function thumbnailUrl(): string
     {
-        return Storage::disk(config('filesystems.media'))->url($this->thumbnail_path ?? $this->path);
+        return static::mediaUrl($this->thumbnail_path ?? $this->path);
     }
 }

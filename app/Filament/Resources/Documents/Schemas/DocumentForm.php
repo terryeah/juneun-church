@@ -9,6 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
@@ -40,8 +41,16 @@ class DocumentForm
                     ->visibility('public')
                     ->required()
                     ->saveUploadedFileUsing(function (TemporaryUploadedFile $file): string {
-                        /** Documents are always stored as document-{upload date-time}.pdf */
-                        $path = 'documents/document-'.now('Australia/Brisbane')->format('Y-m-d-His').'.pdf';
+                        /**
+                         * A random name, because the file itself is not
+                         * behind the login - only the listing is. The
+                         * name used to be the upload's date and time to
+                         * the second, which is one day's worth of
+                         * guesses for anyone who knows a 주보 goes up on
+                         * a Sunday, and a 주보 carries the cell lists,
+                         * the rota and the offering record.
+                         */
+                        $path = 'documents/'.Str::uuid().'.pdf';
                         Storage::disk(config('filesystems.media'))
                             ->put($path, (string) file_get_contents($file->getRealPath()), ['visibility' => 'public']);
 

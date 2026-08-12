@@ -19,12 +19,34 @@ class SiteSetting extends Model
     use LogsModelActivity;
 
     /**
+     * The settings for this request, once they have been fetched.
+     *
+     * rememberForever() saves the database query, not the round trip:
+     * the cache store is itself a database table here, so every call
+     * was a SELECT against `cache` plus an unserialize. The footer alone
+     * asks sixteen times, and 오시는 길 asked fifty-two times in all -
+     * for one row of settings that cannot change mid-request.
+     *
+     * @var array<string, string|null>|null
+     */
+    private static ?array $settings = null;
+
+    /**
      * Flush the settings cache whenever a setting changes.
      */
     protected static function booted(): void
     {
-        static::saved(fn () => Cache::forget('site_settings'));
-        static::deleted(fn () => Cache::forget('site_settings'));
+        static::saved(fn () => static::flush());
+        static::deleted(fn () => static::flush());
+    }
+
+    /**
+     * Drop both the shared cache and this request's copy of it.
+     */
+    public static function flush(): void
+    {
+        Cache::forget('site_settings');
+        static::$settings = null;
     }
 
     /**
@@ -32,11 +54,10 @@ class SiteSetting extends Model
      */
     public static function get(string $key, ?string $default = null): ?string
     {
-        /** @var array<string, string|null> $settings */
-        $settings = Cache::rememberForever('site_settings', function (): array {
+        static::$settings ??= Cache::rememberForever('site_settings', function (): array {
             return static::query()->pluck('value', 'key')->all();
         });
 
-        return $settings[$key] ?? $default;
+        return static::$settings[$key] ?? $default;
     }
 }

@@ -30,9 +30,14 @@ class DownloadsController extends Controller
      */
     public function __invoke(Request $request): View
     {
-        $tab = array_key_exists((string) $request->query('type'), self::TABS)
-            ? (string) $request->query('type')
-            : 'bulletins';
+        /**
+         * The type is checked before it is used as one: ?type[]=x
+         * arrives as an array, and casting an array to a string is a
+         * PHP error rather than a value - an unauthenticated 500 on a
+         * public page. 앨범 was fixed for this; 자료실 was not.
+         */
+        $type = $request->query('type');
+        $tab = is_string($type) && array_key_exists($type, self::TABS) ? $type : 'bulletins';
 
         $files = $tab === 'bulletins'
             ? Bulletin::query()->visible()->orderByDesc('published_at')->get()
@@ -49,8 +54,14 @@ class DownloadsController extends Controller
             || Document::query()->where('is_members_only', true)->exists()
         );
 
+        /** Whether the other tab has anything this reader may open. */
+        $hasOtherTab = $tab === 'bulletins'
+            ? Document::query()->visible()->exists()
+            : Bulletin::query()->visible()->exists();
+
         return view('pages.downloads', [
             'tabs' => self::TABS,
+            'hasOtherTab' => $hasOtherTab,
             'tab' => $tab,
             'files' => $files,
             'hasRestricted' => $hasRestricted,

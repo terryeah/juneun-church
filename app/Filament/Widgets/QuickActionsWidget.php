@@ -23,12 +23,16 @@ class QuickActionsWidget extends Widget
     protected int|string|array $columnSpan = 'full';
 
     /**
-     * Every shortcut here opens a create form only the church office
-     * may submit, so the whole card is hidden from anyone below an
-     * administrator rather than offering links that end in a 403.
+     * Anybody who may actually use the shortcuts.
+     *
+     * This was administrators only, on the stated grounds that only the
+     * office may submit these forms - which is not so: an editor holds
+     * 소식, 주보 and 사진, the three the card links to. The one role
+     * whose whole job is those screens was the only staff role that
+     * could not see them.
      */
     public static function canView(): bool
     {
-        return auth()->user()?->isAdministrator() ?? false;
+        return ! (auth()->user()?->isGeneralMember() ?? true);
     }
 }

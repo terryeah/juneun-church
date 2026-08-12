@@ -41,7 +41,7 @@
                         {{-- A text field rather than a native date picker, whose
                              displayed order follows the browser locale. --}}
                         <input id="birth_date" name="birth_date" type="text" required inputmode="numeric"
-                               placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" maxlength="10"
+                               placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" maxlength="20"
                                data-date-field
                                value="{{ old('birth_date') }}" class="{{ $inputClass }}">
                         @error('birth_date')<p class="{{ $errorClass }}">{{ $message }}</p>@enderror
@@ -49,7 +49,7 @@
 
                     <div>
                         <label for="phone" class="{{ $labelClass }}">전화번호</label>
-                        <input id="phone" name="phone" type="tel" required maxlength="10" placeholder="0411222333"
+                        <input id="phone" name="phone" type="tel" required maxlength="20" placeholder="0411222333"
                                autocomplete="tel" value="{{ old('phone') }}" class="{{ $inputClass }}">
                         @error('phone')<p class="{{ $errorClass }}">{{ $message }}</p>@enderror
                     </div>

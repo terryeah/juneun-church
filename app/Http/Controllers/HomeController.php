@@ -89,6 +89,8 @@ class HomeController extends Controller
             ->where('featured_in_slider', true)
             ->latest()
             ->limit(10)
+            /** Each photo links back to its album, so fetch them together. */
+            ->with('album')
             ->get();
 
         if ($picked->count() >= 10) {
@@ -99,7 +101,14 @@ class HomeController extends Controller
             ->where('is_published', true)
             ->where('is_members_only', false)
             ->orderByDesc('event_date')
-            ->with(['photos' => fn ($query) => $query->latest()])
+            /**
+             * Ten from each album is more than the round robin can use,
+             * and the whole relation was being loaded to pick a few:
+             * with nothing pinned to the slider, the church's 904 public
+             * photographs were hydrated into memory on every visit to
+             * the front page - about 8 MB, to show ten.
+             */
+            ->with(['photos' => fn ($query) => $query->latest()->limit(10)])
             ->get()
             ->map(fn ($album) => $album->photos->whereNotIn('id', $picked->pluck('id'))->values())
             ->filter(fn ($photos) => $photos->isNotEmpty())

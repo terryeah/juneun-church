@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BuildsMediaUrls;
 use App\Models\Concerns\LogsModelActivity;
 use App\Models\Concerns\PurgesCdnCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Storage;
 #[Fillable(['title', 'file_path', 'published_at', 'is_members_only', 'created_by'])]
 class Bulletin extends Model
 {
-    use HasFactory, LogsModelActivity, PurgesCdnCache;
+    use BuildsMediaUrls, HasFactory, LogsModelActivity, PurgesCdnCache;
 
     /**
      * Remove the stored file alongside the record.
@@ -83,6 +84,6 @@ class Bulletin extends Model
      */
     public function fileUrl(): string
     {
-        return Storage::disk(config('filesystems.media'))->url($this->file_path);
+        return static::mediaUrl($this->file_path);
     }
 }

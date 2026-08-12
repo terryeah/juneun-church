@@ -20,7 +20,7 @@
              data-lightbox-gallery
              data-photo-total="{{ $photos->total() }}">
             <div class="contents" data-infinite-scroll>
-                @foreach ($photos as $photo)
+                @forelse ($photos as $photo)
                     <a href="{{ $photo->url() }}" data-lightbox class="block overflow-hidden rounded-media">
                         <img
                             src="{{ $photo->thumbnailUrl() }}"
@@ -29,7 +29,12 @@
                             loading="lazy"
                         >
                     </a>
-                @endforeach
+                @empty
+                    {{-- An album is usually made before the photographs
+                         go in, and it is published from the moment it is
+                         made, so this is an ordinary state. --}}
+                    <p class="col-span-full font-kr text-body-sm text-navy-400">아직 올라온 사진이 없습니다.</p>
+                @endforelse
 
                 @if ($photos->hasMorePages())
                     <div class="col-span-full py-6 text-center">

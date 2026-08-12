@@ -132,7 +132,7 @@
                 <div class="wiki-rows">
                     <div class="wiki-row"><b>앨범</b><span>사진을 담는 그릇. 활성화와 성도 전용을 여기서 정합니다</span></div>
                     <div class="wiki-row"><b>사진</b><span>사진 한 장씩. 홈 슬라이더에 넣을 사진도 여기서 고릅니다</span></div>
-                    <div class="wiki-row"><b>동영상</b><span>아직 비어 있습니다. 나중에 영상이 들어올 자리</span></div>
+                    <div class="wiki-row"><b>동영상</b><span>유튜브 주소를 붙여넣으면 됩니다. 앨범에서 종류를 <b>동영상</b>으로 만든 뒤 여기에 담습니다</span></div>
                 </div>
 
                 <h3 class="wiki-h3">재정</h3>

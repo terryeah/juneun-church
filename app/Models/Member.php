@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BuildsMediaUrls;
 use App\Models\Concerns\LogsModelActivity;
 use App\Models\Concerns\PurgesCdnCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -46,7 +47,7 @@ use Spatie\Activitylog\Support\LogOptions;
 ])]
 class Member extends Model
 {
-    use HasFactory, LogsModelActivity, PurgesCdnCache;
+    use BuildsMediaUrls, HasFactory, LogsModelActivity, PurgesCdnCache;
 
     /**
      * Position names that never count as serving on the public people
@@ -165,7 +166,7 @@ class Member extends Model
     public function photoUrl(): ?string
     {
         return $this->photo
-            ? Storage::disk(config('filesystems.media'))->url($this->photo)
+            ? static::mediaUrl($this->photo)
             : null;
     }
 
