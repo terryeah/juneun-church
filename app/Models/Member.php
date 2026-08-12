@@ -144,8 +144,7 @@ class Member extends Model
      */
     public function scopeServing($query): void
     {
-        $query->where('is_published', true)
-            ->where(fn ($inner) => $inner->whereNotNull('position_id')->orWhereNotNull('department'))
+        $query->where(fn ($inner) => $inner->whereNotNull('position_id')->orWhereNotNull('department'))
             ->withoutLayPositions();
     }
 

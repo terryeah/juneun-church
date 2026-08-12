@@ -206,6 +206,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
             'email_verified_at' => 'datetime',
             'is_test_account' => 'boolean',
             'is_audit_exempt' => 'boolean',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
             'app_authentication_secret' => 'encrypted',
             'app_authentication_recovery_codes' => 'encrypted:array',

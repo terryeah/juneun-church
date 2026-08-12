@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\MembershipRequestController;
 use App\Http\Controllers\DownloadsController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AlbumController;
+use App\Http\Controllers\RestrictedFileController;
 use App\Http\Controllers\GivingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocationController;
@@ -26,6 +27,13 @@ Route::get('/downloads', DownloadsController::class)->name('downloads');
 
 /** 주보 moved into 자료실; the old address is kept for anything linking to it. */
 Route::permanentRedirect('/bulletins', '/downloads')->name('bulletins');
+/**
+ * A 성도 전용 file is fetched through the application so somebody can
+ * be asked who they are. An open one keeps its direct CDN address.
+ */
+Route::get('/downloads/bulletin/{bulletin}', [RestrictedFileController::class, 'bulletin'])->name('bulletin.file');
+Route::get('/downloads/document/{document}', [RestrictedFileController::class, 'document'])->name('document.file');
+
 Route::get('/album', [AlbumController::class, 'index'])->name('album.index');
 Route::get('/album/{album}', [AlbumController::class, 'show'])->name('album.show');
 

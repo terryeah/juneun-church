@@ -88,6 +88,15 @@ class Document extends Model
      */
     public function fileUrl(): string
     {
+        /**
+         * A restricted file goes through the application, which can ask
+         * who is asking. The bucket is public, so its direct address is
+         * an open door to anyone the link reaches.
+         */
+        if ($this->is_members_only) {
+            return route('document.file', $this);
+        }
+
         return static::mediaUrl($this->file_path);
     }
 }

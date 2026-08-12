@@ -80,6 +80,21 @@ class UsersTable
                     ->formatStateUsing(fn ($state): string => filled($state) ? '사용 중' : '미설정')
                     ->color(fn ($state): string => filled($state) ? 'success' : 'gray')
                     ->placeholder('미설정'),
+                /**
+                 * The one column an access review is actually made on.
+                 * The list said when each account was created but never
+                 * whether it is still used, so an account belonging to a
+                 * volunteer who left two years ago looked exactly like
+                 * one opened every Sunday. The sign-ins are in the
+                 * activity log, but only a developer may read that.
+                 */
+                TextColumn::make('last_login_at')
+                    ->label('마지막 로그인')
+                    ->dateTime('Y-m-d')
+                    ->description(fn (User $record): ?string => $record->last_login_at?->diffForHumans())
+                    ->placeholder('한 번도 없음')
+                    ->sortable()
+                    ->visible(fn (): bool => auth()->user()?->isAdministrator() ?? false),
                 TextColumn::make('created_at')
                     ->label('가입일')
                     ->dateTime('Y-m-d H:i')

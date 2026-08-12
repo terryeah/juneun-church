@@ -127,6 +127,15 @@ class AppServiceProvider extends ServiceProvider
     private function logAuthenticationActivity(): void
     {
         Event::listen(function (Login $event): void {
+            /**
+             * Stamped for everyone, exempt or not: this is not a record
+             * of what somebody did but of whether the account is still
+             * in use, and it is what the account list is reviewed on.
+             */
+            if ($event->user instanceof User) {
+                $event->user->forceFill(['last_login_at' => now()])->saveQuietly();
+            }
+
             if ($event->user instanceof User && $event->user->is_audit_exempt) {
                 return;
             }

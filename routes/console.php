@@ -13,6 +13,11 @@ Artisan::command('inspire', function () {
  * rows with it. */
 Schedule::command('analytics:snapshot')->daily()->withoutOverlapping();
 Schedule::command('activitylog:clean', ['--force'])->dailyAt('03:15')->withoutOverlapping();
+/**
+ * A settled 가입 신청 keeps its decision but loses the applicant's
+ * details, which the church has no use for once it has decided.
+ */
+Schedule::command('membership:redact')->dailyAt('03:20')->withoutOverlapping();
 Schedule::command('instagram:import')->dailyAt('03:30')->withoutOverlapping();
 /**
  * No timeout is set on the YouTube calls, so a slow morning could

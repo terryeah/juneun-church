@@ -76,11 +76,20 @@ class DownloadsPageTest extends TestCase
      */
     public function test_a_member_sees_the_bulletins_tab_first(): void
     {
+        $bulletin = Bulletin::query()->sole();
+
+        /**
+         * The link goes through the site, not to the bucket. This used
+         * to assert that the file's own CDN path appeared on the page -
+         * which was the leak: that address answers anyone who has it,
+         * for ever, whether they are a 성도 or not.
+         */
         $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/downloads')
             ->assertOk()
             ->assertSee('주일 예배 주보')
-            ->assertSee('bulletin-2026-08-09.pdf')
+            ->assertSee(route('bulletin.file', $bulletin))
+            ->assertDontSee('bulletins/bulletin-2026-08-09.pdf')
             ->assertDontSee('새가족 등록 카드');
     }
 
