@@ -86,8 +86,7 @@ class MembershipRequestController extends Controller
          * cost is paid on both paths. The 'hashed' cast leaves an
          * already-hashed value alone, so nothing is hashed twice.
          */
-        $reasonEarly = $this->duplicateReason($data['email']);
-        if ($reasonEarly === null) { $data['password'] = Hash::make($data['password']); }
+        $data['password'] = Hash::make($data['password']);
 
         /**
          * A duplicate is dropped silently rather than rejected with a
