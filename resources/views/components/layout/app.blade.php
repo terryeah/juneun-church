@@ -99,6 +99,10 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <meta name="theme-color" content="#16223c">
     <link rel="preconnect" href="https://media.juneun.com">
+    {{-- Video stills come from YouTube's image host. Without this the
+         first one on an album page pays a fresh DNS, TCP and TLS
+         handshake from Brisbane before a single pixel arrives. --}}
+    <link rel="preconnect" href="https://i.ytimg.com" crossorigin>
     <link rel="preload" href="/fonts/GmarketSansMedium-modern.woff2" as="font" type="font/woff2" crossorigin>
     <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])

@@ -142,7 +142,8 @@ export class VideoModal {
         this.frame.title = card.dataset.videoTitle ?? '동영상';
         this.frame.className = 'w-full rounded-media';
         this.frame.style.cssText = 'aspect-ratio: 16 / 9; border: 0; display: block;';
-        this.frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+        /** What a church video needs and nothing else - no motion sensors, no clipboard. */
+        this.frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
         this.frame.allowFullscreen = true;
         this.frame.referrerPolicy = 'strict-origin-when-cross-origin';
         this.stage.appendChild(this.frame);

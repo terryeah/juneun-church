@@ -27,9 +27,13 @@ class LogPageVisits
     /**
      * The query string keys worth keeping.
      *
-     * These four say which part of a page was open: the week of 헌금
-     * 내역, the tab of 자료실, the filter on 갤러리, and how far down a
+     * These say which part of a page was open: the week of 헌금 내역,
+     * the tab of 자료실, the kind and filter on 앨범, and how far down a
      * list someone had paged.
+     *
+     * 'kind' is separate from 'type' rather than a rename of it: 자료실
+     * still uses 'type' for its tabs, and 앨범 uses 'kind' for 사진 vs
+     * 동영상. Renaming would have quietly stopped recording one of them.
      *
      * Everything else is dropped, and the list is a whitelist rather
      * than a list of exclusions on purpose. Filament keeps a table's
@@ -40,7 +44,7 @@ class LogPageVisits
      * someone open" the church is announcing. A whitelist cannot start
      * doing that when a new screen is added; a blacklist can.
      */
-    private const KEPT_QUERY = ['week', 'type', 'visibility', 'page'];
+    private const KEPT_QUERY = ['week', 'type', 'kind', 'visibility', 'page'];
 
     /**
      * Handle an incoming request.

@@ -45,12 +45,19 @@ class AlbumController extends Controller
      */
     public function index(Request $request): View
     {
-        $kind = array_key_exists((string) $request->query('kind'), self::KINDS)
-            ? (string) $request->query('kind')
+        /**
+         * Read as a string rather than cast to one: ?kind[]=video
+         * arrives as an array, and casting an array to string is a
+         * PHP error rather than a value - an unauthenticated 500 on a
+         * public page. string() gives an empty string instead, which
+         * falls through to the default like any other nonsense.
+         */
+        $kind = array_key_exists($request->string('kind')->value(), self::KINDS)
+            ? $request->string('kind')->value()
             : Album::TYPE_PHOTO;
 
-        $filter = array_key_exists((string) $request->query('visibility'), self::FILTERS)
-            ? (string) $request->query('visibility')
+        $filter = array_key_exists($request->string('visibility')->value(), self::FILTERS)
+            ? $request->string('visibility')->value()
             : 'all';
 
         $albums = Album::query()
@@ -59,13 +66,29 @@ class AlbumController extends Controller
             ->when($filter === 'members', fn ($query) => $query->where('is_members_only', true))
             ->when($filter === 'public', fn ($query) => $query->where('is_members_only', false))
             ->withCount($kind === Album::TYPE_VIDEO ? 'videos' : 'photos')
+            /**
+             * The id breaks ties. Without it two albums sharing an
+             * event date have no defined order, so one can appear on
+             * both pages and the other on neither.
+             */
             ->orderByDesc('event_date')
+            ->orderByDesc('id')
             ->paginate(12)
             ->withQueryString();
 
+        /**
+         * Only offer a kind the reader can actually open. Every video
+         * album is 성도 전용 today, so a guest was being handed a 동영상
+         * chip that led to an empty page - a door painted on a wall.
+         */
+        $available = Album::query()->visible()->distinct()->pluck('type')->all();
+
         return view('pages.album.index', [
             'albums' => $albums,
-            'kinds' => self::KINDS,
+            'kinds' => array_intersect_key(
+                self::KINDS,
+                array_flip([...$available, $kind]),
+            ),
             'kind' => $kind,
             'filters' => self::FILTERS,
             'filter' => $filter,

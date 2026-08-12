@@ -37,7 +37,7 @@ class VideoAlbumPageTest extends TestCase
         ]);
 
         Video::factory()->for($this->album)->create([
-            'youtube_id' => '556vWaIbHSE',
+            'youtube_id' => 'aaaaaaaaaaa',
             'title' => '겨울 리트릿',
         ]);
     }
@@ -57,7 +57,7 @@ class VideoAlbumPageTest extends TestCase
         $this->get('/album/video-test-youth')
             ->assertOk()
             ->assertSee('겨울 리트릿')
-            ->assertSee('youtube-nocookie.com/embed/556vWaIbHSE', false);
+            ->assertSee('youtube-nocookie.com/embed/aaaaaaaaaaa', false);
     }
 
     /**
@@ -66,17 +66,21 @@ class VideoAlbumPageTest extends TestCase
      * The identifier is the video: anyone holding it can watch, so it
      * leaking is the whole of the harm. This asserts on the eleven
      * characters themselves rather than on the title.
+     *
+     * The identifiers here are invented. A real one must never be
+     * written into this repository, which is public - putting one in a
+     * test would leak the video exactly as putting it on a page would.
      */
     public function test_the_identifier_never_reaches_a_guest(): void
     {
         $this->get('/album?kind=video')
             ->assertOk()
             ->assertDontSee('테스트 청소년부')
-            ->assertDontSee('556vWaIbHSE');
+            ->assertDontSee('aaaaaaaaaaa');
 
         $this->get('/album/video-test-youth')
             ->assertNotFound()
-            ->assertDontSee('556vWaIbHSE');
+            ->assertDontSee('aaaaaaaaaaa');
 
         $this->get('/sitemap.xml')
             ->assertOk()
@@ -90,7 +94,7 @@ class VideoAlbumPageTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $this->get('/album?kind=video')->assertOk()->assertDontSee('556vWaIbHSE');
+        $this->get('/album?kind=video')->assertOk()->assertDontSee('aaaaaaaaaaa');
         $this->get('/album/video-test-youth')->assertNotFound();
     }
 
@@ -129,6 +133,45 @@ class VideoAlbumPageTest extends TestCase
         $this->get('/album?kind=nonsense')
             ->assertOk()
             ->assertSee('사진');
+    }
+
+    /**
+     * A guest is not offered a 동영상 chip that leads nowhere.
+     *
+     * Every video album is 성도 전용, so the chip was a door painted on
+     * a wall: a link, a page, and '등록된 앨범이 없습니다'.
+     */
+    public function test_a_kind_with_nothing_to_show_is_not_offered(): void
+    {
+        Album::factory()->create([
+            'title' => '공개 사진첩',
+            'slug' => 'album-open',
+            'type' => Album::TYPE_PHOTO,
+            'is_published' => true,
+            'is_members_only' => false,
+        ]);
+
+        $this->get('/album')->assertOk()->assertDontSee('>동영상<', false);
+
+        $this->actingAs(User::factory()->onTheRoster()->create())
+            ->get('/album')
+            ->assertOk()
+            ->assertSee('동영상');
+    }
+
+    /**
+     * A page nobody may open says so in Korean, in the site's own
+     * layout, and tells a guest that signing in may be the answer -
+     * without confirming that anything is there.
+     */
+    public function test_the_not_found_page_is_the_church_s_own(): void
+    {
+        $this->get('/album/video-test-youth')
+            ->assertNotFound()
+            ->assertSee('페이지를 찾을 수 없습니다')
+            ->assertSee('성도에게만 공개된 페이지일 수 있습니다')
+            ->assertSee('noindex', false)
+            ->assertDontSee('테스트 청소년부');
     }
 
     /**

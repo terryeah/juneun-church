@@ -5,7 +5,7 @@
             .($album->event_date ? ' · '.$album->event_date->translatedFormat('Y년 n월 j일') : '');
 @endphp
 
-<x-layout.app :title="$album->title" :description="$shareDescription" :image="$album->coverUrl()">
+<x-layout.app :title="$album->title" :description="$shareDescription" :image="$videos->first()?->thumbnailUrl()" :noindex="$album->is_members_only">
 
     <x-ui.page-header kicker="주는교회의 순간들 · Videos" :title="$album->title">
         @if ($album->event_date){{ $album->event_date->translatedFormat('Y년 n월 j일') }}@if ($album->description) - @endif@endif{{ $album->description }}

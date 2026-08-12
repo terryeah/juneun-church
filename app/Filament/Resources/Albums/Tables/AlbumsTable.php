@@ -57,6 +57,16 @@ class AlbumsTable
                     ->sortable()
                     ->weight(FontWeight::SemiBold)
                     ->wrap(),
+                /**
+                 * A video album has no cover of its own, so without
+                 * this the list shows a row of empty thumbnails with
+                 * nothing to say why.
+                 */
+                TextColumn::make('type')
+                    ->label('종류')
+                    ->badge()
+                    ->color(fn (?string $state): string => $state === Album::TYPE_VIDEO ? 'info' : 'gray')
+                    ->formatStateUsing(fn (?string $state): string => Album::TYPES[$state] ?? '사진'),
                 TextColumn::make('slug')
                     ->label('슬러그')
                     ->searchable()

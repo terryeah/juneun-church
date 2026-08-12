@@ -98,14 +98,14 @@ class VideosTest extends TestCase
     public static function addresses(): array
     {
         return [
-            'youtu.be' => ['https://youtu.be/556vWaIbHSE?si=KNNTUmGryurQ50uX', '556vWaIbHSE'],
-            'watch' => ['https://www.youtube.com/watch?v=MU_cM9z_QDU', 'MU_cM9z_QDU'],
-            'embed' => ['https://www.youtube.com/embed/1_9f57Inll0', '1_9f57Inll0'],
-            'shorts' => ['https://www.youtube.com/shorts/qBQCrB0cLPA', 'qBQCrB0cLPA'],
-            'bare identifier' => ['7jV3hZ_b1mw', '7jV3hZ_b1mw'],
-            'missing question mark' => ['https://youtu.be/MHIn7tuo2Gcsi=jwhcoEFeQ977Oeyy', 'MHIn7tuo2Gc'],
-            'missing slash as well' => ['https://youtu.beCqKtyS7whu0si=oMv8_6odZ0Ay65LF', 'CqKtyS7whu0'],
-            'leading underscore' => ['https://youtu.be/_RP51iRbnKA?si=mWYNbAf6J', '_RP51iRbnKA'],
+            'youtu.be' => ['https://youtu.be/aaaaaaaaaaa?si=KNNTUmGryurQ50uX', 'aaaaaaaaaaa'],
+            'watch' => ['https://www.youtube.com/watch?v=bbbbbbbbbbb', 'bbbbbbbbbbb'],
+            'embed' => ['https://www.youtube.com/embed/ccccccccccc', 'ccccccccccc'],
+            'shorts' => ['https://www.youtube.com/shorts/ddddddddddd', 'ddddddddddd'],
+            'bare identifier' => ['eeeeeeeeeee', 'eeeeeeeeeee'],
+            'missing question mark' => ['https://youtu.be/hhhhhhhhhhhsi=jwhcoEFeQ977Oeyy', 'hhhhhhhhhhh'],
+            'missing slash as well' => ['https://youtu.beiiiiiiiiiiisi=oMv8_6odZ0Ay65LF', 'iiiiiiiiiii'],
+            'leading underscore' => ['https://youtu.be/_nnnnnnnnnn?si=mWYNbAf6J', '_nnnnnnnnnn'],
             'not a video' => ['https://www.youtube.com/@juneun_church', null],
             'nothing at all' => ['', null],
         ];
@@ -129,13 +129,13 @@ class VideosTest extends TestCase
             ->fillForm([
                 'album_id' => $album->getKey(),
                 'title' => '청소년부 겨울 리트릿',
-                'youtube_id' => 'https://youtu.be/556vWaIbHSE?si=KNNTUmGryurQ50uX',
+                'youtube_id' => 'https://youtu.be/aaaaaaaaaaa?si=KNNTUmGryurQ50uX',
             ])
             ->call('create')
             ->assertHasNoFormErrors();
 
         /** Scoped to this album: the church's own videos are seeded by a migration. */
-        $this->assertSame('556vWaIbHSE', Video::query()->where('album_id', $album->getKey())->sole()->youtube_id);
+        $this->assertSame('aaaaaaaaaaa', Video::query()->where('album_id', $album->getKey())->sole()->youtube_id);
     }
 
     /**
@@ -164,9 +164,9 @@ class VideosTest extends TestCase
      */
     public function test_the_player_uses_the_no_cookie_domain(): void
     {
-        $video = Video::factory()->create(['youtube_id' => '556vWaIbHSE']);
+        $video = Video::factory()->create(['youtube_id' => 'aaaaaaaaaaa']);
 
-        $this->assertStringStartsWith('https://www.youtube-nocookie.com/embed/556vWaIbHSE', $video->embedUrl());
-        $this->assertSame('https://i.ytimg.com/vi/556vWaIbHSE/hqdefault.jpg', $video->thumbnailUrl());
+        $this->assertStringStartsWith('https://www.youtube-nocookie.com/embed/aaaaaaaaaaa', $video->embedUrl());
+        $this->assertSame('https://i.ytimg.com/vi/aaaaaaaaaaa/hqdefault.jpg', $video->thumbnailUrl());
     }
 }

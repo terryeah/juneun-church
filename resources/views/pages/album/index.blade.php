@@ -1,4 +1,9 @@
-<x-layout.app :title="'앨범 · '.$kinds[$kind]" :description="'브리즈번 주는교회의 '.$kinds[$kind].' 앨범입니다.'">
+{{-- The page is called 앨범 now, but 갤러리 is what people search for and
+     what the address used to say, so the description keeps the word. --}}
+<x-layout.app
+    :title="'앨범 · '.$kinds[$kind]"
+    :description="'브리즈번 주는교회의 '.$kinds[$kind].' 갤러리입니다. 예배와 교회 행사의 '.$kinds[$kind].' 앨범을 모았습니다.'"
+>
 
     <x-ui.page-header kicker="주는교회의 순간들 · Moments" title="앨범" />
 
@@ -38,10 +43,15 @@
 
         <div class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($albums as $album)
+                {{-- Asked once. An album with no cover of its own works
+                     the answer out from its first photo, and in the
+                     largest album that is 806 rows sorted - twice, if
+                     the test and the tag each ask separately. --}}
+                @php $cover = $album->coverUrl(); @endphp
                 <a href="{{ route('album.show', $album) }}" class="group block" data-gallery-item>
-                    @if ($album->coverUrl())
+                    @if ($cover)
                         <div class="relative overflow-hidden rounded-media">
-                            <img src="{{ $album->coverUrl() }}" alt="{{ $album->title }}" class="aspect-[4/3] w-full object-cover" loading="lazy">
+                            <img src="{{ $cover }}" alt="{{ $album->title }}" class="aspect-[4/3] w-full object-cover" loading="lazy" referrerpolicy="no-referrer">
                             {{-- A still frame is indistinguishable from a photograph,
                                  so a video album says so before it is opened. --}}
                             @if ($album->holdsVideos())
