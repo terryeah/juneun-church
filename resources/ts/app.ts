@@ -23,14 +23,17 @@ document.addEventListener('DOMContentLoaded', (): void => {
         .querySelectorAll<HTMLElement>('[data-youtube-lazy]')
         .forEach((element) => new YouTubeLazy(element));
 
+    /**
+     * The scroller is built first so the lightbox can hold it: on a
+     * paginated album the lightbox runs out of photos before the album
+     * does, and asks it for the next page rather than wrapping around.
+     */
+    const scrollContainer = document.querySelector<HTMLElement>('[data-infinite-scroll]');
+    const scroller = scrollContainer ? new InfiniteScroll(scrollContainer) : null;
+
     const gallery = document.querySelector<HTMLElement>('[data-lightbox-gallery]');
     if (gallery) {
-        new Lightbox(gallery);
-    }
-
-    const scrollContainer = document.querySelector<HTMLElement>('[data-infinite-scroll]');
-    if (scrollContainer) {
-        new InfiniteScroll(scrollContainer);
+        new Lightbox(gallery, scroller);
     }
 
     const slider = document.querySelector<HTMLElement>('[data-photo-slider]');

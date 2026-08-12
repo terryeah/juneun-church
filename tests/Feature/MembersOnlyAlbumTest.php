@@ -180,4 +180,29 @@ class MembersOnlyAlbumTest extends TestCase
             ->assertSee($photo->thumbnailUrl(), false)
             ->assertSee(route('gallery.show', $open));
     }
+
+    /**
+     * The album page states how many photos the album holds, not how
+     * many fitted on the first page.
+     *
+     * The grid renders 24 at a time and the lightbox fetches the rest
+     * as it reaches them, so it counts from this figure. Without it the
+     * lightbox would announce '사진 1 / 24' in an album of 60, which
+     * reads as though the album ended at the first screenful - which is
+     * exactly how it behaved before it could ask for more.
+     */
+    public function test_the_album_page_states_the_whole_photo_count(): void
+    {
+        $album = Album::factory()->create([
+            'title' => '수련회',
+            'slug' => 'album-camp',
+            'is_members_only' => false,
+        ]);
+
+        Photo::factory()->for($album)->count(30)->create();
+
+        $this->get(route('gallery.show', $album))
+            ->assertOk()
+            ->assertSee('data-photo-total="30"', false);
+    }
 }

@@ -1,10 +1,23 @@
 /**
+ * Supplies the pages of an album the grid has not rendered yet.
+ *
+ * Kept as an interface rather than a reference to InfiniteScroll so the
+ * lightbox works on its own wherever a gallery is not paginated.
+ */
+export interface PhotoLoader {
+    hasMore(): boolean;
+    loadMore(): Promise<boolean>;
+}
+
+/**
  * Lightbox Component
  *
  * Displays gallery images in a fullscreen overlay with previous/next
  * and keyboard navigation.
  */
 export class Lightbox {
+    private loader: PhotoLoader | null;
+
     private container: HTMLElement;
     private overlay: HTMLElement | null = null;
     private stage: HTMLElement | null = null;
@@ -27,9 +40,11 @@ export class Lightbox {
      * Creates a new Lightbox instance.
      *
      * @param container - The gallery container element
+     * @param loader - Supplies the rest of a paginated album, if any
      */
-    constructor(container: HTMLElement) {
+    constructor(container: HTMLElement, loader: PhotoLoader | null = null) {
         this.container = container;
+        this.loader = loader;
         this.buildOverlay();
         this.bindEvents();
     }
@@ -40,6 +55,20 @@ export class Lightbox {
      */
     private links(): HTMLAnchorElement[] {
         return Array.from(this.container.querySelectorAll<HTMLAnchorElement>('a[data-lightbox]'));
+    }
+
+    /**
+     * How many photos the album holds, not how many are on the page.
+     *
+     * Counting the rendered links would announce "사진 1 / 24" in an
+     * album of 806, which reads as though the album ended there. The
+     * server states the real figure; without it the rendered count is
+     * the whole album anyway.
+     */
+    private total(): number {
+        const stated = Number(this.container.dataset.photoTotal);
+
+        return Number.isFinite(stated) && stated > 0 ? stated : this.links().length;
     }
 
     /**
@@ -403,12 +432,25 @@ export class Lightbox {
     /**
      * Moves forwards or backwards through the photo list.
      *
+     * Reaching the end of the grid fetches the next page before moving,
+     * so the lightbox walks the whole album rather than the 24 photos
+     * the page happened to be rendered with. Only once the album really
+     * has run out does the last photo wrap round to the first.
+     *
      * @param delta - +1 for next, -1 for previous
      */
-    private step(delta: number): void {
+    private async step(delta: number): Promise<void> {
         this.zoomScale = 1;
         this.zoomX = 0;
         this.zoomY = 0;
+
+        if (delta > 0 && this.currentIndex === this.links().length - 1 && this.loader?.hasMore()) {
+            if (this.status) {
+                this.status.textContent = '사진을 더 불러오는 중';
+            }
+
+            await this.loader.loadMore();
+        }
 
         const links = this.links();
         this.currentIndex = (this.currentIndex + delta + links.length) % links.length;
@@ -434,7 +476,7 @@ export class Lightbox {
         }
 
         if (this.status) {
-            this.status.textContent = `사진 ${this.currentIndex + 1} / ${this.links().length}`;
+            this.status.textContent = `사진 ${this.currentIndex + 1} / ${this.total()}`;
         }
 
         if (direction === 0) {

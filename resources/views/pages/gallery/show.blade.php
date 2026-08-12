@@ -12,7 +12,13 @@
     </x-ui.page-header>
 
     <section class="section-album-photos container-site pb-12 lg:pb-16">
-        <div class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4" data-lightbox-gallery>
+        {{-- The lightbox counts the album, not the page: it fetches the
+             remaining pages as it reaches them, so announcing the 24
+             photos rendered here would read as though the album ended
+             at the first screenful. --}}
+        <div class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4"
+             data-lightbox-gallery
+             data-photo-total="{{ $photos->total() }}">
             <div class="contents" data-infinite-scroll>
                 @foreach ($photos as $photo)
                     <a href="{{ $photo->url() }}" data-lightbox class="block overflow-hidden rounded-media">

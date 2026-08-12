@@ -8,7 +8,7 @@
  */
 export class InfiniteScroll {
     private container: HTMLElement;
-    private loading: boolean = false;
+    private inFlight: Promise<boolean> | null = null;
     private failures: number = 0;
     private status: HTMLElement;
 
@@ -34,6 +34,43 @@ export class InfiniteScroll {
     }
 
     /**
+     * Whether a further page of the grid is still waiting.
+     */
+    public hasMore(): boolean {
+        return this.sentinel() !== null;
+    }
+
+    /**
+     * Appends the next page, and resolves once it is in the DOM.
+     *
+     * Public because scrolling is not the only thing that runs out of
+     * photos: the lightbox reaches the end of the grid too, and has to
+     * be able to ask for the next page rather than wrap around to the
+     * first photo as though the album ended there.
+     *
+     * Two callers arriving together share one fetch, so stepping
+     * through the lightbox while the sentinel scrolls into view cannot
+     * append the same page twice.
+     *
+     * @returns Whether anything was appended
+     */
+    public loadMore(): Promise<boolean> {
+        if (this.inFlight) {
+            return this.inFlight;
+        }
+
+        if (! this.hasMore()) {
+            return Promise.resolve(false);
+        }
+
+        this.inFlight = this.fetchNextPage().finally(() => {
+            this.inFlight = null;
+        });
+
+        return this.inFlight;
+    }
+
+    /**
      * Observes the sentinel and loads the next page when it nears view.
      */
     private observe(): void {
@@ -46,7 +83,7 @@ export class InfiniteScroll {
             (entries) => {
                 if (entries.some((entry) => entry.isIntersecting)) {
                     observer.disconnect();
-                    void this.loadNextPage();
+                    void this.loadMore();
                 }
             },
             { rootMargin: '400px' },
@@ -57,14 +94,17 @@ export class InfiniteScroll {
 
     /**
      * Fetches the next page and splices its grid items into the DOM.
+     *
+     * @returns Whether anything was appended
      */
-    private async loadNextPage(): Promise<void> {
+    private async fetchNextPage(): Promise<boolean> {
         const sentinel = this.sentinel();
-        if (!sentinel || this.loading) {
-            return;
+        if (!sentinel) {
+            return false;
         }
 
-        this.loading = true;
+        let appended = false;
+
         this.status.textContent = '사진을 불러오는 중';
 
         try {
@@ -87,6 +127,7 @@ export class InfiniteScroll {
                     this.container.appendChild(child);
                 });
                 this.status.textContent = `사진 ${count}장이 추가되었습니다`;
+                appended = count > 0;
             }
 
             this.failures = 0;
@@ -99,14 +140,12 @@ export class InfiniteScroll {
             this.status.textContent = '';
 
             if (this.failures >= 2) {
-                this.loading = false;
-
-                return;
+                return false;
             }
-        } finally {
-            this.loading = false;
         }
 
         this.observe();
+
+        return appended;
     }
 }
