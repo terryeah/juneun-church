@@ -124,9 +124,24 @@
                  empty picture frame would read as a fault rather than a gap. --}}
             <div @class(['grid gap-8 lg:gap-11', 'lg:grid-cols-[1.3fr_1fr]' => $highlight->featured_image])>
                 @if ($highlight->featured_image)
+                    {{-- The frame is landscape from lg up, where the copy sits
+                         beside it in a 1fr column that is only ever a few lines
+                         tall. Left to the image's own proportions a portrait
+                         poster set the row height and left most of the copy
+                         column empty - a screenful of nothing on the home page.
+
+                         object-contain rather than cover because a highlight
+                         image is usually a poster: cropping one to fill a
+                         landscape box cuts the very words it exists to carry.
+                         The cream mat either side is what makes the letterbox
+                         read as a frame instead of a gap.
+
+                         Below lg the section is one column, so a tall poster
+                         costs no empty space and is left at full height, which
+                         is the only way its text is legible on a phone. --}}
                     <div class="order-2 flex items-center lg:order-1">
-                        <a href="{{ $highlightLink }}" class="block w-full overflow-hidden rounded-media">
-                            <img src="{{ $highlight->imageUrl() }}" alt="{{ $highlight->title }}" class="w-full rounded-media object-contain" loading="lazy">
+                        <a href="{{ $highlightLink }}" class="block w-full overflow-hidden rounded-media lg:bg-cream">
+                            <img src="{{ $highlight->imageUrl() }}" alt="{{ $highlight->title }}" class="w-full rounded-media object-contain lg:aspect-[4/3]" loading="lazy">
                         </a>
                     </div>
                 @endif
