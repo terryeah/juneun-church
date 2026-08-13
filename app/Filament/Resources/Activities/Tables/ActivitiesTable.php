@@ -109,9 +109,10 @@ class ActivitiesTable
                     ->options(fn (): array => self::causerOptions())
                     ->searchable(),
                 /**
-                 * Rows with no causer read as 시스템: a failed sign-in,
-                 * a visit by somebody not signed in, a scheduled command,
-                 * and anything done by an account exempt from the log.
+                 * Rows the log cannot put a name to read as 시스템: a
+                 * failed sign-in, a visit by somebody not signed in, a
+                 * scheduled command, anything an exempt account does,
+                 * and anything left behind by an account since closed.
                  *
                  * They outnumber the rest and answer a different question
                  * from "who changed what", so they are off unless asked
@@ -124,8 +125,8 @@ class ActivitiesTable
                     ->trueLabel('시스템 기록만')
                     ->falseLabel('사람이 한 기록만')
                     ->queries(
-                        true: fn (Builder $query): Builder => $query->whereNull('causer_id'),
-                        false: fn (Builder $query): Builder => $query->whereNotNull('causer_id'),
+                        true: fn (Builder $query): Builder => self::scopeToNamedCausers($query, false),
+                        false: fn (Builder $query): Builder => self::scopeToNamedCausers($query, true),
                         blank: fn (Builder $query): Builder => $query,
                     )
                     ->default(false),
@@ -238,35 +239,58 @@ class ActivitiesTable
     }
 
     /**
-     * The accounts that appear in the log, named, newest-known name
-     * first for anyone still on the roster and by id for anyone closed.
+     * The accounts that appear in the log, named.
+     *
+     * Only accounts that still exist: an id left behind by a closed one
+     * has no name to offer and its rows now sit under 시스템 anyway.
      *
      * @return array<int, string>
      */
     private static function causerOptions(): array
     {
-        $ids = Activity::query()->whereNotNull('causer_id')->distinct()->pluck('causer_id');
-        $names = User::query()->whereKey($ids)->pluck('name', 'id');
-
-        return $ids
-            ->mapWithKeys(fn (int $id): array => [$id => $names[$id] ?? '삭제된 계정 #'.$id])
-            ->sort()
+        return User::query()
+            ->whereKey(Activity::query()->whereNotNull('causer_id')->distinct()->pluck('causer_id'))
+            ->orderBy('name')
+            ->pluck('name', 'id')
             ->all();
     }
 
     /**
-     * Who a row belongs to, including accounts that no longer exist.
+     * Who a row belongs to, or null for anything the log cannot name.
      *
-     * Closing someone's 사이트 계정 deletes the account outright, and
-     * nothing ties the log to it, so every row that person left behind
-     * would fall back to the '시스템' placeholder - reading as though
-     * the site had done it rather than a person. The id is still in the
-     * column, so it is shown instead, and '시스템' goes back to meaning
-     * what it says: no one was signed in, as with a failed sign-in.
+     * Closing someone's 사이트 계정 deletes the account outright and
+     * nothing ties the log back to it, so the rows that person left
+     * behind carry an id that resolves to nobody. They read 시스템 with
+     * the rest of the unattributable rows and are hidden with them,
+     * rather than showing a '삭제된 계정 #8' nobody can act on.
+     *
+     * What that costs is the difference between "no one was signed in"
+     * and "somebody whose account is gone", which the log no longer
+     * draws. The id is still in the column for anyone who needs it.
      */
     private static function causer(Activity $record): ?string
     {
-        return $record->causer?->name
-            ?? ($record->causer_id ? '삭제된 계정 #'.$record->causer_id : null);
+        return $record->causer?->name;
+    }
+
+    /**
+     * Rows the log can put a name to.
+     *
+     * A causer_id pointing at an account that no longer exists is not
+     * one of them, so the check is for a matching user rather than for
+     * the column being filled.
+     *
+     * @param  Builder<Activity>  $query
+     * @return Builder<Activity>
+     */
+    private static function scopeToNamedCausers(Builder $query, bool $named): Builder
+    {
+        $users = User::query()->select('id');
+
+        return $named
+            ? $query->whereIn('causer_id', $users)
+            : $query->where(fn (Builder $inner): Builder => $inner
+                ->whereNull('causer_id')
+                ->orWhereNotIn('causer_id', $users));
     }
 }

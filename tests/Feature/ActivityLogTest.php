@@ -148,28 +148,34 @@ class ActivityLogTest extends TestCase
     }
 
     /**
-     * Closing someone's 사이트 계정 must not turn their history into
-     * the site's own.
+     * A closed account leaves rows the log cannot name.
      *
-     * The account is deleted outright and the log holds no link back to
-     * it, so those rows would otherwise read '시스템' - which is what a
-     * failed sign-in reads, and would say the site did what a person
-     * did. The id survives in the column, so it stands in.
+     * The account is deleted outright and nothing ties the log back to
+     * it, so its id resolves to nobody. Those rows read 시스템 with the
+     * rest of the unattributable ones and are hidden with them, rather
+     * than offering a '삭제된 계정 #8' nobody can act on.
      */
-    public function test_a_deleted_account_is_still_named(): void
+    public function test_a_closed_account_reads_as_system_and_is_hidden(): void
     {
         $developer = User::factory()->create();
         $developer->assignRole('developer');
 
         $departed = User::factory()->create();
         activity('auth')->causedBy($departed)->event('login')->log('로그인');
+        $left = Activity::query()->latest('id')->firstOrFail();
         $id = $departed->getKey();
         $departed->delete();
 
         Livewire::actingAs($developer)
             ->test(ListActivities::class)
-            ->assertSee('삭제된 계정 #'.$id)
-            ->assertSee('시스템');
+            ->filterTable('log_name', 'auth')
+            ->assertDontSee('삭제된 계정')
+            ->assertCanNotSeeTableRecords([$left])
+            /** It is one filter away, and reads 시스템 there. */
+            ->filterTable('system', true)
+            ->assertCanSeeTableRecords([$left])
+            ->assertSee('시스템')
+            ->assertDontSee('삭제된 계정 #'.$id);
     }
 
     /**
