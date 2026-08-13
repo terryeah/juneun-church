@@ -142,6 +142,10 @@ class ActivitiesTable
                         false: fn (Builder $query): Builder => self::scopeToNamedCausers($query, true),
                         blank: fn (Builder $query): Builder => $query,
                     )
+                    /** The chip drops the label: '시스템 기록: 사람이 한 기록만' says 기록 twice. */
+                    ->indicateUsing(fn (array $state): ?string => blank($state['value'] ?? null)
+                        ? null
+                        : ($state['value'] ? '시스템 기록만' : '사람이 한 기록만'))
                     ->default(false),
                 SelectFilter::make('event')
                     ->label('동작')

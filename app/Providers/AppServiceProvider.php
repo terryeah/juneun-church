@@ -7,10 +7,13 @@ use App\Filament\Analytics\TrafficStatsWidget;
 use App\Filament\Support\SaveUploadsAsWebp;
 use App\Models\User;
 use App\Policies\ActivityPolicy;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -85,7 +88,7 @@ class AppServiceProvider extends ServiceProvider
 
         Paginator::defaultView('pagination.juneun');
 
-        Table::configureUsing(fn (Table $table) => $table
+        Table::configureUsing(fn (Table $table) => self::configureFilters($table)
             ->stackedOnMobile()
             ->defaultPaginationPageOption(25)
             ->defaultSort('created_at', 'desc')
@@ -123,6 +126,92 @@ class AppServiceProvider extends ServiceProvider
         $this->registerAnalyticsWidgets();
         $this->anonymiseExemptCausers();
         $this->logAuthenticationActivity();
+    }
+
+    /**
+     * How every table in the panel asks for its filters.
+     *
+     * A dropdown anchored to a 36px icon is a 320px card floating over
+     * the rows on a phone, with no backdrop and the apply button in the
+     * far corner. The same filters as a modal are a full-width sheet on
+     * a phone and an ordinary dialog on a laptop, which is the shape
+     * every other action in this panel already opens in - so the office
+     * learns one gesture. The breakpoint difference is drawn in CSS,
+     * because the layout is chosen here, once, on the server.
+     *
+     * Tables with no filters are untouched: Filament draws no trigger
+     * when filters() is empty, so none of this reaches them.
+     */
+    private static function configureFilters(Table $table): Table
+    {
+        return $table
+            ->filtersLayout(FiltersLayout::Modal)
+            ->filtersFormColumns(['sm' => 2])
+            ->filtersFormWidth(Width::Large)
+            ->filtersApplyAction(fn (Action $action): Action => $action->label('결과 보기'))
+            /**
+             * An emptied list explains itself. Filament's own heading
+             * tells the reader to create the first record, which is the
+             * wrong advice when what emptied the list was a filter.
+             *
+             * The heading falls back to the vendor's when nothing is
+             * filtered; the description does not, because
+             * getEmptyStateDescription() has no ?? fallback and returns
+             * whatever this closure gives it. Dropping it is deliberate:
+             * the sentence it removes is '사진 을(를) 만들어 시작하세요',
+             * whose 을(를) is a particle the vendor could not resolve and
+             * which reads as a bug to the office. The heading alone says
+             * enough.
+             */
+            ->emptyStateHeading(fn (): ?string => $table->isFiltered() ? '조건에 맞는 결과가 없어요' : null)
+            ->emptyStateDescription(fn (): ?string => $table->isFiltered() ? '필터를 바꾸거나 모두 지워 보세요.' : null)
+            /**
+             * The count badge is drawn even when it reads 0 - the view
+             * sets it after this closure runs - and a funnel wearing a
+             * '0' reads as "no results" long before it reads as "no
+             * filters". So the badge is hidden in CSS and the button
+             * carries the state instead: grey when nothing is filtered,
+             * the panel's own colour when something is. The chips under
+             * the toolbar say which, which matters on 활동 기록, where a
+             * default filter is already on when the page paints.
+             *
+             * 닫기 is dropped: the header keeps its close button, and
+             * 결과 보기 applies and closes in the one tap.
+             */
+            ->filtersTriggerAction(fn (Action $action): Action => $action
+                ->button()
+                /**
+                 * Hiding the count takes it out of the accessibility
+                 * tree with it, which would leave the fill colour as the
+                 * only thing saying a filter is on. The label carries it
+                 * instead, and keeps the visible '필터' inside itself so
+                 * the two still match for anyone speaking the button.
+                 */
+                ->extraAttributes([
+                    'class' => 'fi-ta-filters-trigger',
+                    'aria-label' => $action->getTable()->isFiltered() ? '필터 (적용 중)' : '필터',
+                ], merge: true)
+                ->color($action->getTable()->isFiltered() ? 'primary' : 'gray')
+                ->modalCancelAction(false)
+                ->stickyModalFooter()
+                ->extraModalFooterActions([
+                    $action->getTable()->getFiltersApplyAction()->close(),
+                    /**
+                     * removeTableFilters, not resetTableFiltersForm.
+                     * The reset one calls fill(), which restores each
+                     * filter's default rather than clearing it - so on
+                     * 활동 기록, where 시스템 기록 defaults to off, a
+                     * button reading 모두 지우기 put back the filter the
+                     * reader had just removed, and did nothing at all
+                     * from a freshly loaded page.
+                     */
+                    Action::make('removeFilters')
+                        ->label('모두 지우기')
+                        ->color('gray')
+                        ->table($action->getTable())
+                        ->action('removeTableFilters')
+                        ->button(),
+                ]));
     }
 
     /**

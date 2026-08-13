@@ -61,6 +61,8 @@ class VideosTable
                     ->searchable()
                     ->preload(),
             ])
+            /** One filter should not sit in half a dialog. */
+            ->filtersFormColumns(1)
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
