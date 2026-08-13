@@ -39,6 +39,19 @@ class MembershipRequest extends Model
     ];
 
     /**
+     * What a redacted field reads as once membership:redact has stripped
+     * a long-settled request.
+     *
+     * Shared rather than private to the command because the 성도 form
+     * shows the submission back and has to say the details are gone
+     * instead of comparing against them. It is only ever what a redacted
+     * field displays - whether a row has been redacted is redacted_at,
+     * because 이름 is typed by the applicant and a sentinel they can
+     * write is a retention control they can switch off.
+     */
+    public const REDACTED = '지움';
+
+    /**
      * Why a roster record was offered as a candidate, strongest match
      * first. The order is the ranking, not a statement about identity:
      * name and birth date are whatever the applicant typed.
@@ -93,13 +106,29 @@ class MembershipRequest extends Model
      * password is a fillable attribute, and naming what is logged keeps
      * it out by construction. The free-text 확인 메모 stays on the
      * request only, as it may name other people.
+     *
+     * The applicant's name is not among them. Nothing rewrites the
+     * activity log, and its rows are kept for 180 days from when they
+     * were written against the 90 days from 처리일 that the request's
+     * own details get - so logging the name here quietly outlived the
+     * redaction that exists to destroy it. subject_id already says which
+     * request a row is about, and for an approved one the name is on the
+     * 교적 anyway.
      */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'status', 'matched_member_id', 'reviewed_by', 'verification_method'])
+            ->logOnly(['status', 'matched_member_id', 'reviewed_by', 'verification_method'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
+    }
+
+    /**
+     * Whether the applicant's details have been stripped from this row.
+     */
+    public function isRedacted(): bool
+    {
+        return $this->redacted_at !== null;
     }
 
     /**
@@ -289,6 +318,7 @@ class MembershipRequest extends Model
         return [
             'birth_date' => 'date',
             'reviewed_at' => 'datetime',
+            'redacted_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

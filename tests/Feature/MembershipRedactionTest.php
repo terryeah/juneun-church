@@ -87,4 +87,64 @@ class MembershipRedactionTest extends TestCase
 
         $this->assertSame('박민수', $request->fresh()->name);
     }
+
+    /**
+     * An applicant cannot switch their own retention off.
+     *
+     * Whether a row had been redacted used to be read back from its
+     * name, compared against the '지움' the redaction writes - and 이름
+     * is typed into the public sign-up form. Anyone submitting 지움 was
+     * skipped by every pass for ever, keeping their birth date, phone
+     * number, email address and password hash, while the 성도 form
+     * reported the details as erased.
+     */
+    public function test_an_applicant_named_like_the_redaction_marker_is_still_redacted(): void
+    {
+        $request = MembershipRequest::create([
+            'name' => MembershipRequest::REDACTED,
+            'birth_date' => '1985-01-01',
+            'phone' => '0400 555 666',
+            'email' => 'sentinel@example.com',
+            'password' => 'secret-password',
+            'note' => '지워지지 않으면 안 되는 내용',
+        ]);
+
+        $this->assertFalse($request->isRedacted());
+
+        $request->forceFill(['status' => '거절', 'reviewed_at' => now()->subDays(120)])->save();
+
+        $this->artisan('membership:redact')->assertSuccessful();
+
+        $fresh = $request->fresh();
+
+        $this->assertTrue($fresh->isRedacted());
+        $this->assertSame(MembershipRequest::REDACTED, $fresh->phone);
+        $this->assertNull($fresh->note);
+        $this->assertSame('1900-01-01', $fresh->birth_date->format('Y-m-d'));
+    }
+
+    /**
+     * A second pass leaves an already-redacted row alone rather than
+     * spending another password hash on it.
+     */
+    public function test_redaction_is_idempotent(): void
+    {
+        $request = MembershipRequest::create([
+            'name' => '김철수',
+            'birth_date' => '1980-03-02',
+            'phone' => '0400 111 222',
+            'email' => 'kim@example.com',
+            'password' => 'secret-password',
+        ]);
+
+        $request->forceFill(['status' => '거절', 'reviewed_at' => now()->subDays(120)])->save();
+
+        $this->artisan('membership:redact')->assertSuccessful();
+
+        $first = $request->fresh();
+
+        $this->artisan('membership:redact')->expectsOutputToContain('0건')->assertSuccessful();
+
+        $this->assertSame($first->password, $request->fresh()->password);
+    }
 }

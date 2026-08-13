@@ -19,6 +19,10 @@ use Illuminate\Support\Str;
  *
  * The row itself stays, because who decided what, when and on what
  * grounds is worth keeping. Only the applicant's details go.
+ *
+ * Whether a row is already done is read from redacted_at rather than
+ * from its name: 이름 is typed by the applicant, and a sentinel they can
+ * write is a retention control they can switch off.
  */
 class RedactOldMembershipRequests extends Command
 {
@@ -38,15 +42,16 @@ class RedactOldMembershipRequests extends Command
         MembershipRequest::query()
             ->whereNotNull('reviewed_at')
             ->where('reviewed_at', '<', $cutoff)
-            ->where('name', '!=', self::REDACTED)
+            ->whereNull('redacted_at')
             ->each(function (MembershipRequest $request) use (&$redacted): void {
                 $request->forceFill([
-                    'name' => self::REDACTED,
+                    'name' => MembershipRequest::REDACTED,
                     'birth_date' => '1900-01-01',
-                    'phone' => self::REDACTED,
-                    'email' => self::REDACTED.'+'.$request->getKey().'@juneun.invalid',
+                    'phone' => MembershipRequest::REDACTED,
+                    'email' => MembershipRequest::REDACTED.'+'.$request->getKey().'@juneun.invalid',
                     'password' => Str::random(60),
                     'note' => null,
+                    'redacted_at' => now(),
                 ])->saveQuietly();
 
                 $redacted++;
@@ -56,10 +61,4 @@ class RedactOldMembershipRequests extends Command
 
         return self::SUCCESS;
     }
-
-    /**
-     * What a redacted field reads as, and the marker that stops a row
-     * being redacted twice.
-     */
-    private const REDACTED = '지움';
 }
