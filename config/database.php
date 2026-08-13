@@ -55,6 +55,27 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            /*
+            | The session timezone every connection opens with.
+            |
+            | MySQL keeps a TIMESTAMP column as an instant and converts
+            | it to the session timezone on the way in and out, so what
+            | a stored row reads as depends on how the connection is
+            | configured. This application writes Brisbane wall-clock
+            | values (see the migration that shifted them there) and the
+            | production server's session happens to be UTC, so the
+            | strings round-trip unchanged and the two agree.
+            |
+            | Left to the server default, they only agree by luck. A
+            | machine whose MySQL runs on local time reads every
+            | TIMESTAMP ten hours later than it was written - which is
+            | exactly what a copy of the production database did on a
+            | developer's laptop, putting an approval recorded at 10:12
+            | on screen as 20:12. Naming the value here makes the
+            | round trip a property of the application rather than of
+            | whichever machine it happens to be running on.
+            */
+            'timezone' => env('DB_TIMEZONE', '+00:00'),
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
