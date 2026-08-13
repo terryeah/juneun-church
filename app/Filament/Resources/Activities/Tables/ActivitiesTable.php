@@ -15,6 +15,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
 use Spatie\Activitylog\Models\Activity;
 
 /**
@@ -54,10 +55,22 @@ class ActivitiesTable
                  * to page. Left to size itself, an auto-laid-out table
                  * hands it whatever slack the other columns leave, and
                  * that slack changes with the content of each page.
+                 *
+                 * The date and the time are separate elements so the
+                 * stacked card can put the time on its own line. Left as
+                 * one string it broke wherever it happened to run out of
+                 * room - after the comma, mid-way through a date - which
+                 * is what made a phone read '2026-08-05,' above
+                 * '23:08:17'. The comma is drawn by CSS, so it goes when
+                 * the line does.
                  */
                 TextColumn::make('created_at')
                     ->label('일시')
-                    ->dateTime(AppServiceProvider::DATE_TIME_FORMAT.':s')
+                    ->html()
+                    ->state(fn (Activity $record): HtmlString => new HtmlString(
+                        '<span class="fi-datetime-date">'.e($record->created_at->format(AppServiceProvider::DATE_FORMAT)).'</span>'
+                        .'<span class="fi-datetime-time">'.e($record->created_at->format('H:i:s')).'</span>',
+                    ))
                     ->width('1%')
                     ->extraCellAttributes(['class' => 'whitespace-nowrap'])
                     ->sortable(),
