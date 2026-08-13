@@ -10,6 +10,7 @@ use App\Policies\ActivityPolicy;
 use Filament\Actions\CreateAction;
 use Filament\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -26,6 +27,25 @@ use Spatie\Activitylog\Support\CauserResolver;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * How a date is written everywhere in the admin panel.
+     */
+    public const DATE_FORMAT = 'Y-m-d';
+
+    /**
+     * How a date and a time are written together everywhere in the admin
+     * panel. The comma is what separates them: a bare space reads as one
+     * run of digits at a glance, which is the whole problem with
+     * '2026-08-13 09:41'.
+     *
+     * Seconds are left out. Nothing the office does is ordered by them,
+     * and they are three characters of noise on every 게시 일시 and
+     * 신청일 in the panel. The activity log appends ':s' for itself,
+     * being the one place where two rows can share a minute and the
+     * order of them is the point.
+     */
+    public const DATE_TIME_FORMAT = 'Y-m-d, H:i';
+
     /**
      * Register any application services.
      */
@@ -69,8 +89,25 @@ class AppServiceProvider extends ServiceProvider
             ->stackedOnMobile()
             ->defaultPaginationPageOption(25)
             ->defaultSort('created_at', 'desc')
-            ->defaultDateDisplayFormat('Y-m-d')
-            ->defaultDateTimeDisplayFormat('Y-m-d, H:i:s')
+            ->defaultDateDisplayFormat(self::DATE_FORMAT)
+            ->defaultDateTimeDisplayFormat(self::DATE_TIME_FORMAT)
+            ->defaultTimeDisplayFormat('H:i'));
+
+        /**
+         * The same formats for everything that is not a table.
+         *
+         * Only Table carried them, and an infolist entry reads its
+         * default off the Schema it sits in - so every 일시 outside a
+         * table, the activity log's own view modal included, fell back
+         * to Filament's American 'M j, Y H:i:s'. Schema is the one place
+         * that covers infolists and every modal built out of them.
+         *
+         * Date pickers are unaffected: DateTimePicker keeps its own copy
+         * of these settings rather than reading the container's.
+         */
+        Schema::configureUsing(fn (Schema $schema) => $schema
+            ->defaultDateDisplayFormat(self::DATE_FORMAT)
+            ->defaultDateTimeDisplayFormat(self::DATE_TIME_FORMAT)
             ->defaultTimeDisplayFormat('H:i'));
 
         /**

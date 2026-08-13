@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Announcements\Schemas;
 
+use App\Providers\AppServiceProvider;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -45,14 +46,14 @@ class AnnouncementForm
                 DateTimePicker::make('published_at')
                     ->label('게시 일시')
                     ->native(false)
-                    ->displayFormat('Y-m-d, H:i:s')
-                    ->seconds(true)
+                    ->displayFormat(AppServiceProvider::DATE_TIME_FORMAT)
+                    ->seconds(false)
                     ->default(now()),
                 DateTimePicker::make('expires_at')
                     ->label('게시 종료 일시')
                     ->native(false)
-                    ->displayFormat('Y-m-d, H:i:s')
-                    ->seconds(true)
+                    ->displayFormat(AppServiceProvider::DATE_TIME_FORMAT)
+                    ->seconds(false)
                     ->helperText('비워두면 계속 게시됩니다.'),
                 Flex::make([
                     Toggle::make('is_published')

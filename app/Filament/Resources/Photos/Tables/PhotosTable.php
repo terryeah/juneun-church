@@ -59,7 +59,7 @@ class PhotosTable
                     ->boolean(),
                 TextColumn::make('updated_at')
                     ->label('수정일')
-                    ->dateTime('Y-m-d H:i')
+                    ->dateTime()
                     ->sortable()
                     ->visibleFrom('lg'),
                 TextColumn::make('uploader.name')

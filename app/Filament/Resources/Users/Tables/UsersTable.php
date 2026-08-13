@@ -97,7 +97,7 @@ class UsersTable
                     ->visible(fn (): bool => auth()->user()?->isAdministrator() ?? false),
                 TextColumn::make('created_at')
                     ->label('가입일')
-                    ->dateTime('Y-m-d H:i')
+                    ->dateTime()
                     ->sortable()
                     ->visible(fn (): bool => auth()->user()?->isAdministrator() ?? false)
                     ->visibleFrom('lg'),

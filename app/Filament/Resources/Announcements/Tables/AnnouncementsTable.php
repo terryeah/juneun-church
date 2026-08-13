@@ -47,7 +47,7 @@ class AnnouncementsTable
                     }),
                 TextColumn::make('published_at')
                     ->label('게시 일시')
-                    ->dateTime('Y-m-d H:i')
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('author.name')
                     ->label('작성자')
