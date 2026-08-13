@@ -53,7 +53,23 @@
  * Design tokens from the Ju-neun Church design handoff.
  */
 @theme {
-    --font-sans: 'Archivo', system-ui, sans-serif;
+    /**
+     * Archivo first, Gmarket Sans behind it.
+     *
+     * A font stack is resolved per character, not per element, and the
+     * Archivo we ship carries latin, latin-ext and vietnamese only - no
+     * Hangul. Ending the stack at system-ui therefore sent every Korean
+     * character in a kicker, a button, a date or a scripture reference
+     * to whatever the operating system happened to offer: Apple SD
+     * Gothic Neo here, Malgun Gothic there, and two typefaces inside
+     * one line on '교회 소식 · News'.
+     *
+     * Naming Gmarket Sans after Archivo lets each half of a mixed line
+     * land where the handoff wants it - Latin in Archivo, Hangul in the
+     * church's own face - without every view having to remember to ask.
+     * font-kr stays for the places that want Gmarket for the Latin too.
+     */
+    --font-sans: 'Archivo', 'GmarketSans', 'GmarketSans Fallback', 'Gothic A1', system-ui, sans-serif;
     --font-kr: 'GmarketSans', 'GmarketSans Fallback', 'Gothic A1', 'Archivo', system-ui, sans-serif;
 
     --color-navy: #16223c;
