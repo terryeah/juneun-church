@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Activities\Tables;
 
 use App\Filament\Resources\Activities\Schemas\ActivityChanges;
+use App\Models\User;
 use App\Providers\AppServiceProvider;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -11,7 +12,9 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Models\Activity;
 
 /**
@@ -94,6 +97,38 @@ class ActivitiesTable
                     ->visibleFrom('lg'),
             ])
             ->filters([
+                /**
+                 * Who did it. Only accounts that appear in the log are
+                 * offered, so the list is the people who have actually
+                 * done something rather than the whole roster, and an
+                 * account that has since been closed keeps the name the
+                 * 사용자 column gives it.
+                 */
+                SelectFilter::make('causer_id')
+                    ->label('사용자')
+                    ->options(fn (): array => self::causerOptions())
+                    ->searchable(),
+                /**
+                 * Rows with no causer read as 시스템: a failed sign-in,
+                 * a visit by somebody not signed in, a scheduled command,
+                 * and anything done by an account exempt from the log.
+                 *
+                 * They outnumber the rest and answer a different question
+                 * from "who changed what", so they are off unless asked
+                 * for. The filter indicator says so on the toolbar, which
+                 * is what stops a hidden default reading as an empty log.
+                 */
+                TernaryFilter::make('system')
+                    ->label('시스템 기록')
+                    ->placeholder('사람 + 시스템 모두')
+                    ->trueLabel('시스템 기록만')
+                    ->falseLabel('사람이 한 기록만')
+                    ->queries(
+                        true: fn (Builder $query): Builder => $query->whereNull('causer_id'),
+                        false: fn (Builder $query): Builder => $query->whereNotNull('causer_id'),
+                        blank: fn (Builder $query): Builder => $query,
+                    )
+                    ->default(false),
                 SelectFilter::make('event')
                     ->label('동작')
                     ->options(ActivityChanges::EVENTS),
@@ -200,6 +235,23 @@ class ActivitiesTable
             ])
             ->defaultSort('created_at', 'desc')
             ->poll(null);
+    }
+
+    /**
+     * The accounts that appear in the log, named, newest-known name
+     * first for anyone still on the roster and by id for anyone closed.
+     *
+     * @return array<int, string>
+     */
+    private static function causerOptions(): array
+    {
+        $ids = Activity::query()->whereNotNull('causer_id')->distinct()->pluck('causer_id');
+        $names = User::query()->whereKey($ids)->pluck('name', 'id');
+
+        return $ids
+            ->mapWithKeys(fn (int $id): array => [$id => $names[$id] ?? '삭제된 계정 #'.$id])
+            ->sort()
+            ->all();
     }
 
     /**

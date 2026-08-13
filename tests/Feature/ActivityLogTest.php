@@ -203,6 +203,63 @@ class ActivityLogTest extends TestCase
     }
 
     /**
+     * The log opens on what people did, not on what the site did.
+     *
+     * Rows with no causer - a failed sign-in, a visit by somebody not
+     * signed in, anything an exempt account does - outnumber the rest,
+     * and reading them is a different question from "who changed what".
+     * They are still one filter away.
+     */
+    public function test_system_rows_are_hidden_until_asked_for(): void
+    {
+        $developer = User::factory()->create();
+        $developer->assignRole('developer');
+
+        $person = User::factory()->create(['name' => '사람이 한 기록']);
+
+        activity('auth')->causedBy($person)->event('login')->log('로그인');
+        $byPerson = Activity::query()->latest('id')->firstOrFail();
+
+        activity('auth')->event('failed_login')->log('로그인 실패');
+        $bySystem = Activity::query()->latest('id')->firstOrFail();
+
+        /** Narrowed to the auth log so the assertion is about these two rows, not about which page they land on. */
+        Livewire::actingAs($developer)
+            ->test(ListActivities::class)
+            ->filterTable('log_name', 'auth')
+            ->assertCanSeeTableRecords([$byPerson])
+            ->assertCanNotSeeTableRecords([$bySystem])
+            /** Asking for them shows them, and only them. */
+            ->filterTable('system', true)
+            ->assertCanSeeTableRecords([$bySystem])
+            ->assertCanNotSeeTableRecords([$byPerson]);
+    }
+
+    /**
+     * The log can be narrowed to one person.
+     */
+    public function test_the_log_can_be_filtered_by_user(): void
+    {
+        $developer = User::factory()->create();
+        $developer->assignRole('developer');
+
+        $one = User::factory()->create(['name' => '김철수']);
+        $two = User::factory()->create(['name' => '이영희']);
+
+        activity('auth')->causedBy($one)->event('login')->log('로그인');
+        $byOne = Activity::query()->latest('id')->firstOrFail();
+
+        activity('auth')->causedBy($two)->event('login')->log('로그인');
+        $byTwo = Activity::query()->latest('id')->firstOrFail();
+
+        Livewire::actingAs($developer)
+            ->test(ListActivities::class)
+            ->filterTable('causer_id', $one->getKey())
+            ->assertCanSeeTableRecords([$byOne])
+            ->assertCanNotSeeTableRecords([$byTwo]);
+    }
+
+    /**
      * A deletion still says what was deleted.
      *
      * logOnlyDirty() files the record's final state under 'old', not
