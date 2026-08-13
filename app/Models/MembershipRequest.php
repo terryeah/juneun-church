@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\LogsModelActivity;
+use App\Notifications\MembershipApproved;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Model;
@@ -258,9 +259,9 @@ class MembershipRequest extends Model
      *
      * Field handling mirrors the 사이트 계정 section of the member form.
      */
-    public function approve(?Member $member, User $reviewer, string $verificationMethod, ?string $verificationNote = null, bool $registerOnRoster = true): User
+    public function approve(?Member $member, User $reviewer, string $verificationMethod, ?string $verificationNote = null, bool $registerOnRoster = true, bool $notify = true): User
     {
-        return DB::transaction(function () use ($member, $reviewer, $verificationMethod, $verificationNote, $registerOnRoster): User {
+        $user = DB::transaction(function () use ($member, $reviewer, $verificationMethod, $verificationNote, $registerOnRoster): User {
             $user = new User;
             $user->name = $this->name;
             $user->email = $this->email;
@@ -294,6 +295,19 @@ class MembershipRequest extends Model
 
             return $user;
         });
+
+        /**
+         * Told after the transaction commits, never inside it: a mail
+         * host having a bad afternoon may not undo an approval an
+         * administrator has already made. The notification defers its
+         * own send to after the response, so a slow SMTP handshake does
+         * not hold the panel open either.
+         */
+        if ($notify) {
+            $user->notify(new MembershipApproved($this->matched_member_id !== null));
+        }
+
+        return $user;
     }
 
     /**

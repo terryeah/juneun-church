@@ -115,4 +115,22 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Reply-To Address
+    |--------------------------------------------------------------------------
+    |
+    | Mail is sent from no-reply@, which is a routing rule rather than a
+    | mailbox. Somebody will reply to it anyway - a 성도 told their
+    | account is ready will write back to say thank you, or to say the
+    | password does not work - so every message carries a reply address
+    | that a person actually reads.
+    |
+    */
+
+    'reply_to' => [
+        'address' => env('MAIL_REPLY_TO_ADDRESS', 'hello@juneun.com'),
+        'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
+    ],
+
 ];

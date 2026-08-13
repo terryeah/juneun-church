@@ -8,12 +8,14 @@ use App\Filament\Resources\MembershipRequests\Pages\ViewMembershipRequest;
 use App\Models\Member;
 use App\Models\MembershipRequest;
 use App\Models\User;
+use App\Notifications\MembershipApproved;
 use Database\Seeders\RoleSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Livewire\Livewire;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Permission;
@@ -380,6 +382,71 @@ class MembershipSignupTest extends TestCase
             'password_confirmation' => 'correct-horse-battery',
             'note' => '주일 2부 예배에 출석합니다.',
         ], $overrides);
+    }
+
+    /**
+     * An approved applicant is told, at the address they applied with.
+     *
+     * Somebody who applied and heard nothing has no way to know it
+     * worked, and the one thing the mail has to carry is that the
+     * password is the one they chose - otherwise they write to the
+     * office asking where it is.
+     */
+    public function test_an_approval_tells_the_applicant(): void
+    {
+        NotificationFacade::fake();
+
+        $request = MembershipRequest::create($this->payload());
+        $user = $request->approve(null, $this->reviewer(), '직접 만나 확인');
+
+        NotificationFacade::assertSentTo($user, MembershipApproved::class, function (MembershipApproved $notification) use ($user): bool {
+            $mail = $notification->toMail($user);
+
+            $this->assertStringContainsString('가입 신청하실 때 직접 정하신 비밀번호', implode(' ', $mail->introLines));
+            $this->assertSame(route('login'), $mail->actionUrl);
+
+            /** no-reply@ is a routing rule, not a mailbox, so a reply has somewhere to land. */
+            $this->assertSame(config('mail.reply_to.address'), $mail->replyTo[0][0]);
+
+            return true;
+        });
+    }
+
+    /**
+     * The office can approve without writing, for somebody they have
+     * already rung.
+     */
+    public function test_the_approval_mail_can_be_withheld(): void
+    {
+        NotificationFacade::fake();
+
+        MembershipRequest::create($this->payload())
+            ->approve(null, $this->reviewer(), '전화 통화로 확인', notify: false);
+
+        NotificationFacade::assertNothingSent();
+    }
+
+    /**
+     * An account alone does not open 성도 전용 content - the 교적 record
+     * does - so the mail may not promise it to somebody left off the
+     * roster.
+     */
+    public function test_the_mail_only_promises_성도_전용_to_somebody_on_the_roster(): void
+    {
+        $reviewer = $this->reviewer();
+        $user = User::factory()->create();
+
+        $onRoster = (new MembershipApproved(true))->toMail($user);
+        $accountOnly = (new MembershipApproved(false))->toMail($user);
+
+        $this->assertStringContainsString('성도 전용 자료와 헌금 내역도 함께', implode(' ', $onRoster->outroLines));
+        $this->assertStringContainsString('교적에 등록된 뒤에', implode(' ', $accountOnly->outroLines));
+
+        /** And the flag follows the outcome the administrator picked. */
+        $request = MembershipRequest::create($this->payload());
+        $request->approve(null, $reviewer, '직접 만나 확인', registerOnRoster: false, notify: false);
+
+        $this->assertNull($request->fresh()->matched_member_id);
     }
 
     /**

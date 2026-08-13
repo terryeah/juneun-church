@@ -7,6 +7,7 @@ use App\Filament\Resources\MembershipRequests\Schemas\MembershipRequestInfolist;
 use App\Models\Member;
 use App\Models\MembershipRequest;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -98,9 +99,22 @@ class ViewMembershipRequest extends ViewRecord
                         ->rows(3)
                         ->placeholder('누가 언제 어떻게 확인했는지 적어두면 나중에 확인할 수 있습니다.')
                         ->required(fn (Get $get): bool => $get('verification_method') === '기타'),
+                    /**
+                     * On by default, because somebody who applied and
+                     * heard nothing has no way to know it worked. Off
+                     * for the case the office has already rung them, or
+                     * where the address on the request is one they have
+                     * reason not to write to.
+                     */
+                    Checkbox::make('notify')
+                        ->label('승인 안내 메일 보내기')
+                        ->helperText(fn (MembershipRequest $record): string => $record->email.' 로 발송됩니다. 가입할 때 정한 비밀번호로 로그인하라는 안내가 나갑니다.')
+                        ->default(true),
                 ])
                 ->action(function (MembershipRequest $record, array $data): void {
                     $outcome = $data['outcome'] ?? self::OUTCOME_REGISTER;
+
+                    $notify = (bool) ($data['notify'] ?? true);
 
                     $record->approve(
                         $outcome === self::OUTCOME_LINK ? Member::query()->find($data['member_id']) : null,
@@ -108,14 +122,20 @@ class ViewMembershipRequest extends ViewRecord
                         $data['verification_method'],
                         $data['verification_note'] ?? null,
                         registerOnRoster: $outcome !== self::OUTCOME_ACCOUNT_ONLY,
+                        notify: $notify,
                     );
 
                     Notification::make()
                         ->success()
                         ->title('가입 신청을 승인했습니다.')
-                        ->body($outcome === self::OUTCOME_ACCOUNT_ONLY
-                            ? '교적에 올리지 않았으므로 성도 전용 자료는 보이지 않습니다.'
-                            : null)
+                        ->body(collect([
+                            $outcome === self::OUTCOME_ACCOUNT_ONLY
+                                ? '교적에 올리지 않았으므로 성도 전용 자료는 보이지 않습니다.'
+                                : null,
+                            $notify
+                                ? $record->email.' 로 안내 메일을 보냈습니다.'
+                                : '안내 메일은 보내지 않았습니다.',
+                        ])->filter()->implode(' '))
                         ->send();
                 }),
             Action::make('reject')
