@@ -89,7 +89,7 @@ class MembershipRequestInfolist
                     ->color(fn (string $state): string => MembershipRequestsTable::statusColour($state)),
                 TextEntry::make('created_at')
                     ->label('신청일')
-                    ->dateTime('Y-m-d H:i'),
+                    ->dateTime(),
                 TextEntry::make('note')
                     ->label('남기실 말씀')
                     ->placeholder('-')
@@ -105,21 +105,29 @@ class MembershipRequestInfolist
                         TableColumn::make('교적부 기록'),
                         TableColumn::make('확인'),
                     ])
+                    /**
+                     * Labels are set rather than hidden: below the
+                     * repeatable's own breakpoint Filament drops the
+                     * header row and stacks each row as a block,
+                     * captioning every cell with its entry label - so
+                     * hiddenLabel() leaves a phone showing five bare
+                     * values, three of them names.
+                     */
                     ->schema([
                         TextEntry::make('member')
-                            ->hiddenLabel()
+                            ->label('성도')
                             ->weight(FontWeight::Medium)
                             ->placeholder(''),
                         TextEntry::make('field')
-                            ->hiddenLabel(),
+                            ->label('항목'),
                         TextEntry::make('submitted')
-                            ->hiddenLabel()
+                            ->label('신청서 내용')
                             ->placeholder('-'),
                         TextEntry::make('held')
-                            ->hiddenLabel()
+                            ->label('교적부 기록')
                             ->placeholder('교회 기록 없음'),
                         TextEntry::make('verdict')
-                            ->hiddenLabel()
+                            ->label('확인')
                             ->badge()
                             ->color(fn (string $state): string => self::verdictColour($state)),
                     ])
@@ -133,7 +141,7 @@ class MembershipRequestInfolist
                     ->placeholder('-'),
                 TextEntry::make('reviewed_at')
                     ->label('처리일')
-                    ->dateTime('Y-m-d H:i')
+                    ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('verification_method')
                     ->label('확인 방법')

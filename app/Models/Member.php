@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -199,5 +200,19 @@ class Member extends Model
     public function cell(): BelongsTo
     {
         return $this->belongsTo(Cell::class);
+    }
+
+    /**
+     * The 가입 신청 this roster record was linked to on approval.
+     *
+     * Null for anyone the office registered by hand, which is most of
+     * the roster. latestOfMany() because an approval can happen twice
+     * over: closing somebody's 사이트 계정 deletes the account but
+     * leaves them on the 교적, so a second sign-up may be linked to the
+     * same record later, and the current one is the one that matters.
+     */
+    public function membershipRequest(): HasOne
+    {
+        return $this->hasOne(MembershipRequest::class, 'matched_member_id')->latestOfMany();
     }
 }
