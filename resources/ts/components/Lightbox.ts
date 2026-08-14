@@ -550,7 +550,12 @@ export class Lightbox {
         const outgoing = this.image;
         const generation = ++this.renderGeneration;
 
-        if (!link || !stage || !outgoing) {
+        if (!link || !stage) {
+            return;
+        }
+
+        /** Only the opening render reuses the existing layer. */
+        if (direction === 0 && ! outgoing) {
             return;
         }
 
@@ -558,7 +563,7 @@ export class Lightbox {
             this.status.textContent = `사진 ${this.currentIndex + 1} / ${this.total()}`;
         }
 
-        if (direction === 0) {
+        if (direction === 0 && outgoing) {
             outgoing.onload = null;
             outgoing.style.transition = 'none';
             outgoing.style.opacity = '0';
@@ -590,7 +595,6 @@ export class Lightbox {
         incoming.style.opacity = '0';
         incoming.style.transform = `translateX(${direction * 36}px)`;
         incoming.alt = link.querySelector('img')?.alt ?? '';
-        this.image = incoming;
 
         const thumbnail = this.thumbnailFor(link);
 
@@ -601,14 +605,34 @@ export class Lightbox {
                 return;
             }
 
+            /**
+             * What leaves is whatever is on the stage right now, not
+             * whatever this.image points at.
+             *
+             * A move that is superseded before its photo loads never
+             * appends its layer, and the old code had already pointed
+             * this.image at it. The next move then faded that detached
+             * layer instead of the one the reader could see, so the
+             * photo on screen stayed put and never got removed - the
+             * counter climbed, nothing changed, and a layer piled up on
+             * every attempt. Tapping next twice before a photo has
+             * loaded is all it took, which on mobile data is most of
+             * the time.
+             */
+            const leaving = Array.from(stage.querySelectorAll('img'));
+
             stage.appendChild(incoming);
+            this.image = incoming;
 
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     incoming.style.opacity = '1';
                     incoming.style.transform = 'translateX(0)';
-                    outgoing.style.opacity = '0';
-                    outgoing.style.transform = `translateX(${direction * -36}px)`;
+
+                    for (const layer of leaving) {
+                        layer.style.opacity = '0';
+                        layer.style.transform = `translateX(${direction * -36}px)`;
+                    }
                 });
             });
 
@@ -619,7 +643,10 @@ export class Lightbox {
              * the reader is watching.
              */
             window.setTimeout(() => {
-                outgoing.remove();
+                for (const layer of leaving) {
+                    layer.remove();
+                }
+
                 this.upgradeToFullSize(incoming, link.href, generation);
                 this.preloadNeighbours();
             }, 400);
