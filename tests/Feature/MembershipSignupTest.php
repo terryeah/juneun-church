@@ -9,6 +9,7 @@ use App\Models\Member;
 use App\Models\MembershipRequest;
 use App\Models\User;
 use App\Notifications\MembershipApproved;
+use App\Notifications\MembershipRequested;
 use Database\Seeders\RoleSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -382,6 +383,50 @@ class MembershipSignupTest extends TestCase
             'password_confirmation' => 'correct-horse-battery',
             'note' => '주일 2부 예배에 출석합니다.',
         ], $overrides);
+    }
+
+    /**
+     * A request that nobody knows about is a request nobody reviews.
+     *
+     * The office is written to at an address on the church's own domain,
+     * so who actually reads it is a mail routing question rather than a
+     * deploy - and the mail carries the applicant's name only, because
+     * an inbox is the wrong place to copy somebody's birth date to.
+     */
+    public function test_a_new_request_tells_the_office(): void
+    {
+        NotificationFacade::fake();
+
+        $this->post('/signup', $this->payload());
+
+        NotificationFacade::assertSentOnDemand(MembershipRequested::class, function (MembershipRequested $notification, array $channels, object $notifiable): bool {
+            $this->assertSame([config('mail.office.address')], array_keys($notifiable->routes['mail']));
+
+            $mail = $notification->toMail($notifiable);
+
+            $this->assertStringContainsString('김철수', $mail->subject);
+            $this->assertStringNotContainsString('1980-03-02', implode(' ', $mail->introLines));
+            $this->assertStringNotContainsString('kim@example.com', implode(' ', $mail->introLines));
+
+            return true;
+        });
+    }
+
+    /**
+     * A silently dropped duplicate writes to nobody: there is no request
+     * to review, and the mail would put the very fact the silence exists
+     * to keep - that this address is already known to the church - into
+     * an inbox.
+     */
+    public function test_a_dropped_duplicate_tells_nobody(): void
+    {
+        NotificationFacade::fake();
+
+        User::factory()->create(['email' => 'taken@example.com']);
+
+        $this->post('/signup', $this->payload(['email' => 'taken@example.com']));
+
+        NotificationFacade::assertNothingSent();
     }
 
     /**

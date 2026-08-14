@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\MembershipRequest;
 use App\Models\User;
+use App\Notifications\MembershipRequested;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
@@ -103,7 +105,22 @@ class MembershipRequestController extends Controller
         $reason = $this->duplicateReason($data['email']);
 
         if ($reason === null) {
-            MembershipRequest::create($data);
+            /**
+             * The office is told, or nobody is: a request used to land
+             * in the table behind a sidebar badge only somebody already
+             * signed in would see, so an applicant could wait days on
+             * one nobody knew about.
+             *
+             * Only on the stored path. A silently dropped duplicate has
+             * no request to review, and writing about it would put the
+             * fact that an address is already known to the church into a
+             * mailbox - which is the thing the silence exists to keep.
+             */
+            $membershipRequest = MembershipRequest::create($data);
+
+            NotificationFacade::route('mail', [
+                config('mail.office.address') => config('mail.office.name'),
+            ])->notify(new MembershipRequested($membershipRequest));
         } else {
             Log::warning('Sign-up request dropped as a duplicate.', [
                 'email_digest' => substr(hash('sha256', $data['email']), 0, 12),

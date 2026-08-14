@@ -133,4 +133,21 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Office Address
+    |--------------------------------------------------------------------------
+    |
+    | Where the site writes when it needs a person to do something - a
+    | 가입 신청 waiting for review, for now. It is an address on the
+    | church's own domain rather than somebody's personal inbox, so who
+    | actually reads it is a mail routing question and not a deploy.
+    |
+    */
+
+    'office' => [
+        'address' => env('MAIL_OFFICE_ADDRESS', 'hello@juneun.com'),
+        'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
+    ],
+
 ];
