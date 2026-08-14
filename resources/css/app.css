@@ -140,6 +140,20 @@
         text-wrap: pretty;
     }
 
+    /**
+     * A button says it is pressable by the cursor it shows, and the
+     * browser default for one is the plain arrow - so every button had
+     * to remember to ask, and several did not: the home slider arrows,
+     * the hamburger, both logout buttons, the video cards. Saying it
+     * once here means a new button is right without being told.
+     *
+     * A disabled one keeps the arrow, because it is not pressable.
+     */
+    button:not(:disabled),
+    summary {
+        cursor: pointer;
+    }
+
     a,
     button,
     summary {

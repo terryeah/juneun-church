@@ -470,7 +470,6 @@ export class Lightbox {
          */
         button.style.cssText = 'display: flex; align-items: center; justify-content: center;'
             + ' width: 2.75rem; height: 2.75rem; border-radius: 9999px; line-height: 1;'
-            + ' cursor: pointer;'
             + ' font-size: 1.75rem; color: var(--color-cream);'
             + ' background-color: rgba(13, 23, 48, 0.72);'
             + ' transition: background-color 150ms ease;';

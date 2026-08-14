@@ -23,7 +23,7 @@
             </div>
 
             <details class="mt-6 border-t-2 border-line pt-6" @if ($errors->has('recovery_code')) open @endif>
-                <summary class="cursor-pointer font-kr text-body-sm font-bold text-accent hover:text-accent-700">
+                <summary class="font-kr text-body-sm font-bold text-accent hover:text-accent-700">
                     휴대폰을 사용할 수 없으신가요?
                 </summary>
 
@@ -38,7 +38,7 @@
                 </div>
             </details>
 
-            <button type="submit" class="mt-7 inline-flex cursor-pointer items-center gap-2 rounded-btn bg-accent px-5 py-3 text-body font-extrabold text-on-accent transition-colors duration-200 hover:bg-accent-700 active:bg-accent-700">
+            <button type="submit" class="mt-7 inline-flex items-center gap-2 rounded-btn bg-accent px-5 py-3 text-body font-extrabold text-on-accent transition-colors duration-200 hover:bg-accent-700 active:bg-accent-700">
                 <span class="font-kr">확인</span>
             </button>
 

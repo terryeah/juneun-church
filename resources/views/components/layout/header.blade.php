@@ -33,7 +33,7 @@
                 @auth
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="cursor-pointer rounded-nav px-3 py-[0.5625rem] font-kr text-body-sm font-medium text-navy hover:bg-accent-100">로그아웃</button>
+                        <button type="submit" class="rounded-nav px-3 py-[0.5625rem] font-kr text-body-sm font-medium text-navy hover:bg-accent-100">로그아웃</button>
                     </form>
                 @else
                     <x-layout.nav-link :href="route('login')" :active="request()->routeIs('login')">로그인</x-layout.nav-link>
@@ -43,7 +43,7 @@
 
         <button
             type="button"
-            class="group cursor-pointer rounded-nav p-2 text-navy hover:bg-accent-100 lg:hidden"
+            class="group rounded-nav p-2 text-navy hover:bg-accent-100 lg:hidden"
             aria-expanded="false"
             aria-controls="mobile-menu"
             aria-label="메뉴 열기"
@@ -71,7 +71,7 @@
                 @auth
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="block w-full cursor-pointer rounded-nav px-4 py-3.5 text-left font-kr text-body font-medium text-navy hover:bg-accent-100">로그아웃</button>
+                        <button type="submit" class="block w-full rounded-nav px-4 py-3.5 text-left font-kr text-body font-medium text-navy hover:bg-accent-100">로그아웃</button>
                     </form>
                 @else
                     <x-layout.nav-link :href="route('login')" :active="request()->routeIs('login')" :mobile="true">로그인</x-layout.nav-link>

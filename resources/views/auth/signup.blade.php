@@ -83,7 +83,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="mt-7 inline-flex cursor-pointer items-center gap-2 rounded-btn bg-accent px-5 py-3 text-body font-extrabold text-on-accent transition-colors duration-200 hover:bg-accent-700 active:bg-accent-700">
+                <button type="submit" class="mt-7 inline-flex items-center gap-2 rounded-btn bg-accent px-5 py-3 text-body font-extrabold text-on-accent transition-colors duration-200 hover:bg-accent-700 active:bg-accent-700">
                     <span class="font-kr">가입 신청하기</span>
                 </button>
 

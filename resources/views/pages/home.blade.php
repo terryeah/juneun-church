@@ -198,10 +198,10 @@
                     </template>
                 @endif
                 <div class="container-site mt-6 flex items-center justify-end gap-3">
-                    <button type="button" data-slider-prev aria-label="이전 사진" class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-cream/10 text-cream transition-colors hover:bg-cream/20 disabled:pointer-events-none disabled:opacity-30">
+                    <button type="button" data-slider-prev aria-label="이전 사진" class="flex h-9 w-9 items-center justify-center rounded-full bg-cream/10 text-cream transition-colors hover:bg-cream/20 disabled:pointer-events-none disabled:opacity-30">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
                     </button>
-                    <button type="button" data-slider-next aria-label="다음 사진" class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-cream/10 text-cream transition-colors hover:bg-cream/20 disabled:pointer-events-none disabled:opacity-30">
+                    <button type="button" data-slider-next aria-label="다음 사진" class="flex h-9 w-9 items-center justify-center rounded-full bg-cream/10 text-cream transition-colors hover:bg-cream/20 disabled:pointer-events-none disabled:opacity-30">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>
                     </button>
                 </div>

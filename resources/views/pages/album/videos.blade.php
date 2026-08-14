@@ -19,7 +19,7 @@
             @forelse ($videos as $video)
                 <button
                     type="button"
-                    class="group block w-full cursor-pointer text-left"
+                    class="group block w-full text-left"
                     data-video
                     data-video-embed="{{ $video->embedUrl() }}"
                     data-video-title="{{ $video->title }}"
