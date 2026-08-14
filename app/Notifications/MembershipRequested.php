@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Filament\Resources\MembershipRequests\MembershipRequestResource;
 use App\Models\MembershipRequest;
-use App\Providers\AppServiceProvider;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -51,9 +50,25 @@ class MembershipRequested extends Notification implements ShouldQueue
             ->subject('새 가입 신청: '.$this->request->name.' 님')
             ->replyTo(config('mail.reply_to.address'), config('mail.reply_to.name'))
             ->greeting('가입 신청이 들어왔습니다.')
-            ->line('**'.$this->request->name.'** 님이 '.$this->request->created_at->format(AppServiceProvider::DATE_TIME_FORMAT).' 에 신청하셨습니다.')
+            ->line('**'.$this->request->name.'** 님이 '.$this->submittedAt().'에 신청하셨습니다.')
             ->line('교적부와 대조한 뒤 승인해 주세요. 승인하면 신청자에게 안내 메일이 나갑니다.')
             ->action('가입 신청 검토하기', MembershipRequestResource::getUrl('view', ['record' => $this->request]))
             ->line('신청자가 적은 생년월일과 연락처는 관리자 화면에서 확인하실 수 있습니다.');
+    }
+
+    /**
+     * When the request came in, written the way a person says it rather
+     * than the way the panel's tables do.
+     *
+     * The minutes carry no leading zero and go missing altogether on the
+     * hour, because '오후 2시 05분' and '오후 8시 00분' are how a clock
+     * reads, not how anybody says it.
+     */
+    private function submittedAt(): string
+    {
+        $at = $this->request->created_at;
+
+        return $at->translatedFormat('Y년 n월 j일, A g시')
+            .($at->minute > 0 ? ' '.$at->minute.'분' : '');
     }
 }

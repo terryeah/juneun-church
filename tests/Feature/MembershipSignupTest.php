@@ -13,7 +13,9 @@ use App\Notifications\MembershipRequested;
 use Database\Seeders\RoleSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
@@ -396,6 +398,7 @@ class MembershipSignupTest extends TestCase
     public function test_a_new_request_tells_the_office(): void
     {
         NotificationFacade::fake();
+        Carbon::setTestNow('2026-08-14 14:05:00');
 
         $this->post('/signup', $this->payload());
 
@@ -403,13 +406,32 @@ class MembershipSignupTest extends TestCase
             $this->assertSame([config('mail.office.address')], array_keys($notifiable->routes['mail']));
 
             $mail = $notification->toMail($notifiable);
+            $body = implode(' ', $mail->introLines);
 
             $this->assertStringContainsString('김철수', $mail->subject);
-            $this->assertStringNotContainsString('1980-03-02', implode(' ', $mail->introLines));
-            $this->assertStringNotContainsString('kim@example.com', implode(' ', $mail->introLines));
+
+            /** Written the way a person says it, not the way a clock reads. */
+            $this->assertStringContainsString('2026년 8월 14일, 오후 2시 5분에 신청하셨습니다', $body);
+
+            $this->assertStringNotContainsString('1980-03-02', $body);
+            $this->assertStringNotContainsString('kim@example.com', $body);
 
             return true;
         });
+    }
+
+    /**
+     * On the hour the minutes go altogether: '오후 8시 00분' is a clock,
+     * not a sentence.
+     */
+    public function test_the_office_notice_drops_the_minutes_on_the_hour(): void
+    {
+        Carbon::setTestNow('2026-08-14 20:00:00');
+
+        $mail = (new MembershipRequested(MembershipRequest::create($this->payload())))
+            ->toMail(new AnonymousNotifiable);
+
+        $this->assertStringContainsString('2026년 8월 14일, 오후 8시에 신청하셨습니다', implode(' ', $mail->introLines));
     }
 
     /**
