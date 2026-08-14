@@ -73,34 +73,50 @@ export class Lightbox {
      * the dimensions the page states, so the picture does not change
      * size when the original replaces the thumbnail it opened on.
      *
-     * The box fills the stage but never exceeds the original's own
-     * pixels: a third of this gallery is under 1000px wide and the
-     * smallest is 297px, so stretching everything to the stage would
-     * blow those up into mush. object-fit keeps the aspect ratio inside
-     * whichever of the two is smaller.
+     * The box is fitted to the photo rather than to the stage, so the
+     * rounded corners land on the picture instead of on empty space
+     * beside it.
      *
      * Without the dimensions it falls back to what it did before, which
-     * is correct but sizes itself from whichever file has loaded.
+     * is correct but sizes itself from whichever file has loaded - and
+     * so still grows when the original lands.
      */
     private sizeLayer(layer: HTMLImageElement, link: HTMLAnchorElement): void {
         const width = Number(link.dataset.width);
         const height = Number(link.dataset.height);
+        const stage = this.stage;
 
-        if (! width || ! height) {
+        if (! width || ! height || ! stage) {
             layer.style.width = '';
             layer.style.height = '';
-            layer.style.objectFit = '';
             layer.style.maxWidth = '100%';
             layer.style.maxHeight = '100%';
 
             return;
         }
 
-        layer.style.width = '100%';
-        layer.style.height = '100%';
-        layer.style.objectFit = 'contain';
-        layer.style.maxWidth = `${width}px`;
-        layer.style.maxHeight = `${height}px`;
+        /**
+         * Never larger than the original: a third of this gallery is
+         * under 1000px wide and the smallest is 297px, so filling the
+         * stage regardless would blow those up into mush.
+         */
+        const scale = Math.min(stage.clientWidth / width, stage.clientHeight / height, 1);
+
+        layer.style.width = `${Math.round(width * scale)}px`;
+        layer.style.height = `${Math.round(height * scale)}px`;
+        layer.style.maxWidth = '100%';
+        layer.style.maxHeight = '100%';
+    }
+
+    /**
+     * Re-fit the photo on screen when the window changes shape.
+     */
+    private resizeCurrentLayer(): void {
+        const link = this.links()[this.currentIndex];
+
+        if (link && this.image) {
+            this.sizeLayer(this.image, link);
+        }
     }
 
     /**
@@ -196,6 +212,9 @@ export class Lightbox {
 
         this.bindSwipe();
 
+        /** A rotated phone or a dragged window changes what fits. */
+        window.addEventListener('resize', () => this.resizeCurrentLayer());
+
         document.body.appendChild(this.overlay);
     }
 
@@ -205,6 +224,7 @@ export class Lightbox {
     private createImageLayer(): HTMLImageElement {
         const image = document.createElement('img');
         image.className = 'rounded-media';
+        /** The box is fitted to the photo, so this rounds the picture itself. */
         /**
          * Never decode on the main thread. A 1280x853 photo is a
          * megapixel to unpack, and doing it synchronously is a freeze

@@ -71,19 +71,40 @@ class CreatePhoto extends CreateRecord
     }
 
     /**
-     * Generate the grid thumbnail once the photo has been stored.
+     * Generate the grid thumbnail once the photo has been stored, and
+     * record what size the photo actually is.
+     *
+     * The dimensions were never written here, so every photo uploaded
+     * through the panel arrived without them. The lightbox needs them to
+     * lay a photo out before its file has loaded; without them it sizes
+     * itself from whichever file arrived first, which is the thumbnail -
+     * so the picture opened small and grew a moment later.
      */
     protected function afterCreate(): void
     {
         $photo = $this->record;
         $disk = Storage::disk(config('filesystems.media'));
+        $contents = (string) $disk->get($photo->path);
 
-        $thumbnail = SaveUploadsAsWebp::thumbnail((string) $disk->get($photo->path));
+        $attributes = [];
+
+        $size = @getimagesizefromstring($contents);
+
+        if ($size !== false) {
+            $attributes['width'] = $size[0];
+            $attributes['height'] = $size[1];
+        }
+
+        $thumbnail = SaveUploadsAsWebp::thumbnail($contents);
 
         if ($thumbnail !== null) {
             $thumbnailPath = dirname($photo->path).'/thumbs/'.basename($photo->path);
             $disk->put($thumbnailPath, $thumbnail);
-            $photo->forceFill(['thumbnail_path' => $thumbnailPath])->saveQuietly();
+            $attributes['thumbnail_path'] = $thumbnailPath;
+        }
+
+        if ($attributes !== []) {
+            $photo->forceFill($attributes)->saveQuietly();
         }
     }
 }
