@@ -455,23 +455,29 @@ export class Lightbox {
          * - a poster, a snow scene - they disappeared into it. The disc
          * carries its own contrast whatever it sits on.
          *
-         * Written inline rather than as utilities so the colour and the
-         * blur do not depend on a Tailwind class surviving the scan of a
-         * file that builds its markup in TypeScript.
+         * A plain translucent colour, deliberately, with no backdrop
+         * blur. A blur samples what is painted behind it, and WebKit
+         * does not re-sample when that is a transformed layer - so once
+         * a photo was pinched the discs kept showing the blur of where
+         * it had been when it loaded, frozen, while the photo moved
+         * underneath. Alpha compositing has nothing to freeze.
+         *
+         * Written inline rather than as utilities so the colour does not
+         * depend on a Tailwind class surviving the scan of a file that
+         * builds its markup in TypeScript.
          */
         button.style.cssText = 'display: flex; align-items: center; justify-content: center;'
             + ' width: 2.75rem; height: 2.75rem; border-radius: 9999px; line-height: 1;'
             + ' font-size: 1.75rem; color: var(--color-cream);'
-            + ' background-color: color-mix(in srgb, var(--color-navy-900) 55%, transparent);'
-            + ' backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);'
+            + ' background-color: color-mix(in srgb, var(--color-navy-900) 62%, transparent);'
             + ' transition: background-color 150ms ease;';
 
         button.addEventListener('pointerenter', () => {
-            button.style.backgroundColor = 'color-mix(in srgb, var(--color-navy-900) 78%, transparent)';
+            button.style.backgroundColor = 'color-mix(in srgb, var(--color-navy-900) 82%, transparent)';
         });
 
         button.addEventListener('pointerleave', () => {
-            button.style.backgroundColor = 'color-mix(in srgb, var(--color-navy-900) 55%, transparent)';
+            button.style.backgroundColor = 'color-mix(in srgb, var(--color-navy-900) 62%, transparent)';
         });
 
         this.overlay?.appendChild(button);
