@@ -136,7 +136,7 @@ class MemberSiteAccountTest extends TestCase
                 'site_account' => true,
                 'site_email' => 'park@example.com',
                 'site_password' => 'correct-horse-battery',
-                'site_roles' => [$editorRole->id],
+                'site_roles' => $editorRole->id,
             ])
             ->call('create')
             ->assertActionNotMounted()
@@ -155,7 +155,7 @@ class MemberSiteAccountTest extends TestCase
             ->fillForm([
                 'site_email' => 'park.new@example.com',
                 'site_password' => 'a-brand-new-secret',
-                'site_roles' => [Role::query()->where('name', 'admin')->sole()->id],
+                'site_roles' => Role::query()->where('name', 'admin')->sole()->id,
             ])
             ->call('save')
             ->assertActionNotMounted()
@@ -167,6 +167,9 @@ class MemberSiteAccountTest extends TestCase
         $this->assertSame('park.new@example.com', $user->email);
         $this->assertTrue($user->hasRole('admin'));
         $this->assertFalse($user->hasRole('content_editor'));
+
+        /** The field takes one role, so switching replaces rather than adds. */
+        $this->assertSame(1, $user->roles()->count());
         $this->assertTrue(Hash::check('a-brand-new-secret', $user->password));
     }
 

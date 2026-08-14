@@ -183,11 +183,25 @@ class MemberForm
                     ->visible(fn (Get $get): bool => (bool) $get('site_account'))
                     ->required(fn (?Member $record): bool => $record?->user_id === null)
                     ->helperText('수정 시 비워두면 기존 비밀번호가 유지됩니다.'),
+                /**
+                 * One role, not a set of them.
+                 *
+                 * Every account this church has ever opened holds
+                 * exactly one, and the roles are written as whole jobs -
+                 * 관리자, 재정부, 콘텐츠 관리 - rather than as
+                 * capabilities to be stacked. Offering a multi-select
+                 * invited a combination nobody has thought about the
+                 * consequences of, and the permission matrix in
+                 * CLAUDE.md describes none.
+                 *
+                 * syncRoles() still receives an array, so an account
+                 * that somehow holds two ends up with the one chosen
+                 * here rather than keeping the extra quietly.
+                 */
                 Select::make('site_roles')
                     ->label('롤')
-                    ->multiple()
                     ->dehydrated(false)
-                    ->afterStateHydrated(fn (Select $component, ?Member $record) => $component->state($record?->user?->roles->pluck('id')->all() ?? []))
+                    ->afterStateHydrated(fn (Select $component, ?Member $record) => $component->state($record?->user?->roles->first()?->getKey()))
                     ->options(fn (): array => static::assignableRoles()
                         ->mapWithKeys(fn (Role $role): array => [$role->id => RoleLabel::label($role->name)])
                         ->all())
@@ -196,9 +210,9 @@ class MemberForm
                     ->rule(fn (): \Closure => function (string $attribute, mixed $value, \Closure $fail): void {
                         $allowed = static::assignableRoles()->pluck('id');
 
-                        foreach ((array) $value as $roleId) {
+                        foreach (array_filter((array) $value) as $roleId) {
                             if (! $allowed->contains((int) $roleId)) {
-                                $fail('부여할 수 없는 롤이 포함되어 있습니다.');
+                                $fail('부여할 수 없는 롤입니다.');
                             }
                         }
                     }),
