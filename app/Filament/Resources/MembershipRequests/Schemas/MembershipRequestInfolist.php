@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MembershipRequests\Schemas;
 
 use App\Filament\Resources\MembershipRequests\Tables\MembershipRequestsTable;
+use App\Filament\Support\Author;
 use App\Models\Member;
 use App\Models\MembershipRequest;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -138,6 +139,10 @@ class MembershipRequestInfolist
                     ->placeholder('-'),
                 TextEntry::make('reviewer.name')
                     ->label('처리자')
+                    ->state(fn (MembershipRequest $record): ?string => $record->reviewer === null
+                        ? null
+                        : Author::name($record->reviewer))
+                    ->color(Author::colour(...))
                     ->placeholder('-'),
                 TextEntry::make('reviewed_at')
                     ->label('처리일')

@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\Activities\Schemas\ActivityChanges;
 use App\Filament\Resources\Announcements\Pages\ListAnnouncements;
+use App\Filament\Resources\MembershipRequests\Pages\ViewMembershipRequest;
 use App\Filament\Support\Author;
 use App\Models\Announcement;
+use App\Models\MembershipRequest;
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\SiteSettingSeeder;
@@ -154,6 +156,44 @@ class AuditExemptAccountTest extends TestCase
 
         $this->assertSame('gray', $column->getColor('시스템'));
         $this->assertNull($column->getColor($ordinary->name));
+    }
+
+    /**
+     * 처리자 on 가입 신청 answers to the same rule, on the request
+     * itself and on the 성도 record the approval created.
+     */
+    public function test_the_reviewer_of_a_signup_is_not_named_either(): void
+    {
+        $this->seed(RoleSeeder::class);
+
+        [$exempt] = $this->accounts();
+        $exempt->assignRole('super_admin');
+
+        foreach (['ViewAny:MembershipRequest', 'View:MembershipRequest', 'Update:MembershipRequest'] as $permission) {
+            Permission::query()->firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+            $exempt->givePermissionTo($permission);
+        }
+
+        $request = MembershipRequest::create([
+            'name' => '김철수',
+            'birth_date' => '1980-03-02',
+            'phone' => '0411222333',
+            'email' => 'kim@example.com',
+            'password' => 'correct-horse-battery',
+            'password_confirmation' => 'correct-horse-battery',
+        ]);
+
+        Livewire::actingAs($exempt)
+            ->test(ViewMembershipRequest::class, ['record' => $request->getKey()])
+            ->callAction('approve', ['verification_method' => '가족 또는 셀장·교역자가 확인'])
+            ->assertHasNoActionErrors();
+
+        $this->assertSame($exempt->getKey(), $request->fresh()->reviewed_by);
+
+        Livewire::actingAs($exempt)
+            ->test(ViewMembershipRequest::class, ['record' => $request->getKey()])
+            ->assertSeeTextInOrder(['처리자', '시스템'])
+            ->assertDontSee($exempt->name);
     }
 
     /**

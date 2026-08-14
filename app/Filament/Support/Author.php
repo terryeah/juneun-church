@@ -35,8 +35,19 @@ final class Author
         return TextColumn::make($name)
             ->label($label)
             ->state(fn (Model $record): string => self::name($record->{$relationship}))
-            ->color(fn (string $state): ?string => $state === self::SYSTEM ? 'gray' : null)
+            ->color(self::colour(...))
             ->sortable();
+    }
+
+    /**
+     * Grey for an unattributed row, the reader's own colour otherwise.
+     *
+     * Entries that build their own state - 처리자 is one, and has its
+     * own answer for a deleted account - reach for this directly.
+     */
+    public static function colour(?string $state): ?string
+    {
+        return $state === self::SYSTEM ? 'gray' : null;
     }
 
     /**

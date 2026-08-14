@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Members\Schemas;
 use App\Filament\Resources\Members\MemberResource;
 use App\Filament\Resources\MembershipRequests\MembershipRequestResource;
 use App\Filament\Resources\MembershipRequests\Schemas\MembershipRequestInfolist;
+use App\Filament\Support\Author;
 use App\Models\Cell;
 use App\Models\Member;
 use App\Models\MembershipRequest;
@@ -329,8 +330,9 @@ class MemberForm
                 TextEntry::make('signup_reviewer')
                     ->label('처리자')
                     ->state(fn (?Member $record): ?string => ($request = static::signupRequest($record))?->reviewed_at
-                        ? ($request->reviewer?->name ?? '삭제된 계정')
+                        ? ($request->reviewer === null ? '삭제된 계정' : Author::name($request->reviewer))
                         : null)
+                    ->color(Author::colour(...))
                     ->placeholder('-'),
                 TextEntry::make('signup_reviewed_at')
                     ->label('처리일')
