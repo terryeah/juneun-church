@@ -131,9 +131,7 @@ class ViewMembershipRequest extends ViewRecord
                             $outcome === self::OUTCOME_ACCOUNT_ONLY
                                 ? '교적에 올리지 않았으므로 성도 전용 자료는 보이지 않습니다.'
                                 : null,
-                            $notify
-                                ? $record->email.' 로 안내 메일을 보냈습니다.'
-                                : '안내 메일은 보내지 않았습니다.',
+                            $notify ? null : '안내 메일은 보내지 않았습니다.',
                         ])->filter()->implode(' '))
                         ->send();
                 }),
