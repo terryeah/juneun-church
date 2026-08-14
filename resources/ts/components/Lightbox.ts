@@ -86,7 +86,8 @@ export class Lightbox {
         const height = Number(link.dataset.height);
         const stage = this.stage;
 
-        if (! width || ! height || ! stage) {
+        /** A stage with no size cannot fit anything; leave the layer alone. */
+        if (! width || ! height || ! stage || stage.clientWidth === 0 || stage.clientHeight === 0) {
             layer.style.width = '';
             layer.style.height = '';
             layer.style.maxWidth = '100%';
@@ -446,7 +447,33 @@ export class Lightbox {
         button.type = 'button';
         button.textContent = label;
         button.setAttribute('aria-label', title);
-        button.className = `${position} rounded-nav px-3 py-2 text-2xl text-cream hover:bg-navy-700`;
+        button.className = position;
+
+        /**
+         * A dark disc under the glyph. The controls were bare cream
+         * marks on whatever the photo happened to be, so on a bright one
+         * - a poster, a snow scene - they disappeared into it. The disc
+         * carries its own contrast whatever it sits on.
+         *
+         * Written inline rather than as utilities so the colour and the
+         * blur do not depend on a Tailwind class surviving the scan of a
+         * file that builds its markup in TypeScript.
+         */
+        button.style.cssText = 'display: flex; align-items: center; justify-content: center;'
+            + ' width: 2.75rem; height: 2.75rem; border-radius: 9999px; line-height: 1;'
+            + ' font-size: 1.75rem; color: var(--color-cream);'
+            + ' background-color: color-mix(in srgb, var(--color-navy-900) 55%, transparent);'
+            + ' backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);'
+            + ' transition: background-color 150ms ease;';
+
+        button.addEventListener('pointerenter', () => {
+            button.style.backgroundColor = 'color-mix(in srgb, var(--color-navy-900) 78%, transparent)';
+        });
+
+        button.addEventListener('pointerleave', () => {
+            button.style.backgroundColor = 'color-mix(in srgb, var(--color-navy-900) 55%, transparent)';
+        });
+
         this.overlay?.appendChild(button);
 
         return button;
@@ -524,9 +551,17 @@ export class Lightbox {
     private open(index: number): void {
         this.opener = document.activeElement as HTMLElement;
         this.currentIndex = index;
-        this.render(0);
+
+        /**
+         * Shown before the photo is laid out, not after. Fitting the
+         * layer to the stage needs the stage to have a size, and a
+         * hidden one measures zero - so the first photo of every album
+         * was laid out 0x0 and never appeared, while every photo after
+         * it, measured against an overlay already on screen, was fine.
+         */
         this.overlay?.classList.remove('hidden');
         this.overlay?.classList.add('flex');
+        this.render(0);
 
         /**
          * The overlay is built click-through so that a faded-out one
