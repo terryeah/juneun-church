@@ -373,7 +373,8 @@ MAIL_HOST=
 MAIL_PORT=587
 MAIL_USERNAME=
 MAIL_PASSWORD=
-MAIL_FROM_ADDRESS=noreply@church-domain.org.au
+MAIL_FROM_ADDRESS=no-reply@church-domain.org.au
+MAIL_REPLY_TO_ADDRESS=hello@church-domain.org.au
 ```
 
 ---
