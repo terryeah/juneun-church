@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Announcements\Tables;
 
+use App\Filament\Support\Author;
 use App\Models\Announcement;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -49,10 +50,7 @@ class AnnouncementsTable
                     ->label('게시 일시')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('author.name')
-                    ->label('작성자')
-                    ->default('시스템')
-                    ->sortable()
+                Author::column('author.name', '작성자')
                     ->visibleFrom('lg'),
                 TextColumn::make('expires_at')
                     ->label('게시 종료')

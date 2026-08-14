@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Events\Tables;
 
+use App\Filament\Support\Author;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -61,10 +62,7 @@ class EventsTable
                 IconColumn::make('is_published')
                     ->label('게시')
                     ->boolean(),
-                TextColumn::make('author.name')
-                    ->label('작성자')
-                    ->default('시스템')
-                    ->sortable()
+                Author::column('author.name', '작성자')
                     ->visibleFrom('lg'),
                 TextColumn::make('created_at')
                     ->label('생성일')

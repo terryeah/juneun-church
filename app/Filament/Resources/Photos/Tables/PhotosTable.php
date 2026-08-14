@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Photos\Tables;
 
+use App\Filament\Support\Author;
 use App\Models\Photo;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -62,10 +63,7 @@ class PhotosTable
                     ->dateTime()
                     ->sortable()
                     ->visibleFrom('lg'),
-                TextColumn::make('uploader.name')
-                    ->label('업로더')
-                    ->default('시스템')
-                    ->sortable()
+                Author::column('uploader.name', '업로더')
                     ->visibleFrom('lg'),
                 TextColumn::make('created_at')
                     ->label('생성일')

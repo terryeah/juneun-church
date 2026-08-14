@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Bulletins\Tables;
 
+use App\Filament\Support\Author;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -30,10 +31,7 @@ class BulletinsTable
                     ->label('발행일')
                     ->date('Y-m-d')
                     ->sortable(),
-                TextColumn::make('author.name')
-                    ->label('작성자')
-                    ->default('시스템')
-                    ->sortable(),
+                Author::column('author.name', '작성자'),
                 TextColumn::make('created_at')
                     ->label('생성일')
                     ->dateTime()

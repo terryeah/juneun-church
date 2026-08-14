@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Activities\Schemas;
 
+use App\Filament\Support\Author;
 use App\Models\Album;
 use App\Models\Cell;
 use App\Models\Member;
@@ -381,6 +382,23 @@ class ActivityChanges
     private static function reference(string $field, mixed $id): string
     {
         [$model, $column] = self::REFERENCES[$field];
+
+        /**
+         * 작성자 and 업로더 follow the rule the tables follow: a
+         * maintenance account is never named, it is 시스템. An account
+         * that has since been deleted is a different answer and keeps
+         * its own, because an audit trail saying 삭제됨 is saying
+         * something.
+         */
+        if (in_array($field, ['created_by', 'uploaded_by'], true)) {
+            $author = self::remember('author|'.$id, fn (): ?User => User::query()->whereKey($id)->first());
+
+            return match (true) {
+                $author === null => '삭제됨 #'.$id,
+                $author->is_audit_exempt => Author::SYSTEM,
+                default => $author->name.' #'.$id,
+            };
+        }
 
         $name = self::remember($model.'|'.$column.'|'.$id, fn (): ?string => $model::query()->whereKey($id)->value($column));
 
