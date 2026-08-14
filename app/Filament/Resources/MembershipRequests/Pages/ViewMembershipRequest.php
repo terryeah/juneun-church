@@ -108,7 +108,6 @@ class ViewMembershipRequest extends ViewRecord
                      */
                     Checkbox::make('notify')
                         ->label('승인 안내 메일 보내기')
-                        ->helperText(fn (MembershipRequest $record): string => $record->email.' 로 발송됩니다. 가입할 때 정한 비밀번호로 로그인하라는 안내가 나갑니다.')
                         ->default(true),
                 ])
                 ->action(function (MembershipRequest $record, array $data): void {
