@@ -464,20 +464,22 @@ export class Lightbox {
          *
          * Written inline rather than as utilities so the colour does not
          * depend on a Tailwind class surviving the scan of a file that
-         * builds its markup in TypeScript.
+         * builds its markup in TypeScript, and as a plain rgba() rather
+         * than color-mix() so it does not depend on a colour function
+         * either - navy-900 is #0d1730.
          */
         button.style.cssText = 'display: flex; align-items: center; justify-content: center;'
             + ' width: 2.75rem; height: 2.75rem; border-radius: 9999px; line-height: 1;'
             + ' font-size: 1.75rem; color: var(--color-cream);'
-            + ' background-color: color-mix(in srgb, var(--color-navy-900) 62%, transparent);'
+            + ' background-color: rgba(13, 23, 48, 0.62);'
             + ' transition: background-color 150ms ease;';
 
         button.addEventListener('pointerenter', () => {
-            button.style.backgroundColor = 'color-mix(in srgb, var(--color-navy-900) 82%, transparent)';
+            button.style.backgroundColor = 'rgba(13, 23, 48, 0.82)';
         });
 
         button.addEventListener('pointerleave', () => {
-            button.style.backgroundColor = 'color-mix(in srgb, var(--color-navy-900) 62%, transparent)';
+            button.style.backgroundColor = 'rgba(13, 23, 48, 0.62)';
         });
 
         this.overlay?.appendChild(button);
