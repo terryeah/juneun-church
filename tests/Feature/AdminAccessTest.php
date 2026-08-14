@@ -197,6 +197,27 @@ class AdminAccessTest extends TestCase
     }
 
     /**
+     * 마지막 로그인 is developer only, like the activity log the same
+     * fact lives in. When somebody last signed in says less about the
+     * account than about the person, and that is not something the
+     * office needs from a list of logins.
+     */
+    public function test_the_last_sign_in_column_is_developer_only(): void
+    {
+        $columns = fn (array $roles): array => collect(
+            Livewire::actingAs($this->administrator($roles))
+                ->test(ListUsers::class)
+                ->instance()
+                ->getTable()
+                ->getVisibleColumns(),
+        )->map(fn ($column): string => $column->getName())->all();
+
+        $this->assertNotContains('last_login_at', $columns(['super_admin']));
+        $this->assertNotContains('last_login_at', $columns(['admin']));
+        $this->assertContains('last_login_at', $columns(['developer']));
+    }
+
+    /**
      * The 가입 경로 column reads the account's origin: an approved
      * 가입 신청 reaches back through the roster record it was matched
      * to, while an account the office registered has nothing to find.

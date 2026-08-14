@@ -82,11 +82,16 @@ class UsersTable
                     ->placeholder('미설정'),
                 /**
                  * The one column an access review is actually made on.
-                 * The list said when each account was created but never
+                 * The list says when each account was created but not
                  * whether it is still used, so an account belonging to a
-                 * volunteer who left two years ago looked exactly like
-                 * one opened every Sunday. The sign-ins are in the
-                 * activity log, but only a developer may read that.
+                 * volunteer who left two years ago looks exactly like one
+                 * opened every Sunday.
+                 *
+                 * Developer only, like the activity log the same fact
+                 * lives in. When somebody last signed in says less about
+                 * the account than about the person - who was away, who
+                 * has stopped coming - and that is not something the
+                 * office needs from a list of logins.
                  */
                 TextColumn::make('last_login_at')
                     ->label('마지막 로그인')
@@ -94,7 +99,7 @@ class UsersTable
                     ->description(fn (User $record): ?string => $record->last_login_at?->diffForHumans())
                     ->placeholder('한 번도 없음')
                     ->sortable()
-                    ->visible(fn (): bool => auth()->user()?->isAdministrator() ?? false),
+                    ->visible(fn (): bool => auth()->user()?->hasRole('developer') ?? false),
                 TextColumn::make('created_at')
                     ->label('가입일')
                     ->dateTime()
