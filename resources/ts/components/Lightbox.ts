@@ -472,6 +472,24 @@ export class Lightbox {
         this.render(0);
         this.overlay?.classList.remove('hidden');
         this.overlay?.classList.add('flex');
+
+        /**
+         * The overlay is built click-through so that a faded-out one
+         * does not eat the next tap on the grid behind it. Opening has
+         * to hand that back, and did not - so the lightbox spent its
+         * whole life transparent to touch: the backdrop tap fell through
+         * to the header or the grid instead of closing it, a swipe never
+         * reached the pointer handlers at all, and the previous and next
+         * buttons passed the tap down to whatever thumbnail sat behind
+         * them, which opened that photo and looked like one step.
+         *
+         * It survived every test because a dispatched click ignores
+         * pointer-events; only a real finger notices.
+         */
+        if (this.overlay) {
+            this.overlay.style.pointerEvents = 'auto';
+        }
+
         document.body.classList.add('overflow-hidden');
         this.overlay?.focus({ preventScroll: true });
 
