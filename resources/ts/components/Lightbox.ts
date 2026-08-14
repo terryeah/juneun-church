@@ -58,6 +58,33 @@ export class Lightbox {
     }
 
     /**
+     * The thumbnail the grid is already showing for a photo.
+     *
+     * It is on screen, so the browser has it: painting it costs nothing
+     * and gives the reader the picture at once while the full-size file
+     * is still on its way.
+     */
+    private thumbnailFor(link: HTMLAnchorElement): string | null {
+        return link.querySelector('img')?.currentSrc || link.querySelector('img')?.src || null;
+    }
+
+    /**
+     * Warm the browser cache for the photos either side of this one, so
+     * the next swipe paints from cache instead of opening a connection.
+     */
+    private preloadNeighbours(): void {
+        const links = this.links();
+
+        for (const index of [this.currentIndex + 1, this.currentIndex - 1]) {
+            const href = links[index]?.href;
+
+            if (href) {
+                new Image().src = href;
+            }
+        }
+    }
+
+    /**
      * How many photos the album holds, not how many are on the page.
      *
      * Counting the rendered links would announce "사진 1 / 24" in an
@@ -195,6 +222,25 @@ export class Lightbox {
                 lastY = event.clientY;
                 this.setImageTransition(false);
                 this.applyZoom();
+
+                return;
+            }
+
+            /**
+             * Not zoomed: the photo follows the finger. Without this the
+             * gesture had no answer until it ended, so a swipe that was
+             * being read looked exactly like one that was being ignored.
+             */
+            if (this.pointers.size === 1 && this.image) {
+                const deltaX = event.clientX - startX;
+                const deltaY = event.clientY - startY;
+
+                if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                    return;
+                }
+
+                this.setImageTransition(false);
+                this.image.style.transform = `translateX(${deltaX}px)`;
             }
         });
 
@@ -232,6 +278,11 @@ export class Lightbox {
                 this.step(deltaX < 0 ? 1 : -1);
 
                 return;
+            }
+
+            /** A drag that did not go far enough springs back. */
+            if (this.image && this.image.style.transform.startsWith('translateX')) {
+                this.image.style.transform = 'translateX(0)';
             }
 
             if (deltaY > 72 && Math.abs(deltaY) > Math.abs(deltaX)) {
@@ -495,7 +546,8 @@ export class Lightbox {
             outgoing.style.transition = 'none';
             outgoing.style.opacity = '0';
             outgoing.style.transform = 'scale(0.965)';
-            outgoing.src = link.href;
+            outgoing.src = this.thumbnailFor(link) ?? link.href;
+            this.upgradeToFullSize(outgoing, link.href, generation);
             outgoing.alt = link.querySelector('img')?.alt ?? '';
 
             const reveal = (): void => {
@@ -509,6 +561,7 @@ export class Lightbox {
             };
 
             outgoing.complete ? reveal() : (outgoing.onload = reveal);
+            this.preloadNeighbours();
 
             return;
         }
@@ -518,6 +571,8 @@ export class Lightbox {
         incoming.style.transform = `translateX(${direction * 36}px)`;
         incoming.alt = link.querySelector('img')?.alt ?? '';
         this.image = incoming;
+
+        const thumbnail = this.thumbnailFor(link);
 
         const start = (): void => {
             incoming.onload = null;
@@ -538,13 +593,45 @@ export class Lightbox {
             });
 
             window.setTimeout(() => outgoing.remove(), 400);
+            this.upgradeToFullSize(incoming, link.href, generation);
+            this.preloadNeighbours();
         };
 
+        /**
+         * The move starts on the thumbnail, which the grid behind the
+         * overlay has already loaded, and the full-size file replaces it
+         * once it arrives.
+         *
+         * Waiting for the full file before starting is what made a swipe
+         * feel broken: the finger left the screen, nothing moved for as
+         * long as 223 KB takes on a phone, and the reader swiped again
+         * thinking the first one had missed.
+         */
         incoming.onload = start;
-        incoming.src = link.href;
+        incoming.src = thumbnail ?? link.href;
 
         if (incoming.complete) {
             start();
         }
+    }
+
+    /**
+     * Swap a layer showing the thumbnail for the full-size photo, once
+     * that has loaded and if the reader has not moved on since.
+     */
+    private upgradeToFullSize(layer: HTMLImageElement, href: string, generation: number): void {
+        if (layer.src === href) {
+            return;
+        }
+
+        const full = new Image();
+
+        full.onload = (): void => {
+            if (generation === this.renderGeneration && layer.isConnected) {
+                layer.src = href;
+            }
+        };
+
+        full.src = href;
     }
 }
