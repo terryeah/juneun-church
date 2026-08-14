@@ -69,8 +69,14 @@ export class Lightbox {
     }
 
     /**
-     * Warm the browser cache for the photos either side of this one, so
-     * the next swipe paints from cache instead of opening a connection.
+     * Warm the photos either side of this one, so the next swipe paints
+     * from memory instead of opening a connection and unpacking a
+     * megapixel while the animation is trying to run.
+     *
+     * Downloading is only half of it: an image that is in the cache but
+     * not yet decoded still costs that decode at the moment it is shown.
+     * decode() does the work now, off the main thread, while nobody is
+     * waiting.
      */
     private preloadNeighbours(): void {
         const links = this.links();
@@ -78,9 +84,14 @@ export class Lightbox {
         for (const index of [this.currentIndex + 1, this.currentIndex - 1]) {
             const href = links[index]?.href;
 
-            if (href) {
-                new Image().src = href;
+            if (! href) {
+                continue;
             }
+
+            const image = new Image();
+            image.decoding = 'async';
+            image.src = href;
+            image.decode?.().catch(() => undefined);
         }
     }
 
@@ -159,6 +170,12 @@ export class Lightbox {
     private createImageLayer(): HTMLImageElement {
         const image = document.createElement('img');
         image.className = 'rounded-media';
+        /**
+         * Never decode on the main thread. A 1280x853 photo is a
+         * megapixel to unpack, and doing it synchronously is a freeze
+         * landing exactly as the swipe animation should be running.
+         */
+        image.decoding = 'async';
         image.style.cssText = 'position: absolute; inset: 0; margin: auto; max-width: 100%; max-height: 100%;';
         image.style.transition = this.reducedMotion
             ? 'none'
@@ -547,7 +564,6 @@ export class Lightbox {
             outgoing.style.opacity = '0';
             outgoing.style.transform = 'scale(0.965)';
             outgoing.src = this.thumbnailFor(link) ?? link.href;
-            this.upgradeToFullSize(outgoing, link.href, generation);
             outgoing.alt = link.querySelector('img')?.alt ?? '';
 
             const reveal = (): void => {
@@ -561,7 +577,11 @@ export class Lightbox {
             };
 
             outgoing.complete ? reveal() : (outgoing.onload = reveal);
-            this.preloadNeighbours();
+
+            window.setTimeout(() => {
+                this.upgradeToFullSize(outgoing, link.href, generation);
+                this.preloadNeighbours();
+            }, 400);
 
             return;
         }
@@ -592,9 +612,17 @@ export class Lightbox {
                 });
             });
 
-            window.setTimeout(() => outgoing.remove(), 400);
-            this.upgradeToFullSize(incoming, link.href, generation);
-            this.preloadNeighbours();
+            /**
+             * Both of these wait for the move to finish. Reading
+             * clientWidth forces a layout, and starting a fetch mid
+             * animation competes with it - neither belongs on the frames
+             * the reader is watching.
+             */
+            window.setTimeout(() => {
+                outgoing.remove();
+                this.upgradeToFullSize(incoming, link.href, generation);
+                this.preloadNeighbours();
+            }, 400);
         };
 
         /**
@@ -624,14 +652,41 @@ export class Lightbox {
             return;
         }
 
-        const full = new Image();
+        /**
+         * Skip it when the thumbnail already has more pixels than the
+         * screen can show. On a phone the 800px thumbnail covers the
+         * frame, so fetching the 1280px original bought nothing anybody
+         * could see and cost a download and a decode on every swipe.
+         */
+        const needed = layer.clientWidth * (window.devicePixelRatio || 1);
 
-        full.onload = (): void => {
+        if (needed > 0 && layer.naturalWidth >= needed) {
+            return;
+        }
+
+        const full = new Image();
+        full.decoding = 'async';
+
+        /**
+         * The swap waits for the decode, not just the download. Setting
+         * src on a downloaded-but-undecoded image makes the browser
+         * unpack it there and then, which is a stall on the frame the
+         * reader is looking at.
+         */
+        const swap = (): void => {
             if (generation === this.renderGeneration && layer.isConnected) {
                 layer.src = href;
             }
         };
 
         full.src = href;
+
+        if (full.decode) {
+            full.decode().then(swap).catch(() => undefined);
+
+            return;
+        }
+
+        full.onload = swap;
     }
 }
