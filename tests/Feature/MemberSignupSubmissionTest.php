@@ -76,12 +76,17 @@ class MemberSignupSubmissionTest extends TestCase
 
         $comparison = $this->entryState($section, 'signup_comparison');
 
+        /**
+         * A field the church holds nothing for is left blank rather
+         * than saying '비어 있음' beside a 자기 신고 badge that means
+         * 'because it is empty' - the same thing twice.
+         */
         $this->assertSame(
             [
                 ['이름', 'Yeji Park', '박예지', MembershipRequest::VERDICT_CONFLICT],
                 ['생년월일', '1988-05-04', '1988-05-04', MembershipRequest::VERDICT_MATCH],
                 ['전화번호', '0411222333', '0411222333', MembershipRequest::VERDICT_MATCH],
-                ['이메일', 'yeji@example.com', null, MembershipRequest::VERDICT_SELF_DECLARED],
+                ['이메일', 'yeji@example.com', null, null],
             ],
             array_map(
                 fn (array $row): array => [$row['field'], $row['submitted'], $row['held'], $row['verdict']],

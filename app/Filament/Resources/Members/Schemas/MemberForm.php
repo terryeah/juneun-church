@@ -291,7 +291,7 @@ class MemberForm
                  */
                 RepeatableEntry::make('signup_comparison')
                     ->hiddenLabel()
-                    ->state(fn (?Member $record): array => static::signupRequest($record)?->comparison($record) ?? [])
+                    ->state(fn (?Member $record): array => static::comparisonRows($record))
                     ->visible(fn (?Member $record): bool => ! (static::signupRequest($record)?->isRedacted() ?? true))
                     ->helperText('승인할 때 신청서 내용이 그대로 교적부에 옮겨지므로 대부분은 일치로 나옵니다. 불일치는 신청서에 다르게 적혀 있거나 승인한 뒤에 교적부를 고친 항목이니, 그 줄만 확인하시면 됩니다.')
                     ->table([
@@ -303,11 +303,12 @@ class MemberForm
                     ->schema([
                         TextEntry::make('field')->label('항목'),
                         TextEntry::make('submitted')->label('신청서 내용')->placeholder('-'),
-                        TextEntry::make('held')->label('현재 교적부')->placeholder('비어 있음'),
+                        TextEntry::make('held')->label('현재 교적부')->placeholder('-'),
                         TextEntry::make('verdict')
                             ->label('대조')
                             ->badge()
-                            ->color(fn (string $state): string => MembershipRequestInfolist::verdictColour($state)),
+                            ->placeholder('-')
+                            ->color(fn (?string $state): string => MembershipRequestInfolist::verdictColour((string) $state)),
                     ])
                     ->columnSpanFull(),
                 TextEntry::make('signup_note')
@@ -355,6 +356,31 @@ class MemberForm
                         ->openUrlInNewTab(),
                 ])->columnSpanFull(),
             ]);
+    }
+
+    /**
+     * The comparison, with the rows the church holds nothing for left
+     * blank rather than spelled out.
+     *
+     * 자기 신고 is by definition what a field reads when the 교적 side is
+     * empty, so those rows said the same thing twice - '비어 있음' beside
+     * a badge meaning 'because it is empty'. A pair of dashes says it
+     * once, and leaves the badges to the rows a reader has to act on.
+     *
+     * The 가입 신청 screen keeps the wording. There the reviewer is being
+     * warned that agreement on a self-declared field proves nothing
+     * about who the applicant is, which is worth the words; here the
+     * approval has already been made.
+     *
+     * @return list<array{field: string, submitted: ?string, held: ?string, verdict: ?string}>
+     */
+    private static function comparisonRows(?Member $record): array
+    {
+        return collect(static::signupRequest($record)?->comparison($record) ?? [])
+            ->map(fn (array $row): array => $row['verdict'] === MembershipRequest::VERDICT_SELF_DECLARED
+                ? [...$row, 'held' => null, 'verdict' => null]
+                : $row)
+            ->all();
     }
 
     /**
