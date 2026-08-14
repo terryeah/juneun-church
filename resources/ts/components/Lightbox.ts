@@ -69,6 +69,41 @@ export class Lightbox {
     }
 
     /**
+     * Hold the layer at the size the full-size photo will occupy, from
+     * the dimensions the page states, so the picture does not change
+     * size when the original replaces the thumbnail it opened on.
+     *
+     * The box fills the stage but never exceeds the original's own
+     * pixels: a third of this gallery is under 1000px wide and the
+     * smallest is 297px, so stretching everything to the stage would
+     * blow those up into mush. object-fit keeps the aspect ratio inside
+     * whichever of the two is smaller.
+     *
+     * Without the dimensions it falls back to what it did before, which
+     * is correct but sizes itself from whichever file has loaded.
+     */
+    private sizeLayer(layer: HTMLImageElement, link: HTMLAnchorElement): void {
+        const width = Number(link.dataset.width);
+        const height = Number(link.dataset.height);
+
+        if (! width || ! height) {
+            layer.style.width = '';
+            layer.style.height = '';
+            layer.style.objectFit = '';
+            layer.style.maxWidth = '100%';
+            layer.style.maxHeight = '100%';
+
+            return;
+        }
+
+        layer.style.width = '100%';
+        layer.style.height = '100%';
+        layer.style.objectFit = 'contain';
+        layer.style.maxWidth = `${width}px`;
+        layer.style.maxHeight = `${height}px`;
+    }
+
+    /**
      * Warm the photos either side of this one, so the next swipe paints
      * from memory instead of opening a connection and unpacking a
      * megapixel while the animation is trying to run.
@@ -583,6 +618,7 @@ export class Lightbox {
 
         if (direction === 0 && outgoing) {
             outgoing.onload = null;
+            this.sizeLayer(outgoing, link);
             outgoing.style.transition = 'none';
             outgoing.style.opacity = '0';
             outgoing.style.transform = 'scale(0.965)';
@@ -613,6 +649,7 @@ export class Lightbox {
         incoming.style.opacity = '0';
         incoming.style.transform = `translateX(${direction * 36}px)`;
         incoming.alt = link.querySelector('img')?.alt ?? '';
+        this.sizeLayer(incoming, link);
 
         const thumbnail = this.thumbnailFor(link);
 
@@ -703,7 +740,11 @@ export class Lightbox {
          * frame, so fetching the 1280px original bought nothing anybody
          * could see and cost a download and a decode on every swipe.
          */
-        const needed = layer.clientWidth * (window.devicePixelRatio || 1);
+        const ratio = layer.naturalHeight > 0 ? layer.naturalWidth / layer.naturalHeight : 0;
+        const painted = ratio > 0
+            ? Math.min(layer.clientWidth, layer.clientHeight * ratio)
+            : layer.clientWidth;
+        const needed = painted * (window.devicePixelRatio || 1);
 
         if (needed > 0 && layer.naturalWidth >= needed) {
             return;

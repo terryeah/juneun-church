@@ -21,7 +21,16 @@
              data-photo-total="{{ $photos->total() }}">
             <div class="contents" data-infinite-scroll>
                 @forelse ($photos as $photo)
-                    <a href="{{ $photo->url() }}" data-lightbox class="block overflow-hidden rounded-media">
+                    {{-- The full-size dimensions let the lightbox lay the
+                         photo out before it has one: it opens on the
+                         thumbnail, and without knowing where the original
+                         will land it drew that at the thumbnail's own size
+                         and then jumped when the original replaced it. --}}
+                    <a href="{{ $photo->url() }}" data-lightbox
+                       @if ($photo->width && $photo->height)
+                           data-width="{{ $photo->width }}" data-height="{{ $photo->height }}"
+                       @endif
+                       class="block overflow-hidden rounded-media">
                         <img
                             src="{{ $photo->thumbnailUrl() }}"
                             alt="{{ $photo->caption ?? $album->title }}"
