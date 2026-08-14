@@ -472,8 +472,13 @@ class MembershipSignupTest extends TestCase
             $this->assertStringContainsString('가입 신청하실 때 직접 정하신 비밀번호', implode(' ', $mail->introLines));
             $this->assertSame(route('login'), $mail->actionUrl);
 
-            /** no-reply@ is a routing rule, not a mailbox, so a reply has somewhere to land. */
-            $this->assertSame(config('mail.reply_to.address'), $mail->replyTo[0][0]);
+            /**
+             * Reply-To comes from config('mail.reply_to'), which
+             * MailManager applies to every message; setting it on the
+             * message as well put the address in the header twice.
+             */
+            $this->assertSame([], $mail->replyTo);
+            $this->assertSame('hello@juneun.com', config('mail.reply_to.address'));
 
             return true;
         });

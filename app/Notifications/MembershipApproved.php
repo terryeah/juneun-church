@@ -22,6 +22,10 @@ use Illuminate\Notifications\Notification;
  * not a "set your password" mail and must not read like one. Saying so
  * plainly is the difference between somebody signing in and somebody
  * writing to the office asking where their password is.
+ *
+ * Reply-To is not set here. MailManager reads config('mail.reply_to')
+ * and hands it to every message the application sends, so naming it
+ * again put the address in the header twice.
  */
 class MembershipApproved extends Notification implements ShouldQueue
 {
@@ -50,7 +54,6 @@ class MembershipApproved extends Notification implements ShouldQueue
     {
         $message = (new MailMessage)
             ->subject('가입 신청이 승인되었습니다 · 브리즈번 주는교회')
-            ->replyTo(config('mail.reply_to.address'), config('mail.reply_to.name'))
             ->greeting($notifiable->name.' 님, 안녕하세요.')
             ->line('홈페이지 가입 신청이 승인되었습니다. 이제 로그인하실 수 있습니다.')
             /**
