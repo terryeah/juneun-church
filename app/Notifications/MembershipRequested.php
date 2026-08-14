@@ -47,7 +47,7 @@ class MembershipRequested extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('새 가입 신청: '.$this->request->name.' 님')
+            ->subject('가입 신청: '.$this->request->name)
             ->replyTo(config('mail.reply_to.address'), config('mail.reply_to.name'))
             ->greeting('가입 신청이 들어왔습니다.')
             ->line('**'.$this->request->name.'** 님이 '.$this->submittedAt().'에 신청하셨습니다.')

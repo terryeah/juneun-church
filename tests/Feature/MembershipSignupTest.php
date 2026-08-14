@@ -408,7 +408,7 @@ class MembershipSignupTest extends TestCase
             $mail = $notification->toMail($notifiable);
             $body = implode(' ', $mail->introLines);
 
-            $this->assertStringContainsString('김철수', $mail->subject);
+            $this->assertSame('가입 신청: 김철수', $mail->subject);
 
             /** Written the way a person says it, not the way a clock reads. */
             $this->assertStringContainsString('2026년 8월 14일, 오후 2시 5분에 신청하셨습니다', $body);
