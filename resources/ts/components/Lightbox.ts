@@ -198,10 +198,10 @@ export class Lightbox {
         const close = this.overlayButton('✕', 'absolute right-4 top-4', '닫기');
         close.addEventListener('click', () => this.close());
 
-        const previous = this.overlayButton('‹', 'absolute left-4 top-1/2 -translate-y-1/2', '이전 사진');
+        const previous = this.overlayButton('‹', 'absolute left-6 top-1/2 -translate-y-1/2', '이전 사진');
         previous.addEventListener('click', () => this.step(-1));
 
-        const next = this.overlayButton('›', 'absolute right-4 top-1/2 -translate-y-1/2', '다음 사진');
+        const next = this.overlayButton('›', 'absolute right-6 top-1/2 -translate-y-1/2', '다음 사진');
         next.addEventListener('click', () => this.step(1));
 
         this.overlay.addEventListener('click', (event: MouseEvent) => {
