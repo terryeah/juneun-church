@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\Dashboard;
 use App\Filament\Resources\MembershipRequests\MembershipRequestResource;
+use App\Filament\Resources\MembershipRequests\Pages\ListMembershipRequests;
 use App\Filament\Resources\MembershipRequests\Pages\ViewMembershipRequest;
+use App\Filament\Resources\MembershipRequests\Tables\MembershipRequestsTable;
 use App\Models\Member;
 use App\Models\MembershipRequest;
 use App\Models\User;
@@ -12,6 +14,7 @@ use App\Notifications\MembershipApproved;
 use App\Notifications\MembershipRequested;
 use Database\Seeders\RoleSeeder;
 use Filament\Facades\Filament;
+use Filament\Tables\Table;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Routing\Middleware\ThrottleRequests;
@@ -519,6 +522,33 @@ class MembershipSignupTest extends TestCase
         $request->approve(null, $reviewer, '직접 만나 확인', registerOnRoster: false, notify: false);
 
         $this->assertNull($request->fresh()->matched_member_id);
+    }
+
+    /**
+     * A request still waiting is put first and marked, so it is not
+     * buried under whatever was approved since.
+     */
+    public function test_waiting_requests_lead_the_list_and_carry_a_mark(): void
+    {
+        $reviewer = $this->reviewer();
+
+        $waiting = MembershipRequest::create($this->payload(['created_at' => now()->subWeek()]));
+        $waiting->forceFill(['created_at' => now()->subWeek()])->save();
+
+        $settled = MembershipRequest::create($this->payload(['email' => 'lee@example.com']));
+        $settled->approve(null, $reviewer, '직접 만나 확인', registerOnRoster: false, notify: false);
+
+        Livewire::actingAs($reviewer)
+            ->test(ListMembershipRequests::class)
+            ->assertCanSeeTableRecords([$waiting, $settled], inOrder: true);
+
+        $table = MembershipRequestsTable::configure(
+            Table::make(app(ListMembershipRequests::class)),
+        );
+
+        $this->assertSame('대기', $waiting->fresh()->status);
+        $this->assertSame(['record-pending'], $table->getRecordClasses($waiting->fresh()));
+        $this->assertSame([], $table->getRecordClasses($settled->fresh()));
     }
 
     /**

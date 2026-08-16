@@ -7,9 +7,10 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Sign-up request listing, newest first.
+ * Sign-up request listing: still waiting first, then newest.
  *
  * The office works this list by deciding which requests are still
  * waiting and ringing the people behind them, so a phone gets the name,
@@ -71,7 +72,24 @@ class MembershipRequestsTable
                     ->date('Y-m-d')
                     ->sortable(),
             ])
-            ->defaultSort('created_at', 'desc')
+            /**
+             * Waiting requests first, then newest. A settled request is
+             * a record; a waiting one is a job, and on a list sorted
+             * purely by date the job sinks under the record the moment
+             * a newer request is approved.
+             *
+             * A closure rather than a column so the two orderings can
+             * be stated together. Filament applies whichever column the
+             * reader clicked before this, so their sort still wins.
+             */
+            ->defaultSort(fn (Builder $query): Builder => $query
+                ->orderByRaw('(status = ?) desc', ['대기'])
+                ->orderByDesc('created_at'))
+            /**
+             * And the waiting ones are marked, so they are found by
+             * looking rather than by reading every status badge.
+             */
+            ->recordClasses(fn (MembershipRequest $record): ?string => $record->status === '대기' ? 'record-pending' : null)
             ->recordActions([
                 ViewAction::make(),
             ]);
