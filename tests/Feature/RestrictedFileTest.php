@@ -48,7 +48,7 @@ class RestrictedFileTest extends TestCase
      */
     public function test_the_file_is_routed_through_the_site(): void
     {
-        $this->assertSame(route('bulletin.file', $this->restricted), $this->restricted->fileUrl());
+        $this->assertSame($this->restricted->pdfUrl(), $this->restricted->fileUrl());
         $this->assertStringNotContainsString('bulletins/restricted.pdf', $this->restricted->fileUrl());
 
         $document = Document::factory()->create(['file_path' => 'documents/routed.pdf']);
@@ -133,15 +133,14 @@ class RestrictedFileTest extends TestCase
     }
 
     /**
-     * A record whose file went missing 404s rather than rendering a
-     * page around an empty frame and a button that leads to a 404.
+     * A record whose file went missing 404s at the file itself.
      */
-    public function test_the_page_needs_the_file_to_exist(): void
+    public function test_a_missing_file_is_not_found(): void
     {
         Storage::disk(config('filesystems.media'))->delete('bulletins/restricted.pdf');
 
         $this->actingAs(User::factory()->onTheRoster()->create())
-            ->get(route('bulletin.file', $this->restricted))
+            ->get($this->restricted->pdfUrl())
             ->assertNotFound();
     }
 
@@ -219,17 +218,16 @@ class RestrictedFileTest extends TestCase
     }
 
     /**
-     * The 주보 opens as a page of the site, so the tab reads like every
-     * other page rather than showing the record's id.
+     * The bare address hands a 성도 straight to the PDF.
+     *
+     * 자료실 links to the file, so this is only what an older link or a
+     * forwarded message carries. Nothing is drawn around the PDF.
      */
-    public function test_the_bulletin_page_carries_a_title(): void
+    public function test_the_bare_address_leads_to_the_pdf(): void
     {
         $this->actingAs(User::factory()->onTheRoster()->create())
             ->get(route('bulletin.file', $this->restricted))
-            ->assertOk()
-            ->assertSee('<title>브리즈번 주는교회 · 주보 · 2026년 8월 3일</title>', false)
-            ->assertSee($this->restricted->pdfUrl(), false)
-            ->assertSee('noindex', false);
+            ->assertRedirect($this->restricted->pdfUrl());
     }
 
     /**

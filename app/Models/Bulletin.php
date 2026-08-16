@@ -91,7 +91,7 @@ class Bulletin extends Model
      */
     public function fileUrl(): string
     {
-        return route('bulletin.file', $this);
+        return $this->pdfUrl();
     }
 
     /**

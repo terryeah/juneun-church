@@ -65,14 +65,24 @@ class PhotosTable
                  * Only the chosen few are marked. Drawn as a boolean this
                  * put a red cross on all 3,199 rows, which read as 3,199
                  * things wrong rather than ten things picked.
+                 *
+                 * A hollow star means the box is ticked but the band will
+                 * not draw it, because the album is not 활성화. Four
+                 * photographs were ticked and one reached the front page,
+                 * with nothing anywhere saying where the other three had
+                 * gone.
                  */
                 IconColumn::make('featured_in_slider')
                     ->label('홈 슬라이더')
-                    ->boolean()
-                    ->trueIcon(Heroicon::Star)
-                    /** false, not null: null falls through to the default cross. */
-                    ->falseIcon(false)
-                    ->trueColor('warning'),
+                    ->icon(fn (Photo $record): ?Heroicon => match (true) {
+                        ! $record->featured_in_slider => null,
+                        (bool) $record->album?->is_published => Heroicon::Star,
+                        default => Heroicon::OutlinedStar,
+                    })
+                    ->color(fn (Photo $record): string => $record->album?->is_published ? 'warning' : 'gray')
+                    ->tooltip(fn (Photo $record): ?string => $record->featured_in_slider && ! $record->album?->is_published
+                        ? '앨범이 비활성 상태라 홈 화면에 나오지 않습니다'
+                        : null),
                 TextColumn::make('updated_at')
                     ->label('수정일')
                     ->dateTime()
@@ -178,9 +188,24 @@ class PhotosTable
                 /** Saved one by one so each change reaches 활동 기록. */
                 $adding->each(fn (Photo $photo) => $photo->update(['featured_in_slider' => true]));
 
+                /**
+                 * The band draws from 활성화된 앨범 only, so a photograph
+                 * in a draft album is ticked and then never appears. Said
+                 * here because the alternative is an editor picking four
+                 * and finding one on the front page with nothing to
+                 * explain the other three.
+                 */
+                $hidden = $adding->filter(fn (Photo $photo): bool => ! $photo->album?->is_published);
+
                 Notification::make()
                     ->success()
                     ->title($adding->count().'장을 홈 슬라이더에 넣었습니다')
+                    ->body($hidden->isEmpty() ? null : sprintf(
+                        '다만 %d장은 앨범이 비활성 상태라 홈 화면에 나오지 않습니다. 앨범에서 활성화를 켜 주세요: %s',
+                        $hidden->count(),
+                        $hidden->map(fn (Photo $photo): string => $photo->album?->title ?? '-')->unique()->implode(', '),
+                    ))
+                    ->persistent($hidden->isNotEmpty())
                     ->send();
             });
     }

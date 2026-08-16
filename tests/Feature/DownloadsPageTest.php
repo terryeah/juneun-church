@@ -129,11 +129,11 @@ class DownloadsPageTest extends TestCase
     }
 
     /**
-     * Each row says what it opens.
+     * Both kinds of row open the PDF itself, in a new tab.
      *
-     * A 주보 row leads to a page of the site now, so promising a PDF in
-     * a new window was two things untrue at once; a 문서 row is still
-     * the file itself.
+     * A 주보 row briefly led to a page of the site with the PDF in a
+     * frame. Nobody asked for the frame, so the row goes straight at
+     * the file again, exactly as a 문서 row does.
      */
     public function test_a_row_names_what_it_opens(): void
     {
@@ -142,15 +142,13 @@ class DownloadsPageTest extends TestCase
         $bulletins = (string) $this->actingAs($member)
             ->get('/downloads')
             ->assertOk()
-            ->assertSee('주보 보기 →')
-            ->assertDontSee('PDF 보기 →')
+            ->assertSee('PDF 보기 →')
             ->getContent();
 
         $documents = (string) $this->actingAs($member)
             ->get('/downloads?type=documents')
             ->assertOk()
             ->assertSee('PDF 보기 →')
-            ->assertDontSee('주보 보기 →')
             ->getContent();
 
         /**
@@ -158,11 +156,11 @@ class DownloadsPageTest extends TestCase
          * the assertion is made against the row's own opening tag
          * rather than against the whole page.
          */
-        preg_match('~<a href="[^"]*/downloads/bulletin/\d+"[^>]*>~', $bulletins, $bulletinRow);
+        preg_match('~<a href="[^"]*/downloads/bulletin/[^"]+\.pdf"[^>]*>~', $bulletins, $bulletinRow);
         preg_match('~<a href="[^"]*/downloads/document/\d+"[^>]*>~', $documents, $documentRow);
 
-        $this->assertStringContainsString('aria-label="주일 예배 주보 보기"', $bulletinRow[0] ?? '');
-        $this->assertStringNotContainsString('target=', $bulletinRow[0] ?? '');
+        $this->assertStringContainsString('aria-label="주일 예배 주보 PDF 열기 (새 창)"', $bulletinRow[0] ?? '');
+        $this->assertStringContainsString('target="_blank"', $bulletinRow[0] ?? '');
 
         $this->assertStringContainsString('aria-label="새가족 등록 카드 PDF 열기 (새 창)"', $documentRow[0] ?? '');
         $this->assertStringContainsString('target="_blank"', $documentRow[0] ?? '');

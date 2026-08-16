@@ -28,15 +28,11 @@
 
         <div class="mt-6 border-t-2 border-navy">
             @forelse ($files as $file)
-                {{-- A 주보 row opens a page of the site now, not a PDF,
-                     so it says so and opens in this tab like any other
-                     link here - a new tab for it would leave the reader
-                     with two tabs of the same site and no back button.
-                     A 문서 row is still the file itself, in a new tab so
-                     the list is not lost behind the viewer. --}}
+                {{-- Both kinds are the PDF itself, opened in a new tab so
+                     the list is not lost behind it. --}}
                 <a href="{{ $file->fileUrl() }}" class="group flex items-center justify-between gap-4 border-b border-line py-5"
-                   @unless ($tab === 'bulletins') target="_blank" rel="noopener" @endunless
-                   aria-label="{{ $file->title }} {{ $tab === 'bulletins' ? '보기' : 'PDF 열기 (새 창)' }}" data-download-item>
+                   target="_blank" rel="noopener"
+                   aria-label="{{ $file->title }} PDF 열기 (새 창)" data-download-item>
                     <div>
                         <p class="text-caption text-navy-400">{{ $file->published_at->translatedFormat('Y년 n월 j일') }}</p>
                         <h3 class="mt-1 font-kr text-body font-medium group-hover:text-accent">{{ $file->title }}</h3>
@@ -44,7 +40,7 @@
                             <p class="mt-1 font-kr text-body-sm text-navy-400">{{ $file->description }}</p>
                         @endif
                     </div>
-                    <span class="shrink-0 text-caption font-bold text-accent group-hover:text-accent-700">{{ $tab === 'bulletins' ? '주보 보기 →' : 'PDF 보기 →' }}</span>
+                    <span class="shrink-0 text-caption font-bold text-accent group-hover:text-accent-700">PDF 보기 →</span>
                 </a>
             @empty
                 <p class="py-8 text-body-sm text-navy-400">등록된 자료가 없습니다.</p>

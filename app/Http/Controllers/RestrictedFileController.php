@@ -29,29 +29,26 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class RestrictedFileController extends Controller
 {
     /**
-     * Show a 주보 to a 성도 as a page.
+     * Send a 주보 straight to the PDF.
      *
-     * A raw PDF has no title for the browser to put in the tab, so it
-     * showed the last part of the address - the record's id, "5". The
-     * PDF is embedded in an ordinary page of the site instead, and the
-     * file hangs off its own address below.
+     * 자료실 links to the file itself, so this bare address is only what
+     * an older link or a forwarded message carries. A 성도 is passed
+     * through to the PDF; nothing is drawn around it.
      *
-     * This is a page, so a reader with no account is answered the way
-     * every other 성도 전용 page answers one: with the sign-in notice.
-     * A 주보 link forwarded into a 단톡방 is opened by 성도 whose session
-     * has lapsed, and a bare 404 leaves them with nowhere to go.
-     *
-     * Nothing is looked up before that answer and the notice names no
-     * 주보 and no date, so it is the same response at every address -
-     * it says only that 주보 are 성도 전용, which the site says anyway.
-     * A signed-in reader who is not on the 교적 keeps the 404, so
-     * working through the addresses one by one still learns nothing.
+     * A reader with no account is answered the way every other 성도 전용
+     * page answers one, with the sign-in notice, because a 주보 link
+     * forwarded into a 단톡방 is opened by 성도 whose session has lapsed
+     * and a bare 404 leaves them with nowhere to go. Nothing is looked
+     * up before that answer and the notice names no 주보 and no date, so
+     * every address answers alike. A signed-in reader who is not on the
+     * 교적 keeps the 404, so working through the addresses one by one
+     * still learns nothing.
      *
      * The bulletin is taken as a plain route parameter for that reason:
      * route model binding would resolve the record first and answer a
      * guest 404 or notice depending on whether it exists.
      */
-    public function bulletin(string $bulletin): View
+    public function bulletin(string $bulletin): View|RedirectResponse
     {
         if (Auth::guest()) {
             return view('pages.members-only', [
@@ -62,17 +59,9 @@ class RestrictedFileController extends Controller
 
         $record = Bulletin::query()->visible()->whereKey($bulletin)->first();
 
-        /**
-         * The file is checked here and not only on the stream below.
-         * The whole page is the PDF, so without the object there is
-         * nothing to show but an empty frame and a button that 404s -
-         * a page that says a 주보 is there when it is not. A missing
-         * object is an upload to redo in the admin panel rather than a
-         * state worth a screen of its own.
-         */
-        abort_unless($record !== null && Storage::disk(config('filesystems.media'))->exists($record->file_path), 404);
+        abort_unless($record !== null, 404);
 
-        return view('pages.bulletin', ['bulletin' => $record]);
+        return redirect($record->pdfUrl());
     }
 
     /**
