@@ -68,6 +68,14 @@ class MembersTable
                     ->sortable()
                     ->visibleFrom('lg'),
             ])
+            /**
+             * By name. The panel sorts every other table by 생성일, which
+             * is the right answer for a list of things that happen and
+             * the wrong one for a roster: nobody looking up a 성도 knows
+             * when their record was typed in, and everybody knows how to
+             * find a name in a list of names.
+             */
+            ->defaultSort('name')
             ->filters([
                 SelectFilter::make('position_id')
                     ->label('직분')
