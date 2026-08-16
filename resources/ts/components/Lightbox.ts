@@ -10,6 +10,11 @@ export interface PhotoLoader {
 }
 
 /**
+ * The three marks the overlay controls carry.
+ */
+type OverlayIcon = 'close' | 'previous' | 'next';
+
+/**
  * Lightbox Component
  *
  * Displays gallery images in a fullscreen overlay with previous/next
@@ -195,21 +200,13 @@ export class Lightbox {
         this.image = this.createImageLayer();
         this.stage.appendChild(this.image);
 
-        const close = this.overlayButton('✕', 'absolute right-4 top-4', '닫기');
-
-        /**
-         * The three controls share a type size, but not a glyph: at
-         * 1.75rem the ✕ draws a mark 19.5px tall where the chevrons
-         * draw 11.5px, so the corner read heavier than the sides. The
-         * size that squares them is 1rem.
-         */
-        close.style.fontSize = '1rem';
+        const close = this.overlayButton('close', 'absolute right-4 top-4', '닫기');
         close.addEventListener('click', () => this.close());
 
-        const previous = this.overlayButton('‹', 'absolute left-6 top-1/2 -translate-y-1/2', '이전 사진');
+        const previous = this.overlayButton('previous', 'absolute left-6 top-1/2 -translate-y-1/2', '이전 사진');
         previous.addEventListener('click', () => this.step(-1));
 
-        const next = this.overlayButton('›', 'absolute right-6 top-1/2 -translate-y-1/2', '다음 사진');
+        const next = this.overlayButton('next', 'absolute right-6 top-1/2 -translate-y-1/2', '다음 사진');
         next.addEventListener('click', () => this.step(1));
 
         this.overlay.addEventListener('click', (event: MouseEvent) => {
@@ -446,14 +443,14 @@ export class Lightbox {
     /**
      * Creates a styled overlay control button.
      *
-     * @param label - The visible glyph
+     * @param icon - Which mark the button carries
      * @param position - Positioning utility classes
      * @param title - Accessible label in Korean
      */
-    private overlayButton(label: string, position: string, title: string): HTMLButtonElement {
+    private overlayButton(icon: OverlayIcon, position: string, title: string): HTMLButtonElement {
         const button = document.createElement('button');
         button.type = 'button';
-        button.textContent = label;
+        button.innerHTML = Lightbox.icon(icon);
         button.setAttribute('aria-label', title);
         button.className = position;
 
@@ -478,7 +475,7 @@ export class Lightbox {
          */
         button.style.cssText = 'display: flex; align-items: center; justify-content: center;'
             + ' width: 2.75rem; height: 2.75rem; border-radius: 9999px; line-height: 1;'
-            + ' font-size: 1.75rem; color: var(--color-cream);'
+            + ' color: var(--color-cream);'
             + ' background-color: rgba(13, 23, 48, 0.72);'
             + ' transition: background-color 150ms ease;';
 
@@ -493,6 +490,39 @@ export class Lightbox {
         this.overlay?.appendChild(button);
 
         return button;
+    }
+
+    /**
+     * The mark a control carries, drawn rather than typed.
+     *
+     * These were text glyphs - ✕ and the chevrons - and a font gives
+     * each of those whatever size and weight it likes: at one type size
+     * the ✕ came out 19.5px tall against the chevrons' 11.5px, and no
+     * type size fixes the stroke weight underneath. Drawn from one
+     * viewBox at one stroke width, the three marks are the same by
+     * construction rather than by a number somebody measured once.
+     *
+     * 1.375rem in a 2.75rem disc: the mark takes half the circle.
+     */
+    private static icon(name: OverlayIcon): string {
+        /**
+         * The chevrons are drawn taller than the ✕ on purpose. Given
+         * the same height they measure the same and still look smaller,
+         * because a chevron is one thin bend where a ✕ fills a square
+         * with two crossing strokes - so the eye is comparing 5px of
+         * mark against 12px. Heroicons' own pair solves this by running
+         * the chevron 15 units against the ✕'s 12, and both were held
+         * against each other here before these numbers were kept.
+         */
+        const paths: Record<OverlayIcon, string> = {
+            close: 'M6 6 18 18M18 6 6 18',
+            previous: 'M15.75 19.5 8.25 12l7.5-7.5',
+            next: 'M8.25 4.5l7.5 7.5-7.5 7.5',
+        };
+
+        return '<svg viewBox="0 0 24 24" width="22" height="22" fill="none"'
+            + ' stroke="currentColor" stroke-width="2" stroke-linecap="round"'
+            + ` stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="${paths[name]}"/></svg>`;
     }
 
     /**
