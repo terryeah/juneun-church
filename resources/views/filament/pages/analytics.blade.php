@@ -1,17 +1,23 @@
 <x-filament-panels::page>
-    {{-- Styled inline because the panel's compiled CSS does not include arbitrary utilities from app views. --}}
-    {{-- A dashboard inside a dashboard is two sets of scrollbars, and on
-         a phone the outer one is the enemy: every drag inside the frame
-         has to fight the page behind it. So the frame is given the whole
-         screen that is left under the header, which leaves the page with
-         nothing of its own to scroll, and dvh rather than vh so the
-         browser's own chrome sliding away does not change the answer.
+    {{-- Styled inline because the panel's compiled CSS does not include
+         arbitrary utilities from app views.
 
-         Umami draws its dashboard responsively, so the narrow width is
-         its problem to solve and it does. --}}
+         A dashboard inside a dashboard is two sets of scrollbars, and on
+         a phone that is unusable however tall the frame is made: every
+         drag inside it fights the page behind it, and Umami's own date
+         pickers and charts want the gestures too. So the frame is for a
+         laptop, and a phone gets a way out to Umami itself instead.
+
+         min-width only, per the house rule, so the phone case is what
+         is written first and the frame is the addition. --}}
     <style>
-        .an-frame { display: block; width: 100%; height: calc(100dvh - 13rem); min-height: 26rem; border: 0; border-radius: 0.75rem; background-color: rgba(128, 138, 160, 0.06); }
-        @media (min-width: 48rem) { .an-frame { height: 78vh; min-height: 40rem; } }
+        .an-frame { display: none; }
+        .an-handoff { display: block; }
+
+        @media (min-width: 48rem) {
+            .an-frame { display: block; width: 100%; height: 78vh; min-height: 40rem; border: 0; border-radius: 0.75rem; background-color: rgba(128, 138, 160, 0.06); }
+            .an-handoff { display: none; }
+        }
     </style>
 
     @if (filled($this->shareUrl))
@@ -24,6 +30,27 @@
             loading="lazy"
             referrerpolicy="no-referrer"
         ></iframe>
+
+        <div class="an-handoff">
+            <x-filament::section>
+                <x-slot name="heading">방문자 통계</x-slot>
+                <x-slot name="description">
+                    페이지별 조회수, 유입 경로, 지금 보고 있는 사람까지 Umami에서 볼 수 있습니다.
+                    화면 안에 끼워 넣으면 폰에서는 손가락이 두 화면과 싸우게 되어, 여기서는 바로 열도록 했습니다.
+                </x-slot>
+
+                <x-filament::button
+                    tag="a"
+                    href="{{ $this->shareUrl }}"
+                    target="_blank"
+                    rel="noopener"
+                    icon="heroicon-o-arrow-top-right-on-square"
+                    size="lg"
+                >
+                    Umami에서 열기
+                </x-filament::button>
+            </x-filament::section>
+        </div>
     @else
         <x-filament::section>
             <x-slot name="heading">Umami 연동이 아직 설정되지 않았습니다</x-slot>
