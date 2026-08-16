@@ -196,6 +196,14 @@ export class Lightbox {
         this.stage.appendChild(this.image);
 
         const close = this.overlayButton('✕', 'absolute right-4 top-4', '닫기');
+
+        /**
+         * The three controls share a type size, but not a glyph: at
+         * 1.75rem the ✕ draws a mark 19.5px tall where the chevrons
+         * draw 11.5px, so the corner read heavier than the sides. The
+         * size that squares them is 1rem.
+         */
+        close.style.fontSize = '1rem';
         close.addEventListener('click', () => this.close());
 
         const previous = this.overlayButton('‹', 'absolute left-6 top-1/2 -translate-y-1/2', '이전 사진');
