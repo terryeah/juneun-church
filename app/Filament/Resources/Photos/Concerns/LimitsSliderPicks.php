@@ -32,7 +32,7 @@ trait LimitsSliderPicks
             ->orderByDesc('created_at')
             ->get();
 
-        if ($picked->count() < 10) {
+        if ($picked->count() < Photo::SLIDER_LIMIT) {
             return;
         }
 
@@ -48,7 +48,7 @@ trait LimitsSliderPicks
         Notification::make()
             ->danger()
             ->title('홈 슬라이더가 가득 찼습니다')
-            ->body(new HtmlString('슬라이더에는 최대 10장까지만 넣을 수 있습니다.<br>아래에서 하나를 해제한 뒤 다시 저장해 주세요.<br><br>'.$rows))
+            ->body(new HtmlString('슬라이더에는 최대 '.Photo::SLIDER_LIMIT.'장까지만 넣을 수 있습니다.<br>아래에서 하나를 해제한 뒤 다시 저장해 주세요.<br><br>'.$rows))
             ->persistent()
             ->send();
 

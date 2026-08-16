@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Photos\Schemas;
 
 use App\Models\Album;
+use App\Models\Photo;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -76,7 +77,7 @@ class PhotoForm
                     ->required(),
                 Toggle::make('featured_in_slider')
                     ->label('홈 슬라이더에 표시')
-                    ->helperText('최대 10장까지 선택할 수 있습니다.')
+                    ->helperText('최대 '.Photo::SLIDER_LIMIT.'장까지 선택할 수 있습니다. 이 체크는 "이 사진은 누구나 봐도 괜찮다"는 뜻입니다.')
                     ->columnSpanFull(),
             ]);
     }

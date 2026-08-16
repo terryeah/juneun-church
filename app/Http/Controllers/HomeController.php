@@ -79,7 +79,7 @@ class HomeController extends Controller
             ->whereHas('album', fn ($query) => $query->where('is_published', true))
             ->where('featured_in_slider', true)
             ->latest()
-            ->limit(10)
+            ->limit(Photo::SLIDER_LIMIT)
             /** Each photo links back to its album, so fetch them together. */
             ->with('album')
             ->get();

@@ -33,6 +33,16 @@ class Photo extends Model
     use BuildsMediaUrls, HasFactory, LogsModelActivity, PurgesCdnCache;
 
     /**
+     * How many photographs the home band will draw.
+     *
+     * The band is a fixed strip on the front page rather than a feed,
+     * so the number is a design constraint and not a preference. It is
+     * asked about from the edit form, the bulk action and the home page
+     * itself, which is why it lives on the model.
+     */
+    public const SLIDER_LIMIT = 10;
+
+    /**
      * The image and its thumbnail are both served from the CDN.
      *
      * @return list<string>

@@ -18,6 +18,10 @@
         </include>
     </source>
     <php>
+        <!-- Mounting a Filament page in a Livewire test holds the whole
+             panel in memory, and PHP's default 128M runs out part way
+             through the suite rather than in any one test. -->
+        <ini name="memory_limit" value="512M"/>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
