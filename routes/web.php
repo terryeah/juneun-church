@@ -28,12 +28,14 @@ Route::get('/downloads', DownloadsController::class)->name('downloads');
 /** 주보 moved into 자료실; the old address is kept for anything linking to it. */
 Route::permanentRedirect('/bulletins', '/downloads')->name('bulletins');
 /**
- * A 성도 전용 file is fetched through the application so somebody can
- * be asked who they are. An open one keeps its direct CDN address.
+ * Every 주보 and 문서 is fetched through the application so somebody can
+ * be asked who they are. The objects are private on the bucket, so
+ * there is no direct address left to take instead.
  *
- * A 주보 opens as a page rather than as a bare PDF, so the browser tab
- * carries the church's name and the date instead of the record's id.
- * The file itself hangs off it under an ASCII name browsers can keep.
+ * 자료실 links at the file, under an ASCII name browsers can keep. The
+ * bare address below it is only what an older link or a forwarded
+ * message carries: it hands a 성도 on to the file, and answers anyone
+ * signed out with the sign-in notice rather than a bare 404.
  */
 Route::get('/downloads/bulletin/{bulletin}', [RestrictedFileController::class, 'bulletin'])->name('bulletin.file');
 Route::get('/downloads/bulletin/{bulletin}/{filename}', [RestrictedFileController::class, 'bulletinPdf'])

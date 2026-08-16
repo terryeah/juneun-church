@@ -7,9 +7,11 @@
          the project's CSS rule. The page opens as a short index of
          eight questions; each part is a closed accordion beneath it.
 
-         The two things staff get wrong - who may see which page, and
-         what 교적 등록 actually decides - are drawn rather than
-         described: a permission table and a step flow carry them.
+         The three things staff get wrong - who may see which page,
+         what 교적 등록 actually decides, and why a photograph they
+         picked never reached the front page - are drawn rather than
+         described: a permission table, a step flow, and a two-condition
+         gate carry them.
 
          Motion is enabled by JavaScript (it adds .wiki-anim), so with
          no JavaScript, or with prefers-reduced-motion, everything is
@@ -50,7 +52,7 @@
                         <li>PDF 파일을 올리고 <b>저장</b>합니다.</li>
                     </ol>
                     <p class="wiki-note"><b>따로 켜거나 끌 것은 없습니다.</b> 자료실은 성도만 들어오는 페이지라, 올리시면 그대로 성도에게만 보입니다.</p>
-                    <p class="wiki-note">성도가 자료실에서 주보를 누르면 <b>주보 &middot; 2026년 8월 16일</b>처럼 이름 붙은 페이지가 열리고, 그 안에 주보가 펼쳐집니다. 휴대폰에서 잘 안 보이면 그 위에 있는 <b>PDF 열기</b>를 누르면 됩니다.</p>
+                    <p class="wiki-note">성도가 자료실에서 <b>PDF 보기 &rarr;</b>를 누르면 <b>주보 PDF가 새 탭에서 바로 열립니다.</b> 문서와 똑같습니다. 열린 탭 이름은 <b>Bulletin_2026_08_16.pdf</b>처럼 파일 이름입니다. 예전에 주보만 따로 열리던 안내 페이지는 없앴습니다.</p>
                 </article>
 
                 <article class="wiki-task">
@@ -78,6 +80,16 @@
                 </article>
 
                 <article class="wiki-task">
+                    <h3 class="wiki-task-title">사진 목록에서 원하는 사진 찾기</h3>
+                    <ol class="wiki-steps">
+                        <li><b>미디어 &rsaquo; 사진</b>에서 목록 위 <b>필터</b>를 누릅니다.</li>
+                        <li><b>앨범</b> 칸에서 앨범을 하나 고릅니다. 앨범 이름을 쳐서 찾을 수 있습니다.</li>
+                        <li>홈 화면 사진 띠에 넣은 사진만 보려면 <b>홈 슬라이더</b>를 <b>넣은 사진</b>으로 바꿉니다. <b>전체 &middot; 넣은 사진 &middot; 넣지 않은 사진</b> 중에서 고릅니다.</li>
+                    </ol>
+                    <p class="wiki-note"><b>사진 일은 앨범을 고르는 것부터 시작하세요.</b> 사진이 3,199장이라, 앨범을 고르기 전에는 여러 앨범의 사진이 뒤섞여 보입니다. 끌어서 순서를 바꾸는 것도 <b>한 앨범 안에서만</b> 뜻이 있으니 앨범을 먼저 고른 뒤에 하세요.</p>
+                </article>
+
+                <article class="wiki-task">
                     <h3 class="wiki-task-title">홈 화면 대표 사진 바꾸기</h3>
                     <ol class="wiki-steps">
                         <li><b>미디어 &rsaquo; 사진</b>에서 쓰고 싶은 사진을 엽니다.</li>
@@ -90,12 +102,43 @@
                 <article class="wiki-task">
                     <h3 class="wiki-task-title">홈 화면 사진 띠 채우기</h3>
                     <ol class="wiki-steps">
-                        <li><b>미디어 &rsaquo; 사진</b>에서 내보내고 싶은 사진을 엽니다.</li>
-                        <li>맨 아래 <b>홈 슬라이더에 표시</b>를 켜고 저장합니다. 최대 열 장까지 됩니다.</li>
-                        <li>그 사진이 든 앨범의 <b>활성화</b>도 켜져 있어야 합니다.</li>
+                        <li><b>미디어 &rsaquo; 사진</b>에서 <b>필터</b>로 앨범을 하나 고릅니다.</li>
+                        <li>내보내고 싶은 사진들의 <b>왼쪽 네모를 체크</b>합니다. 여러 장을 한꺼번에 골라도 됩니다.</li>
+                        <li>목록 위 <b>일괄 작업</b>을 열고 <b>홈 슬라이더에 넣기</b>를 누릅니다.</li>
+                        <li>확인 창을 읽고 <b>넣기</b>를 누릅니다. 뺄 때는 같은 자리에서 <b>홈 슬라이더에서 빼기</b>입니다.</li>
                     </ol>
-                    <p class="wiki-warn"><b>지금은 한 장도 켜져 있지 않습니다.</b> 그래서 홈 화면 <b>주는교회의 순간들</b> 자리에는 글귀 두 줄만 있고 사진 띠가 아예 나오지 않습니다. 몇 장 골라 켜 주시면 그 아래에 사진 띠가 생깁니다. 앨범에서 알아서 채워 오던 예전 방식은 없어졌습니다.</p>
-                    <p class="wiki-note"><b>이 체크는 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다.</b> 홈 화면은 로그인하지 않은 분도 보는 자리이기 때문입니다. 앨범 전체는 성도만 보지만, 여기에 켠 사진은 홈 화면에 나옵니다. 그 사진을 누르면 앨범으로 넘어가는데, 앨범은 성도 전용이라 로그인하지 않은 분에게는 거기서 로그인 안내가 나옵니다.</p>
+                    <p class="wiki-note"><b>한 장씩 열어서 저장하지 않아도 됩니다.</b> 예전에는 사진을 하나 열고 저장하고 다시 나오기를 되풀이해야 했는데, 이제 체크해서 한 번에 넣고 뺍니다.</p>
+
+                    <h3 class="wiki-h3">홈 화면에 나오려면 두 가지가 다 켜져 있어야 합니다</h3>
+
+                    <div class="wiki-gate">
+                        <div class="wiki-gate-cond">
+                            <b>사진에 체크</b>
+                            <span>사진을 골라 <b>홈 슬라이더에 넣기</b></span>
+                        </div>
+                        <span class="wiki-gate-op">그리고</span>
+                        <div class="wiki-gate-cond">
+                            <b>그 사진이 든 앨범이 활성화</b>
+                            <span><b>미디어 &rsaquo; 앨범</b>에서 <b>활성화</b>가 켜져 있어야</span>
+                        </div>
+                        <span class="wiki-gate-op" aria-hidden="true">&darr;</span>
+                        <div class="wiki-gate-out">
+                            <b>홈 화면 사진 띠에 나옵니다</b>
+                            <span>둘 중 하나라도 빠지면 나오지 않습니다</span>
+                        </div>
+                    </div>
+
+                    <p class="wiki-warn"><b>사진에 체크만 해서는 나오지 않습니다.</b> 실제로 네 장을 골랐는데 홈 화면에는 한 장만 나온 일이 있었습니다. 나머지 세 장이 <b>활성화가 꺼진 앨범</b>에 들어 있었기 때문입니다.</p>
+                    <p class="wiki-note">이제는 넣고 나면 <b>어느 앨범이 꺼져 있는지 이름으로 알려줍니다.</b> 사진 목록에서도 별 모양으로 구분됩니다.</p>
+
+                    <div class="wiki-rows">
+                        <div class="wiki-row"><b><span class="wiki-star-on">&starf;</span> 노란 별</b><span>홈 화면 사진 띠에 나오고 있습니다</span></div>
+                        <div class="wiki-row"><b><span class="wiki-star-off">&star;</span> 속이 빈 회색 별</b><span>체크는 되어 있지만 앨범이 비활성이라 나오지 않습니다. 별에 마우스를 올리면 까닭이 뜹니다</span></div>
+                    </div>
+
+                    <p class="wiki-warn"><b>사진 띠는 열 장까지입니다.</b> 자리가 모자라면 <b>한 장도 들어가지 않고</b> 통째로 거절되면서, 남은 자리가 몇 장인지 알려줍니다. 여덟 장이 들어 있는데 다섯 장을 고르시면 앞의 두 장만 들어가는 것이 아니라 다섯 장 모두 들어가지 않습니다. 몇 장을 빼신 뒤 다시 고르세요. 이미 들어 있는 사진을 또 골라도 자리를 두 번 차지하지는 않습니다.</p>
+                    <p class="wiki-warn"><b>지금은 한 장도 들어 있지 않습니다.</b> 그래서 홈 화면 <b>주는교회의 순간들</b> 자리에는 글귀 두 줄만 있고 사진 띠가 아예 나오지 않습니다. 몇 장 넣어 주시면 그 아래에 사진 띠가 생깁니다. 앨범에서 알아서 채워 오던 예전 방식은 없어졌습니다.</p>
+                    <p class="wiki-note"><b>여기에 넣는 것은 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다.</b> 홈 화면은 로그인하지 않은 분도 보는 자리라, 넣기 전에 확인 창이 성도의 얼굴이 담긴 사진인지 한 번 묻습니다. 앨범 전체는 성도만 보지만 여기에 넣은 사진은 홈 화면에 나옵니다. 그 사진을 누르면 앨범으로 넘어가는데, 앨범은 성도 전용이라 로그인하지 않은 분에게는 거기서 로그인 안내가 나옵니다.</p>
                 </article>
 
                 <article class="wiki-task">
@@ -232,7 +275,7 @@
 
                 <h3 class="wiki-h3">홈 화면은 그대로 열려 있습니다</h3>
                 <p>처음 오시는 분이 반드시 보는 자리라 예전과 같습니다. 맨 위 대표 사진, 최근 소식 <b>제목</b> 네 개, 하이라이트로 켠 소식의 제목과 앞부분, 최근 예배 영상이 누구에게나 보입니다. 제목을 눌러 들어가면 그때 로그인 안내가 나옵니다.</p>
-                <p class="wiki-warn"><b>홈 화면 사진 띠는 켜 둔 사진만 나옵니다.</b> 앨범에서 알아서 채워 오지 않습니다. <b>미디어 &rsaquo; 사진</b>에서 사진을 열고 <b>홈 슬라이더에 표시</b>를 켜야 나오며, 그 체크는 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다. 지금은 한 장도 켜져 있지 않아 그 자리에 사진 띠가 나오지 않습니다.</p>
+                <p class="wiki-warn"><b>홈 화면 사진 띠는 골라 넣은 사진만 나옵니다.</b> 앨범에서 알아서 채워 오지 않습니다. <b>미디어 &rsaquo; 사진</b>에서 사진을 체크해 <b>일괄 작업 &rsaquo; 홈 슬라이더에 넣기</b>로 넣으며, 넣는다는 것은 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다. 그 사진이 든 앨범의 <b>활성화</b>까지 켜져 있어야 나옵니다. 순서는 <b>자주 하는 일</b>의 그림에 있습니다. 지금은 한 장도 들어 있지 않아 그 자리에 사진 띠가 나오지 않습니다.</p>
 
                 <h3 class="wiki-h3">검색 엔진</h3>
                 <p>구글에 알려주는 목록에는 <b>홈 &middot; 예배 안내 &middot; 오시는 길 &middot; 섬기는 사람들</b> 네 페이지만 들어 있습니다. 성도 전용 다섯 페이지와 그 안의 소식 &middot; 앨범은 검색 결과에 올라가지 않습니다.</p>
@@ -303,7 +346,7 @@
                 <h3 class="wiki-h3">미디어</h3>
                 <div class="wiki-rows">
                     <div class="wiki-row"><b>앨범</b><span>사진과 영상을 담는 그릇. 여기서 정하는 것은 <b>활성화</b> 하나입니다</span></div>
-                    <div class="wiki-row"><b>사진</b><span>사진 한 장씩. 홈 화면 사진 띠에 넣을 사진을 <b>여기서만</b> 고릅니다</span></div>
+                    <div class="wiki-row"><b>사진</b><span>사진 한 장씩. <b>필터</b>로 앨범을 먼저 고르고 보세요. 홈 화면 사진 띠에 넣을 사진을 <b>여기서만</b> 고르며, 체크한 뒤 <b>일괄 작업</b>으로 한꺼번에 넣고 뺍니다</span></div>
                     <div class="wiki-row"><b>동영상</b><span>유튜브 주소를 붙여넣으면 됩니다. 앨범에서 종류를 <b>동영상</b>으로 만든 뒤 여기에 담습니다</span></div>
                 </div>
 
@@ -384,8 +427,8 @@
                     </div>
                     <div class="wiki-card wiki-card-open">
                         <span class="wiki-card-tag">성도</span>
-                        <b class="wiki-card-title">주보가 열립니다</b>
-                        <span class="wiki-card-body">이름 붙은 주보 페이지가 열리고, <b>PDF 열기</b>로 파일도 볼 수 있습니다.</span>
+                        <b class="wiki-card-title">주보 PDF가 열립니다</b>
+                        <span class="wiki-card-body">중간에 아무 화면도 거치지 않고 <b>주보 PDF가 바로 열립니다.</b></span>
                     </div>
                 </div>
 
@@ -487,18 +530,23 @@
                 </div>
 
                 <div class="wiki-qa">
+                    <p class="wiki-q">사진이 너무 많아서 찾을 수가 없어요</p>
+                    <p class="wiki-a">사진이 3,199장이라 그대로 보면 여러 앨범이 뒤섞여 나옵니다. 목록 위 <b>필터</b>를 열고 <b>앨범</b>을 하나 고르세요. 홈 화면 사진 띠에 넣은 사진만 보려면 <b>홈 슬라이더</b>를 <b>넣은 사진</b>으로 바꾸면 됩니다.</p>
+                </div>
+
+                <div class="wiki-qa">
                     <p class="wiki-q">홈 화면에 사진 띠가 안 보여요</p>
-                    <p class="wiki-a"><b>홈 슬라이더에 표시</b>를 켠 사진이 한 장도 없어서입니다. 지금이 그 상태이고, 그럴 때는 <b>주는교회의 순간들</b> 글귀만 나옵니다. <b>미디어 &rsaquo; 사진</b>에서 사진을 열고 맨 아래 그 체크를 켜 주세요.</p>
+                    <p class="wiki-a">홈 슬라이더에 넣은 사진이 한 장도 없어서입니다. 지금이 그 상태이고, 그럴 때는 <b>주는교회의 순간들</b> 글귀만 나옵니다. <b>미디어 &rsaquo; 사진</b>에서 사진을 체크하고 <b>일괄 작업 &rsaquo; 홈 슬라이더에 넣기</b>를 눌러 주세요.</p>
                 </div>
 
                 <div class="wiki-qa">
-                    <p class="wiki-q">홈 슬라이더에 표시를 켰는데 홈 화면에 안 나와요</p>
-                    <p class="wiki-a">그 사진이 든 앨범의 <b>활성화</b>가 꺼져 있습니다. 앨범을 켜면 나옵니다.</p>
+                    <p class="wiki-q">홈 슬라이더에 넣었는데 홈 화면에 안 나와요</p>
+                    <p class="wiki-a">그 사진이 든 앨범의 <b>활성화</b>가 꺼져 있습니다. 넣을 때 어느 앨범이 꺼져 있는지 알려주고, 사진 목록에서도 그런 사진은 <b><span class="wiki-star-off">&star;</span> 속이 빈 회색 별</b>로 보입니다. <b>미디어 &rsaquo; 앨범</b>에서 그 앨범의 활성화를 켜면 나옵니다.</p>
                 </div>
 
                 <div class="wiki-qa">
-                    <p class="wiki-q">슬라이더에 사진을 더 넣으려는데 안 돼요</p>
-                    <p class="wiki-a">홈 슬라이더는 <b>10장까지</b>입니다. 열한 번째를 켜면 지금 들어 있는 열 장을 알려주니, 하나를 빼고 다시 켜세요.</p>
+                    <p class="wiki-q">홈 슬라이더에 사진을 더 넣으려는데 안 돼요</p>
+                    <p class="wiki-a">홈 슬라이더는 <b>10장까지</b>입니다. 자리보다 많이 고르시면 <b>한 장도 들어가지 않고</b> 남은 자리가 몇 장인지 알려줍니다. 몇 장을 <b>홈 슬라이더에서 빼기</b>로 뺀 뒤 다시 고르세요. 사진을 하나 열어 저장하는 방식으로 열한 번째를 넣으려 할 때는 지금 들어 있는 열 장을 보여줍니다.</p>
                 </div>
 
                 <div class="wiki-qa">
@@ -891,6 +939,42 @@
             border-inline-start-color: color-mix(in srgb, var(--gray-500) 55%, transparent);
             background-color: color-mix(in srgb, var(--gray-500) 10%, transparent);
         }
+
+        /* The two-condition rule for the home band, drawn rather than
+           written: a photograph reaches the front page only when the
+           tick and its album's 활성화 are both on, and the sentence
+           saying so was read as one condition rather than two. Stacked
+           at every width, because three cards in a row inside a 40rem
+           column would wrap into something narrower than it is worth. */
+        .wiki-gate { display: grid; gap: 0.375rem; margin-block-end: 1.25rem; }
+        .wiki-gate-cond,
+        .wiki-gate-out {
+            display: grid;
+            gap: 0.2rem;
+            padding: 0.875rem 1rem;
+            border-radius: 0.625rem;
+            border-inline-start: 3px solid color-mix(in srgb, var(--gray-500) 55%, transparent);
+            background-color: color-mix(in srgb, var(--gray-500) 10%, transparent);
+        }
+        .wiki-gate-out {
+            border-inline-start-color: var(--success-500);
+            background-color: color-mix(in srgb, var(--success-500) 10%, transparent);
+        }
+        .wiki-gate-cond > b, .wiki-gate-out > b { font-size: 0.9375rem; font-weight: 700; }
+        .wiki-gate-cond > span, .wiki-gate-out > span { font-size: 0.875rem; line-height: 1.75; color: var(--wiki-muted); }
+        .wiki-gate-op {
+            justify-self: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1.4;
+            letter-spacing: 0.08em;
+            color: var(--wiki-muted);
+        }
+
+        /* The same two marks the 사진 list uses, in the same colours. */
+        .wiki-star-on, .wiki-star-off { font-size: 1rem; line-height: 1; }
+        .wiki-star-on { color: var(--warning-500); }
+        .wiki-star-off { color: var(--gray-500); }
 
         /* Notes and warnings stay visibly different at a glance. */
         .wiki-note, .wiki-warn {
