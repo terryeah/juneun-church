@@ -38,16 +38,17 @@
 {{-- Salutation --}}
 @if (! empty($salutation))
 {{ $salutation }}
-@else
-@lang('Regards,')<br>
-{{ config('app.name') }}
 @endif
 
 {{--
-    Laravel closes an action mail with an English paragraph repeating the
-    button as a pasteable link. On a Korean letter it was the loudest
-    thing on the screen and the only English on it, and the address it
-    spelled out was an admin URL that means nothing to whoever cannot
-    already open it. The button stays; the paragraph goes.
+    Everything Laravel puts below the last line is gone: the "Regards,"
+    sign-off and the paragraph repeating the button as a pasteable link.
+    Both were in English on a Korean letter, and the address the
+    paragraph spelled out was an admin URL that means nothing to anyone
+    who cannot already open it. The church signs its own letters in its
+    own words - the notification writes its closing line itself - and
+    the footer below still carries the name.
+
+    A notification that sets its own salutation keeps it.
 --}}
 </x-mail::message>
