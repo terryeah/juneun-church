@@ -1,7 +1,17 @@
 <x-filament-panels::page>
     {{-- Styled inline because the panel's compiled CSS does not include arbitrary utilities from app views. --}}
+    {{-- A dashboard inside a dashboard is two sets of scrollbars, and on
+         a phone the outer one is the enemy: every drag inside the frame
+         has to fight the page behind it. So the frame is given the whole
+         screen that is left under the header, which leaves the page with
+         nothing of its own to scroll, and dvh rather than vh so the
+         browser's own chrome sliding away does not change the answer.
+
+         Umami draws its dashboard responsively, so the narrow width is
+         its problem to solve and it does. --}}
     <style>
-        .an-frame { display: block; width: 100%; height: 78vh; min-height: 40rem; border: 0; border-radius: 0.75rem; background-color: rgba(128, 138, 160, 0.06); }
+        .an-frame { display: block; width: 100%; height: calc(100dvh - 13rem); min-height: 26rem; border: 0; border-radius: 0.75rem; background-color: rgba(128, 138, 160, 0.06); }
+        @media (min-width: 48rem) { .an-frame { height: 78vh; min-height: 40rem; } }
     </style>
 
     @if (filled($this->shareUrl))
