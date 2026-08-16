@@ -12,6 +12,7 @@ use App\Models\MembershipRequest;
 use App\Models\User;
 use App\Notifications\MembershipApproved;
 use App\Notifications\MembershipRequested;
+use App\Providers\Filament\AdminPanelProvider;
 use Database\Seeders\RoleSeeder;
 use Filament\Facades\Filament;
 use Filament\Tables\Table;
@@ -549,6 +550,25 @@ class MembershipSignupTest extends TestCase
         $this->assertSame('대기', $waiting->fresh()->status);
         $this->assertSame(['record-pending'], $table->getRecordClasses($waiting->fresh()));
         $this->assertSame([], $table->getRecordClasses($settled->fresh()));
+
+        /**
+         * And the mark has to be one the panel stylesheet can find. The
+         * class landed on the row from the first day; the rule beside it
+         * named fi-ta-record, which is what a row is called in the grid
+         * layout and never in a table - so the desktop list looked
+         * exactly as it had before, and only a phone showed anything.
+         */
+        $markup = Livewire::actingAs($reviewer)->test(ListMembershipRequests::class)->html();
+
+        preg_match('/<tr[^>]*class="([^"]*record-pending[^"]*)"/', $markup, $row);
+
+        $this->assertNotEmpty($row, '대기 행에 표시 클래스가 붙어야 합니다.');
+        $this->assertStringContainsString('fi-ta-row', $row[1]);
+        $this->assertStringContainsString(
+            '.fi-ta-row.record-pending',
+            AdminPanelProvider::panelStyles(),
+            '패널 스타일이 실제로 붙는 클래스를 겨냥해야 합니다.',
+        );
     }
 
     /**
