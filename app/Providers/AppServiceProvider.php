@@ -18,12 +18,16 @@ use Filament\Tables\Table;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Contracts\Validation\UncompromisedVerifier;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\Factory as HttpFactory;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\NotPwnedVerifier;
+use Illuminate\Validation\Rules\Password;
 use Livewire\Livewire;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Support\CauserResolver;
@@ -77,6 +81,24 @@ class AppServiceProvider extends ServiceProvider
             fn ($app, array $parameters): ResetPasswordNotification => (new ResetPasswordNotification($parameters['token']))
                 ->onConnection('deferred'),
         );
+
+        /**
+         * Three seconds to ask whether a password is a known one.
+         *
+         * The check is one call to the Have I Been Pwned range API, and
+         * Laravel allows it thirty seconds by default. That is not a
+         * cost anybody pays on a good day - the call answers in about a
+         * tenth of a second from Sydney - but on a bad one it is thirty
+         * seconds of a person staring at a submitted sign-up form.
+         *
+         * The verifier fails open: an unreachable service means the
+         * password is treated as unbreached, so a bad day never locks
+         * anyone out of joining.
+         */
+        $this->app->singleton(
+            UncompromisedVerifier::class,
+            fn ($app): NotPwnedVerifier => new NotPwnedVerifier($app[HttpFactory::class], 3),
+        );
     }
 
     /**
@@ -119,6 +141,24 @@ class AppServiceProvider extends ServiceProvider
          * the configuration inherits to DatePicker as well.
          */
         DateTimePicker::configureUsing(fn (DateTimePicker $picker) => $picker->firstDayOfWeek(7));
+
+        /**
+         * What the site asks of a password: eight characters, and not
+         * one that is already on the breach lists.
+         *
+         * Length is the only composition rule. NIST retired the rest -
+         * a required symbol pushes people towards Password1! and buys
+         * nothing - and Apple asks for no symbol either. What does the
+         * work is the second rule: a password in the Have I Been Pwned
+         * corpus is one that has already been typed into somebody's
+         * cracking list, which is a far better test than counting
+         * character classes.
+         *
+         * Only the first five characters of the SHA-1 hash leave this
+         * server; the answer comes back as a list of suffixes and the
+         * comparison happens here, so no password ever goes anywhere.
+         */
+        Password::defaults(fn (): Password => Password::min(8)->uncompromised());
 
         SaveUploadsAsWebp::register();
         CreateAction::configureUsing(fn (CreateAction $action) => $action->createAnother(false));
