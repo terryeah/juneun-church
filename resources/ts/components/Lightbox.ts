@@ -474,7 +474,16 @@ export class Lightbox {
          * either - navy-900 is #0d1730.
          */
         button.style.cssText = 'display: flex; align-items: center; justify-content: center;'
-            + ' width: 2.5rem; height: 2.5rem; border-radius: 9999px; line-height: 1;'
+            + ' box-sizing: border-box; width: 2.75rem; height: 2.75rem;'
+            /**
+             * The disc a thumb has to hit is the button's border box,
+             * and a phone wants 44px of it. The disc an eye sees is the
+             * padding box, which this keeps at the 40px it was drawn
+             * to: two transparent pixels all round, with the background
+             * clipped inside them so they do not colour in.
+             */
+            + ' border: 2px solid transparent; background-clip: padding-box;'
+            + ' border-radius: 9999px; line-height: 1;'
             + ' color: var(--color-cream);'
             + ' background-color: rgba(13, 23, 48, 0.72);'
             + ' transition: background-color 150ms ease;';
