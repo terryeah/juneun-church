@@ -28,7 +28,6 @@ class GivingController extends Controller
             return view('pages.members-only', [
                 'kicker' => '은혜를 흘려보내는 · Giving',
                 'title' => '헌금',
-                'body' => '주보에 실리는 주일 헌금 내역에는 헌금하신 성도의 이름이 담겨 있어 헌금 안내와 함께 성도에게만 공개됩니다.',
             ]);
         }
 

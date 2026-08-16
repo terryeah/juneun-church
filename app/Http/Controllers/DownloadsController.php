@@ -39,7 +39,6 @@ class DownloadsController extends Controller
             return view('pages.members-only', [
                 'kicker' => '교회 자료 · Downloads',
                 'title' => '자료실',
-                'body' => '주보와 교회 서식에는 셀 편성과 섬김이 명단처럼 성도의 정보가 담겨 있어 성도에게만 공개됩니다.',
             ]);
         }
 

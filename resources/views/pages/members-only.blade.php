@@ -12,6 +12,6 @@
 
     <x-ui.page-header :kicker="$kicker" :title="$title" />
 
-    <x-ui.sign-in-required class="section-members-only" :body="$body" />
+    <x-ui.sign-in-required class="section-members-only" />
 
 </x-layout.app>

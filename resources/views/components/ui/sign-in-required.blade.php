@@ -1,5 +1,5 @@
 @props([
-    'body',
+    'body' => '이 페이지는 성도에게만 공개됩니다.',
 ])
 
 @php
@@ -10,8 +10,10 @@
 @endphp
 
 {{-- Tells a reader who is not on the 교적, in one line, why a page is
-     holding something back. Shared by every 성도 전용 page through
-     pages/members-only.blade.php, so they all read as one site.
+     holding something back. Every 성도 전용 page says the same sentence:
+     five pages each explaining themselves differently read as five
+     different rules rather than one, and the page's own heading sits
+     directly above this line, so naming the section again adds nothing.
 
      The gate is the 교적, not the session, so the two readers who hit
      it need different things said to them. Someone signed out is one

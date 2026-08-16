@@ -57,7 +57,6 @@ class RestrictedFileController extends Controller
             return view('pages.members-only', [
                 'kicker' => '주일 예배 · Bulletin',
                 'title' => '주보',
-                'body' => '주보에는 셀 편성과 섬김이 명단, 주일 헌금 내역이 담겨 있어 성도에게만 공개됩니다.',
             ]);
         }
 

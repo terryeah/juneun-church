@@ -25,7 +25,6 @@ class EventController extends Controller
             return view('pages.members-only', [
                 'kicker' => '함께하는 시간 · Events',
                 'title' => '교회 행사',
-                'body' => '교회 행사에는 성도가 모이는 시간과 장소가 담겨 있어 성도에게만 공개됩니다.',
             ]);
         }
 

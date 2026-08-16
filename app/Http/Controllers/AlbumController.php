@@ -140,7 +140,6 @@ class AlbumController extends Controller
         return view('pages.members-only', [
             'kicker' => '주는교회의 순간들 · Moments',
             'title' => '앨범',
-            'body' => '예배와 교회 행사의 사진과 영상에는 성도의 얼굴이 담겨 있어 성도에게만 공개됩니다.',
         ]);
     }
 }

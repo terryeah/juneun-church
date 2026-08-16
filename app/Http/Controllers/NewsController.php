@@ -62,7 +62,6 @@ class NewsController extends Controller
         return view('pages.members-only', [
             'kicker' => '함께 나누는 소식 · News',
             'title' => '교회 소식',
-            'body' => '교회 소식에는 성도의 이름과 사정이 담겨 있어 성도에게만 공개됩니다.',
         ]);
     }
 }
