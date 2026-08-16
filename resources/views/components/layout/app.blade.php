@@ -133,12 +133,16 @@
     <link rel="preload" href="/fonts/GmarketSansMedium-modern.woff2" as="font" type="font/woff2" crossorigin>
     <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
-    {{-- The beacon is what Cloudflare counts, so an ignored address is
-         simply not sent it. Safe to decide per request: this HTML is
-         never cached at the edge - it answers no-cache, private, and
-         Cloudflare reports it back as DYNAMIC. --}}
-    @if (config('services.cloudflare.web_analytics_token') && ! in_array(request()->ip(), config('services.cloudflare.analytics_ignored_ips'), true))
-        <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "{{ config('services.cloudflare.web_analytics_token') }}"}'></script>
+    {{-- Umami counts a visit when this script runs, so an ignored
+         address is simply not sent it. Safe to decide per request: this
+         HTML is never cached at the edge - it answers no-cache, private,
+         and Cloudflare reports it back as DYNAMIC.
+
+         data-cfasync="false" tells Cloudflare's Rocket Loader to leave
+         the tag alone. Rocket Loader is off today, and this is what
+         keeps the counting honest if anyone ever turns it on. --}}
+    @if (config('services.umami.website_id') && ! in_array(request()->ip(), config('services.cloudflare.analytics_ignored_ips'), true))
+        <script defer data-cfasync="false" src="{{ config('services.umami.script_url') }}" data-website-id="{{ config('services.umami.website_id') }}"></script>
     @endif
 </head>
 <body class="flex min-h-screen flex-col bg-paper font-sans text-navy antialiased">

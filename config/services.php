@@ -65,4 +65,19 @@ return [
         ))),
     ],
 
+    /**
+     * Umami, which counts the visits 방문자 통계 reports.
+     *
+     * Cloudflare's own figures came from a beacon Cloudflare injects at
+     * the edge, which meant no address could be left out of them and no
+     * page could be told from another. This script is ours, in our own
+     * layout, so both are decided here.
+     */
+    'umami' => [
+        'website_id' => env('UMAMI_WEBSITE_ID'),
+        'script_url' => env('UMAMI_SCRIPT_URL', 'https://cloud.umami.is/script.js'),
+        'api_url' => env('UMAMI_API_URL', 'https://api.umami.is/v1'),
+        'api_key' => env('UMAMI_API_KEY'),
+    ],
+
 ];

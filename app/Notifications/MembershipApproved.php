@@ -76,7 +76,6 @@ class MembershipApproved extends Notification implements ShouldQueue
             : '성도 전용 자료는 교적에 등록된 뒤에 보실 수 있습니다. 교회 사무실로 문의해 주세요.');
 
         return $message
-            ->line('비밀번호가 기억나지 않으시면 로그인 화면에서 재설정하실 수 있습니다.')
-            ->salutation('브리즈번 주는교회 드림');
+            ->line('비밀번호가 기억나지 않으시면 로그인 화면에서 재설정하실 수 있습니다.');
     }
 }

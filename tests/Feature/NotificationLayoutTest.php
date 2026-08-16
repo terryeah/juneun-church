@@ -53,16 +53,31 @@ class NotificationLayoutTest extends TestCase
     }
 
     /**
-     * A letter that signs itself keeps its own closing.
+     * The approval letter ends the same way: no sign-off at all.
      */
-    public function test_the_approval_letter_keeps_its_korean_sign_off(): void
+    public function test_the_approval_letter_has_no_sign_off(): void
     {
         $body = (string) (new MembershipApproved(true))
             ->toMail(User::factory()->create())
             ->render();
 
-        $this->assertStringContainsString('브리즈번 주는교회 드림', $body);
+        $this->assertStringContainsString('비밀번호가 기억나지 않으시면', $body);
+        $this->assertStringNotContainsString('드림', $body);
         $this->assertStringNotContainsString('Regards', $body);
         $this->assertStringNotContainsString('having trouble clicking', $body);
+    }
+
+    /**
+     * And nothing signs the page off underneath either. The header
+     * already says who is writing.
+     */
+    public function test_no_letter_carries_a_footer(): void
+    {
+        $body = (string) (new MembershipApproved(true))
+            ->toMail(User::factory()->create())
+            ->render();
+
+        $this->assertStringNotContainsString('All rights reserved', $body);
+        $this->assertStringNotContainsString('©', $body);
     }
 }

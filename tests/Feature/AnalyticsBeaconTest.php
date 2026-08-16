@@ -9,10 +9,10 @@ use Tests\TestCase;
 /**
  * Covers who gets counted in 방문자 통계.
  *
- * The figures come from Cloudflare, which counts a visit when a page
- * loads its beacon. Nothing can be subtracted afterwards - the numbers
- * arrive as daily totals with no addresses in them - so the only place
- * this can be decided is when the page is written.
+ * Umami counts a visit when the page runs its script, and nothing can
+ * be subtracted afterwards - so the only place this can be decided is
+ * when the page is written. Which is the whole reason the script is
+ * ours rather than injected at the edge, as Cloudflare's was.
  */
 class AnalyticsBeaconTest extends TestCase
 {
@@ -25,7 +25,8 @@ class AnalyticsBeaconTest extends TestCase
         $this->seed(SiteSettingSeeder::class);
 
         config([
-            'services.cloudflare.web_analytics_token' => 'test-token',
+            'services.umami.website_id' => 'test-website-id',
+            'services.umami.script_url' => 'https://cloud.umami.is/script.js',
             'services.cloudflare.analytics_ignored_ips' => ['203.0.113.7'],
         ]);
     }
@@ -37,7 +38,7 @@ class AnalyticsBeaconTest extends TestCase
     {
         $this->get('/')
             ->assertOk()
-            ->assertSee('static.cloudflareinsights.com/beacon.min.js', false);
+            ->assertSee('cloud.umami.is/script.js', false);
     }
 
     /**
@@ -48,7 +49,7 @@ class AnalyticsBeaconTest extends TestCase
         $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.7'])
             ->get('/')
             ->assertOk()
-            ->assertDontSee('static.cloudflareinsights.com', false);
+            ->assertDontSee('cloud.umami.is', false);
     }
 
     /**
@@ -62,6 +63,6 @@ class AnalyticsBeaconTest extends TestCase
         $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.7'])
             ->get('/')
             ->assertOk()
-            ->assertSee('static.cloudflareinsights.com/beacon.min.js', false);
+            ->assertSee('cloud.umami.is/script.js', false);
     }
 }
