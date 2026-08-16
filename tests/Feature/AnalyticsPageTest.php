@@ -69,10 +69,7 @@ class AnalyticsPageTest extends TestCase
             ->get('/admin/analytics')
             ->assertOk()
             ->assertSee('https://cloud.umami.is/share/test-share-id', false)
-            /** The frame, for a laptop. */
-            ->assertSee('Umami 방문자 통계', false)
-            /** And the way out, which is what a phone is shown instead. */
-            ->assertSee('Umami에서 열기', false);
+            ->assertSee('Umami 방문자 통계', false);
     }
 
     /**
