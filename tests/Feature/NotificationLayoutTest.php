@@ -13,10 +13,12 @@ use Tests\TestCase;
 /**
  * Covers what the church's letters carry below the last line.
  *
- * Laravel closes a notification with an English sign-off and, when the
- * mail has a button, an English paragraph repeating it as a pasteable
- * link. Neither belongs on a Korean letter, and the link was an admin
- * URL nobody outside the office can open.
+ * Laravel signs every notification off with "Regards," over the app
+ * name, which was the one piece of English in the middle of a Korean
+ * letter. That goes. What Laravel puts under it - the subcopy spelling
+ * out the button as a link, and the footer - stays, because a button
+ * that a mail client mangles leaves that address as the only way
+ * through.
  */
 class NotificationLayoutTest extends TestCase
 {
@@ -42,14 +44,13 @@ class NotificationLayoutTest extends TestCase
 
         $this->assertStringContainsString('가입 신청 검토하기', $body);
         $this->assertStringNotContainsString('Regards', $body);
-        $this->assertStringNotContainsString('having trouble clicking', $body);
 
         /**
-         * The button still links to the request - that is its job. What
-         * has gone is the address written out as a sentence for anyone
-         * to read, under a heading in a language the letter is not in.
+         * The subcopy stays: a button that a mail client mangles leaves
+         * the address written underneath as the only way through.
          */
-        $this->assertSame(1, substr_count($body, '/admin/membership-requests/'));
+        $this->assertStringContainsString('having trouble clicking', $body);
+        $this->assertStringContainsString('/admin/membership-requests/', $body);
     }
 
     /**
@@ -64,20 +65,18 @@ class NotificationLayoutTest extends TestCase
         $this->assertStringContainsString('비밀번호가 기억나지 않으시면', $body);
         $this->assertStringNotContainsString('드림', $body);
         $this->assertStringNotContainsString('Regards', $body);
-        $this->assertStringNotContainsString('having trouble clicking', $body);
     }
 
     /**
-     * And nothing signs the page off underneath either. The header
-     * already says who is writing.
+     * The footer under every letter is Laravel's and stays there.
      */
-    public function test_no_letter_carries_a_footer(): void
+    public function test_the_footer_stays(): void
     {
         $body = (string) (new MembershipApproved(true))
             ->toMail(User::factory()->create())
             ->render();
 
-        $this->assertStringNotContainsString('All rights reserved', $body);
-        $this->assertStringNotContainsString('©', $body);
+        $this->assertStringContainsString('All rights reserved', $body);
+        $this->assertStringContainsString('브리즈번 주는교회', $body);
     }
 }

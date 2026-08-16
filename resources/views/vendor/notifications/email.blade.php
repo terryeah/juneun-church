@@ -35,20 +35,30 @@
 
 @endforeach
 
-{{-- Salutation --}}
+{{--
+    Salutation. The default arm is gone, and only that: Laravel signs
+    every letter "Regards," over the app name, which was the one piece
+    of English in the middle of a Korean letter. A notification that
+    writes its own closing line still gets it.
+
+    Everything else Laravel puts here stays - the subcopy below and the
+    footer under it - because a button that does not survive the mail
+    client leaves the address in the subcopy as the only way through.
+--}}
 @if (! empty($salutation))
 {{ $salutation }}
 @endif
 
-{{--
-    Everything Laravel puts below the last line is gone: the "Regards,"
-    sign-off and the paragraph repeating the button as a pasteable link.
-    Both were in English on a Korean letter, and the address the
-    paragraph spelled out was an admin URL that means nothing to anyone
-    who cannot already open it. The church signs its own letters in its
-    own words - the notification writes its closing line itself - and
-    the footer below still carries the name.
-
-    A notification that sets its own salutation keeps it.
---}}
+{{-- Subcopy --}}
+@isset($actionText)
+<x-slot:subcopy>
+@lang(
+    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\n".
+    'into your web browser:',
+    [
+        'actionText' => $actionText,
+    ]
+) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
+</x-slot:subcopy>
+@endisset
 </x-mail::message>
