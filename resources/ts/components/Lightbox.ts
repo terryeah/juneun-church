@@ -474,7 +474,7 @@ export class Lightbox {
          * either - navy-900 is #0d1730.
          */
         button.style.cssText = 'display: flex; align-items: center; justify-content: center;'
-            + ' width: 2.75rem; height: 2.75rem; border-radius: 9999px; line-height: 1;'
+            + ' width: 2.5rem; height: 2.5rem; border-radius: 9999px; line-height: 1;'
             + ' color: var(--color-cream);'
             + ' background-color: rgba(13, 23, 48, 0.72);'
             + ' transition: background-color 150ms ease;';
@@ -502,7 +502,8 @@ export class Lightbox {
      * viewBox at one stroke width, the three marks are the same by
      * construction rather than by a number somebody measured once.
      *
-     * 1.375rem in a 2.75rem disc: the mark takes half the circle.
+     * 22px in a 2.5rem disc, drawn at the size it was settled on: the
+     * disc came in around it rather than the other way about.
      */
     private static icon(name: OverlayIcon): string {
         /**
