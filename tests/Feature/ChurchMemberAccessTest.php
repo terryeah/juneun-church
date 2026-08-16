@@ -21,6 +21,10 @@ use Tests\TestCase;
  * account proves only that the office let somebody in, not that the
  * church recognises them. The 교적 record is what says that, and it is
  * the only thing these pages ask about.
+ *
+ * Five pages are 성도 전용 in full now - 교회 행사, 교회 소식, 자료실,
+ * 헌금 and 앨범 - so anybody else gets their heading and one line
+ * offering the login, and no query behind it is ever run.
  */
 class ChurchMemberAccessTest extends TestCase
 {
@@ -32,27 +36,39 @@ class ChurchMemberAccessTest extends TestCase
 
         $this->seed(SiteSettingSeeder::class);
 
+        /**
+         * Neither fixture is named '성도 전용': the tag is asserted
+         * absent from these pages, and a title carrying the phrase
+         * would fail that on its own.
+         */
         Announcement::factory()->create([
-            'title' => '성도 전용 공지',
+            'title' => '새가족 명단 공지',
             'slug' => 'members-only-notice',
             'content' => '<p>교적에 있는 분만 보십니다.</p>',
             'is_published' => true,
-            'is_members_only' => true,
             'published_at' => now()->subDay(),
         ]);
 
         Bulletin::factory()->create([
             'title' => '8월 3일 주일 예배 주보',
-            'is_members_only' => true,
             'published_at' => now()->subDay(),
         ]);
 
         Album::factory()->create([
-            'title' => '성도 전용 앨범',
+            'title' => '수련회 사진첩',
             'slug' => 'members-only-album',
             'is_published' => true,
-            'is_members_only' => true,
         ]);
+    }
+
+    /**
+     * The five pages that are 성도 전용 in full.
+     *
+     * @return array<int, string>
+     */
+    private function restrictedPages(): array
+    {
+        return ['/events', '/news', '/downloads', '/giving', '/album'];
     }
 
     /**
@@ -62,9 +78,28 @@ class ChurchMemberAccessTest extends TestCase
     {
         $this->actingAs(User::factory()->onTheRoster()->create());
 
-        $this->get('/news')->assertOk()->assertSee('성도 전용 공지');
+        $this->get('/news')->assertOk()->assertSee('새가족 명단 공지');
         $this->get('/downloads')->assertOk()->assertSee('8월 3일 주일 예배 주보');
-        $this->get('/album')->assertOk()->assertSee('성도 전용 앨범');
+        $this->get('/album')->assertOk()->assertSee('수련회 사진첩');
+
+        foreach ($this->restrictedPages() as $page) {
+            $this->get($page)->assertOk()->assertDontSee('section-members-only');
+        }
+    }
+
+    /**
+     * A guest gets the heading and the login offer on every one of them,
+     * and nothing else.
+     */
+    public function test_a_guest_gets_the_sign_in_notice_on_every_page(): void
+    {
+        foreach ($this->restrictedPages() as $page) {
+            $this->get($page)
+                ->assertOk()
+                ->assertSee('section-members-only')
+                ->assertSee('로그인')
+                ->assertSee('noindex', escape: false);
+        }
     }
 
     /**
@@ -78,51 +113,70 @@ class ChurchMemberAccessTest extends TestCase
     {
         $this->seed(RoleSeeder::class);
 
-        $account = User::factory()->create();
-
-        $this->actingAs($account);
-
-        $this->get('/news')->assertOk()->assertDontSee('성도 전용 공지');
-        $this->get('/downloads')->assertOk()->assertDontSee('8월 3일 주일 예배 주보');
-        $this->get('/album')->assertOk()->assertDontSee('성도 전용 앨범');
-        $this->get('/news/members-only-notice')->assertNotFound();
-        $this->get('/album/members-only-album')->assertNotFound();
-    }
-
-    /**
-     * The 성도 전용 tag never reaches somebody who is not one.
-     *
-     * A restricted item is dropped from the response rather than hidden
-     * in it, so most of these tags cannot be reached anyway - they ride
-     * on the notice or album they mark. 자료실 was the exception: its
-     * tag sits beside the page title and so was drawn for everybody,
-     * naming files the reader could not see and advertising that the
-     * church holds some back.
-     */
-    public function test_the_tag_is_never_shown_to_somebody_who_is_not_a_member(): void
-    {
-        foreach (['/', '/news', '/downloads', '/album', '/giving'] as $page) {
-            $this->get($page)->assertOk()->assertDontSee('성도 전용', escape: false);
-        }
-
-        /** Nor to a signed-in 일반회원, who sees the same pages a guest does. */
         $this->actingAs(User::factory()->create());
 
-        foreach (['/', '/news', '/downloads', '/album', '/giving'] as $page) {
-            $this->get($page)->assertOk()->assertDontSee('성도 전용', escape: false);
+        foreach ($this->restrictedPages() as $page) {
+            $this->get($page)->assertOk()->assertSee('section-members-only');
+        }
+
+        $this->get('/news')->assertDontSee('새가족 명단 공지');
+        $this->get('/downloads')->assertDontSee('8월 3일 주일 예배 주보');
+        $this->get('/album')->assertDontSee('수련회 사진첩');
+    }
+
+    /**
+     * A record's own page names the section, never the record.
+     *
+     * The slug carries the title, so a page that echoed it back would
+     * hand over the one thing the login is standing in front of. The
+     * home page still links notices to everybody, so this is the page a
+     * guest most often lands on.
+     */
+    public function test_a_detail_page_names_the_section_rather_than_the_record(): void
+    {
+        foreach ([null, User::factory()->create()] as $reader) {
+            if ($reader) {
+                $this->actingAs($reader);
+            }
+
+            $this->get('/news/members-only-notice')
+                ->assertOk()
+                ->assertSee('교회 소식')
+                ->assertDontSee('새가족 명단 공지')
+                ->assertDontSee('교적에 있는 분만 보십니다');
+
+            $this->get('/album/members-only-album')
+                ->assertOk()
+                ->assertSee('앨범')
+                ->assertDontSee('수련회 사진첩');
         }
     }
 
     /**
-     * A 성도 is still told which pages hold restricted material.
+     * The 성도 전용 tag is gone from the site.
+     *
+     * It marked a row on a page open to everybody. The page is closed
+     * now, so on every one of them the tag would only repeat what
+     * getting through the door already said.
      */
-    public function test_the_tag_is_shown_to_a_member(): void
+    public function test_the_tag_appears_on_none_of_the_pages(): void
     {
+        foreach (['/', ...$this->restrictedPages()] as $page) {
+            $this->get($page)->assertOk()->assertDontSee('성도 전용', escape: false);
+        }
+
+        $this->actingAs(User::factory()->create());
+
+        foreach (['/', ...$this->restrictedPages()] as $page) {
+            $this->get($page)->assertOk()->assertDontSee('성도 전용', escape: false);
+        }
+
+        /** Nor to a 성도, who is reading the real pages. */
         $this->actingAs(User::factory()->onTheRoster()->create());
 
-        $this->get('/downloads')->assertOk()->assertSee('성도 전용');
-        $this->get('/news')->assertOk()->assertSee('성도 전용');
-        $this->get('/album')->assertOk()->assertSee('성도 전용');
+        foreach (['/', ...$this->restrictedPages()] as $page) {
+            $this->get($page)->assertOk()->assertDontSee('성도 전용', escape: false);
+        }
     }
 
     /**
@@ -136,17 +190,12 @@ class ChurchMemberAccessTest extends TestCase
             'items' => [['category' => '십일조', 'name' => '이영희', 'amount' => '222.00']],
         ]);
 
-        /**
-         * The section is identified by its class rather than by its
-         * wording: the sign-in notice says '주보에 실리는 주일 헌금
-         * 내역은 성도에게만 공개됩니다', so asserting on the phrase
-         * would match the very notice that proves the records are gone.
-         */
         $this->actingAs(User::factory()->create())
             ->get('/giving')
             ->assertOk()
             ->assertDontSee('section-giving-records')
-            ->assertSee('section-giving-signup');
+            ->assertDontSee('이영희')
+            ->assertSee('section-members-only');
     }
 
     /**
@@ -163,7 +212,7 @@ class ChurchMemberAccessTest extends TestCase
             ->get('/giving')
             ->assertOk()
             ->assertSee('section-giving-records')
-            ->assertDontSee('section-giving-signup');
+            ->assertDontSee('section-members-only');
     }
 
     /**
@@ -183,7 +232,7 @@ class ChurchMemberAccessTest extends TestCase
         $this->actingAs($staff)
             ->get('/news')
             ->assertOk()
-            ->assertDontSee('성도 전용 공지');
+            ->assertDontSee('새가족 명단 공지');
     }
 
     /**
@@ -215,6 +264,6 @@ class ChurchMemberAccessTest extends TestCase
         $this->actingAs($account)
             ->get('/news')
             ->assertOk()
-            ->assertDontSee('성도 전용 공지');
+            ->assertDontSee('새가족 명단 공지');
     }
 }

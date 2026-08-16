@@ -5,7 +5,10 @@
             .($album->event_date ? ' · '.$album->event_date->translatedFormat('Y년 n월 j일') : '');
 @endphp
 
-<x-layout.app :title="$album->title" :description="$shareDescription" :image="$videos->first()?->thumbnailUrl()" :noindex="$album->is_members_only">
+{{-- Always noindex: 앨범 is 성도 전용 as a whole section, and the
+     videos are unlisted on YouTube. --}}
+
+<x-layout.app :title="$album->title" :description="$shareDescription" :image="$videos->first()?->thumbnailUrl()" :noindex="true">
 
     <x-ui.page-header kicker="주는교회의 순간들 · Videos" :title="$album->title">
         @if ($album->event_date){{ $album->event_date->translatedFormat('Y년 n월 j일') }}@if ($album->description) - @endif@endif{{ $album->description }}

@@ -66,10 +66,6 @@ class AnnouncementForm
                     Toggle::make('is_highlighted')
                         ->label('하이라이트')
                         ->grow(false),
-                    Toggle::make('is_members_only')
-                        ->label('성도 전용')
-                        ->helperText('켜면 로그인한 성도에게만 보이고, 로그인하지 않은 방문자에게는 제목도 내용도 보이지 않습니다. 새가족 소개, 셀 배정 등 성도의 이름이 들어가는 소식은 반드시 켜 주세요.')
-                        ->grow(false),
                 ])
                     ->from('md')
                     ->columnSpanFull(),

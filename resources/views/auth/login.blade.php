@@ -8,7 +8,7 @@
 <x-layout.app title="로그인" description="브리즈번 주는교회 홈페이지 로그인입니다." :noindex="true">
 
     <x-ui.page-header kicker="함께하는 성도 · Log in" title="로그인" narrow>
-        헌금 내역처럼 성도에게만 열려 있는 내용은 로그인하신 뒤에 보실 수 있습니다.
+        교회 소식, 교회 행사, 자료실, 헌금, 앨범은 성도에게만 열려 있습니다. 로그인하시면 보시던 페이지로 돌아갑니다.
     </x-ui.page-header>
 
     <section class="container-site pb-12 lg:pb-16">

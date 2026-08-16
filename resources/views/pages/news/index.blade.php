@@ -12,10 +12,10 @@
                             <span class="ml-2 font-extrabold uppercase tracking-[0.16em] text-accent">Pinned</span>
                         @endif
                     </p>
-                    {{-- Same badge as the 헌금 records, sat inline after the title so it
-                         follows the last word and a title that wraps on a phone leaves
-                         the list layout alone. Only signed-in 성도 ever reach this. --}}
-                    <h2 class="mt-1 font-kr text-display-sm font-medium group-hover:text-accent">{{ $announcement->title }}@if ($announcement->is_members_only)<span class="ml-2 inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 align-middle font-kr text-xs font-medium text-success">성도 전용</span>@endif</h2>
+                    {{-- No 성도 전용 tag: the page is 성도 전용 in full, so a
+                         tag on each row would only repeat what getting here
+                         already said. --}}
+                    <h2 class="mt-1 font-kr text-display-sm font-medium group-hover:text-accent">{{ $announcement->title }}</h2>
                     <p class="mt-2 line-clamp-2 max-w-2xl font-kr text-body-sm leading-relaxed text-navy-700">
                         {{ $announcement->excerpt() }}
                     </p>

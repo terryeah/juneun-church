@@ -1,15 +1,15 @@
 <?php
 
+use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\MembershipRequestController;
 use App\Http\Controllers\DownloadsController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\AlbumController;
-use App\Http\Controllers\RestrictedFileController;
 use App\Http\Controllers\GivingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\RestrictedFileController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\WorshipController;
@@ -30,8 +30,15 @@ Route::permanentRedirect('/bulletins', '/downloads')->name('bulletins');
 /**
  * A 성도 전용 file is fetched through the application so somebody can
  * be asked who they are. An open one keeps its direct CDN address.
+ *
+ * A 주보 opens as a page rather than as a bare PDF, so the browser tab
+ * carries the church's name and the date instead of the record's id.
+ * The file itself hangs off it under an ASCII name browsers can keep.
  */
 Route::get('/downloads/bulletin/{bulletin}', [RestrictedFileController::class, 'bulletin'])->name('bulletin.file');
+Route::get('/downloads/bulletin/{bulletin}/{filename}', [RestrictedFileController::class, 'bulletinPdf'])
+    ->where('filename', 'Bulletin_\d{4}_\d{2}_\d{2}\.pdf')
+    ->name('bulletin.pdf');
 Route::get('/downloads/document/{document}', [RestrictedFileController::class, 'document'])->name('document.file');
 
 Route::get('/album', [AlbumController::class, 'index'])->name('album.index');

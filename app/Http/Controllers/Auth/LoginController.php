@@ -55,9 +55,27 @@ class LoginController extends Controller
 
     /**
      * Show the login form.
+     *
+     * A 성도 전용 page answers 200 with its notice rather than
+     * redirecting, so nothing sets the intended URL the way the `auth`
+     * middleware would and every sign-in landed on 헌금. The notice's
+     * 로그인 link carries where the reader was as `next`, and it is
+     * recorded here as the intended URL so the existing
+     * redirect()->intended() takes them back.
+     *
+     * Only a path on this site is accepted: an absolute or
+     * protocol-relative value would let a link posted anywhere decide
+     * where a freshly signed-in session lands.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
+        /** ?next[]=/x arrives as an array, and casting one to a string is an error rather than a value. */
+        $next = $request->query('next');
+
+        if (is_string($next) && str_starts_with($next, '/') && ! str_starts_with($next, '//') && ! str_starts_with($next, '/\\')) {
+            redirect()->setIntendedUrl(url($next));
+        }
+
         return view('auth.login');
     }
 

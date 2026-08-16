@@ -33,7 +33,6 @@ class VideoAlbumPageTest extends TestCase
             'slug' => 'video-test-youth',
             'type' => Album::TYPE_VIDEO,
             'is_published' => true,
-            'is_members_only' => true,
         ]);
 
         Video::factory()->for($this->album)->create([
@@ -52,7 +51,7 @@ class VideoAlbumPageTest extends TestCase
         $this->get('/album?kind=video')
             ->assertOk()
             ->assertSee('테스트 청소년부')
-            ->assertSee('성도 전용');
+            ->assertDontSee('성도 전용');
 
         $this->get('/album/video-test-youth')
             ->assertOk()
@@ -79,7 +78,8 @@ class VideoAlbumPageTest extends TestCase
             ->assertDontSee('aaaaaaaaaaa');
 
         $this->get('/album/video-test-youth')
-            ->assertNotFound()
+            ->assertOk()
+            ->assertSee('section-members-only')
             ->assertDontSee('aaaaaaaaaaa');
 
         $this->get('/sitemap.xml')
@@ -95,7 +95,7 @@ class VideoAlbumPageTest extends TestCase
         $this->actingAs(User::factory()->create());
 
         $this->get('/album?kind=video')->assertOk()->assertDontSee('aaaaaaaaaaa');
-        $this->get('/album/video-test-youth')->assertNotFound();
+        $this->get('/album/video-test-youth')->assertOk()->assertDontSee('aaaaaaaaaaa');
     }
 
     /**
@@ -108,7 +108,6 @@ class VideoAlbumPageTest extends TestCase
             'slug' => 'album-summer',
             'type' => Album::TYPE_PHOTO,
             'is_published' => true,
-            'is_members_only' => false,
         ]);
 
         $this->actingAs(User::factory()->onTheRoster()->create());
@@ -130,16 +129,15 @@ class VideoAlbumPageTest extends TestCase
      */
     public function test_an_unknown_kind_falls_back(): void
     {
-        $this->get('/album?kind=nonsense')
+        $this->actingAs(User::factory()->onTheRoster()->create())
+            ->get('/album?kind=nonsense')
             ->assertOk()
             ->assertSee('사진');
     }
 
     /**
-     * A guest is not offered a 동영상 chip that leads nowhere.
-     *
-     * Every video album is 성도 전용, so the chip was a door painted on
-     * a wall: a link, a page, and '등록된 앨범이 없습니다'.
+     * A kind with nothing in it is not offered a chip that leads
+     * nowhere: a link, a page, and '등록된 앨범이 없습니다'.
      */
     public function test_a_kind_with_nothing_to_show_is_not_offered(): void
     {
@@ -148,17 +146,17 @@ class VideoAlbumPageTest extends TestCase
             'slug' => 'album-open',
             'type' => Album::TYPE_PHOTO,
             'is_published' => true,
-            'is_members_only' => false,
         ]);
+
+        $this->actingAs(User::factory()->onTheRoster()->create());
 
         /** Asserted on the chip's own address, not on the word - '동영상'
             appears in the empty message and in the page title too. */
-        $this->get('/album')->assertOk()->assertDontSee('kind=video');
+        $this->get('/album')->assertOk()->assertSee('kind=video');
 
-        $this->actingAs(User::factory()->onTheRoster()->create())
-            ->get('/album')
-            ->assertOk()
-            ->assertSee('kind=video');
+        Album::query()->where('type', Album::TYPE_VIDEO)->delete();
+
+        $this->get('/album')->assertOk()->assertDontSee('kind=video');
     }
 
     /**
@@ -172,10 +170,12 @@ class VideoAlbumPageTest extends TestCase
             'slug' => 'album-open-two',
             'type' => Album::TYPE_PHOTO,
             'is_published' => true,
-            'is_members_only' => false,
         ]);
 
-        $this->get('/album?kind=video')
+        Album::query()->where('type', Album::TYPE_VIDEO)->delete();
+
+        $this->actingAs(User::factory()->onTheRoster()->create())
+            ->get('/album?kind=video')
             ->assertOk()
             ->assertSee('공개 사진첩')
             ->assertDontSee('kind=video');
@@ -186,23 +186,28 @@ class VideoAlbumPageTest extends TestCase
      */
     public function test_an_array_parameter_does_not_break_the_page(): void
     {
-        $this->get('/album?kind[]=video')->assertOk();
-        $this->get('/album?visibility[]=members')->assertOk();
+        $this->actingAs(User::factory()->onTheRoster()->create())
+            ->get('/album?kind[]=video')
+            ->assertOk();
     }
 
     /**
-     * A page nobody may open says so in Korean, in the site's own
-     * layout, and tells a guest that signing in may be the answer -
-     * without confirming that anything is there.
+     * A slug with nothing behind it says so in Korean, in the site's own
+     * layout, and tells a guest that signing in may be the answer.
+     *
+     * A 성도 전용 album no longer lands here: the page is closed as a
+     * whole, so an address that does exist answers with the section's
+     * heading and the login offer instead. What still 404s for a guest
+     * is a restricted file, which is why the notice says 자료 rather
+     * than 페이지.
      */
     public function test_the_not_found_page_is_the_church_s_own(): void
     {
-        $this->get('/album/video-test-youth')
+        $this->get('/album/there-is-no-such-album')
             ->assertNotFound()
             ->assertSee('페이지를 찾을 수 없습니다')
-            ->assertSee('성도에게만 공개된 페이지일 수 있습니다')
-            ->assertSee('noindex', false)
-            ->assertDontSee('테스트 청소년부');
+            ->assertSee('성도에게만 공개된 자료일 수 있습니다')
+            ->assertSee('noindex', false);
     }
 
     /**
@@ -214,7 +219,6 @@ class VideoAlbumPageTest extends TestCase
             'title' => '나들이',
             'slug' => 'album-outing',
             'is_published' => true,
-            'is_members_only' => false,
         ]);
 
         $this->get('/gallery')->assertMovedPermanently()->assertRedirect('/album');

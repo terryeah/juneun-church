@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -28,7 +27,6 @@ use Illuminate\Support\Facades\Storage;
     'cover_photo_path',
     'cover_thumbnail_path',
     'is_published',
-    'is_members_only',
     'created_by',
 ])]
 class Album extends Model
@@ -72,7 +70,6 @@ class Album extends Model
         return [
             'event_date' => 'date',
             'is_published' => 'boolean',
-            'is_members_only' => 'boolean',
         ];
     }
 
@@ -169,18 +166,15 @@ class Album extends Model
     /**
      * Scope to the albums the current visitor may see.
      *
-     * A 성도 전용 album is dropped from the query rather than hidden in
-     * the markup, so neither its title nor the URL of any of its
-     * photographs ever reaches a guest's response.
+     * Who is reading is no longer asked here: 앨범 is 성도 전용 as a
+     * whole section, closed at the door by 교적 membership, so an album
+     * is either published or it is not.
      *
      * @param  Builder<Album>  $query
      */
     public function scopeVisible(Builder $query): void
     {
-        $query->published()->unless(
-            (bool) Auth::user()?->isChurchMember(),
-            fn (Builder $q) => $q->where('is_members_only', false),
-        );
+        $query->published();
     }
 
     /**

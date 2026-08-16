@@ -18,11 +18,10 @@ use Filament\Tables\Table;
  *
  * A phone gets the four things that identify an album - its cover, its
  * name, when the event was and whether it is live - and nothing else.
- * The two publish switches are left as switches rather than folded into
- * one badge: flipping 활성화 from the list is the whole point of them,
- * and a badge cannot be flipped. 성도 전용 is the rarer of the two, so
- * it waits for a laptop along with the author, and the slug is
- * reference material behind the column menu.
+ * 활성화 is left as a switch rather than folded into a badge: flipping
+ * it from the list is the whole point of it, and a badge cannot be
+ * flipped. The author waits for a laptop, and the slug is reference
+ * material behind the column menu.
  *
  * The cover leads the card on a phone rather than sitting in a grid
  * cell at thumbnail size. Stacking every column into an equal labelled
@@ -78,8 +77,6 @@ class AlbumsTable
                     ->placeholder('-'),
                 ToggleColumn::make('is_published')
                     ->label('활성화'),
-                ToggleColumn::make('is_members_only')
-                    ->label('성도 전용'),
                 Author::column('author.name', '작성자')
                     ->visibleFrom('lg'),
                 TextColumn::make('created_at')

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\BuildsMediaUrls;
 use App\Models\Concerns\LogsModelActivity;
 use App\Models\Concerns\PurgesCdnCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -16,10 +15,10 @@ use Illuminate\Support\Facades\Storage;
 /**
  * A weekly bulletin (주보) uploaded as a PDF.
  */
-#[Fillable(['title', 'file_path', 'published_at', 'is_members_only', 'created_by'])]
+#[Fillable(['title', 'file_path', 'published_at', 'created_by'])]
 class Bulletin extends Model
 {
-    use BuildsMediaUrls, HasFactory, LogsModelActivity, PurgesCdnCache;
+    use HasFactory, LogsModelActivity, PurgesCdnCache;
 
     /**
      * Remove the stored file alongside the record.
@@ -32,7 +31,9 @@ class Bulletin extends Model
     }
 
     /**
-     * The PDF is served from the CDN.
+     * The PDF is private on the bucket now, but every address it was
+     * ever served from is still cached at the edge, so a replaced or
+     * deleted file is still worth purging.
      *
      * @return list<string>
      */
@@ -50,16 +51,18 @@ class Bulletin extends Model
     {
         return [
             'published_at' => 'date',
-            'is_members_only' => 'boolean',
         ];
     }
 
     /**
      * Scope to the bulletins the current visitor may see.
      *
-     * A restricted bulletin is dropped from the query rather than hidden
-     * in the markup, so neither its title nor the URL of its PDF ever
-     * reaches a guest's response.
+     * 자료실 is 성도 전용 as a whole page, so the question is about the
+     * reader rather than about the record: a 주보 carries the cell
+     * lists, the rota and the offering record, and every one of them
+     * does. Anybody off the 교적 therefore selects no bulletin at all,
+     * which is what keeps the file endpoints closed - they ask this
+     * scope whether the reader may have the row before streaming it.
      *
      * @param  Builder<Bulletin>  $query
      */
@@ -67,7 +70,7 @@ class Bulletin extends Model
     {
         $query->unless(
             (bool) Auth::user()?->isChurchMember(),
-            fn (Builder $q) => $q->where('is_members_only', false),
+            fn (Builder $q) => $q->whereRaw('1 = 0'),
         );
     }
 
@@ -80,19 +83,35 @@ class Bulletin extends Model
     }
 
     /**
-     * Public URL of the PDF on the media disk.
+     * Address of the 주보 on this site.
+     *
+     * Always the application's own, never the object's: the file is
+     * private on the bucket now, and only a request that comes through
+     * here can be asked who is making it.
      */
     public function fileUrl(): string
     {
-        /**
-         * A restricted file goes through the application, which can ask
-         * who is asking. The bucket is public, so its direct address is
-         * an open door to anyone the link reaches.
-         */
-        if ($this->is_members_only) {
-            return route('bulletin.file', $this);
-        }
+        return route('bulletin.file', $this);
+    }
 
-        return static::mediaUrl($this->file_path);
+    /**
+     * The name the PDF is served and saved under.
+     *
+     * ASCII on purpose. Laravel's fallback filename runs the name
+     * through Str::ascii(), which drops Hangul entirely, so a 주보
+     * called 주일 예배 주보 arrived named nothing at all and the browser
+     * fell back to the last part of the address - the record's id.
+     */
+    public function downloadName(): string
+    {
+        return 'Bulletin_'.$this->published_at->format('Y_m_d').'.pdf';
+    }
+
+    /**
+     * Address of the PDF itself, as opposed to the page that shows it.
+     */
+    public function pdfUrl(): string
+    {
+        return route('bulletin.pdf', [$this, $this->downloadName()]);
     }
 }

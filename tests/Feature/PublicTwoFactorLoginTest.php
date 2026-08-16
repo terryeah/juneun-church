@@ -203,7 +203,7 @@ class PublicTwoFactorLoginTest extends TestCase
         $this->get(route('giving'))
             ->assertOk()
             ->assertDontSee('section-giving-records')
-            ->assertSee('section-giving-signup');
+            ->assertSee('section-members-only');
     }
 
     /**

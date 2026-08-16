@@ -5,7 +5,10 @@
             .($album->event_date ? ' · '.$album->event_date->translatedFormat('Y년 n월 j일') : '');
 @endphp
 
-<x-layout.app :title="$album->title" :description="$shareDescription" :image="$album->coverUrl()" :noindex="$album->is_members_only">
+{{-- Always noindex: 앨범 is 성도 전용 as a whole section, so no album
+     page is ever a page a crawler may keep. --}}
+
+<x-layout.app :title="$album->title" :description="$shareDescription" :image="$album->coverUrl()" :noindex="true">
 
     <x-ui.page-header kicker="주는교회의 순간들 · Photos" :title="$album->title">
         @if ($album->event_date){{ $album->event_date->translatedFormat('Y년 n월 j일') }}@if ($album->description) - @endif@endif{{ $album->description }}

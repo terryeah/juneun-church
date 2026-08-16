@@ -159,12 +159,17 @@
          so the reveal animation moves the whole navy band together; split
          across two sections, each got its own trigger and the page
          background showed through the gap between them. --}}
-    <section class="section-moments bg-navy pb-5">
+    <section @class(['section-moments bg-navy', 'pb-5' => $recentPhotos->isNotEmpty()])>
         <div class="section-moments-intro container-site py-12 md:py-16 lg:py-[4.75rem]">
             <x-ui.kicker color="text-cream/55">주는교회의 순간들 · Moments</x-ui.kicker>
             <p class="mt-5 font-kr text-display-lg text-cream">함께 예배하고, 함께 나누는<br>교회의 일상입니다.</p>
         </div>
 
+        {{-- Nothing stands in for the photographs when none is ticked.
+             The three empty frames that used to sit here were a whole
+             phone screen of blank squares under the heading, which
+             reads as a broken page; the band's own two lines say what
+             the church is like perfectly well on their own. --}}
         @if ($recentPhotos->isNotEmpty())
             @php
                 /**
@@ -205,12 +210,6 @@
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>
                     </button>
                 </div>
-            </div>
-        @else
-            <div class="grid grid-cols-1 gap-1 md:grid-cols-3">
-                @foreach (['Fellowship', 'Worship', 'Next-Gen'] as $label)
-                    <x-ui.photo-placeholder :label="$label" class="aspect-square rounded-[0.625rem] bg-navy-700/60 text-cream/55" />
-                @endforeach
             </div>
         @endif
     </section>

@@ -47,11 +47,13 @@ class AnnouncementsTableTest extends TestCase
 
     /**
      * A row carries its title and the badges a phone shows in place of
-     * the unlabelled tick columns.
+     * the unlabelled tick columns. 성도 전용 is not one of them: the
+     * whole 교회 소식 page is behind the 교적 now, so the per-notice flag
+     * has nothing left to say in the panel.
      */
     public function test_a_row_renders_its_title_and_state_badges(): void
     {
-        Announcement::factory()->membersOnly()->pinned()->create([
+        Announcement::factory()->pinned()->create([
             'title' => '셀 모임 안내',
             'slug' => 'news-cell-meeting',
             'is_published' => true,
@@ -62,7 +64,7 @@ class AnnouncementsTableTest extends TestCase
             ->assertOk()
             ->assertSee('셀 모임 안내')
             ->assertSee('고정')
-            ->assertSee('성도 전용');
+            ->assertDontSee('성도 전용');
     }
 
     /**

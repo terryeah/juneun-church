@@ -14,6 +14,10 @@ use Illuminate\View\View;
  *
  * Each tab is a real URL, so the page works without JavaScript and the
  * swap in the browser is only an enhancement over a normal navigation.
+ *
+ * The page is 성도 전용 as a whole: the 주보 carries cell assignments,
+ * rosters and the week's giving, and the forms are the church's own
+ * paperwork.
  */
 class DownloadsController extends Controller
 {
@@ -30,6 +34,15 @@ class DownloadsController extends Controller
      */
     public function __invoke(Request $request): View
     {
+        /** Asked before the files are fetched, so nothing held back is ever loaded. */
+        if (! Auth::user()?->isChurchMember()) {
+            return view('pages.members-only', [
+                'kicker' => '교회 자료 · Downloads',
+                'title' => '자료실',
+                'body' => '주보와 교회 서식에는 셀 편성과 섬김이 명단처럼 성도의 정보가 담겨 있어 성도에게만 공개됩니다.',
+            ]);
+        }
+
         /**
          * The type is checked before it is used as one: ?type[]=x
          * arrives as an array, and casting an array to a string is a
@@ -43,28 +56,10 @@ class DownloadsController extends Controller
             ? Bulletin::query()->visible()->orderByDesc('published_at')->get()
             : Document::query()->visible()->orderByDesc('published_at')->get();
 
-        /**
-         * Anyone who is not on the 교적 is told whether something is
-         * being held back, so the page only offers to sign them in when
-         * there is something behind it rather than on every visit. A
-         * signed-in 일반회원 is in the same position as a guest here.
-         */
-        $hasRestricted = ! Auth::user()?->isChurchMember() && (
-            Bulletin::query()->where('is_members_only', true)->exists()
-            || Document::query()->where('is_members_only', true)->exists()
-        );
-
-        /** Whether the other tab has anything this reader may open. */
-        $hasOtherTab = $tab === 'bulletins'
-            ? Document::query()->visible()->exists()
-            : Bulletin::query()->visible()->exists();
-
         return view('pages.downloads', [
             'tabs' => self::TABS,
-            'hasOtherTab' => $hasOtherTab,
             'tab' => $tab,
             'files' => $files,
-            'hasRestricted' => $hasRestricted,
         ]);
     }
 }

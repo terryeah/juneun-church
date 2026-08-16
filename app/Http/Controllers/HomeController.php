@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Album;
 use App\Models\Announcement;
-use App\Models\Event;
 use App\Models\Photo;
 use App\Models\Sermon;
 use App\Models\SiteSetting;
@@ -36,23 +34,15 @@ class HomeController extends Controller
             ->orderByDesc('sermon_date')
             ->first();
 
-        /** Next three upcoming events */
-        $upcomingEvents = Event::query()
-            ->published()
-            ->whereDate('event_date', '>=', today())
-            ->orderBy('event_date')
-            ->limit(3)
-            ->get();
-
         /** Photos for the sliding gallery preview band */
         $recentPhotos = $this->sliderPhotos();
 
         /**
          * The 하이라이트 section is whichever 교회 소식 carries the flag.
-         * A 성도 전용 notice may hold it, in which case a guest gets no
-         * highlight at all and the section hides itself exactly as it
-         * does when nothing is flagged - no teaser, since a "로그인하세요"
-         * panel would itself announce that a private notice exists.
+         * 교회 소식 is a 성도 전용 page now, so the flag is the whole
+         * decision: an editor ticking 하이라이트 is choosing to put that
+         * notice's opening lines on a page anybody can read, and the
+         * band is the same for a guest and a 성도 alike.
          */
         $highlight = Announcement::query()
             ->visible()
@@ -62,80 +52,37 @@ class HomeController extends Controller
         /** The hero photograph is chosen in 사이트 설정 by gallery filename */
         $heroPhoto = $this->featuredPhoto('home_hero_photo');
 
-        return view('pages.home', compact('announcements', 'latestSermon', 'upcomingEvents', 'recentPhotos', 'heroPhoto', 'highlight'));
+        return view('pages.home', compact('announcements', 'latestSermon', 'recentPhotos', 'heroPhoto', 'highlight'));
     }
 
     /**
      * The ten photos shown in the home slider.
      *
-     * Only albums that are both published and open to everyone are
-     * drawn from. A 성도 전용 album is left out entirely, hand-picked
-     * photographs included: the front page is the one screen a stranger
-     * always sees, and a picture the church decided to keep for its own
-     * members does not belong on it, however good the picture is.
+     * Hand-picked photos only. 앨범 is a 성도 전용 page now, so an
+     * album's own audience says nothing about who may see a picture on
+     * the front page; the only thing that says it is 홈 슬라이더에 표시
+     * beside the photograph itself. An admin ticking that box is
+     * deciding this one picture may be seen by anyone.
      *
-     * Hand-picked photos (홈 슬라이더에 표시) come first. Any remaining
-     * slots are filled round-robin across those albums - the newest
-     * photo of each, then each album's next-newest, and so on - so the
-     * band shows ten photos from a spread of events rather than one
-     * album's dump.
+     * The band used to top itself up round-robin from every published
+     * album when fewer than ten were pinned. That filler was chosen by
+     * nobody, and most of the church's photographs now sit in albums
+     * kept to the 교적, so it would have carried them onto a public
+     * page. Nothing pinned means no band, which the view already draws
+     * correctly.
      *
      * @return Collection<int, Photo>
      */
     private function sliderPhotos(): Collection
     {
-        $picked = Photo::query()
-            ->whereHas('album', fn ($query) => $query->where('is_published', true)->where('is_members_only', false))
+        return Photo::query()
+            ->whereHas('album', fn ($query) => $query->where('is_published', true))
             ->where('featured_in_slider', true)
             ->latest()
             ->limit(10)
             /** Each photo links back to its album, so fetch them together. */
             ->with('album')
             ->get();
-
-        if ($picked->count() >= 10) {
-            return $picked->values();
-        }
-
-        $queues = Album::query()
-            ->where('is_published', true)
-            ->where('is_members_only', false)
-            ->orderByDesc('event_date')
-            /**
-             * Ten from each album is more than the round robin can use,
-             * and the whole relation was being loaded to pick a few:
-             * with nothing pinned to the slider, the church's 904 public
-             * photographs were hydrated into memory on every visit to
-             * the front page - about 8 MB, to show ten.
-             */
-            ->with(['photos' => fn ($query) => $query->latest()->limit(10)])
-            ->get()
-            ->map(fn ($album) => $album->photos->whereNotIn('id', $picked->pluck('id'))->values())
-            ->filter(fn ($photos) => $photos->isNotEmpty())
-            ->values();
-
-        $slider = $picked->values();
-
-        for ($round = 0; $slider->count() < 10; $round++) {
-            $added = false;
-
-            foreach ($queues as $queue) {
-                if ($slider->count() >= 10) {
-                    break;
-                }
-
-                if ($queue->has($round)) {
-                    $slider->push($queue[$round]);
-                    $added = true;
-                }
-            }
-
-            if (! $added) {
-                break;
-            }
-        }
-
-        return $slider;
     }
 
     /**

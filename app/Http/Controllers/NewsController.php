@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 /**
  * Handles announcement display (교회 소식).
+ *
+ * The section is 성도 전용 as a whole. Church news is mostly about the
+ * people in it - who has joined, who is ill, who is serving where - so
+ * the page is closed rather than each notice being marked one by one.
  */
 class NewsController extends Controller
 {
@@ -15,6 +20,10 @@ class NewsController extends Controller
      */
     public function index(): View
     {
+        if (! Auth::user()?->isChurchMember()) {
+            return $this->signInPage();
+        }
+
         /** Fetch announcements with pinned items first */
         $announcements = Announcement::query()
             ->visible()
@@ -28,14 +37,32 @@ class NewsController extends Controller
     /**
      * Display a single announcement.
      *
-     * A 성도 전용 notice 404s for a guest rather than 403s: a 403 would
-     * confirm that a notice lives at that slug, and the slug carries the
-     * title, so the URL alone would leak what is meant to be private.
+     * The check comes before the record is looked at, so the notice's own
+     * title never reaches somebody who may not read it. The home page
+     * still lists news titles to everyone, and a 404 from there would be
+     * a dead end where a sign-in notice is a next step.
      */
     public function show(Announcement $announcement): View
     {
+        if (! Auth::user()?->isChurchMember()) {
+            return $this->signInPage();
+        }
+
         abort_unless(Announcement::query()->visible()->whereKey($announcement->getKey())->exists(), 404);
 
         return view('pages.news.show', compact('announcement'));
+    }
+
+    /**
+     * The sign-in notice standing in for the section, named by the
+     * section rather than by whichever notice was asked for.
+     */
+    private function signInPage(): View
+    {
+        return view('pages.members-only', [
+            'kicker' => '함께 나누는 소식 · News',
+            'title' => '교회 소식',
+            'body' => '교회 소식에는 성도의 이름과 사정이 담겨 있어 성도에게만 공개됩니다.',
+        ]);
     }
 }

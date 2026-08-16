@@ -4,9 +4,7 @@
 
 <x-layout.app title="헌금" description="브리즈번 주는교회 헌금 계좌 안내입니다.">
 
-    <x-ui.page-header kicker="은혜를 흘려보내는 · Giving" title="헌금">
-        받은 은혜에 감사하며 드리는 헌금은 교회의 사역과 이웃 나눔에 소중히 사용됩니다.
-    </x-ui.page-header>
+    <x-ui.page-header kicker="은혜를 흘려보내는 · Giving" title="헌금" />
 
     <section class="section-giving-details container-site pb-12 lg:pb-16">
         <div class="grid gap-6 md:grid-cols-2 md:gap-8 lg:gap-11">
@@ -55,6 +53,12 @@
             @endif
         </div>
 
+        {{-- The one sentence saying what the giving is for. It sat under
+             the h1 until the heading was cut back to a bare title; below
+             the accounts it still frames them, without putting a
+             paragraph between the reader and what they came for. --}}
+        <p class="mt-6 max-w-xl font-kr text-body-sm leading-relaxed text-navy-700">받은 은혜에 감사하며 드리는 헌금은 교회의 사역과 이웃 나눔에 소중히 사용됩니다.</p>
+
         <div class="mt-6 font-kr text-body-sm leading-relaxed text-navy-400">
             <p>이체 시 참조란에 이름과 헌금 종류를 약자로 함께 적어주세요.</p>
             <ul class="mt-2 space-y-1 md:mt-1 md:flex md:flex-wrap md:gap-x-5 md:space-y-0">
@@ -67,16 +71,11 @@
         </div>
     </section>
 
-    {{-- The bulletin only reaches the congregation, so the records stay
-         with the 성도 on the 교적 rather than with anyone who signed up. --}}
-    @if (auth()->user()?->isChurchMember())
+    {{-- No 성도 전용 tag: the whole page is, so only a 성도 is reading
+         this and the tag would say nothing they do not know. --}}
     @if ($offering)
         <section class="section-giving-records container-site pb-12 lg:pb-16" data-giving-weeks>
-            <div class="flex flex-wrap items-center gap-3">
-                <x-ui.kicker>헌금 소식 · Records</x-ui.kicker>
-                {{-- Matches the green 사용 중 badge in 관리자 페이지: slate pill, 1px success border, success label. --}}
-                <span class="inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 font-kr text-xs font-medium text-success">성도 전용</span>
-            </div>
+            <x-ui.kicker>헌금 소식 · Records</x-ui.kicker>
             <h2 class="mt-3 font-kr text-display-sm font-medium">{{ $offering->sunday_date->translatedFormat('Y년 n월 j일') }} 주일 헌금 내역</h2>
             <p class="mt-2 font-kr text-body-sm text-navy-400">주보에 실리는 내용과 동일합니다. 함께 드린 손길에 감사드립니다.</p>
 
@@ -121,16 +120,5 @@
             @endif
         </section>
     @endif
-    @endif
-
-    {{-- Anyone who cannot see the records is told why, rather than being
-         left with a page that simply ends early. That now includes a
-         signed-in 일반회원, who is not on the 교적. --}}
-    @unless (auth()->user()?->isChurchMember())
-        <x-ui.sign-in-required
-            class="section-giving-signup"
-            body="주보에 실리는 주일 헌금 내역은 성도에게만 공개됩니다."
-        />
-    @endunless
 
 </x-layout.app>

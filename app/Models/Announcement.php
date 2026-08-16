@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -20,9 +19,9 @@ use Illuminate\Support\Str;
  *
  * Announcements are authored in the admin panel with the Filament rich
  * editor, may be pinned above the chronological list, and can expire
- * automatically via the optional expires_at timestamp. A notice naming
- * individual members can be marked 성도 전용, which keeps it out of every
- * query a guest makes.
+ * automatically via the optional expires_at timestamp. 교회 소식 is
+ * 성도 전용 as a whole page, so no notice carries an audience of its
+ * own; the home page still lists the latest titles to everybody.
  */
 #[Fillable([
     'title',
@@ -32,7 +31,6 @@ use Illuminate\Support\Str;
     'is_published',
     'is_pinned',
     'is_highlighted',
-    'is_members_only',
     'published_at',
     'expires_at',
     'created_by',
@@ -52,7 +50,6 @@ class Announcement extends Model
             'is_published' => 'boolean',
             'is_pinned' => 'boolean',
             'is_highlighted' => 'boolean',
-            'is_members_only' => 'boolean',
             'published_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
@@ -129,24 +126,17 @@ class Announcement extends Model
     /**
      * Scope to announcements the current visitor is allowed to read.
      *
-     * This is the scope every public page uses: 성도 전용 notices name
-     * individual members, so a guest's query never selects them and the
-     * content cannot reach the response at all.
+     * This is the scope every public page uses. Who is reading is no
+     * longer asked here: 교회 소식 is closed at the door by 교적
+     * membership, and the home page deliberately lists the latest
+     * titles to everybody, so a notice is either published or it is
+     * not.
      *
      * @param  Builder<Announcement>  $query
-     * @param  bool|null  $isMember  Overrides the signed-in check. The
-     *                               sitemap passes false so a document
-     *                               written for crawlers - and cacheable
-     *                               by the CDN in front of the site -
-     *                               never lists a restricted notice, not
-     *                               even when an admin requests it.
      */
-    public function scopeVisible(Builder $query, ?bool $isMember = null): void
+    public function scopeVisible(Builder $query): void
     {
-        $query->published()->unless(
-            $isMember ?? (bool) Auth::user()?->isChurchMember(),
-            fn (Builder $q) => $q->where('is_members_only', false),
-        );
+        $query->published();
     }
 
     /**

@@ -39,10 +39,9 @@ class AnnouncementsTable
                         $record->is_published ? '게시' : '비공개',
                         $record->is_pinned ? '고정' : null,
                         $record->is_highlighted ? '하이라이트' : null,
-                        $record->is_members_only ? '성도 전용' : null,
                     ])))
                     ->color(fn (string $state): string => match ($state) {
-                        '게시', '성도 전용' => 'success',
+                        '게시' => 'success',
                         '비공개' => 'gray',
                         default => 'warning',
                     }),

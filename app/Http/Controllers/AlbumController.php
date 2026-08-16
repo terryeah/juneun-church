@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Album;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 /**
@@ -13,6 +14,10 @@ use Illuminate\View\View;
  * one address holds everything the church has recorded and the chips
  * choose which kind is on show - the same shape the panel uses, where
  * 앨범 is one screen and 사진 and 동영상 are what goes in them.
+ *
+ * The section is 성도 전용 as a whole: every album is a room full of
+ * the congregation's faces, and the videos are unlisted on YouTube, so
+ * the page is closed rather than each album being marked one by one.
  */
 class AlbumController extends Controller
 {
@@ -22,18 +27,6 @@ class AlbumController extends Controller
     private const KINDS = [
         Album::TYPE_PHOTO => '사진',
         Album::TYPE_VIDEO => '동영상',
-    ];
-
-    /**
-     * The audience filters offered to a signed-in 성도.
-     *
-     * A guest is never shown these: everything they can reach is open
-     * already, so every chip would say the same thing.
-     */
-    private const FILTERS = [
-        'all' => '전체',
-        'members' => '성도 전용',
-        'public' => '모두 공개',
     ];
 
     /**
@@ -55,19 +48,21 @@ class AlbumController extends Controller
     /**
      * Display the album grid for one kind.
      *
-     * The filter narrows what is already visible rather than widening
-     * it - scopeVisible still runs first, so asking for 성도 전용
-     * without being one returns nothing rather than everything.
+     * There is no audience chip any more. It sorted the shelf into 성도
+     * 전용 and 모두 공개, which said something while the page was open
+     * to the street; now that only a 성도 reaches it, every album on it
+     * is theirs and the chip only repeated the page.
      */
     public function index(Request $request): View
     {
-        $filter = static::chosen($request->query('visibility'), self::FILTERS, 'all');
+        if (! Auth::user()?->isChurchMember()) {
+            return $this->signInPage();
+        }
 
         /**
-         * Only offer a kind the reader can actually open, and do not
-         * open one for them either. Every video album is 성도 전용
-         * today, so a guest asking for 동영상 - from a shared link or
-         * their own history - was being given a chip and an empty grid.
+         * Only offer a kind there is something to see in, and do not
+         * open an empty one either - a chip leading to '등록된 앨범이
+         * 없습니다' is a door painted on a wall.
          */
         $available = array_intersect_key(
             self::KINDS,
@@ -83,8 +78,6 @@ class AlbumController extends Controller
         $albums = Album::query()
             ->visible()
             ->ofType($kind)
-            ->when($filter === 'members', fn ($query) => $query->where('is_members_only', true))
-            ->when($filter === 'public', fn ($query) => $query->where('is_members_only', false))
             ->withCount($kind === Album::TYPE_VIDEO ? 'videos' : 'photos')
             /**
              * The id breaks ties. Without it two albums sharing an
@@ -106,25 +99,23 @@ class AlbumController extends Controller
             'kinds' => $available,
             'kind' => $kind,
             'kindLabel' => self::KINDS[$kind],
-            'filters' => self::FILTERS,
-            'filter' => $filter,
         ]);
     }
 
     /**
      * Display a single album: its photographs, or its videos.
      *
-     * A 성도 전용 album 404s for a guest rather than 403s: a 403 would
-     * confirm that an album lives at that slug, and the slug carries the
-     * title, so the URL alone would leak what is meant to be private.
-     *
-     * That matters more for the videos than it ever did for the photos.
-     * Most of them are unlisted on YouTube, viewable by anyone holding
-     * the link, so their identifiers must not reach a page a stranger
-     * can open - and here they never leave the query.
+     * The check comes before the album is looked at, so its title never
+     * reaches somebody who may not open it - and nor do the YouTube
+     * identifiers, which are what the videos actually are: most are
+     * unlisted, viewable by anyone holding one.
      */
     public function show(Album $album): View
     {
+        if (! Auth::user()?->isChurchMember()) {
+            return $this->signInPage();
+        }
+
         abort_unless(Album::query()->visible()->whereKey($album->getKey())->exists(), 404);
 
         if ($album->holdsVideos()) {
@@ -137,6 +128,19 @@ class AlbumController extends Controller
         return view('pages.album.show', [
             'album' => $album,
             'photos' => $album->photos()->paginate(24),
+        ]);
+    }
+
+    /**
+     * The sign-in notice standing in for the section, named by the
+     * section rather than by whichever album was asked for.
+     */
+    private function signInPage(): View
+    {
+        return view('pages.members-only', [
+            'kicker' => '주는교회의 순간들 · Moments',
+            'title' => '앨범',
+            'body' => '예배와 교회 행사의 사진과 영상에는 성도의 얼굴이 담겨 있어 성도에게만 공개됩니다.',
         ]);
     }
 }

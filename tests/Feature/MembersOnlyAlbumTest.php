@@ -12,11 +12,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Covers 성도 전용 앨범: photo sets published to signed-in 성도 only.
+ * Covers 앨범, which is published to 성도 on the 교적 only.
  *
+ * The section is closed as a whole now rather than album by album.
  * Every assertion here is about what a guest's response contains, not
- * about what is hidden in the markup - a restricted album is excluded
- * from the query, so neither its title nor its slug is ever rendered.
+ * about what is hidden in the markup - the controller never runs the
+ * query, so no title and no photograph URL is ever rendered.
  */
 class MembersOnlyAlbumTest extends TestCase
 {
@@ -44,7 +45,6 @@ class MembersOnlyAlbumTest extends TestCase
         $this->restricted = Album::factory()->create([
             'title' => '2026 성도 수련회',
             'slug' => 'album-members-retreat',
-            'is_members_only' => true,
         ]);
     }
 
@@ -60,30 +60,29 @@ class MembersOnlyAlbumTest extends TestCase
     }
 
     /**
-     * A guest hitting the detail URL directly gets a 404, not a 403: a
-     * 403 would confirm the album exists at that slug.
+     * A guest hitting the detail URL directly gets the section's own
+     * heading and the login offer, never the album's title - which the
+     * slug carries and which is the thing being kept back.
      */
-    public function test_a_guest_gets_a_404_on_the_detail_url(): void
+    public function test_a_guest_gets_the_sign_in_notice_on_the_detail_url(): void
     {
         $this->get('/album/album-members-retreat')
-            ->assertNotFound()
+            ->assertOk()
+            ->assertSee('section-members-only')
             ->assertDontSee('2026 성도 수련회');
     }
 
     /**
-     * A signed-in 성도 sees the album on the grid carrying the 성도 전용
-     * badge, and may open it.
+     * A signed-in 성도 sees the album on the grid and may open it, and
+     * no 성도 전용 tag rides on it: the whole page is one.
      */
-    public function test_a_signed_in_member_sees_the_album_with_the_badge(): void
+    public function test_a_signed_in_member_sees_the_album_without_a_tag(): void
     {
-        $badge = 'inline-flex items-center rounded-md border border-success bg-slate-900 px-2 py-0.5 align-middle font-kr text-xs font-medium text-success';
-
         $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/album')
             ->assertOk()
             ->assertSee('2026 성도 수련회')
-            ->assertSee($badge, false)
-            ->assertSee('성도 전용');
+            ->assertDontSee('성도 전용');
 
         $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/album/album-members-retreat')
@@ -92,9 +91,10 @@ class MembersOnlyAlbumTest extends TestCase
     }
 
     /**
-     * An ordinary published album still reaches a guest, badge-free.
+     * An album nobody marked restricted is no longer open either: the
+     * page is closed, so the column on the record decides nothing.
      */
-    public function test_an_open_album_still_reaches_a_guest(): void
+    public function test_an_unmarked_album_is_closed_with_the_rest(): void
     {
         Album::factory()->create([
             'title' => '여름 성경학교',
@@ -103,37 +103,46 @@ class MembersOnlyAlbumTest extends TestCase
 
         $this->get('/album')
             ->assertOk()
-            ->assertSee('여름 성경학교')
-            ->assertDontSee('성도 전용');
+            ->assertDontSee('여름 성경학교')
+            ->assertSee('section-members-only');
 
         $this->get('/album/album-summer-school')
+            ->assertOk()
+            ->assertDontSee('여름 성경학교');
+
+        $this->actingAs(User::factory()->onTheRoster()->create())
+            ->get('/album/album-summer-school')
             ->assertOk()
             ->assertSee('여름 성경학교');
     }
 
     /**
-     * The sitemap never lists a restricted album, signed in or not,
-     * because the document is written for crawlers and may be cached by
-     * the CDN in front of the site.
+     * The sitemap lists no album at all, and not the section either:
+     * 앨범 answers a crawler with a login notice carrying noindex.
      */
-    public function test_the_sitemap_omits_a_restricted_album(): void
+    public function test_the_sitemap_omits_the_albums_and_the_section(): void
     {
-        $this->get('/sitemap.xml')
-            ->assertOk()
-            ->assertDontSee(route('album.show', $this->restricted));
+        foreach ([null, User::factory()->onTheRoster()->create()] as $reader) {
+            if ($reader) {
+                $this->actingAs($reader);
+            }
 
-        $this->actingAs(User::factory()->onTheRoster()->create())
-            ->get('/sitemap.xml')
-            ->assertOk()
-            ->assertDontSee(route('album.show', $this->restricted));
+            $this->get('/sitemap.xml')
+                ->assertOk()
+                ->assertDontSee(route('album.show', $this->restricted))
+                ->assertDontSee(route('album.index'));
+        }
     }
 
     /**
-     * The home slider never draws on a 성도 전용 album, and picking a
-     * photograph by hand does not override that. The front page is the
-     * one screen a stranger always sees.
+     * The home slider goes by the box beside the photograph, not by the
+     * album's audience.
+     *
+     * 앨범 is a 성도 전용 page now, so the album's own flag says nothing
+     * about the front page. An admin ticking 홈 슬라이더에 표시 is the
+     * decision that this one picture may be seen by anyone.
      */
-    public function test_the_slider_leaves_a_restricted_album_alone(): void
+    public function test_a_hand_picked_photo_reaches_the_slider_from_any_album(): void
     {
         $photo = Photo::factory()->for($this->restricted)->create([
             'featured_in_slider' => true,
@@ -141,16 +150,30 @@ class MembersOnlyAlbumTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertDontSee($photo->thumbnailUrl(), false)
-            ->assertDontSee(route('album.show', $this->restricted))
-            ->assertDontSee($this->restricted->title);
+            ->assertSee($photo->thumbnailUrl(), false);
     }
 
     /**
-     * Signing in does not change it either. The band is the same for
-     * everyone, so a 성도 전용 photograph cannot reach it by any route.
+     * A photograph nobody pinned never reaches the front page.
+     *
+     * The band used to top itself up from every published album when too
+     * few were pinned. Most of the church's photographs sit in albums
+     * kept to the 교적, so that filler put faces on a public page that
+     * nobody had chosen to put there.
      */
-    public function test_the_slider_leaves_it_alone_for_a_member_too(): void
+    public function test_a_photo_nobody_picked_stays_off_the_slider(): void
+    {
+        $photo = Photo::factory()->for($this->restricted)->create();
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee($photo->thumbnailUrl(), false);
+    }
+
+    /**
+     * The band is the same for everyone, signed in or not.
+     */
+    public function test_the_slider_is_the_same_for_a_member(): void
     {
         $photo = Photo::factory()->for($this->restricted)->create([
             'featured_in_slider' => true,
@@ -158,6 +181,25 @@ class MembersOnlyAlbumTest extends TestCase
 
         $this->actingAs(User::factory()->onTheRoster()->create())
             ->get('/')
+            ->assertOk()
+            ->assertSee($photo->thumbnailUrl(), false);
+    }
+
+    /**
+     * An unpublished album is still left alone, which is the one thing
+     * the slider does still ask about.
+     */
+    public function test_the_slider_leaves_an_unpublished_album_alone(): void
+    {
+        $draft = Album::factory()->create([
+            'title' => '준비 중',
+            'slug' => 'album-draft',
+            'is_published' => false,
+        ]);
+
+        $photo = Photo::factory()->for($draft)->create(['featured_in_slider' => true]);
+
+        $this->get('/')
             ->assertOk()
             ->assertDontSee($photo->thumbnailUrl(), false);
     }
@@ -170,7 +212,6 @@ class MembersOnlyAlbumTest extends TestCase
         $open = Album::factory()->create([
             'title' => '전교인 나들이',
             'slug' => 'album-outing',
-            'is_members_only' => false,
         ]);
 
         $photo = Photo::factory()->for($open)->create(['featured_in_slider' => true]);
@@ -196,12 +237,12 @@ class MembersOnlyAlbumTest extends TestCase
         $album = Album::factory()->create([
             'title' => '수련회',
             'slug' => 'album-camp',
-            'is_members_only' => false,
         ]);
 
         Photo::factory()->for($album)->count(30)->create();
 
-        $this->get(route('album.show', $album))
+        $this->actingAs(User::factory()->onTheRoster()->create())
+            ->get(route('album.show', $album))
             ->assertOk()
             ->assertSee('data-photo-total="30"', false);
     }

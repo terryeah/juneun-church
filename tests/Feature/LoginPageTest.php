@@ -74,6 +74,44 @@ class LoginPageTest extends TestCase
     }
 
     /**
+     * The 성도 전용 notice's ?next brings the reader back.
+     *
+     * The wall answers 200, so nothing sets an intended URL on its own
+     * and everyone who clicked 로그인 from 자료실 landed on 헌금.
+     */
+    public function test_the_notice_sends_the_member_back_to_the_page_they_were_on(): void
+    {
+        User::factory()->create(['email' => 'kim@example.com', 'password' => 'correct-horse-battery']);
+
+        $this->get(route('login', ['next' => '/downloads']))->assertOk();
+
+        $this->post(route('login.store'), [
+            'email' => 'kim@example.com',
+            'password' => 'correct-horse-battery',
+        ])->assertRedirect(url('/downloads'));
+    }
+
+    /**
+     * Only a path on this site is honoured, so a link posted anywhere
+     * cannot decide where a signed-in session lands.
+     */
+    public function test_an_off_site_next_is_ignored(): void
+    {
+        User::factory()->create(['email' => 'kim@example.com', 'password' => 'correct-horse-battery']);
+
+        foreach (['https://evil.example/steal', '//evil.example/steal', '/\\evil.example/steal'] as $next) {
+            $this->get(route('login', ['next' => $next]))->assertOk();
+
+            $this->post(route('login.store'), [
+                'email' => 'kim@example.com',
+                'password' => 'correct-horse-battery',
+            ])->assertRedirect(route('giving'));
+
+            $this->post(route('logout'));
+        }
+    }
+
+    /**
      * A wrong password is refused without saying whether the address
      * is known to the church.
      */

@@ -6,7 +6,6 @@ use App\Filament\Support\Author;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -20,9 +19,6 @@ class BulletinsTable
                     ->label('제목')
                     ->searchable()
                     ->sortable(),
-                IconColumn::make('is_members_only')
-                    ->label('성도 전용')
-                    ->boolean(),
                 TextColumn::make('file_path')
                     ->label('파일')
                     ->searchable()

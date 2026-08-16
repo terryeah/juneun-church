@@ -6,7 +6,6 @@ use App\Filament\Support\SaveUploadsAsWebp;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -38,21 +37,20 @@ class DocumentForm
                     ->acceptedFileTypes(['application/pdf'])
                     ->disk(config('filesystems.media'))
                     ->directory('documents')
-                    ->visibility('public')
+                    ->visibility('private')
                     ->required()
                     ->saveUploadedFileUsing(function (TemporaryUploadedFile $file): string {
                         /**
-                         * A random name, because the file itself is not
-                         * behind the login - only the listing is. The
-                         * name used to be the upload's date and time to
-                         * the second, which is one day's worth of
-                         * guesses for anyone who knows a 주보 goes up on
-                         * a Sunday, and a 주보 carries the cell lists,
-                         * the rota and the offering record.
+                         * Private, and under a random name. The bucket
+                         * is served by the CDN: written public, a form
+                         * the office hands out to the congregation
+                         * answered anyone holding its address and was
+                         * cached at the edge for a year, so the round
+                         * trip through the site counted for nothing.
                          */
                         $path = 'documents/'.Str::uuid().'.pdf';
                         Storage::disk(config('filesystems.media'))
-                            ->put($path, (string) file_get_contents($file->getRealPath()), ['visibility' => 'public']);
+                            ->put($path, (string) file_get_contents($file->getRealPath()), ['visibility' => 'private']);
 
                         /** The upload does not linger on the server once it is on the CDN. */
                         SaveUploadsAsWebp::discard($file);
@@ -65,10 +63,6 @@ class DocumentForm
                     ->displayFormat('Y-m-d')
                     ->required()
                     ->default(now()),
-                Toggle::make('is_members_only')
-                    ->label('성도 전용')
-                    ->default(true)
-                    ->helperText('끄면 로그인하지 않은 방문자도 이 문서를 내려받을 수 있습니다. 성도의 정보가 들어 있지 않은 문서에만 꺼 주세요.'),
             ]);
     }
 }
