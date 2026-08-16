@@ -133,7 +133,11 @@
     <link rel="preload" href="/fonts/GmarketSansMedium-modern.woff2" as="font" type="font/woff2" crossorigin>
     <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
-    @if (config('services.cloudflare.web_analytics_token'))
+    {{-- The beacon is what Cloudflare counts, so an ignored address is
+         simply not sent it. Safe to decide per request: this HTML is
+         never cached at the edge - it answers no-cache, private, and
+         Cloudflare reports it back as DYNAMIC. --}}
+    @if (config('services.cloudflare.web_analytics_token') && ! in_array(request()->ip(), config('services.cloudflare.analytics_ignored_ips'), true))
         <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "{{ config('services.cloudflare.web_analytics_token') }}"}'></script>
     @endif
 </head>

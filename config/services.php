@@ -45,6 +45,24 @@ return [
         'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
         'rum_site_tag' => env('CLOUDFLARE_RUM_SITE_TAG'),
         'web_analytics_token' => env('CLOUDFLARE_WEB_ANALYTICS_TOKEN'),
+
+        /**
+         * Addresses whose page openings are not counted as visits.
+         *
+         * 방문자 통계 is meant to say how the congregation uses the site,
+         * and the people building and running it look from the same
+         * address every day. Cloudflare Web Analytics counts whoever
+         * loads its beacon, so an address named here simply is not
+         * served the beacon.
+         *
+         * The addresses live in the environment rather than in this
+         * file because the repository is public, and a home address is
+         * not ours to publish.
+         */
+        'analytics_ignored_ips' => array_values(array_filter(array_map(
+            trim(...),
+            explode(',', (string) env('ANALYTICS_IGNORED_IPS', '')),
+        ))),
     ],
 
 ];
