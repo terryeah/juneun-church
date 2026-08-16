@@ -76,8 +76,17 @@ return [
     'umami' => [
         'website_id' => env('UMAMI_WEBSITE_ID'),
         'script_url' => env('UMAMI_SCRIPT_URL', 'https://cloud.umami.is/script.js'),
-        'api_url' => env('UMAMI_API_URL', 'https://api.umami.is/v1'),
-        'api_key' => env('UMAMI_API_KEY'),
+
+        /**
+         * The dashboard 방문자 통계 embeds. Reading the same figures
+         * through Umami's API needs a paid plan; a share link does not,
+         * and carries far more than an API would have been asked for.
+         *
+         * Anyone holding the link can read the statistics without
+         * signing in, so it stays out of this repository, which is
+         * public. It can be reissued from Umami at any time.
+         */
+        'share_url' => env('UMAMI_SHARE_URL'),
     ],
 
 ];

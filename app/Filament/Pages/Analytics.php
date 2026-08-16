@@ -2,26 +2,32 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Analytics\TrafficChartWidget;
-use App\Filament\Analytics\TrafficStatsWidget;
-use App\Models\AnalyticsSnapshot;
-use App\Services\CloudflareAnalyticsService;
 use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 
 /**
- * Developer-only dashboard showing Cloudflare zone analytics.
+ * 방문자 통계, which is Umami's own dashboard on this page.
  *
- * Charts read from the local analytics_snapshots table, which a daily
- * scheduled command fills from Cloudflare's GraphQL API, so history is
- * kept beyond the free-plan retention window.
+ * It used to be Cloudflare's figures, drawn here as cards, a chart and
+ * a table. Two things were wrong with them and neither could be fixed
+ * from this side: Cloudflare injects its counting beacon at the edge,
+ * so nobody could be left out of the numbers - the office and whoever
+ * maintains the site were in every one of them - and what came back
+ * was a daily total with nothing underneath it, no way to ask which
+ * page anyone had actually opened.
+ *
+ * Umami answers both, and answers far more than this page ever drew:
+ * pages, referrers, countries, devices, live visitors. Reading it
+ * through the API needs a paid plan, so the dashboard itself is
+ * embedded instead, through a share link created in Umami. The link is
+ * public to anyone holding it, which is why it lives in the
+ * environment and not in this repository.
+ *
+ * The Cloudflare snapshots are still collected and still in the
+ * database. They are simply not drawn any more.
  */
 class Analytics extends Page
 {
@@ -44,143 +50,31 @@ class Analytics extends Page
     }
 
     /**
-     * Whether the Cloudflare credentials are configured.
+     * The Umami dashboard to embed, or null when none is configured.
      */
     #[Computed]
-    public function isConfigured(): bool
+    public function shareUrl(): ?string
     {
-        return app(CloudflareAnalyticsService::class)->isConfigured();
+        return config('services.umami.share_url');
     }
 
     /**
-     * The last thirty daily snapshots, newest first, for the table.
-     *
-     * @return Collection<int, AnalyticsSnapshot>
-     */
-    #[Computed]
-    public function dailySnapshots(): Collection
-    {
-        return AnalyticsSnapshot::query()
-            ->where('snapshot_date', '>=', today()->subDays(29))
-            ->orderByDesc('snapshot_date')
-            ->get();
-    }
-
-    /**
-     * Selected range for the real-visitor breakdowns: 24h, 7d, 30d or all.
-     */
-    public string $visitorRange = 'today';
-
-    /**
-     * Range options offered on the breakdown sections.
-     *
-     * @var array<string, string>
-     */
-    public array $rangeOptions = [
-        'today' => '오늘',
-        '24h' => '최근 24시간',
-        '7d' => '최근 7일',
-        '30d' => '최근 30일',
-        'all' => '전체',
-    ];
-
-    /**
-     * Web Analytics breakdowns for the selected range, cached per range.
-     *
-     * @return array<string, array<int, array{label: string, count: int}>>
-     */
-    #[Computed]
-    public function breakdowns(): array
-    {
-        $since = match ($this->visitorRange) {
-            'today' => today(),
-            '24h' => now()->subDay(),
-            '7d' => today()->subDays(6),
-            'all' => today()->subMonths(6),
-            default => today()->subDays(29),
-        };
-
-        return Cache::remember(
-            "cf-rum-breakdowns-v2-{$this->visitorRange}",
-            in_array($this->visitorRange, ['today', '24h']) ? 900 : 3600,
-            fn (): array => app(CloudflareAnalyticsService::class)->breakdowns($since, now()),
-        );
-    }
-
-    /**
-     * Bot-included request breakdowns, cached for an hour.
-     *
-     * @return array<string, array<int, array{label: string, count: int}>>
-     */
-    #[Computed]
-    public function botBreakdowns(): array
-    {
-        return Cache::remember(
-            'cf-zone-breakdowns',
-            3600,
-            fn (): array => app(CloudflareAnalyticsService::class)->botIncludedBreakdowns(),
-        );
-    }
-
-    /**
-     * Widgets rendered above the page content.
-     *
-     * @return array<class-string>
-     */
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            TrafficStatsWidget::class,
-        ];
-    }
-
-    /**
-     * The traffic chart renders below the page body, under the daily
-     * detail table.
-     *
-     * @return array<class-string>
-     */
-    protected function getFooterWidgets(): array
-    {
-        return [
-            TrafficChartWidget::class,
-        ];
-    }
-
-    /**
-     * Whether the signed-in user holds the developer role.
-     */
-    #[Computed]
-    public function isDeveloper(): bool
-    {
-        return auth()->user()?->hasRole('developer') ?? false;
-    }
-
-    /**
-     * Header action that refreshes the snapshots on demand.
+     * A way out to the full dashboard, for anything the frame makes
+     * awkward - a phone, mostly, where a dashboard inside a dashboard
+     * is two sets of scrollbars.
      *
      * @return array<Action>
      */
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('sync')
-                ->label('지금 동기화')
-                ->icon(Heroicon::OutlinedArrowPath)
-                ->action(function (): void {
-                    foreach (array_keys($this->rangeOptions) as $range) {
-                        Cache::forget("cf-rum-breakdowns-v2-{$range}");
-                    }
-                    Cache::forget('cf-zone-breakdowns');
-
-                    /** A month-wide refresh repairs days stored under the old UTC bucketing */
-                    Artisan::call('analytics:snapshot', ['--days' => 30]);
-
-                    Notification::make()
-                        ->title(trim(Artisan::output()) ?: 'Snapshot complete')
-                        ->success()
-                        ->send();
-                }),
+            Action::make('open')
+                ->label('새 창에서 열기')
+                ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
+                ->color('gray')
+                ->url(fn (): ?string => $this->shareUrl)
+                ->openUrlInNewTab()
+                ->visible(fn (): bool => filled($this->shareUrl)),
         ];
     }
 }
