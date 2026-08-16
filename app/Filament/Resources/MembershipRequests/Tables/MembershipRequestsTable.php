@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MembershipRequests\Tables;
 
 use App\Models\MembershipRequest;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
@@ -92,6 +93,15 @@ class MembershipRequestsTable
             ->recordClasses(fn (MembershipRequest $record): ?string => $record->status === '대기' ? 'record-pending' : null)
             ->recordActions([
                 ViewAction::make(),
+                /**
+                 * Hidden for everyone but the developer, by the policy.
+                 * The wording says what is lost, because 승인 and 거절
+                 * both keep the request on the list and this does not.
+                 */
+                DeleteAction::make()
+                    ->modalHeading('가입 신청 삭제')
+                    ->modalDescription('이 신청 기록이 완전히 지워집니다. 신청자가 적은 내용도, 누가 언제 처리했는지도 남지 않습니다. 이미 만들어진 로그인 계정과 성도 기록은 그대로입니다.')
+                    ->modalSubmitActionLabel('삭제'),
             ]);
     }
 }

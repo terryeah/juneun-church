@@ -49,14 +49,27 @@ class MembershipRequestPolicy
         return $authUser->can('Update:MembershipRequest');
     }
 
+    /**
+     * Only the developer may throw a request away.
+     *
+     * A request is the record of somebody asking to join and of who
+     * decided what about it, so the office closes one by 승인 or 거절 -
+     * both of which leave it on the list, with a name and a date
+     * against them. Deleting removes that account of what happened, and
+     * the reasons to do it are all housekeeping: a test submission, a
+     * duplicate, a row somebody made while the site was being built.
+     *
+     * A role check rather than a permission, like the activity log, so
+     * it cannot be handed out from the roles screen by accident.
+     */
     public function delete(AuthUser $authUser, MembershipRequest $membershipRequest): bool
     {
-        return $authUser->can('Delete:MembershipRequest');
+        return $authUser->hasRole('developer');
     }
 
     public function deleteAny(AuthUser $authUser): bool
     {
-        return $authUser->can('DeleteAny:MembershipRequest');
+        return $authUser->hasRole('developer');
     }
 
     public function restore(AuthUser $authUser, MembershipRequest $membershipRequest): bool
