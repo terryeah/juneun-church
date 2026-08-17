@@ -245,7 +245,13 @@ main [data-zoom]:hover img {
     }
 }
 
-.moments-track > a {
+/**
+ * Every slide, whatever tag it is. A slide whose album is not listed on
+ * 앨범 carries no link and so is a div; matched on `a` alone it took no
+ * width at all and the band drew one poster at its natural height beside
+ * four thumbnails.
+ */
+.moments-track > * {
     width: calc(100% / var(--slides) - 0.8rem);
     flex-shrink: 0;
     scroll-snap-align: start;
