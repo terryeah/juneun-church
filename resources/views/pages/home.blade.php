@@ -187,7 +187,7 @@
                 $deferredPhotos = $recentPhotos->slice(4);
             @endphp
             <div data-photo-slider>
-                <div class="moments-track flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pe-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-slider-track tabindex="0" aria-label="교회 사진 모음">
+                <div class="moments-track flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-slider-track tabindex="0" aria-label="교회 사진 모음">
                     @foreach ($recentPhotos->take(4) as $photo)
                         <x-ui.moment-slide :photo="$photo" />
                     @endforeach
