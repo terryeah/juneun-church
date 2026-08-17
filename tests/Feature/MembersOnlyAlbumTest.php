@@ -186,14 +186,20 @@ class MembersOnlyAlbumTest extends TestCase
     }
 
     /**
-     * An unpublished album is still left alone, which is the one thing
-     * the slider does still ask about.
+     * A photograph from an album that is not listed still reaches the
+     * band, but carries no link.
+     *
+     * 활성화 decides whether an album appears on 앨범, which is a
+     * different question from whether one picture may be on the front
+     * page - six albums are kept off that page while holding pictures
+     * the site uses elsewhere. Its detail page 404s for everybody, a
+     * 성도 included, so the slide is drawn without an anchor.
      */
-    public function test_the_slider_leaves_an_unpublished_album_alone(): void
+    public function test_a_photo_from_an_unlisted_album_is_drawn_without_a_link(): void
     {
         $draft = Album::factory()->create([
-            'title' => '준비 중',
-            'slug' => 'album-draft',
+            'title' => '사이트 자료',
+            'slug' => 'album-assets',
             'is_published' => false,
         ]);
 
@@ -201,7 +207,8 @@ class MembersOnlyAlbumTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertDontSee($photo->thumbnailUrl(), false);
+            ->assertSee($photo->thumbnailUrl(), false)
+            ->assertDontSee(route('album.show', $draft));
     }
 
     /**
