@@ -227,7 +227,7 @@ main [data-zoom]:hover img {
  * the site container edge while the band itself is full-bleed.
  */
 .moments-track {
-    --slides: 1.2;
+    --slides: 1.1;
     /**
      * --gutter tracks container-site's own padding at each breakpoint.
      * Pinned at 1.375rem it only matched the narrowest one, so from 48rem
@@ -250,7 +250,7 @@ main [data-zoom]:hover img {
 
 @media (min-width: 64rem) {
     .moments-track {
-        --slides: 4.2;
+        --slides: 4.1;
         --gutter: 46px;
     }
 }
@@ -262,7 +262,15 @@ main [data-zoom]:hover img {
  * four thumbnails.
  */
 .moments-track > * {
-    width: calc(100% / var(--slides) - 0.8rem);
+    /**
+     * --slides counts what a reader sees, and the band is full-bleed:
+     * the strip on screen runs from the first card to the right edge of
+     * the window, which is the content box plus one gutter. Divided by
+     * the content box alone, that gutter went uncounted - and it grows
+     * with the window past 80rem, so 4.1 drew as seven cards on a wide
+     * monitor and the count meant nothing.
+     */
+    width: calc((100% + var(--edge)) / var(--slides) - 0.8rem);
     flex-shrink: 0;
     scroll-snap-align: start;
 }
