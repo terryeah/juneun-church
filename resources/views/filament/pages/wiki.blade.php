@@ -7,11 +7,9 @@
          the project's CSS rule. The page opens as a short index of
          eight questions; each part is a closed accordion beneath it.
 
-         The three things staff get wrong - who may see which page,
-         what 교적 등록 actually decides, and why a photograph they
-         picked never reached the front page - are drawn rather than
-         described: a permission table, a step flow, and a two-condition
-         gate carry them.
+         The two things staff get wrong - who may see which page, and
+         what 교적 등록 actually decides - are drawn rather than
+         described: a permission table and a step flow carry them.
 
          Motion is enabled by JavaScript (it adds .wiki-anim), so with
          no JavaScript, or with prefers-reduced-motion, everything is
@@ -61,7 +59,7 @@
                         <li>먼저 <b>미디어 &rsaquo; 앨범</b>에서 사진을 담을 앨범을 만듭니다. 앨범명과 행사 날짜만 있으면 됩니다.</li>
                         <li><b>미디어 &rsaquo; 사진</b>으로 가서 <b>업로드</b>를 누릅니다.</li>
                         <li>앨범을 고르고 사진 파일을 올린 뒤 저장합니다.</li>
-                        <li>앨범의 <b>활성화</b>가 켜져 있어야 홈페이지에 나옵니다. 새로 만든 앨범은 처음부터 켜져 있습니다.</li>
+                        <li>앨범의 <b>활성화</b>가 켜져 있어야 홈페이지 <b>앨범</b> 페이지에 그 앨범이 올라갑니다. 새로 만든 앨범은 처음부터 켜져 있습니다.</li>
                     </ol>
                     <p class="wiki-note">올린 사진은 자동으로 가볍게 바뀝니다. 아이폰 사진도 그대로 올리시면 됩니다. 자세한 건 <b>사진과 파일</b>에 있습니다.</p>
                     <p class="wiki-note"><b>앨범은 성도만 봅니다.</b> 홈페이지의 앨범 페이지는 로그인한 성도에게만 열리니, 아이들 얼굴이 담긴 사진도 마음 놓고 올리시면 됩니다.</p>
@@ -108,37 +106,11 @@
                         <li>확인 창을 읽고 <b>넣기</b>를 누릅니다. 뺄 때는 같은 자리에서 <b>홈 슬라이더에서 빼기</b>입니다.</li>
                     </ol>
                     <p class="wiki-note"><b>한 장씩 열어서 저장하지 않아도 됩니다.</b> 예전에는 사진을 하나 열고 저장하고 다시 나오기를 되풀이해야 했는데, 이제 체크해서 한 번에 넣고 뺍니다.</p>
-
-                    <h3 class="wiki-h3">홈 화면에 나오려면 두 가지가 다 켜져 있어야 합니다</h3>
-
-                    <div class="wiki-gate">
-                        <div class="wiki-gate-cond">
-                            <b>사진에 체크</b>
-                            <span>사진을 골라 <b>홈 슬라이더에 넣기</b></span>
-                        </div>
-                        <span class="wiki-gate-op">그리고</span>
-                        <div class="wiki-gate-cond">
-                            <b>그 사진이 든 앨범이 활성화</b>
-                            <span><b>미디어 &rsaquo; 앨범</b>에서 <b>활성화</b>가 켜져 있어야</span>
-                        </div>
-                        <span class="wiki-gate-op" aria-hidden="true">&darr;</span>
-                        <div class="wiki-gate-out">
-                            <b>홈 화면 사진 띠에 나옵니다</b>
-                            <span>둘 중 하나라도 빠지면 나오지 않습니다</span>
-                        </div>
-                    </div>
-
-                    <p class="wiki-warn"><b>사진에 체크만 해서는 나오지 않습니다.</b> 실제로 네 장을 골랐는데 홈 화면에는 한 장만 나온 일이 있었습니다. 나머지 세 장이 <b>활성화가 꺼진 앨범</b>에 들어 있었기 때문입니다.</p>
-                    <p class="wiki-note">이제는 넣고 나면 <b>어느 앨범이 꺼져 있는지 이름으로 알려줍니다.</b> 사진 목록에서도 별 모양으로 구분됩니다.</p>
-
-                    <div class="wiki-rows">
-                        <div class="wiki-row"><b><span class="wiki-star-on">&starf;</span> 노란 별</b><span>홈 화면 사진 띠에 나오고 있습니다</span></div>
-                        <div class="wiki-row"><b><span class="wiki-star-off">&star;</span> 속이 빈 회색 별</b><span>체크는 되어 있지만 앨범이 비활성이라 나오지 않습니다. 별에 마우스를 올리면 까닭이 뜹니다</span></div>
-                    </div>
+                    <p class="wiki-note"><b>사진에 홈 슬라이더 체크가 되어 있으면 홈 화면에 나옵니다.</b> 다른 조건은 없습니다. 그 사진이 든 앨범의 <b>활성화</b>는 앨범 페이지에 그 앨범을 올릴지를 정할 뿐이라 여기와는 상관이 없고, 앨범이 꺼져 있어도 체크한 사진은 홈 화면에 나옵니다. 넣은 사진은 사진 목록에서 <b><span class="wiki-star-on">&starf;</span> 노란 별</b>로 표시됩니다.</p>
 
                     <p class="wiki-warn"><b>사진 띠는 열 장까지입니다.</b> 자리가 모자라면 <b>한 장도 들어가지 않고</b> 통째로 거절되면서, 남은 자리가 몇 장인지 알려줍니다. 여덟 장이 들어 있는데 다섯 장을 고르시면 앞의 두 장만 들어가는 것이 아니라 다섯 장 모두 들어가지 않습니다. 몇 장을 빼신 뒤 다시 고르세요. 이미 들어 있는 사진을 또 골라도 자리를 두 번 차지하지는 않습니다.</p>
-                    <p class="wiki-warn"><b>지금은 한 장도 들어 있지 않습니다.</b> 그래서 홈 화면 <b>주는교회의 순간들</b> 자리에는 글귀 두 줄만 있고 사진 띠가 아예 나오지 않습니다. 몇 장 넣어 주시면 그 아래에 사진 띠가 생깁니다. 앨범에서 알아서 채워 오던 예전 방식은 없어졌습니다.</p>
-                    <p class="wiki-note"><b>여기에 넣는 것은 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다.</b> 홈 화면은 로그인하지 않은 분도 보는 자리라, 넣기 전에 확인 창이 성도의 얼굴이 담긴 사진인지 한 번 묻습니다. 앨범 전체는 성도만 보지만 여기에 넣은 사진은 홈 화면에 나옵니다. 그 사진을 누르면 앨범으로 넘어가는데, 앨범은 성도 전용이라 로그인하지 않은 분에게는 거기서 로그인 안내가 나옵니다.</p>
+                    <p class="wiki-warn"><b>한 장도 넣지 않으면 사진 띠가 아예 나오지 않습니다.</b> 홈 화면 <b>주는교회의 순간들</b> 자리에 글귀 두 줄만 남습니다. 몇 장 넣어 주시면 그 아래에 사진 띠가 생깁니다. 앨범에서 알아서 채워 오던 예전 방식은 없어졌습니다.</p>
+                    <p class="wiki-note"><b>여기에 넣는 것은 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다.</b> 홈 화면은 로그인하지 않은 분도 보는 자리라, 넣기 전에 확인 창이 성도의 얼굴이 담긴 사진인지 한 번 묻습니다. 앨범 전체는 성도만 보지만 여기에 넣은 사진은 홈 화면에 나옵니다. 그 사진을 누르면 앨범으로 넘어가는데, 앨범은 성도 전용이라 로그인하지 않은 분에게는 거기서 로그인 안내가 나옵니다. <b>활성화가 꺼진 앨범</b>의 사진은 넘어갈 곳이 없어 눌러도 아무 일이 일어나지 않고 사진만 보입니다.</p>
                 </article>
 
                 <article class="wiki-task">
@@ -275,7 +247,7 @@
 
                 <h3 class="wiki-h3">홈 화면은 그대로 열려 있습니다</h3>
                 <p>처음 오시는 분이 반드시 보는 자리라 예전과 같습니다. 맨 위 대표 사진, 최근 소식 <b>제목</b> 네 개, 하이라이트로 켠 소식의 제목과 앞부분, 최근 예배 영상이 누구에게나 보입니다. 제목을 눌러 들어가면 그때 로그인 안내가 나옵니다.</p>
-                <p class="wiki-warn"><b>홈 화면 사진 띠는 골라 넣은 사진만 나옵니다.</b> 앨범에서 알아서 채워 오지 않습니다. <b>미디어 &rsaquo; 사진</b>에서 사진을 체크해 <b>일괄 작업 &rsaquo; 홈 슬라이더에 넣기</b>로 넣으며, 넣는다는 것은 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다. 그 사진이 든 앨범의 <b>활성화</b>까지 켜져 있어야 나옵니다. 순서는 <b>자주 하는 일</b>의 그림에 있습니다. 지금은 한 장도 들어 있지 않아 그 자리에 사진 띠가 나오지 않습니다.</p>
+                <p class="wiki-warn"><b>홈 화면 사진 띠는 골라 넣은 사진만 나옵니다.</b> 앨범에서 알아서 채워 오지 않습니다. <b>미디어 &rsaquo; 사진</b>에서 사진을 체크해 <b>일괄 작업 &rsaquo; 홈 슬라이더에 넣기</b>로 넣으며, 넣는다는 것은 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다. 체크한 사진은 그것만으로 나오고, 그 사진이 든 앨범의 <b>활성화</b>와는 상관이 없습니다. 순서는 <b>자주 하는 일</b>에 있습니다. 한 장도 넣지 않으면 그 자리에 사진 띠가 나오지 않습니다.</p>
 
                 <h3 class="wiki-h3">검색 엔진</h3>
                 <p>구글에 알려주는 목록에는 <b>홈 &middot; 예배 안내 &middot; 오시는 길 &middot; 섬기는 사람들</b> 네 페이지만 들어 있습니다. 성도 전용 다섯 페이지와 그 안의 소식 &middot; 앨범은 검색 결과에 올라가지 않습니다.</p>
@@ -541,7 +513,7 @@
 
                 <div class="wiki-qa">
                     <p class="wiki-q">홈 슬라이더에 넣었는데 홈 화면에 안 나와요</p>
-                    <p class="wiki-a">그 사진이 든 앨범의 <b>활성화</b>가 꺼져 있습니다. 넣을 때 어느 앨범이 꺼져 있는지 알려주고, 사진 목록에서도 그런 사진은 <b><span class="wiki-star-off">&star;</span> 속이 빈 회색 별</b>로 보입니다. <b>미디어 &rsaquo; 앨범</b>에서 그 앨범의 활성화를 켜면 나옵니다.</p>
+                    <p class="wiki-a">체크가 되어 있으면 나옵니다. 앨범의 <b>활성화</b>는 이제 보지 않습니다. 예전에는 앨범까지 켜져 있어야 나왔지만, 지금은 사진에 한 체크만 봅니다. 사진 목록에서 그 사진에 <b><span class="wiki-star-on">&starf;</span> 노란 별</b>이 붙어 있는지 확인해 주세요.</p>
                 </div>
 
                 <div class="wiki-qa">
@@ -940,41 +912,11 @@
             background-color: color-mix(in srgb, var(--gray-500) 10%, transparent);
         }
 
-        /* The two-condition rule for the home band, drawn rather than
-           written: a photograph reaches the front page only when the
-           tick and its album's 활성화 are both on, and the sentence
-           saying so was read as one condition rather than two. Stacked
-           at every width, because three cards in a row inside a 40rem
-           column would wrap into something narrower than it is worth. */
-        .wiki-gate { display: grid; gap: 0.375rem; margin-block-end: 1.25rem; }
-        .wiki-gate-cond,
-        .wiki-gate-out {
-            display: grid;
-            gap: 0.2rem;
-            padding: 0.875rem 1rem;
-            border-radius: 0.625rem;
-            border-inline-start: 3px solid color-mix(in srgb, var(--gray-500) 55%, transparent);
-            background-color: color-mix(in srgb, var(--gray-500) 10%, transparent);
-        }
-        .wiki-gate-out {
-            border-inline-start-color: var(--success-500);
-            background-color: color-mix(in srgb, var(--success-500) 10%, transparent);
-        }
-        .wiki-gate-cond > b, .wiki-gate-out > b { font-size: 0.9375rem; font-weight: 700; }
-        .wiki-gate-cond > span, .wiki-gate-out > span { font-size: 0.875rem; line-height: 1.75; color: var(--wiki-muted); }
-        .wiki-gate-op {
-            justify-self: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            line-height: 1.4;
-            letter-spacing: 0.08em;
-            color: var(--wiki-muted);
-        }
-
-        /* The same two marks the 사진 list uses, in the same colours. */
-        .wiki-star-on, .wiki-star-off { font-size: 1rem; line-height: 1; }
-        .wiki-star-on { color: var(--warning-500); }
-        .wiki-star-off { color: var(--gray-500); }
+        /* The same mark the 사진 list uses, in the same colour. There
+           is only the one now: the band asks about the tick and
+           nothing else, so a photograph is either on the front page or
+           it is not. */
+        .wiki-star-on { font-size: 1rem; line-height: 1; color: var(--warning-500); }
 
         /* Notes and warnings stay visibly different at a glance. */
         .wiki-note, .wiki-warn {
