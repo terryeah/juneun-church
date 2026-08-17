@@ -181,7 +181,8 @@
                  * of below-the-fold images off the connection while the hero
                  * loads. PhotoSlider moves them into the track once the page
                  * has finished loading. Without JavaScript the band is those
-                 * four photos, each still linking through to its album.
+                 * four photos, still scrollable and still linking through to
+                 * whichever albums are listed on 앨범.
                  */
                 $deferredPhotos = $recentPhotos->slice(4);
             @endphp

@@ -1,19 +1,18 @@
 /**
  * Photo Carousel Component
  *
- * Apple-style horizontal carousel: native scroll-snap handles touch
- * swipes and trackpads, and the circular arrow buttons page through
- * one viewport at a time. The slide set is cloned once so the band
- * loops seamlessly - crossing into the cloned set teleports the
- * scroll position back by exactly one set width, which is invisible
- * because both sets render identically. Slides the page held back for
- * performance are adopted from an inert template once loading finishes.
- * Without JavaScript the band is a plain scrollable row of the photo
- * links present in the HTML.
+ * Horizontal carousel with two ends: native scroll-snap handles touch
+ * swipes and trackpads, and the circular arrow buttons page through one
+ * card at a time until the band runs out, at which point the arrow for
+ * that direction goes dim and stops responding. Slides the page held
+ * back for performance are adopted from an inert template once loading
+ * finishes. Without JavaScript the band is a plain scrollable row of the
+ * photographs present in the HTML.
  */
 export class PhotoSlider {
     private track: HTMLElement | null;
-    private setWidth: number = 0;
+    private prev: HTMLButtonElement | null;
+    private next: HTMLButtonElement | null;
 
     /**
      * Creates a new PhotoSlider instance.
@@ -22,33 +21,22 @@ export class PhotoSlider {
      */
     constructor(container: HTMLElement) {
         this.track = container.querySelector<HTMLElement>('[data-slider-track]');
+        this.prev = container.querySelector<HTMLButtonElement>('[data-slider-prev]');
+        this.next = container.querySelector<HTMLButtonElement>('[data-slider-next]');
 
-        if (!this.track || this.track.children.length < 2) {
+        if (!this.track) {
             return;
         }
 
-        this.cloneSlides();
-        this.measure();
         this.hydrateDeferred(container.querySelector<HTMLTemplateElement>('[data-slider-deferred]'));
-        window.addEventListener('resize', () => this.measure());
-        this.track.addEventListener('scroll', () => this.wrap(), { passive: true });
 
-        container.querySelector('[data-slider-prev]')?.addEventListener('click', () => this.page(-1));
-        container.querySelector('[data-slider-next]')?.addEventListener('click', () => this.page(1));
-    }
+        this.track.addEventListener('scroll', () => this.syncArrows(), { passive: true });
+        window.addEventListener('resize', () => this.syncArrows());
 
-    /**
-     * Appends one hidden-from-AT copy of every slide for the loop.
-     */
-    private cloneSlides(): void {
-        Array.from(this.track!.children).forEach((slide) => {
-            const clone = slide.cloneNode(true) as HTMLElement;
-            clone.dataset.sliderClone = '';
-            clone.setAttribute('aria-hidden', 'true');
-            clone.setAttribute('tabindex', '-1');
-            clone.querySelectorAll('a').forEach((link) => link.setAttribute('tabindex', '-1'));
-            this.track!.appendChild(clone);
-        });
+        this.prev?.addEventListener('click', () => this.page(-1));
+        this.next?.addEventListener('click', () => this.page(1));
+
+        this.syncArrows();
     }
 
     /**
@@ -59,11 +47,8 @@ export class PhotoSlider {
      * the connection. They are adopted once the page has finished loading and
      * the band is within a couple of screens of the viewport, which both keeps
      * them out of the initial load and spares the data of a visitor who never
-     * scrolls this far. Adopting them invalidates the loop, which is measured
-     * from the cloned set, so the clones are thrown away and rebuilt around
-     * the full set. The scroll position is folded back into the original set
-     * beforehand and restored afterwards, because the original slides stay at
-     * the head of the track and so keep their offsets.
+     * scrolls this far. They join the end of the track, so nothing already on
+     * screen moves and the scroll position needs no correcting.
      *
      * @param template - Element holding the slides held back from the initial HTML
      */
@@ -73,14 +58,8 @@ export class PhotoSlider {
         }
 
         const adopt = (): void => {
-            const track = this.track!;
-            const offset = this.setWidth > 0 ? track.scrollLeft % this.setWidth : track.scrollLeft;
-
-            track.querySelectorAll('[data-slider-clone]').forEach((clone) => clone.remove());
-            track.appendChild(template.content);
-            this.cloneSlides();
-            this.measure();
-            this.jump(offset);
+            this.track!.appendChild(template.content);
+            this.syncArrows();
         };
 
         /** Watching only starts after load so a tall screen cannot pull the photos forward. */
@@ -112,53 +91,37 @@ export class PhotoSlider {
     }
 
     /**
-     * Measures the pixel width of one full slide set.
+     * Dims the arrow that has nothing left to reach.
+     *
+     * A band that fits on screen has both arrows off, so a set of three
+     * photographs does not offer a control that would do nothing. The
+     * tolerance absorbs the sub-pixel remainder a fractional card width
+     * leaves behind, which would otherwise keep the forward arrow live
+     * at the very end.
      */
-    private measure(): void {
+    private syncArrows(): void {
         const track = this.track!;
-        const slides = track.children;
-        const first = slides[0] as HTMLElement;
-        const firstClone = slides[slides.length / 2] as HTMLElement;
-        this.setWidth = firstClone.offsetLeft - first.offsetLeft;
-    }
+        const furthest = track.scrollWidth - track.clientWidth;
 
-    /**
-     * Teleports back by one set width once the cloned set is reached,
-     * keeping the loop invisible.
-     */
-    private wrap(): void {
-        const track = this.track!;
+        if (this.prev) {
+            this.prev.disabled = track.scrollLeft <= 1;
+        }
 
-        if (this.setWidth > 0 && track.scrollLeft >= this.setWidth) {
-            this.jump(track.scrollLeft - this.setWidth);
+        if (this.next) {
+            this.next.disabled = track.scrollLeft >= furthest - 1;
         }
     }
 
     /**
-     * Moves the scroll position instantly, without smooth behaviour.
-     */
-    private jump(left: number): void {
-        const track = this.track!;
-        const previous = track.style.scrollBehavior;
-        track.style.scrollBehavior = 'auto';
-        track.scrollLeft = left;
-        track.style.scrollBehavior = previous;
-    }
-
-    /**
-     * Pages by exactly one card - the same distance as a light swipe -
-     * wrapping at both ends.
+     * Pages by exactly one card - the same distance as a light swipe.
+     *
+     * The scroll container clamps at both ends on its own, so a page
+     * past the last card simply lands on it.
      *
      * @param direction - -1 for backwards, +1 for forwards
      */
     private page(direction: number): void {
         const track = this.track!;
-
-        /** Going backwards from the start borrows the cloned set first. */
-        if (direction < 0 && track.scrollLeft <= 2 && this.setWidth > 0) {
-            this.jump(track.scrollLeft + this.setWidth);
-        }
-
         const card = track.firstElementChild as HTMLElement | null;
         const step = card ? card.offsetWidth + 16 : track.clientWidth * 0.85;
 
