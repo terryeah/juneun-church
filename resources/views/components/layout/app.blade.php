@@ -68,7 +68,19 @@
             'latitude' => -27.5308,
             'longitude' => 153.0838,
         ],
-        'image' => url('/favicon-512.png'),
+        /**
+         * The picture that stands for the church. Google picks a
+         * search result's thumbnail from what a page says about
+         * itself, and a favicon is not a photograph, so the node
+         * said nothing usable and the crawler chose for itself -
+         * it settled on the 하이라이트 소식 poster, the largest
+         * image on the front page. A page that names no picture of
+         * its own leaves this out rather than repeating the
+         * favicon: every page carries this same node, and an
+         * emptier one merges with the home page's rather than
+         * arguing with it.
+         */
+        'image' => $image ?: null,
         'sameAs' => $sameAs,
     ]);
 
@@ -104,6 +116,12 @@
     @endif
     @if ($noindex)
         <meta name="robots" content="noindex, follow">
+    @else
+        {{-- Without this, Google is free to shrink a result's picture
+             to a thumbnail so small it shows nothing, or to leave it
+             off altogether. The pages that reach this line are the four
+             public ones, and every picture on them is the church's own. --}}
+        <meta name="robots" content="max-image-preview:large">
     @endif
     <meta property="og:type" content="website">
     <meta property="og:title" content="{{ $shareTitle }}">
