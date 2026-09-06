@@ -87,7 +87,6 @@ class ImportInstagramPhotos extends Command
                 'title' => $this->titleFor($node),
                 'description' => $this->captionFor($node),
                 'event_date' => $takenAt,
-                'is_published' => true,
             ]);
 
             foreach ($this->imageUrls($node) as $index => $url) {

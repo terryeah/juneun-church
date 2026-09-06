@@ -57,7 +57,6 @@ class ChurchMemberAccessTest extends TestCase
         Album::factory()->create([
             'title' => '수련회 사진첩',
             'slug' => 'members-only-album',
-            'is_published' => true,
         ]);
     }
 

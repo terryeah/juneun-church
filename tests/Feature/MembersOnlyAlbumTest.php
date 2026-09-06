@@ -186,29 +186,32 @@ class MembersOnlyAlbumTest extends TestCase
     }
 
     /**
-     * A photograph from an album that is not listed still reaches the
-     * band, but carries no link.
+     * A slide carries a link whatever album it came from, and a guest
+     * who follows one is met by the notice rather than the album.
      *
-     * 활성화 decides whether an album appears on 앨범, which is a
-     * different question from whether one picture may be on the front
-     * page - six albums are kept off that page while holding pictures
-     * the site uses elsewhere. Its detail page 404s for everybody, a
-     * 성도 included, so the slide is drawn without an anchor.
+     * 활성화 used to decide this: the albums holding the site's own
+     * graphics stayed off 앨범, so their slides were drawn without an
+     * anchor to avoid a dead end. Every album is on the shelf now, so
+     * every slide has somewhere to go - and the door is still shut.
      */
-    public function test_a_photo_from_an_unlisted_album_is_drawn_without_a_link(): void
+    public function test_a_slide_links_to_its_album_and_a_guest_is_met_by_the_notice(): void
     {
-        $draft = Album::factory()->create([
+        $assets = Album::factory()->create([
             'title' => '사이트 자료',
             'slug' => 'album-assets',
-            'is_published' => false,
         ]);
 
-        $photo = Photo::factory()->for($draft)->create(['featured_in_slider' => true]);
+        $photo = Photo::factory()->for($assets)->create(['featured_in_slider' => true]);
 
         $this->get('/')
             ->assertOk()
             ->assertSee($photo->thumbnailUrl(), false)
-            ->assertDontSee(route('album.show', $draft));
+            ->assertSee(route('album.show', $assets));
+
+        $this->get(route('album.show', $assets))
+            ->assertOk()
+            ->assertDontSee('사이트 자료')
+            ->assertSee('성도');
     }
 
     /**

@@ -56,7 +56,7 @@ class ContentStatsWidget extends StatsOverviewWidget
             Stat::make('게시된 소식', Number::format(Announcement::query()->where('is_published', true)->count()))
                 ->description('예배 영상 '.Number::format(Sermon::query()->where('is_published', true)->count()).'편'),
             Stat::make('갤러리 사진', Number::format(Photo::query()->count()))
-                ->description('앨범 '.Number::format(Album::query()->where('is_published', true)->count()).'개'),
+                ->description('앨범 '.Number::format(Album::query()->count()).'개'),
         ];
     }
 }

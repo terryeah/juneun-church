@@ -26,7 +26,6 @@ use Illuminate\Support\Facades\Storage;
     'event_date',
     'cover_photo_path',
     'cover_thumbnail_path',
-    'is_published',
     'created_by',
 ])]
 class Album extends Model
@@ -69,7 +68,6 @@ class Album extends Model
     {
         return [
             'event_date' => 'date',
-            'is_published' => 'boolean',
         ];
     }
 
@@ -151,30 +149,6 @@ class Album extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
-    }
-
-    /**
-     * Scope to albums visible on the public site.
-     *
-     * @param  Builder<Album>  $query
-     */
-    public function scopePublished(Builder $query): void
-    {
-        $query->where('is_published', true);
-    }
-
-    /**
-     * Scope to the albums the current visitor may see.
-     *
-     * Who is reading is no longer asked here: 앨범 is 성도 전용 as a
-     * whole section, closed at the door by 교적 membership, so an album
-     * is either published or it is not.
-     *
-     * @param  Builder<Album>  $query
-     */
-    public function scopeVisible(Builder $query): void
-    {
-        $query->published();
     }
 
     /**

@@ -71,13 +71,12 @@ class HomeController extends Controller
      * page. Nothing pinned means no band, which the view already draws
      * correctly.
      *
-     * The album's own 활성화 is not asked about. It decides whether an
-     * album is listed on 앨범, which is a different question, and six
-     * albums use it to stay off that page while holding pictures the
-     * site uses elsewhere - the hero photograph has always been drawn
-     * from one of them. Asking about it here meant four photographs
-     * were ticked for the band and one arrived, with nothing to say
-     * where the others went.
+     * Nothing about the album is asked either. It once carried a
+     * 활성화 flag, and asking about it here meant four photographs were
+     * ticked for the band and one arrived, with nothing to say where
+     * the others went; the flag is gone now, but the shape of the
+     * question is worth keeping - the tick beside the photograph is
+     * the whole of it.
      *
      * @return Collection<int, Photo>
      */

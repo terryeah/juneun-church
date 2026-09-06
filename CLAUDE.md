@@ -122,7 +122,9 @@ sermons (예배 영상)
 albums
 ├── id, title, slug, type (photo|video), description (nullable), event_date
 ├── cover_photo_path, cover_thumbnail_path (nullable)
-└── is_published, created_by, timestamps
+└── created_by, timestamps
+    No 활성화: 앨범 is 성도 전용 as a page, so every album on it is
+    theirs. 2026_09_06_000000_drop_the_album_published_flag.php
 
 photos
 ├── id, album_id (FK), filename, original_filename

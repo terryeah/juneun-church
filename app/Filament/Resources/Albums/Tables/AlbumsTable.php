@@ -10,7 +10,6 @@ use Filament\Actions\EditAction;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 /**
@@ -75,8 +74,6 @@ class AlbumsTable
                     ->date('Y-m-d')
                     ->sortable()
                     ->placeholder('-'),
-                ToggleColumn::make('is_published')
-                    ->label('활성화'),
                 Author::column('author.name', '작성자')
                     ->visibleFrom('lg'),
                 TextColumn::make('created_at')

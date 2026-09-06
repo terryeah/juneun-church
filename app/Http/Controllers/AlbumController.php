@@ -66,7 +66,7 @@ class AlbumController extends Controller
          */
         $available = array_intersect_key(
             self::KINDS,
-            array_flip(Album::query()->visible()->distinct()->pluck('type')->all()),
+            array_flip(Album::query()->distinct()->pluck('type')->all()),
         );
 
         $kind = static::chosen(
@@ -76,7 +76,6 @@ class AlbumController extends Controller
         );
 
         $albums = Album::query()
-            ->visible()
             ->ofType($kind)
             ->withCount($kind === Album::TYPE_VIDEO ? 'videos' : 'photos')
             /**
@@ -115,8 +114,6 @@ class AlbumController extends Controller
         if (! Auth::user()?->isChurchMember()) {
             return $this->signInPage();
         }
-
-        abort_unless(Album::query()->visible()->whereKey($album->getKey())->exists(), 404);
 
         if ($album->holdsVideos()) {
             return view('pages.album.videos', [

@@ -32,7 +32,6 @@ class VideoAlbumPageTest extends TestCase
             'title' => '테스트 청소년부',
             'slug' => 'video-test-youth',
             'type' => Album::TYPE_VIDEO,
-            'is_published' => true,
         ]);
 
         Video::factory()->for($this->album)->create([
@@ -107,7 +106,6 @@ class VideoAlbumPageTest extends TestCase
             'title' => '여름 성경학교 사진',
             'slug' => 'album-summer',
             'type' => Album::TYPE_PHOTO,
-            'is_published' => true,
         ]);
 
         $this->actingAs(User::factory()->onTheRoster()->create());
@@ -145,7 +143,6 @@ class VideoAlbumPageTest extends TestCase
             'title' => '공개 사진첩',
             'slug' => 'album-open',
             'type' => Album::TYPE_PHOTO,
-            'is_published' => true,
         ]);
 
         $this->actingAs(User::factory()->onTheRoster()->create());
@@ -169,7 +166,6 @@ class VideoAlbumPageTest extends TestCase
             'title' => '공개 사진첩',
             'slug' => 'album-open-two',
             'type' => Album::TYPE_PHOTO,
-            'is_published' => true,
         ]);
 
         Album::query()->where('type', Album::TYPE_VIDEO)->delete();
@@ -218,7 +214,6 @@ class VideoAlbumPageTest extends TestCase
         $open = Album::factory()->create([
             'title' => '나들이',
             'slug' => 'album-outing',
-            'is_published' => true,
         ]);
 
         $this->get('/gallery')->assertMovedPermanently()->assertRedirect('/album');

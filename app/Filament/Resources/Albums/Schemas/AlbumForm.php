@@ -8,7 +8,6 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -73,10 +72,6 @@ class AlbumForm
                     ->disk(config('filesystems.media'))
                     ->directory(fn (?Album $record): string => 'albums/'.($record?->slug ?? 'covers'))
                     ->visibility('public'),
-                Toggle::make('is_published')
-                    ->label('활성화')
-                    ->default(true)
-                    ->columnSpanFull(),
             ]);
     }
 }

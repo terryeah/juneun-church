@@ -26,7 +26,6 @@ class AlbumFactory extends Factory
             'title' => $title,
             'slug' => Str::slug($title).'-'.Str::lower(Str::random(6)),
             'event_date' => fake()->dateTimeBetween('-1 year', 'now'),
-            'is_published' => true,
         ];
     }
 }
