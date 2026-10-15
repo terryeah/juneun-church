@@ -3,6 +3,7 @@
 
     $navItems = [
         ['label' => '예배 안내', 'href' => route('worship'), 'active' => request()->routeIs('worship')],
+        ['label' => '큐티', 'href' => route('qt.index'), 'active' => request()->routeIs('qt.*')],
         ['label' => '교회 행사', 'href' => route('events'), 'active' => request()->routeIs('events')],
         ['label' => '교회 소식', 'href' => route('news.index'), 'active' => request()->routeIs('news.*')],
         ['label' => '자료실', 'href' => route('downloads'), 'active' => request()->routeIs('downloads')],

@@ -61,13 +61,13 @@ class ChurchMemberAccessTest extends TestCase
     }
 
     /**
-     * The five pages that are 성도 전용 in full.
+     * The six pages that are 성도 전용 in full.
      *
      * @return array<int, string>
      */
     private function restrictedPages(): array
     {
-        return ['/events', '/news', '/downloads', '/giving', '/album'];
+        return ['/events', '/news', '/downloads', '/giving', '/album', '/qt'];
     }
 
     /**

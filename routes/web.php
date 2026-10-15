@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlbumController;
+use App\Http\Controllers\DevotionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\MembershipRequestController;
 use App\Http\Controllers\DownloadsController;
@@ -55,6 +56,14 @@ Route::get('/album/{album}', [AlbumController::class, 'show'])->name('album.show
 Route::permanentRedirect('/gallery', '/album');
 Route::get('/gallery/{album}', fn (string $album) => redirect()->route('album.show', $album, 301))
     ->name('gallery.show');
+Route::get('/qt', [DevotionController::class, 'index'])->name('qt.index');
+Route::get('/qt/notes', [DevotionController::class, 'notes'])->name('qt.notes');
+Route::get('/qt/{devotion}', [DevotionController::class, 'show'])->whereNumber('devotion')->name('qt.show');
+Route::post('/qt/{devotion}/note', [DevotionController::class, 'save'])
+    ->whereNumber('devotion')
+    ->middleware(['auth', 'throttle:30,1'])
+    ->name('qt.note');
+
 Route::get('/giving', GivingController::class)->name('giving');
 Route::get('/location', LocationController::class)->name('location');
 

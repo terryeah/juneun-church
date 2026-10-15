@@ -13,6 +13,7 @@ use App\Filament\Resources\Albums\AlbumResource;
 use App\Filament\Resources\Announcements\AnnouncementResource;
 use App\Filament\Resources\Bulletins\BulletinResource;
 use App\Filament\Resources\Cells\CellResource;
+use App\Filament\Resources\Devotions\DevotionResource;
 use App\Filament\Resources\Documents\DocumentResource;
 use App\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Members\MemberResource;
@@ -270,6 +271,7 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(AnnouncementResource::class),
                 ...static::accessibleItems(EventResource::class),
                 ...static::accessibleItems(SermonResource::class),
+                ...static::accessibleItems(DevotionResource::class),
                 ...static::accessibleItems(BulletinResource::class),
                 ...static::accessibleItems(DocumentResource::class),
             ]),

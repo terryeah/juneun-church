@@ -51,8 +51,8 @@ class RoleReachTest extends TestCase
     public static function roles(): array
     {
         $content = [
-            'AlbumResource', 'AnnouncementResource', 'BulletinResource', 'DocumentResource',
-            'EventResource', 'MinistryResource', 'PhotoResource', 'SermonResource',
+            'AlbumResource', 'AnnouncementResource', 'BulletinResource', 'DevotionResource',
+            'DocumentResource', 'EventResource', 'MinistryResource', 'PhotoResource', 'SermonResource',
             'ServiceTypeResource', 'VideoResource',
         ];
 

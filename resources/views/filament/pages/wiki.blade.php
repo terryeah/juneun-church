@@ -34,7 +34,7 @@
                 <span class="wiki-summary-num">1</span>
                 <span class="wiki-summary-text">
                     <span class="wiki-summary-title">자주 하는 일</span>
-                    <span class="wiki-summary-note">주보 &middot; 사진 &middot; 소식 올리기</span>
+                    <span class="wiki-summary-note">주보 &middot; 사진 &middot; 소식 &middot; 큐티 올리기</span>
                 </span>
                 <span class="wiki-chev" aria-hidden="true"></span>
             </summary>
@@ -75,6 +75,20 @@
                     <p class="wiki-note"><b>성도의 이름이 들어가도 괜찮습니다.</b> 교회 소식 페이지는 성도만 들어오는 곳이라, 새가족 소개나 셀 배정처럼 이름이 들어가는 글도 그대로 쓰시면 됩니다. 글마다 켜 두시던 <b>성도 전용</b> 스위치는 없어졌습니다.</p>
                     <p class="wiki-warn"><b>다만 제목과 하이라이트는 홈 화면에 나갑니다.</b> 홈 화면은 누구나 보는 자리인데, 거기에 최근 소식 <b>제목</b> 네 개가 그대로 보이고 하이라이트로 켠 소식은 제목과 앞부분, 대표 이미지까지 보입니다. 제목에는 이름을 넣지 마시고, 이름이나 연락처로 시작하는 글은 하이라이트 대신 <b>상단 고정</b>까지만 쓰세요.</p>
                     <p class="wiki-note">하이라이트는 <b>한 번에 하나만</b> 가능합니다. 새로 켜면 먼저 있던 소식에서 자동으로 꺼지고, 저장 전에 어떤 소식이 내려가는지 알려줍니다.</p>
+                </article>
+
+                <article class="wiki-task">
+                    <h3 class="wiki-task-title">큐티 올리기</h3>
+                    <ol class="wiki-steps">
+                        <li><b>콘텐츠 &rsaquo; 큐티 &rsaquo; 새로운 큐티</b>.</li>
+                        <li>날짜, 제목, 본문 주소(예: 사도행전 11:22-24)를 적습니다. 날짜는 마지막으로 만든 큐티의 다음 날로 미리 채워져 있습니다.</li>
+                        <li><b>연결된 설교</b>에 이 큐티의 바탕이 된 주일 설교를 고릅니다. 비워 두셔도 됩니다.</li>
+                        <li><b>성경 말씀</b>에 본문을 붙여 넣고, <b>묵상 길잡이</b>에 해설과 묵상 질문, 기도를 적습니다.</li>
+                        <li><b>저장 후 계속 만들기</b>를 누르면 다음 날 칸이 바로 열립니다. 한 주치를 한 번에 만드실 수 있습니다.</li>
+                    </ol>
+                    <p class="wiki-note"><b>미리 만들어 두셔도 됩니다.</b> 성도님들께는 그 날짜가 되어야 보입니다. 게시 스위치를 끄면 날짜가 되어도 보이지 않습니다.</p>
+                    <p class="wiki-note"><b>성도님들이 남긴 묵상은 본인만 봅니다.</b> 목회자를 포함해 관리자 화면 어디에도 나오지 않습니다. 성도는 큐티 페이지의 <b>내 묵상 노트</b>에서 자기 묵상을 일기처럼 모아 봅니다.</p>
+                    <p class="wiki-warn"><b>큐티를 지우면 그날 성도님들이 남긴 묵상도 함께 지워집니다.</b> 내용을 고칠 때는 지우지 말고 수정하세요.</p>
                 </article>
 
                 <article class="wiki-task">
@@ -175,7 +189,8 @@
                             <tr><th scope="row">예배 안내</th><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr><th scope="row">섬기는 사람들</th><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr><th scope="row">오시는 길</th><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
-                            <tr class="wiki-matrix-gate"><th scope="row">교회 소식</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
+                            <tr class="wiki-matrix-gate"><th scope="row">큐티</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
+                            <tr><th scope="row">교회 소식</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr><th scope="row">교회 행사</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr><th scope="row">자료실 <span class="wiki-matrix-sub">주보 &middot; 문서</span></th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr><th scope="row">헌금</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
@@ -184,7 +199,7 @@
                     </table>
                 </div>
 
-                <p class="wiki-warn"><b>기준은 로그인이 아니라 교적입니다.</b> 가운데 칸을 보세요. 계정만 있고 교적에 없는 분은 로그인해도 아래 다섯 페이지가 열리지 않습니다. 가입 신청은 누구나 넣을 수 있어서, 로그인을 기준으로 삼으면 교회가 모르는 분에게도 주보와 헌금 내역이 열리기 때문입니다.</p>
+                <p class="wiki-warn"><b>기준은 로그인이 아니라 교적입니다.</b> 가운데 칸을 보세요. 계정만 있고 교적에 없는 분은 로그인해도 아래 여섯 페이지가 열리지 않습니다. 가입 신청은 누구나 넣을 수 있어서, 로그인을 기준으로 삼으면 교회가 모르는 분에게도 주보와 헌금 내역이 열리기 때문입니다.</p>
 
                 <h3 class="wiki-h3">교적에 올릴지가 모든 것을 정합니다</h3>
 
@@ -207,20 +222,20 @@
                     <div class="wiki-card wiki-card-open">
                         <span class="wiki-card-tag">교적에 올림</span>
                         <b class="wiki-card-title">성도</b>
-                        <span class="wiki-card-body">소식 &middot; 행사 &middot; 자료실 &middot; 헌금 &middot; 앨범 다섯 페이지가 <b>한꺼번에</b> 열립니다.</span>
+                        <span class="wiki-card-body">큐티 &middot; 소식 &middot; 행사 &middot; 자료실 &middot; 헌금 &middot; 앨범 여섯 페이지가 <b>한꺼번에</b> 열립니다.</span>
                     </div>
                     <div class="wiki-card wiki-card-shut">
                         <span class="wiki-card-tag">교적에 올리지 않음</span>
                         <b class="wiki-card-title">일반회원</b>
-                        <span class="wiki-card-body">로그인은 되지만 그 다섯 페이지에는 안내만 보입니다. 나중에 성도가 되시면 그때 교적에 올리면 됩니다.</span>
+                        <span class="wiki-card-body">로그인은 되지만 그 여섯 페이지에는 안내만 보입니다. 나중에 성도가 되시면 그때 교적에 올리면 됩니다.</span>
                     </div>
                 </div>
 
-                <p class="wiki-warn"><b>우리 교회 성도가 아닌 분은 교적에 올리지 마세요.</b> 다섯 페이지가 교적 하나로 한꺼번에 열립니다.</p>
+                <p class="wiki-warn"><b>우리 교회 성도가 아닌 분은 교적에 올리지 마세요.</b> 여섯 페이지가 교적 하나로 한꺼번에 열립니다.</p>
 
                 <h3 class="wiki-h3">막혔을 때 보이는 화면</h3>
 
-                <p>메뉴는 누구에게나 여덟 개 그대로 보입니다. 성도가 아닌 분이 성도 전용 메뉴를 누르면 페이지 이름과 안내 한 줄만 나옵니다. 목록을 아예 만들지 않기 때문에 소식 제목도, 주보 파일 이름도 그 화면에는 실려 나가지 않습니다.</p>
+                <p>메뉴는 누구에게나 아홉 개 그대로 보입니다. 성도가 아닌 분이 성도 전용 메뉴를 누르면 페이지 이름과 안내 한 줄만 나옵니다. 목록을 아예 만들지 않기 때문에 소식 제목도, 주보 파일 이름도 그 화면에는 실려 나가지 않습니다.</p>
 
                 <div class="wiki-cards wiki-cards-2">
                     <div class="wiki-card wiki-card-shut">
@@ -237,7 +252,7 @@
 
                 <h3 class="wiki-h3">글마다 켜던 스위치는 없어졌습니다</h3>
                 <p>주보 &middot; 문서 &middot; 교회 소식 &middot; 앨범에 있던 <b>성도 전용</b> 스위치를 모두 없앴습니다. 페이지가 통째로 닫혀 있으니 항목마다 정할 것이 없습니다.</p>
-                <p class="wiki-note"><b>성도 이름 때문에 무언가를 켜 두실 일이 이제 없습니다.</b> 대신 <b>교적에 올리는 일</b>이 유일하게 중요한 결정이 되었습니다. 교적에 이름이 올라가는 순간 그분에게 다섯 페이지가 한꺼번에 열립니다.</p>
+                <p class="wiki-note"><b>성도 이름 때문에 무언가를 켜 두실 일이 이제 없습니다.</b> 대신 <b>교적에 올리는 일</b>이 유일하게 중요한 결정이 되었습니다. 교적에 이름이 올라가는 순간 그분에게 여섯 페이지가 한꺼번에 열립니다.</p>
 
                 <h3 class="wiki-h3">앨범 스위치는 하나입니다</h3>
                 <div class="wiki-rows">
@@ -250,7 +265,7 @@
                 <p class="wiki-warn"><b>홈 화면 사진 띠는 골라 넣은 사진만 나옵니다.</b> 앨범에서 알아서 채워 오지 않습니다. <b>미디어 &rsaquo; 사진</b>에서 사진을 체크해 <b>일괄 작업 &rsaquo; 홈 슬라이더에 넣기</b>로 넣으며, 넣는다는 것은 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다. 체크한 사진은 그것만으로 나옵니다. 순서는 <b>자주 하는 일</b>에 있습니다. 한 장도 넣지 않으면 그 자리에 사진 띠가 나오지 않습니다.</p>
 
                 <h3 class="wiki-h3">검색 엔진</h3>
-                <p>구글에 알려주는 목록에는 <b>홈 &middot; 예배 안내 &middot; 오시는 길 &middot; 섬기는 사람들</b> 네 페이지만 들어 있습니다. 성도 전용 다섯 페이지와 그 안의 소식 &middot; 앨범은 검색 결과에 올라가지 않습니다.</p>
+                <p>구글에 알려주는 목록에는 <b>홈 &middot; 예배 안내 &middot; 오시는 길 &middot; 섬기는 사람들</b> 네 페이지만 들어 있습니다. 성도 전용 여섯 페이지와 그 안의 소식 &middot; 앨범 &middot; 큐티는 검색 결과에 올라가지 않습니다.</p>
 
             </div>
         </details>
@@ -270,7 +285,7 @@
 
                 <div class="wiki-rows">
                     <div class="wiki-row"><b>관리자</b><span>재정을 포함해 거의 전부. 목사님 &middot; 사모님 &middot; 사무 담당</span></div>
-                    <div class="wiki-row"><b>편집자</b><span>소식 &middot; 행사 &middot; 예배 영상 &middot; 주보 &middot; 문서 &middot; 앨범 &middot; 사진 &middot; 동영상. <b>교적부와 헌금, 사이트 설정은 열리지 않습니다</b></span></div>
+                    <div class="wiki-row"><b>편집자</b><span>큐티 &middot; 소식 &middot; 행사 &middot; 예배 영상 &middot; 주보 &middot; 문서 &middot; 앨범 &middot; 사진 &middot; 동영상. <b>교적부와 헌금, 사이트 설정은 열리지 않습니다</b></span></div>
                     <div class="wiki-row"><b>재정부</b><span>헌금 내역과 개인 헌금만. 다른 메뉴는 아예 보이지 않습니다</span></div>
                     <div class="wiki-row"><b>일반회원</b><span>관리자 화면은 못 씁니다. 홈페이지만 봅니다</span></div>
                 </div>
@@ -288,7 +303,7 @@
                     <div class="wiki-card wiki-card-key">
                         <span class="wiki-card-tag">교적</span>
                         <b class="wiki-card-title">홈페이지</b>
-                        <span class="wiki-card-body">성도 전용 다섯 페이지가 열리는지를 정합니다.</span>
+                        <span class="wiki-card-body">성도 전용 여섯 페이지가 열리는지를 정합니다.</span>
                     </div>
                 </div>
 
@@ -311,6 +326,7 @@
                     <div class="wiki-row"><b>교회 소식</b><span>주보에 실리는 광고를 그대로. 상단 고정과 하이라이트만 정합니다. 소식 페이지는 <b>성도만</b></span></div>
                     <div class="wiki-row"><b>교회 행사</b><span>일정. 행사 페이지에 월별로 모입니다. <b>성도만</b></span></div>
                     <div class="wiki-row"><b>예배 영상</b><span>유튜브 주소만 넣으면 됩니다. 새 설교는 자동으로도 들어옵니다. 누구나 봅니다</span></div>
+                    <div class="wiki-row"><b>큐티</b><span>날짜별 본문과 묵상 길잡이. 성도가 남기는 묵상은 <b>본인만</b> 보고 관리자 화면에도 나오지 않습니다. 큐티 페이지는 <b>성도만</b></span></div>
                     <div class="wiki-row"><b>주보</b><span>주간 주보 PDF. 자료실의 첫 번째 탭. <b>성도만</b></span></div>
                     <div class="wiki-row"><b>문서</b><span>새가족 카드, 지출결의서 같은 서식. 자료실의 두 번째 탭. <b>성도만</b></span></div>
                 </div>
@@ -523,12 +539,12 @@
 
                 <div class="wiki-qa">
                     <p class="wiki-q">성도가 아닌 분이 소식 페이지에 들어갔더니 로그인 안내만 나온대요</p>
-                    <p class="wiki-a">정상입니다. 교회 소식 &middot; 교회 행사 &middot; 자료실 &middot; 헌금 &middot; 앨범은 성도만 보는 페이지라, 그 다섯 곳은 로그인 안내 한 줄만 보입니다. 계정이 없으시면 가입 신청을 안내해 주세요.</p>
+                    <p class="wiki-a">정상입니다. 큐티 &middot; 교회 소식 &middot; 교회 행사 &middot; 자료실 &middot; 헌금 &middot; 앨범은 성도만 보는 페이지라, 그 여섯 곳은 로그인 안내 한 줄만 보입니다. 계정이 없으시면 가입 신청을 안내해 주세요.</p>
                 </div>
 
                 <div class="wiki-qa">
                     <p class="wiki-q">로그인했는데도 계속 로그인 안내만 나온대요</p>
-                    <p class="wiki-a">그분이 <b>교적에 없는</b> 것입니다. 계정과 교적은 별개입니다. 그런 분에게는 안내 문구도 달라져서, 로그인하라는 말 대신 교적 등록이 필요하다는 안내와 교회 사무실 이메일이 보입니다. <b>교적 &rsaquo; 성도</b>에서 그분이 있는지 확인하고, 우리 교회 성도가 맞으면 교적에 올려주세요. 올리는 즉시 다섯 페이지가 열립니다.</p>
+                    <p class="wiki-a">그분이 <b>교적에 없는</b> 것입니다. 계정과 교적은 별개입니다. 그런 분에게는 안내 문구도 달라져서, 로그인하라는 말 대신 교적 등록이 필요하다는 안내와 교회 사무실 이메일이 보입니다. <b>교적 &rsaquo; 성도</b>에서 그분이 있는지 확인하고, 우리 교회 성도가 맞으면 교적에 올려주세요. 올리는 즉시 여섯 페이지가 열립니다.</p>
                 </div>
 
                 <div class="wiki-qa">

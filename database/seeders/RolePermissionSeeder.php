@@ -40,7 +40,7 @@ class RolePermissionSeeder extends Seeder
             /** 부서 was missing here while production granted it, so an
                 administrator could not manage what an editor could. */
             'Ministry',
-            'Bulletin', 'Document', 'SiteSetting', 'User',
+            'Bulletin', 'Document', 'SiteSetting', 'User', 'Devotion',
         ]));
 
         /**
@@ -58,7 +58,7 @@ class RolePermissionSeeder extends Seeder
          */
         Role::findOrCreate('content_editor', 'web')->syncPermissions($forModels([
             'Announcement', 'Event', 'Sermon', 'Bulletin', 'Document', 'ServiceType',
-            'Ministry', 'Album', 'Photo', 'Video',
+            'Ministry', 'Album', 'Photo', 'Video', 'Devotion',
         ]));
 
         /**
