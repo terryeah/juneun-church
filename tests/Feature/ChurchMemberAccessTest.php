@@ -22,8 +22,8 @@ use Tests\TestCase;
  * church recognises them. The 교적 record is what says that, and it is
  * the only thing these pages ask about.
  *
- * Five pages are 성도 전용 in full now - 교회 행사, 교회 소식, 자료실,
- * 헌금 and 앨범 - so anybody else gets their heading and one line
+ * Eight pages are 성도 전용 in full now - 교회 행사, 교회 소식, 자료실,
+ * 헌금, 앨범, 큐티, 기도제목 and 성경 타자 - so anybody else gets their heading and one line
  * offering the login, and no query behind it is ever run.
  */
 class ChurchMemberAccessTest extends TestCase
@@ -61,13 +61,13 @@ class ChurchMemberAccessTest extends TestCase
     }
 
     /**
-     * The six pages that are 성도 전용 in full.
+     * The eight pages that are 성도 전용 in full.
      *
      * @return array<int, string>
      */
     private function restrictedPages(): array
     {
-        return ['/events', '/news', '/downloads', '/giving', '/album', '/qt'];
+        return ['/events', '/news', '/downloads', '/giving', '/album', '/qt', '/prayer', '/typing'];
     }
 
     /**

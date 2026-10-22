@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -39,6 +40,14 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function member(): HasOne
     {
         return $this->hasOne(Member::class);
+    }
+
+    /**
+     * The 기도제목 this account has shared.
+     */
+    public function prayerRequests(): HasMany
+    {
+        return $this->hasMany(PrayerRequest::class);
     }
 
     /**
@@ -153,6 +162,18 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function isChurchMember(): bool
     {
         return $this->isChurchMember ??= $this->member()->exists();
+    }
+
+    /**
+     * Whether the 성도 behind this account holds a pastoral 직분.
+     *
+     * Asked by 기도제목 alone, and asked of the 교적 rather than of a
+     * role: an administrator who runs the site is not thereby somebody
+     * a 성도 chose to confide in.
+     */
+    public function isPastor(): bool
+    {
+        return in_array($this->member?->position?->name, Position::PASTORAL, true);
     }
 
     /**

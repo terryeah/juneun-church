@@ -4,6 +4,8 @@
     $navItems = [
         ['label' => '예배 안내', 'href' => route('worship'), 'active' => request()->routeIs('worship')],
         ['label' => '큐티', 'href' => route('qt.index'), 'active' => request()->routeIs('qt.*')],
+        ['label' => '기도제목', 'href' => route('prayer.index'), 'active' => request()->routeIs('prayer.*')],
+        ['label' => '성경 타자', 'href' => route('typing.index'), 'active' => request()->routeIs('typing.*')],
         ['label' => '교회 행사', 'href' => route('events'), 'active' => request()->routeIs('events')],
         ['label' => '교회 소식', 'href' => route('news.index'), 'active' => request()->routeIs('news.*')],
         ['label' => '자료실', 'href' => route('downloads'), 'active' => request()->routeIs('downloads')],
@@ -24,7 +26,7 @@
             </span>
         </a>
 
-        <nav class="hidden items-center gap-0.5 lg:flex" aria-label="주 메뉴">
+        <nav class="hidden items-center gap-0.5 xl:flex" aria-label="주 메뉴">
             @foreach ($navItems as $item)
                 <x-layout.nav-link :href="$item['href']" :active="$item['active']">{{ $item['label'] }}</x-layout.nav-link>
             @endforeach
@@ -44,7 +46,7 @@
 
         <button
             type="button"
-            class="group rounded-nav p-2 text-navy hover:bg-accent-100 lg:hidden"
+            class="group rounded-nav p-2 text-navy hover:bg-accent-100 xl:hidden"
             aria-expanded="false"
             aria-controls="mobile-menu"
             aria-label="메뉴 열기"
@@ -62,7 +64,7 @@
         </button>
     </div>
 
-    <nav id="mobile-menu" class="hidden fixed inset-0 top-(--header-h) z-40 bg-paper lg:hidden" aria-label="모바일 메뉴" data-mobile-nav-menu>
+    <nav id="mobile-menu" class="hidden fixed inset-0 top-(--header-h) z-40 bg-paper xl:hidden" aria-label="모바일 메뉴" data-mobile-nav-menu>
         <div class="container-site divide-y divide-line py-4">
             @foreach ($navItems as $item)
                 <div class="py-1.5"><x-layout.nav-link :href="$item['href']" :active="$item['active']" :mobile="true">{{ $item['label'] }}</x-layout.nav-link></div>

@@ -19,6 +19,14 @@ class Position extends Model
     use HasFactory, LogsModelActivity;
 
     /**
+     * Position names that make somebody a 목회자: the people a 기도제목
+     * marked 목회자에게만 is for.
+     *
+     * @var list<string>
+     */
+    public const PASTORAL = ['담임목사', '부목사', '전도사'];
+
+    /**
      * The staff members holding this position.
      */
     public function staffMembers(): HasMany

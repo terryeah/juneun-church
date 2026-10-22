@@ -33,7 +33,7 @@ A Laravel-based church website with Filament admin panel, Cloudflare R2 media st
 
 ## Site Pages
 
-Four pages are open to the street; six are 성도 전용 as **whole pages**. The
+Four pages are open to the street; eight are 성도 전용 as **whole pages**. The
 gate is `User::isChurchMember()` - an account linked to a 교적 (`members`)
 record - and never a role, so a staff account with no 교적 record is treated
 like anyone else. A reader who fails it is answered with
@@ -54,6 +54,8 @@ the `contact_email` setting to a signed-in non-성도.
 | Giving | 헌금 | `/giving` | 성도 전용 | Bank details plus the last 12 weeks of 헌금 내역 |
 | Album | 앨범 | `/album` | 성도 전용 | 사진 and 동영상 albums, thumbnails, lightbox, infinite scroll |
 | QT | 큐티 | `/qt` | 성도 전용 | A day's passage and guide from the Sunday sermon; each 성도 keeps a 묵상 on it that only they can read, gathered at `/qt/notes` |
+| Prayer | 기도제목 | `/prayer` | 성도 전용 | A 성도 shares a request with their 셀, with every 성도, or with the 목회자 alone; tabs per audience, 응답받음 toggle, no panel screen |
+| Typing | 성경 타자 | `/typing` | 성도 전용 | 개역한글 typed out verse by verse; monthly personal and 셀 leaderboards and an all-time one, no panel screen |
 
 Home is the one place restricted content surfaces publicly, deliberately: it
 lists the latest four announcement **titles** and shows the 하이라이트 notice's
@@ -146,6 +148,21 @@ devotion_notes (묵상)
 └── id, devotion_id (FK, cascade), user_id (FK, cascade), body, timestamps
     unique (user_id, devotion_id). Read by the writer alone: no panel screen
     and no activity log, so not even administrators see them.
+
+prayer_requests (기도제목)
+└── id, user_id (FK, cascade), scope (cell|church|pastor), body, is_answered, timestamps
+    No panel screen and no activity log. A 목회자 is a 성도 whose 직분 is in
+    Position::PASTORAL (User::isPastor()), never a role.
+
+bible_verses (개역한글)
+└── id, book (1-66), chapter, verse, text - unique (book, chapter, verse)
+    31,101 verses loaded by the migration from database/data/krv.jsonl.gz
+    (성경전서 개역한글판, 대한성서공회, public domain). BibleVerse::BOOKS names them.
+
+bible_typings (성경 타자)
+└── id, user_id (FK, cascade), bible_verse_id (FK, cascade), timestamps
+    unique (user_id, bible_verse_id). A verse counts once it matches with
+    whitespace ignored; the leaderboards are counts over this table.
 
 bulletins (주보)
 └── id, title, file_path (R2 - private PDF), published_at, created_by, timestamps
@@ -291,6 +308,8 @@ personal details.
 - [x] 앨범 - Albums index + photo and video album detail
 - [x] 로그인 / 가입 신청, and the shared 성도 전용 notice
 - [x] 큐티 - daily passage and guide, private 묵상 노트 per 성도
+- [x] 기도제목 - shared with a 셀, the church or the 목회자 alone
+- [x] 성경 타자 - 개역한글 verse by verse, with 셀 and personal leaderboards
 
 ### Phase 6: TypeScript Components
 - [x] YouTube lazy loader (click to load iframe) and video modal
@@ -432,11 +451,9 @@ export class Lightbox {
 
 - Email notifications for new announcements
 - Event registration system
-- Prayer request submission (셀 기도제목 and a 성도 전용 public board)
-- 성경 타자 with a cell and personal leaderboard (개역한글: public domain)
 - Multi-language support (Korean/English)
 
-Already shipped, so no longer on this list: automatic sermon fetching from
+Already shipped, so no longer on this list: 기도제목, 성경 타자, automatic sermon fetching from
 YouTube (`youtube:import`) and the private 교적 directory (교적 › 성도).
 
 ## Useful Commands

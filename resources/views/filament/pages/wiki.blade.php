@@ -92,6 +92,16 @@
                 </article>
 
                 <article class="wiki-task">
+                    <h3 class="wiki-task-title">기도제목과 성경 타자</h3>
+                    <p>두 페이지는 관리자 화면에서 할 일이 없습니다. 성도님들이 홈페이지에서 로그인한 채로 직접 씁니다.</p>
+                    <ul class="wiki-steps">
+                        <li><b>기도제목</b>: 성도가 기도제목을 적으면서 <b>우리 셀 &middot; 모든 성도 &middot; 목회자에게만</b> 중 하나를 고릅니다. 셀에 나눈 것은 같은 셀 성도와 목회자만, 모든 성도에 나눈 것은 교적에 있는 모두가 봅니다. <b>목회자에게만</b>은 교적에서 직분이 담임목사 &middot; 부목사 &middot; 전도사인 분의 화면에만 나옵니다. 쓴 사람은 <b>응답받았어요</b> 표시와 지우기를, 목회자는 지우기를 할 수 있습니다.</li>
+                        <li><b>성경 타자</b>: 개역한글 성경 31,101절이 들어 있습니다. 성도가 책을 골라 한 절씩 그대로 치면 한 절로 세고, 이번 달 개인 &middot; 셀, 지금까지 개인 순위가 그 페이지에 나옵니다. 띄어쓰기만 다른 것은 맞은 것으로 봅니다.</li>
+                    </ul>
+                    <p class="wiki-note"><b>셀 배정이 중요해졌습니다.</b> 셀 기도제목과 셀 순위는 <b>교적 &rsaquo; 성도</b>의 셀 칸을 따릅니다. 셀이 비어 있는 성도는 셀에 기도제목을 나눌 수 없고 셀 순위에도 잡히지 않습니다.</p>
+                </article>
+
+                <article class="wiki-task">
                     <h3 class="wiki-task-title">사진 목록에서 원하는 사진 찾기</h3>
                     <ol class="wiki-steps">
                         <li><b>미디어 &rsaquo; 사진</b>에서 목록 위 <b>필터</b>를 누릅니다.</li>
@@ -190,6 +200,8 @@
                             <tr><th scope="row">섬기는 사람들</th><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr><th scope="row">오시는 길</th><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr class="wiki-matrix-gate"><th scope="row">큐티</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
+                            <tr><th scope="row">기도제목</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
+                            <tr><th scope="row">성경 타자</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr><th scope="row">교회 소식</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr><th scope="row">교회 행사</th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
                             <tr><th scope="row">자료실 <span class="wiki-matrix-sub">주보 &middot; 문서</span></th><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-no"><span aria-hidden="true">&times;</span><span class="wiki-sr">안 보임</span></td><td class="wiki-yes"><span aria-hidden="true">&check;</span><span class="wiki-sr">보임</span></td></tr>
@@ -199,7 +211,7 @@
                     </table>
                 </div>
 
-                <p class="wiki-warn"><b>기준은 로그인이 아니라 교적입니다.</b> 가운데 칸을 보세요. 계정만 있고 교적에 없는 분은 로그인해도 아래 여섯 페이지가 열리지 않습니다. 가입 신청은 누구나 넣을 수 있어서, 로그인을 기준으로 삼으면 교회가 모르는 분에게도 주보와 헌금 내역이 열리기 때문입니다.</p>
+                <p class="wiki-warn"><b>기준은 로그인이 아니라 교적입니다.</b> 가운데 칸을 보세요. 계정만 있고 교적에 없는 분은 로그인해도 아래 여덟 페이지가 열리지 않습니다. 가입 신청은 누구나 넣을 수 있어서, 로그인을 기준으로 삼으면 교회가 모르는 분에게도 주보와 헌금 내역이 열리기 때문입니다.</p>
 
                 <h3 class="wiki-h3">교적에 올릴지가 모든 것을 정합니다</h3>
 
@@ -222,20 +234,20 @@
                     <div class="wiki-card wiki-card-open">
                         <span class="wiki-card-tag">교적에 올림</span>
                         <b class="wiki-card-title">성도</b>
-                        <span class="wiki-card-body">큐티 &middot; 소식 &middot; 행사 &middot; 자료실 &middot; 헌금 &middot; 앨범 여섯 페이지가 <b>한꺼번에</b> 열립니다.</span>
+                        <span class="wiki-card-body">큐티 &middot; 기도제목 &middot; 성경 타자 &middot; 소식 &middot; 행사 &middot; 자료실 &middot; 헌금 &middot; 앨범 여덟 페이지가 <b>한꺼번에</b> 열립니다.</span>
                     </div>
                     <div class="wiki-card wiki-card-shut">
                         <span class="wiki-card-tag">교적에 올리지 않음</span>
                         <b class="wiki-card-title">일반회원</b>
-                        <span class="wiki-card-body">로그인은 되지만 그 여섯 페이지에는 안내만 보입니다. 나중에 성도가 되시면 그때 교적에 올리면 됩니다.</span>
+                        <span class="wiki-card-body">로그인은 되지만 그 여덟 페이지에는 안내만 보입니다. 나중에 성도가 되시면 그때 교적에 올리면 됩니다.</span>
                     </div>
                 </div>
 
-                <p class="wiki-warn"><b>우리 교회 성도가 아닌 분은 교적에 올리지 마세요.</b> 여섯 페이지가 교적 하나로 한꺼번에 열립니다.</p>
+                <p class="wiki-warn"><b>우리 교회 성도가 아닌 분은 교적에 올리지 마세요.</b> 여덟 페이지가 교적 하나로 한꺼번에 열립니다.</p>
 
                 <h3 class="wiki-h3">막혔을 때 보이는 화면</h3>
 
-                <p>메뉴는 누구에게나 아홉 개 그대로 보입니다. 성도가 아닌 분이 성도 전용 메뉴를 누르면 페이지 이름과 안내 한 줄만 나옵니다. 목록을 아예 만들지 않기 때문에 소식 제목도, 주보 파일 이름도 그 화면에는 실려 나가지 않습니다.</p>
+                <p>메뉴는 누구에게나 열한 개 그대로 보입니다. 성도가 아닌 분이 성도 전용 메뉴를 누르면 페이지 이름과 안내 한 줄만 나옵니다. 목록을 아예 만들지 않기 때문에 소식 제목도, 주보 파일 이름도 그 화면에는 실려 나가지 않습니다.</p>
 
                 <div class="wiki-cards wiki-cards-2">
                     <div class="wiki-card wiki-card-shut">
@@ -252,7 +264,7 @@
 
                 <h3 class="wiki-h3">글마다 켜던 스위치는 없어졌습니다</h3>
                 <p>주보 &middot; 문서 &middot; 교회 소식 &middot; 앨범에 있던 <b>성도 전용</b> 스위치를 모두 없앴습니다. 페이지가 통째로 닫혀 있으니 항목마다 정할 것이 없습니다.</p>
-                <p class="wiki-note"><b>성도 이름 때문에 무언가를 켜 두실 일이 이제 없습니다.</b> 대신 <b>교적에 올리는 일</b>이 유일하게 중요한 결정이 되었습니다. 교적에 이름이 올라가는 순간 그분에게 여섯 페이지가 한꺼번에 열립니다.</p>
+                <p class="wiki-note"><b>성도 이름 때문에 무언가를 켜 두실 일이 이제 없습니다.</b> 대신 <b>교적에 올리는 일</b>이 유일하게 중요한 결정이 되었습니다. 교적에 이름이 올라가는 순간 그분에게 여덟 페이지가 한꺼번에 열립니다.</p>
 
                 <h3 class="wiki-h3">앨범 스위치는 하나입니다</h3>
                 <div class="wiki-rows">
@@ -265,7 +277,7 @@
                 <p class="wiki-warn"><b>홈 화면 사진 띠는 골라 넣은 사진만 나옵니다.</b> 앨범에서 알아서 채워 오지 않습니다. <b>미디어 &rsaquo; 사진</b>에서 사진을 체크해 <b>일괄 작업 &rsaquo; 홈 슬라이더에 넣기</b>로 넣으며, 넣는다는 것은 &ldquo;이 사진은 누구나 봐도 괜찮다&rdquo;는 뜻입니다. 체크한 사진은 그것만으로 나옵니다. 순서는 <b>자주 하는 일</b>에 있습니다. 한 장도 넣지 않으면 그 자리에 사진 띠가 나오지 않습니다.</p>
 
                 <h3 class="wiki-h3">검색 엔진</h3>
-                <p>구글에 알려주는 목록에는 <b>홈 &middot; 예배 안내 &middot; 오시는 길 &middot; 섬기는 사람들</b> 네 페이지만 들어 있습니다. 성도 전용 여섯 페이지와 그 안의 소식 &middot; 앨범 &middot; 큐티는 검색 결과에 올라가지 않습니다.</p>
+                <p>구글에 알려주는 목록에는 <b>홈 &middot; 예배 안내 &middot; 오시는 길 &middot; 섬기는 사람들</b> 네 페이지만 들어 있습니다. 성도 전용 여덟 페이지와 그 안의 소식 &middot; 앨범 &middot; 큐티 &middot; 기도제목 &middot; 성경 타자는 검색 결과에 올라가지 않습니다.</p>
 
             </div>
         </details>
@@ -303,7 +315,7 @@
                     <div class="wiki-card wiki-card-key">
                         <span class="wiki-card-tag">교적</span>
                         <b class="wiki-card-title">홈페이지</b>
-                        <span class="wiki-card-body">성도 전용 여섯 페이지가 열리는지를 정합니다.</span>
+                        <span class="wiki-card-body">성도 전용 여덟 페이지가 열리는지를 정합니다.</span>
                     </div>
                 </div>
 
@@ -327,6 +339,8 @@
                     <div class="wiki-row"><b>교회 행사</b><span>일정. 행사 페이지에 월별로 모입니다. <b>성도만</b></span></div>
                     <div class="wiki-row"><b>예배 영상</b><span>유튜브 주소만 넣으면 됩니다. 새 설교는 자동으로도 들어옵니다. 누구나 봅니다</span></div>
                     <div class="wiki-row"><b>큐티</b><span>날짜별 본문과 묵상 길잡이. 성도가 남기는 묵상은 <b>본인만</b> 보고 관리자 화면에도 나오지 않습니다. 큐티 페이지는 <b>성도만</b></span></div>
+                    <div class="wiki-row"><b>기도제목</b><span>관리자 화면에는 없습니다. 성도가 홈페이지에서 직접 나누고, 셀 &middot; 모든 성도 &middot; 목회자에게만 중 누구와 나눌지 본인이 고릅니다. <b>성도만</b></span></div>
+                    <div class="wiki-row"><b>성경 타자</b><span>관리자 화면에는 없습니다. 개역한글 성경이 이미 들어 있어 성도가 바로 한 절씩 씁니다. <b>성도만</b></span></div>
                     <div class="wiki-row"><b>주보</b><span>주간 주보 PDF. 자료실의 첫 번째 탭. <b>성도만</b></span></div>
                     <div class="wiki-row"><b>문서</b><span>새가족 카드, 지출결의서 같은 서식. 자료실의 두 번째 탭. <b>성도만</b></span></div>
                 </div>
@@ -539,12 +553,12 @@
 
                 <div class="wiki-qa">
                     <p class="wiki-q">성도가 아닌 분이 소식 페이지에 들어갔더니 로그인 안내만 나온대요</p>
-                    <p class="wiki-a">정상입니다. 큐티 &middot; 교회 소식 &middot; 교회 행사 &middot; 자료실 &middot; 헌금 &middot; 앨범은 성도만 보는 페이지라, 그 여섯 곳은 로그인 안내 한 줄만 보입니다. 계정이 없으시면 가입 신청을 안내해 주세요.</p>
+                    <p class="wiki-a">정상입니다. 큐티 &middot; 기도제목 &middot; 성경 타자 &middot; 교회 소식 &middot; 교회 행사 &middot; 자료실 &middot; 헌금 &middot; 앨범은 성도만 보는 페이지라, 그 여덟 곳은 로그인 안내 한 줄만 보입니다. 계정이 없으시면 가입 신청을 안내해 주세요.</p>
                 </div>
 
                 <div class="wiki-qa">
                     <p class="wiki-q">로그인했는데도 계속 로그인 안내만 나온대요</p>
-                    <p class="wiki-a">그분이 <b>교적에 없는</b> 것입니다. 계정과 교적은 별개입니다. 그런 분에게는 안내 문구도 달라져서, 로그인하라는 말 대신 교적 등록이 필요하다는 안내와 교회 사무실 이메일이 보입니다. <b>교적 &rsaquo; 성도</b>에서 그분이 있는지 확인하고, 우리 교회 성도가 맞으면 교적에 올려주세요. 올리는 즉시 여섯 페이지가 열립니다.</p>
+                    <p class="wiki-a">그분이 <b>교적에 없는</b> 것입니다. 계정과 교적은 별개입니다. 그런 분에게는 안내 문구도 달라져서, 로그인하라는 말 대신 교적 등록이 필요하다는 안내와 교회 사무실 이메일이 보입니다. <b>교적 &rsaquo; 성도</b>에서 그분이 있는지 확인하고, 우리 교회 성도가 맞으면 교적에 올려주세요. 올리는 즉시 여덟 페이지가 열립니다.</p>
                 </div>
 
                 <div class="wiki-qa">

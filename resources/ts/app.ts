@@ -6,6 +6,7 @@ import { InfiniteScroll } from './components/InfiniteScroll';
 import { PhotoSlider } from './components/PhotoSlider';
 import { SectionSwap } from './components/SectionSwap';
 import { DateFieldFormat } from './components/DateFieldFormat';
+import { TypingPad } from './components/TypingPad';
 
 /**
  * Main entry point.
@@ -72,6 +73,20 @@ document.addEventListener('DOMContentLoaded', (): void => {
             chip: '[data-gallery-chip]',
             stagger: '[data-gallery-item]',
         });
+    }
+
+    const prayer = document.querySelector<HTMLElement>('[data-prayer]');
+    if (prayer) {
+        new SectionSwap(prayer, {
+            root: '[data-prayer]',
+            chip: '[data-prayer-tab]',
+            stagger: '[data-prayer-item]',
+        });
+    }
+
+    const typingPad = document.querySelector<HTMLTextAreaElement>('textarea[data-typing-pad]');
+    if (typingPad) {
+        new TypingPad(typingPad);
     }
 
     document

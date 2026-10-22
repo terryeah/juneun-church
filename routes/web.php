@@ -1,15 +1,17 @@
 <?php
 
 use App\Http\Controllers\AlbumController;
-use App\Http\Controllers\DevotionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\MembershipRequestController;
+use App\Http\Controllers\BibleTypingController;
+use App\Http\Controllers\DevotionController;
 use App\Http\Controllers\DownloadsController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GivingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\PrayerRequestController;
 use App\Http\Controllers\RestrictedFileController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StaffController;
@@ -63,6 +65,19 @@ Route::post('/qt/{devotion}/note', [DevotionController::class, 'save'])
     ->whereNumber('devotion')
     ->middleware(['auth', 'throttle:30,1'])
     ->name('qt.note');
+
+Route::get('/prayer', [PrayerRequestController::class, 'index'])->name('prayer.index');
+Route::middleware(['auth', 'throttle:30,1'])->group(function () {
+    Route::post('/prayer', [PrayerRequestController::class, 'store'])->name('prayer.store');
+    Route::post('/prayer/{prayerRequest}/answered', [PrayerRequestController::class, 'answered'])->name('prayer.answered');
+    Route::delete('/prayer/{prayerRequest}', [PrayerRequestController::class, 'destroy'])->name('prayer.destroy');
+});
+
+Route::get('/typing', [BibleTypingController::class, 'index'])->name('typing.index');
+Route::get('/typing/write', [BibleTypingController::class, 'write'])->name('typing.write');
+Route::post('/typing/write', [BibleTypingController::class, 'submit'])
+    ->middleware(['auth', 'throttle:60,1'])
+    ->name('typing.submit');
 
 Route::get('/giving', GivingController::class)->name('giving');
 Route::get('/location', LocationController::class)->name('location');
