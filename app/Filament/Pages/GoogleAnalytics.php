@@ -14,10 +14,12 @@ use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 
 /**
- * Developer-only dashboard showing Google Analytics 4 figures, run
- * alongside the Cloudflare 방문자 통계 page so the two counts can be
- * compared. GA4 sees only browsers that execute its tag, so crawlers
- * that Cloudflare's beacon still counts should not appear here.
+ * 방문자 통계: Google Analytics 4 figures, read through the Data API.
+ *
+ * The site counted with Cloudflare first and then with Umami. Both are
+ * gone; the tag in the public layout is Google's and this is the one
+ * page that reports it. GA4 sees only browsers that execute its tag,
+ * so crawlers never appear here.
  *
  * Ranges are built from app-timezone dates (Australia/Brisbane), and the
  * GA4 property must be set to the same reporting timezone for a day here
@@ -27,33 +29,24 @@ class GoogleAnalytics extends Page
 {
     protected string $view = 'filament.pages.google-analytics';
 
-    protected static ?string $slug = 'google-analytics';
+    protected static ?string $slug = 'analytics';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartLine;
 
-    protected static ?string $navigationLabel = '구글 애널리틱스';
+    protected static ?string $navigationLabel = '방문자 통계';
 
-    protected static ?string $title = '구글 애널리틱스';
+    protected static ?string $title = '방문자 통계';
 
-    protected static ?int $navigationSort = 22;
+    protected static ?int $navigationSort = 21;
 
     /**
-     * Restricted to the developer role while the integration is being
-     * trialled, matching the database graph.
+     * Administrators and developers may access this page. It opens
+     * before the integration is configured too, so the office sees
+     * what is still to be done rather than nothing.
      */
     public static function canAccess(): bool
     {
-        /**
-         * Parked until the church registers the domain with Google.
-         * That needs the pastor's agreement rather than a code change,
-         * so the page stays built and tested but out of the panel;
-         * dropping the property id check here brings it back.
-         */
-        if (blank(config('analytics.property_id'))) {
-            return false;
-        }
-
-        return auth()->user()?->hasRole('developer') ?? false;
+        return auth()->user()?->hasAnyRole(['developer', 'admin', 'super_admin']) ?? false;
     }
 
     /**

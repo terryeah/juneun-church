@@ -65,28 +65,4 @@ return [
         ))),
     ],
 
-    /**
-     * Umami, which counts the visits 방문자 통계 reports.
-     *
-     * Cloudflare's own figures came from a beacon Cloudflare injects at
-     * the edge, which meant no address could be left out of them and no
-     * page could be told from another. This script is ours, in our own
-     * layout, so both are decided here.
-     */
-    'umami' => [
-        'website_id' => env('UMAMI_WEBSITE_ID'),
-        'script_url' => env('UMAMI_SCRIPT_URL', 'https://cloud.umami.is/script.js'),
-
-        /**
-         * The dashboard 방문자 통계 embeds. Reading the same figures
-         * through Umami's API needs a paid plan; a share link does not,
-         * and carries far more than an API would have been asked for.
-         *
-         * Anyone holding the link can read the statistics without
-         * signing in, so it stays out of this repository, which is
-         * public. It can be reissued from Umami at any time.
-         */
-        'share_url' => env('UMAMI_SHARE_URL'),
-    ],
-
 ];

@@ -84,8 +84,7 @@
                 <li>구글 클라우드 콘솔에서 <strong>Google Analytics Data API</strong>를 사용 설정하고 서비스 계정을 만든 뒤 JSON 키를 내려받습니다.</li>
                 <li>GA4 속성의 액세스 관리에서 그 서비스 계정 이메일에 <strong>뷰어</strong> 권한을 부여합니다.</li>
                 <li>JSON 키를 서버의 <code>storage/app/analytics/service-account-credentials.json</code> 에 두고, 웹 서버 사용자만 읽을 수 있게 권한을 제한합니다.</li>
-                <li><code>.env</code> 에 <code>ANALYTICS_PROPERTY_ID</code> 를 설정하고 <code>php artisan config:clear</code> 를 실행합니다.</li>
-                <li>공개 사이트에 GA4 태그(gtag.js)를 넣어야 실제 방문이 수집됩니다.</li>
+                <li><code>.env</code> 에 <code>ANALYTICS_PROPERTY_ID</code>(속성 ID, 숫자)와 <code>ANALYTICS_MEASUREMENT_ID</code>(측정 ID, G-로 시작)를 넣고 <code>php artisan config:cache</code> 를 실행합니다. 측정 ID가 들어가야 홈페이지가 방문을 구글에 보내기 시작합니다.</li>
             </ol>
         </x-filament::section>
     @endif

@@ -8,6 +8,13 @@ return [
     'property_id' => env('ANALYTICS_PROPERTY_ID'),
 
     /*
+     * The measurement id (G-XXXXXXXXXX) of the property's web data stream.
+     * The public layout sends the GA4 tag when it is set, and sends it to
+     * nobody at all when it is blank.
+     */
+    'measurement_id' => env('ANALYTICS_MEASUREMENT_ID'),
+
+    /*
      * Path to the client secret json file. Take a look at the README of this package
      * to learn how to get this file. You can also pass the credentials as an array
      * instead of a file path.

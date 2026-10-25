@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Auth\EditProfile;
-use App\Filament\Pages\Analytics;
 use App\Filament\Pages\BibleTypingReport;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\DatabaseGraph;
@@ -76,10 +75,9 @@ class AdminPanelProvider extends PanelProvider
      * @var array<class-string, string>
      */
     protected const BADGE_OVERRIDES = [
-        Analytics::class => 'admin',
         BibleTypingReport::class => 'admin',
         DatabaseGraph::class => 'developer',
-        GoogleAnalytics::class => 'developer',
+        GoogleAnalytics::class => 'admin',
 
         /**
          * The two screens everybody in the panel shares. A tag answers
@@ -311,7 +309,6 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(PositionResource::class),
             ]),
             NavigationGroup::make('모니터링')->items([
-                ...static::accessibleItems(Analytics::class),
                 ...static::accessibleItems(GoogleAnalytics::class),
                 ...static::accessibleItems(ActivityResource::class),
                 ...static::accessibleItems(DatabaseGraph::class),

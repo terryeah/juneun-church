@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Pages\Analytics;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\DatabaseGraph;
+use App\Filament\Pages\GoogleAnalytics;
 use App\Filament\Pages\Wiki;
 use App\Filament\Resources\Activities\ActivityResource;
 use App\Filament\Resources\Albums\AlbumResource;
@@ -259,7 +259,7 @@ class SidebarRoleBadgeTest extends TestCase
      */
     public function test_pages_carry_their_declared_badges(): void
     {
-        $this->assertSame('admin', AdminPanelProvider::roleBadge(Analytics::class));
+        $this->assertSame('admin', AdminPanelProvider::roleBadge(GoogleAnalytics::class));
         $this->assertSame('developer', AdminPanelProvider::roleBadge(DatabaseGraph::class));
         $this->assertNull(AdminPanelProvider::roleBadge(Dashboard::class));
     }

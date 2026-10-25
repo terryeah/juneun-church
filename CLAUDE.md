@@ -200,7 +200,7 @@ last of them from announcements, bulletins, documents and albums.
 | Role | Korean | Intended User | Access Level |
 |------|--------|---------------|--------------|
 | **super_admin** | 최고 관리자 | Owner | Every permission |
-| **developer** | 개발자 | Developer | Every permission, plus the developer-only screens (활동 기록, DB 구조, Google Analytics, 역할, 비밀번호 재설정 링크) |
+| **developer** | 개발자 | Developer | Every permission, plus the developer-only screens (활동 기록, DB 구조, 역할, 비밀번호 재설정 링크) |
 | **admin** | 관리자 | Pastor / Office Manager | Everything bar the developer-only screens |
 | **content_editor** | 편집자 | Secretary / Comms Lead | Content and media only |
 | **finance_officer** | 재정부 | Treasurer | 헌금 내역 and 개인 헌금, nothing else |
@@ -535,7 +535,9 @@ MAIL_REPLY_TO_ADDRESS=hello@church-domain.org.au
 ```
 
 Optional: `GOOGLE_MAPS_API_KEY` (address autocomplete in the panel),
-`UMAMI_*` (방문자 통계), `ANALYTICS_IGNORED_IPS`.
+`ANALYTICS_MEASUREMENT_ID` and `ANALYTICS_PROPERTY_ID` plus the service-account
+key file at `storage/app/analytics/service-account-credentials.json` (방문자
+통계, Google Analytics 4), `ANALYTICS_IGNORED_IPS`.
 
 ---
 

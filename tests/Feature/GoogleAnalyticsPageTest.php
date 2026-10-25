@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Pages\GoogleAnalytics;
 use App\Models\User;
 use App\Services\GoogleAnalyticsService;
 use Database\Seeders\RoleSeeder;
@@ -10,8 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Access control and unconfigured-state tests for the developer-only
- * Google Analytics page.
+ * Access control and unconfigured-state tests for 방문자 통계, which
+ * is Google Analytics read through the Data API.
  */
 class GoogleAnalyticsPageTest extends TestCase
 {
@@ -19,7 +18,7 @@ class GoogleAnalyticsPageTest extends TestCase
 
     /**
      * Seed the application roles and blank the integration, which is how
-     * the page is deployed until the owner creates the GA4 property.
+     * the page stands until the property and the key are in place.
      */
     protected function setUp(): void
     {
@@ -34,53 +33,46 @@ class GoogleAnalyticsPageTest extends TestCase
     }
 
     /**
-     * Without a property id the page is parked: the church has not
-     * registered the domain with Google yet, so it stays out of the
-     * panel rather than offering a screen nobody can use.
+     * Administrators and developers open it; before anything is
+     * configured it explains what is missing rather than throwing.
      */
-    public function test_the_page_is_hidden_until_a_property_is_configured(): void
+    public function test_administrators_see_the_setup_instructions_until_configured(): void
     {
-        $developer = User::factory()->create();
-        $developer->assignRole('developer');
-
-        $this->assertFalse(GoogleAnalytics::canAccess());
-
-        $this->actingAs($developer)
-            ->get('/admin/google-analytics')
-            ->assertForbidden();
-    }
-
-    /**
-     * Once a property id exists but the credentials file does not, the
-     * page renders and explains what is missing rather than throwing.
-     */
-    public function test_developers_see_the_setup_instructions_when_credentials_are_missing(): void
-    {
-        config(['analytics.property_id' => '123456789']);
-
-        $developer = User::factory()->create();
-        $developer->assignRole('developer');
-
         $this->assertFalse(app(GoogleAnalyticsService::class)->isConfigured());
         $this->assertSame([], app(GoogleAnalyticsService::class)->report(today()->subDays(6), today()));
 
-        $this->actingAs($developer)
-            ->get('/admin/google-analytics')
-            ->assertStatus(200)
-            ->assertSee('구글 애널리틱스 연동이 아직 설정되지 않았습니다');
+        foreach (['admin', 'super_admin', 'developer'] as $role) {
+            $user = User::factory()->create();
+            $user->assignRole($role);
+
+            $this->actingAs($user)
+                ->get('/admin/analytics')
+                ->assertOk()
+                ->assertSee('구글 애널리틱스 연동이 아직 설정되지 않았습니다')
+                ->assertSee('ANALYTICS_MEASUREMENT_ID');
+        }
     }
 
     /**
-     * A super admin without the developer role is refused, matching the
-     * database graph.
+     * A property id alone is not enough: the key file has to be there.
      */
-    public function test_super_admins_without_the_developer_role_are_refused(): void
+    public function test_a_property_id_without_a_key_is_still_unconfigured(): void
     {
-        $superAdmin = User::factory()->create();
-        $superAdmin->assignRole('super_admin');
+        config(['analytics.property_id' => '123456789']);
 
-        $this->actingAs($superAdmin)
-            ->get('/admin/google-analytics')
-            ->assertStatus(403);
+        $this->assertFalse(app(GoogleAnalyticsService::class)->isConfigured());
+    }
+
+    /**
+     * Everyone else is refused.
+     */
+    public function test_editors_and_members_are_refused(): void
+    {
+        foreach (['content_editor', 'finance_officer'] as $role) {
+            $user = User::factory()->create();
+            $user->assignRole($role);
+
+            $this->actingAs($user)->get('/admin/analytics')->assertForbidden();
+        }
     }
 }
