@@ -2,10 +2,10 @@
     use App\Models\BibleVerse;
 @endphp
 
-<x-layout.app title="성경 타자" description="개역한글 성경을 한 절씩 직접 써 내려가는 성경 타자입니다." :noindex="true">
+<x-layout.app title="성경 필사" description="개역한글 성경을 한 절씩 직접 옮겨 쓰는 성경 필사입니다." :noindex="true">
 
-    <x-ui.page-header kicker="말씀 쓰기 · Bible Typing" title="성경 타자">
-        성경을 한 절씩 직접 쳐서 옮깁니다. 띄어쓰기는 달라도 되지만 글자는 모두 맞아야 한 절로 셉니다.
+    <x-ui.page-header kicker="말씀 필사 · Scripture Writing" title="성경 필사">
+        성경을 한 절씩 직접 옮겨 씁니다. 띄어쓰기는 달라도 되지만 글자는 모두 맞아야 한 절로 셉니다.
     </x-ui.page-header>
 
     <section class="section-typing container-site pb-12 lg:pb-16">

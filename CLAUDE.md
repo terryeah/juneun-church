@@ -55,7 +55,11 @@ the `contact_email` setting to a signed-in non-성도.
 | Album | 앨범 | `/album` | 성도 전용 | 사진 and 동영상 albums, thumbnails, lightbox, infinite scroll |
 | QT | 큐티 | `/qt` | 성도 전용 | A day's passage and guide from the Sunday sermon; each 성도 keeps a 묵상 on it that only they can read, gathered at `/qt/notes` |
 | Prayer | 기도제목 | `/prayer` | 성도 전용 | A 성도 shares a request with their 셀, with every 성도, or with the 목회자 alone; tabs per audience, 응답받음 toggle, no panel screen |
-| Typing | 성경 타자 | `/typing` | 성도 전용 | 개역한글 typed out verse by verse; monthly personal and 셀 leaderboards and an all-time one, no panel screen |
+| Typing | 성경 필사 | `/typing` | 성도 전용 | 개역한글 typed out verse by verse; monthly personal and 셀 leaderboards and an all-time one. The panel's 성경 필사 현황 page (admin only) lists every 성도's record |
+
+The header folds the 성도 pages into two groups, 말씀과 기도 (큐티, 기도제목,
+성경 필사) and 교회 생활 (소식, 행사, 앨범, 자료실, 헌금), that open on hover or
+focus with CSS alone; the phone menu lists them under the same headings.
 
 Home is the one place restricted content surfaces publicly, deliberately: it
 lists the latest four announcement **titles** and shows the 하이라이트 notice's
@@ -159,10 +163,11 @@ bible_verses (개역한글)
     31,101 verses loaded by the migration from database/data/krv.jsonl.gz
     (성경전서 개역한글판, 대한성서공회, public domain). BibleVerse::BOOKS names them.
 
-bible_typings (성경 타자)
+bible_typings (성경 필사)
 └── id, user_id (FK, cascade), bible_verse_id (FK, cascade), timestamps
     unique (user_id, bible_verse_id). A verse counts once it matches with
-    whitespace ignored; the leaderboards are counts over this table.
+    whitespace ignored; the leaderboards are counts over this table, and
+    so is the panel's 성경 필사 현황 page (BibleTypingReport, role-gated).
 
 bulletins (주보)
 └── id, title, file_path (R2 - private PDF), published_at, created_by, timestamps
@@ -250,6 +255,7 @@ migrations.
 | Offerings | Full | ❌ | Full |
 | Personal Offerings | Full | ❌ | Full |
 | Users (read-only list) | Full | ❌ | ❌ |
+| 성경 필사 현황 (page, gated by role) | Full | ❌ | ❌ |
 | Roles (Shield) | ❌ | ❌ | ❌ |
 
 Albums and Photos reached content editors through
@@ -286,6 +292,7 @@ personal details.
 - [x] 계정: MembershipRequest, User (read-only list)
 - [x] 기준 정보: SiteSetting, ServiceType, Ministry, Position
 - [x] 모니터링: Activity, plus the Analytics / GoogleAnalytics / DatabaseGraph pages
+- [x] 성경 필사 현황: a read-only page over bible_typings for administrators
 - [x] Wiki page (`resources/views/filament/pages/wiki.blade.php`) - the Korean
       handbook for church staff; keep it true whenever behaviour changes
 - [x] Configure Shield permissions for all resources
@@ -309,7 +316,7 @@ personal details.
 - [x] 로그인 / 가입 신청, and the shared 성도 전용 notice
 - [x] 큐티 - daily passage and guide, private 묵상 노트 per 성도
 - [x] 기도제목 - shared with a 셀, the church or the 목회자 alone
-- [x] 성경 타자 - 개역한글 verse by verse, with 셀 and personal leaderboards
+- [x] 성경 필사 - 개역한글 verse by verse, with 셀 and personal leaderboards
 
 ### Phase 6: TypeScript Components
 - [x] YouTube lazy loader (click to load iframe) and video modal
@@ -453,7 +460,7 @@ export class Lightbox {
 - Event registration system
 - Multi-language support (Korean/English)
 
-Already shipped, so no longer on this list: 기도제목, 성경 타자, automatic sermon fetching from
+Already shipped, so no longer on this list: 기도제목, 성경 필사, automatic sermon fetching from
 YouTube (`youtube:import`) and the private 교적 directory (교적 › 성도).
 
 ## Useful Commands

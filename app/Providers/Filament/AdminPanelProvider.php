@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Auth\EditProfile;
 use App\Filament\Pages\Analytics;
+use App\Filament\Pages\BibleTypingReport;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\DatabaseGraph;
 use App\Filament\Pages\GoogleAnalytics;
@@ -76,6 +77,7 @@ class AdminPanelProvider extends PanelProvider
      */
     protected const BADGE_OVERRIDES = [
         Analytics::class => 'admin',
+        BibleTypingReport::class => 'admin',
         DatabaseGraph::class => 'developer',
         GoogleAnalytics::class => 'developer',
 
@@ -272,6 +274,7 @@ class AdminPanelProvider extends PanelProvider
                 ...static::accessibleItems(EventResource::class),
                 ...static::accessibleItems(SermonResource::class),
                 ...static::accessibleItems(DevotionResource::class),
+                ...static::accessibleItems(BibleTypingReport::class),
                 ...static::accessibleItems(BulletinResource::class),
                 ...static::accessibleItems(DocumentResource::class),
             ]),

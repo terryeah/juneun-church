@@ -51,6 +51,14 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     }
 
     /**
+     * The verses this account has typed out on 성경 필사.
+     */
+    public function bibleTypings(): HasMany
+    {
+        return $this->hasMany(BibleTyping::class);
+    }
+
+    /**
      * The admin panel avatar: the roster photo of the 성도 this account
      * belongs to, when there is one.
      *

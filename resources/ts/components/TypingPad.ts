@@ -1,7 +1,7 @@
 /**
  * Typing Pad Component
  *
- * The box a 성도 types a verse into on 성경 타자. Pasting and dropping
+ * The box a 성도 types a verse into on 성경 필사. Pasting and dropping
  * text are refused, because the count is of verses typed, and the
  * server has no way to tell a pasted verse from a typed one.
  */

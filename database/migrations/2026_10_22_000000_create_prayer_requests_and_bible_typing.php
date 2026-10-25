@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * 기도제목 and 성경 타자: the two 성도 activities the pastor asked for
+ * 기도제목 and 성경 필사: the two 성도 activities the pastor asked for
  * beside 큐티.
  *
  * Nothing here takes a permission. Like 묵상, a 기도제목 is read on the

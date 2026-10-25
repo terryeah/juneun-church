@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
- * 성경 타자: a 성도 types 개역한글 out verse by verse, and the page
+ * 성경 필사: a 성도 types 개역한글 out verse by verse, and the page
  * keeps count for them, for their 셀, and for the whole church.
  *
  * 성도 전용 as a whole. A verse counts once it has been typed exactly,
@@ -134,8 +134,8 @@ class BibleTypingController extends Controller
     private function signInPage(): View
     {
         return view('pages.members-only', [
-            'kicker' => '말씀 쓰기 · Bible Typing',
-            'title' => '성경 타자',
+            'kicker' => '말씀 필사 · Scripture Writing',
+            'title' => '성경 필사',
         ]);
     }
 }

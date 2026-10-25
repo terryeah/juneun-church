@@ -7,12 +7,13 @@ use App\Models\BibleVerse;
 use App\Models\Cell;
 use App\Models\Member;
 use App\Models\User;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\SiteSettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Covers 성경 타자: the verses are there, a verse counts only when it
+ * Covers 성경 필사: the verses are there, a verse counts only when it
  * is typed right, and the leaderboards add up.
  */
 class BibleTypingTest extends TestCase
@@ -105,6 +106,50 @@ class BibleTypingTest extends TestCase
             ->assertSee('4절');
 
         $this->assertStringContainsString('1셀', $this->get('/typing')->getContent());
+    }
+
+    /**
+     * The panel's 성경 필사 현황 lists everyone, and opens to
+     * administrators alone.
+     */
+    public function test_the_panel_report_is_for_administrators(): void
+    {
+        $this->seed(RoleSeeder::class);
+
+        $cell = Cell::query()->create(['name' => '1셀']);
+        $busy = User::factory()->onTheRoster()->create(['name' => '김부지런']);
+        Member::query()->where('user_id', $busy->getKey())->update(['cell_id' => $cell->getKey()]);
+
+        foreach ([1, 2] as $verse) {
+            BibleTyping::create(['user_id' => $busy->getKey(), 'bible_verse_id' => $verse]);
+        }
+
+        /**
+         * A 일반회원 is sent to their profile, as everywhere in the panel.
+         * They go first: a refusal inside a Livewire component leaves
+         * Livewire's redirector bound for the rest of the test process,
+         * and this redirect would then come back as the wrong type.
+         */
+        $member = User::factory()->create();
+        $member->assignRole('general_member');
+        $this->actingAs($member)->get('/admin/bible-typing')->assertRedirect();
+
+        foreach (['content_editor', 'finance_officer'] as $role) {
+            $user = User::factory()->create();
+            $user->assignRole($role);
+
+            $this->actingAs($user)->get('/admin/bible-typing')->assertForbidden();
+        }
+
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        $this->actingAs($admin)
+            ->get('/admin/bible-typing')
+            ->assertOk()
+            ->assertSee('김부지런')
+            ->assertSee('창세기 1:2')
+            ->assertSee('1셀');
     }
 
     /**

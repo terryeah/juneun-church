@@ -9,7 +9,7 @@
     </x-ui.page-header>
 
     <section class="section-prayer-form container-site pb-10">
-        <form method="POST" action="{{ route('prayer.store') }}" class="mx-auto max-w-3xl rounded-frame border-2 border-navy bg-paper p-6 lg:p-8">
+        <form method="POST" action="{{ route('prayer.store') }}" class="rounded-frame border-2 border-navy bg-paper p-6 lg:p-8">
             @csrf
             <label for="body" class="block font-kr text-body font-bold text-navy">기도제목 나누기</label>
             <textarea id="body" name="body" rows="4" required maxlength="2000" class="{{ $inputClass }}"
@@ -43,67 +43,65 @@
 
     {{-- The whole section swaps on a tab click, the way 자료실 does. --}}
     <section class="section-prayer-list container-site pb-12 lg:pb-16" data-prayer>
-        <div class="mx-auto max-w-3xl">
-            <div class="flex flex-wrap gap-2">
-                @foreach ($tabs as $key => $label)
-                    <a href="{{ route('prayer.index', ['tab' => $key]) }}"
-                       class="rounded-nav px-4 py-2 font-kr text-body-sm transition-colors {{ $key === $tab ? 'bg-navy text-cream' : 'bg-navy/5 text-navy hover:bg-navy/10' }}"
-                       @if ($key === $tab) aria-current="page" @endif
-                       data-prayer-tab>
-                        {{ $label }}
-                    </a>
-                @endforeach
-            </div>
+        <div class="flex flex-wrap gap-2">
+            @foreach ($tabs as $key => $label)
+                <a href="{{ route('prayer.index', ['tab' => $key]) }}"
+                   class="rounded-nav px-4 py-2 font-kr text-body-sm transition-colors {{ $key === $tab ? 'bg-navy text-cream' : 'bg-navy/5 text-navy hover:bg-navy/10' }}"
+                   @if ($key === $tab) aria-current="page" @endif
+                   data-prayer-tab>
+                    {{ $label }}
+                </a>
+            @endforeach
+        </div>
 
-            <div class="mt-6 border-t-2 border-navy">
-                @forelse ($requests as $prayer)
-                    <article class="border-b border-line py-5" data-prayer-item>
-                        <p class="text-caption text-navy-400">
-                            @if ($tab !== 'mine')
-                                <span class="font-kr font-bold text-navy">{{ $prayer->user->name }}</span>
-                                @if ($prayer->scope === 'cell' && $prayer->user->member?->cell)
-                                    · {{ $prayer->user->member->cell->displayName() }}
-                                @endif
-                                ·
-                            @else
-                                <span class="font-kr">{{ \App\Models\PrayerRequest::SCOPES[$prayer->scope] }}</span> ·
+        <div class="mt-6 border-t-2 border-navy">
+            @forelse ($requests as $prayer)
+                <article class="border-b border-line py-5" data-prayer-item>
+                    <p class="text-caption text-navy-400">
+                        @if ($tab !== 'mine')
+                            <span class="font-kr font-bold text-navy">{{ $prayer->user->name }}</span>
+                            @if ($prayer->scope === 'cell' && $prayer->user->member?->cell)
+                                · {{ $prayer->user->member->cell->displayName() }}
                             @endif
-                            {{ $prayer->created_at->translatedFormat('n월 j일') }}
-                            @if ($prayer->is_answered)
-                                <span class="ml-2 font-kr font-bold text-accent">응답받음</span>
-                            @endif
-                        </p>
-                        <p class="mt-2 whitespace-pre-line font-kr text-body leading-relaxed text-navy-700">{{ $prayer->body }}</p>
-
-                        @if ($prayer->canBeRemovedBy(auth()->user()))
-                            <div class="mt-3 flex flex-wrap gap-4 font-kr text-caption font-bold">
-                                @if ($prayer->user_id === auth()->id())
-                                    <form method="POST" action="{{ route('prayer.answered', $prayer) }}">
-                                        @csrf
-                                        <button type="submit" class="text-accent hover:text-accent-700">{{ $prayer->is_answered ? '응답 표시 지우기' : '응답받았어요' }}</button>
-                                    </form>
-                                @endif
-                                <form method="POST" action="{{ route('prayer.destroy', $prayer) }}" onsubmit="return confirm('이 기도제목을 지울까요?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-navy-400 hover:text-navy">지우기</button>
-                                </form>
-                            </div>
-                        @endif
-                    </article>
-                @empty
-                    <p class="py-8 font-kr text-body-sm text-navy-400">
-                        @if ($tab === 'cell' && ! $cellId && ! auth()->user()->isPastor())
-                            아직 셀에 속해 있지 않습니다. 셀 배정은 교회 사무실에 문의해 주세요.
+                            ·
                         @else
-                            아직 나눈 기도제목이 없습니다.
+                            <span class="font-kr">{{ \App\Models\PrayerRequest::SCOPES[$prayer->scope] }}</span> ·
+                        @endif
+                        {{ $prayer->created_at->translatedFormat('n월 j일') }}
+                        @if ($prayer->is_answered)
+                            <span class="ml-2 font-kr font-bold text-accent">응답받음</span>
                         @endif
                     </p>
-                @endforelse
-            </div>
-            <div class="mt-8">
-                {{ $requests->links() }}
-            </div>
+                    <p class="mt-2 whitespace-pre-line font-kr text-body leading-relaxed text-navy-700">{{ $prayer->body }}</p>
+
+                    @if ($prayer->canBeRemovedBy(auth()->user()))
+                        <div class="mt-3 flex flex-wrap gap-4 font-kr text-caption font-bold">
+                            @if ($prayer->user_id === auth()->id())
+                                <form method="POST" action="{{ route('prayer.answered', $prayer) }}">
+                                    @csrf
+                                    <button type="submit" class="text-accent hover:text-accent-700">{{ $prayer->is_answered ? '응답 표시 지우기' : '응답받았어요' }}</button>
+                                </form>
+                            @endif
+                            <form method="POST" action="{{ route('prayer.destroy', $prayer) }}" onsubmit="return confirm('이 기도제목을 지울까요?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-navy-400 hover:text-navy">지우기</button>
+                            </form>
+                        </div>
+                    @endif
+                </article>
+            @empty
+                <p class="py-8 font-kr text-body-sm text-navy-400">
+                    @if ($tab === 'cell' && ! $cellId && ! auth()->user()->isPastor())
+                        아직 셀에 속해 있지 않습니다. 셀 배정은 교회 사무실에 문의해 주세요.
+                    @else
+                        아직 나눈 기도제목이 없습니다.
+                    @endif
+                </p>
+            @endforelse
+        </div>
+        <div class="mt-8">
+            {{ $requests->links() }}
         </div>
     </section>
 

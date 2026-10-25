@@ -23,7 +23,7 @@ use Tests\TestCase;
  * the only thing these pages ask about.
  *
  * Eight pages are 성도 전용 in full now - 교회 행사, 교회 소식, 자료실,
- * 헌금, 앨범, 큐티, 기도제목 and 성경 타자 - so anybody else gets their heading and one line
+ * 헌금, 앨범, 큐티, 기도제목 and 성경 필사 - so anybody else gets their heading and one line
  * offering the login, and no query behind it is ever run.
  */
 class ChurchMemberAccessTest extends TestCase

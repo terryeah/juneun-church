@@ -2,11 +2,11 @@
     use App\Models\BibleVerse;
 @endphp
 
-<x-layout.app :title="BibleVerse::BOOKS[$book].' 쓰기'" description="개역한글 성경을 한 절씩 직접 써 내려가는 성경 타자입니다." :noindex="true">
+<x-layout.app :title="BibleVerse::BOOKS[$book].' 쓰기'" description="개역한글 성경을 한 절씩 직접 옮겨 쓰는 성경 필사입니다." :noindex="true">
 
     <section class="section-typing-write container-site py-12 lg:py-16">
         <div class="mx-auto max-w-3xl">
-            <x-ui.kicker>말씀 쓰기 · Bible Typing</x-ui.kicker>
+            <x-ui.kicker>말씀 필사 · Scripture Writing</x-ui.kicker>
             <div class="mt-3 flex flex-wrap items-baseline justify-between gap-3">
                 <h1 class="font-kr text-display-md font-medium">{{ BibleVerse::BOOKS[$book] }}</h1>
                 <p class="font-kr text-body-sm text-navy-400">{{ number_format($progress['done']) }} / {{ number_format($progress['total']) }}절</p>
@@ -27,7 +27,7 @@
                     <input type="hidden" name="verse_id" value="{{ $verse->id }}">
                     <label for="body" class="sr-only">{{ $verse->reference() }} 따라 쓰기</label>
                     <textarea id="body" name="body" rows="4" required maxlength="2000" autofocus data-typing-pad
-                              class="block w-full rounded-btn border-2 border-line bg-paper px-4 py-3 font-kr text-body-lg leading-relaxed text-navy placeholder:text-navy-400 focus:border-navy focus:outline-none"
+                              class="block w-full rounded-frame border-2 border-line bg-paper p-6 font-kr text-body-lg leading-relaxed text-navy placeholder:text-navy-400 focus:border-navy focus:outline-none"
                               placeholder="위 말씀을 그대로 쳐 주세요.">{{ old('body') }}</textarea>
                     @error('body')<p class="mt-1.5 font-kr text-body-sm text-accent">{{ $message }}</p>@enderror
 

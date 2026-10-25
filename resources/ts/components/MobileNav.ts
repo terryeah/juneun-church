@@ -31,7 +31,7 @@ export class MobileNav {
             }
         });
 
-        window.matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+        window.matchMedia('(min-width: 1280px)').addEventListener('change', (event) => {
             if (event.matches && this.isOpen()) {
                 this.setOpen(false);
             }

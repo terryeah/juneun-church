@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * One verse a 성도 has typed out in full. The tally behind 성경 타자's
+ * One verse a 성도 has typed out in full. The tally behind 성경 필사's
  * leaderboard; nothing else is recorded about the attempt.
  */
 #[Fillable(['user_id', 'bible_verse_id'])]
