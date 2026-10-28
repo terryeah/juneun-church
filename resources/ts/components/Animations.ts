@@ -69,11 +69,12 @@ export class Animations {
      * Slides the mobile menu items in whenever the menu opens.
      *
      * The account item is a link for a guest but a form button for
-     * someone signed in, so both tags are collected: matching anchors
-     * alone left 로그아웃 sitting still while everything above it moved.
+     * someone signed in, and the group headings are paragraphs, so all
+     * three tags are collected: matching anchors alone left 로그아웃 and
+     * the headings sitting still while everything around them moved.
      */
     private bindMobileMenu(): void {
-        const items = '[data-mobile-nav-menu] a, [data-mobile-nav-menu] button';
+        const items = '[data-mobile-nav-menu] a, [data-mobile-nav-menu] button, [data-mobile-nav-menu] p';
 
         document.addEventListener('mobilenav:opened', () => {
             gsap.from(items, {
